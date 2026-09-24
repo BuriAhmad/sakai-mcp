@@ -12,7 +12,7 @@ die() { echo "Error: $*" >&2; exit 1; }
 [[ "$EUID" -eq 0 ]] || die 'Run this script with sudo.'
 [[ $# -ge 1 ]] || die 'Usage: release-sakai-vm.sh preflight | deploy SHA SHA256 ARCHIVE RELEASE_ID | rollback RELEASE_ID'
 command -v flock >/dev/null || die 'flock is required.'
-install -d -m 0750 "$RELEASES"
+install -d -o root -g tomcat -m 0750 "$RELEASES"
 exec 9>"$RELEASES/.lock"
 flock -n 9 || die 'Another Sakai release operation is already running.'
 
@@ -84,6 +84,7 @@ case "$1" in
     printf '%s  %s\n' "$expected_hash" "$archive" | sha256sum --check --status || \
       die 'Source archive checksum mismatch.'
     install -d -m 0750 "$release/source" "$release/staged-tomcat" "$release/backup"
+    chgrp tomcat "$release"
     tar -xzf "$archive" --strip-components=2 -C "$release/source" apps/sakai
     [[ -f "$release/source/pom.xml" ]] || die 'Archive contains no Sakai POM.'
     printf '%s\n' "$commit" > "$release/commit"
@@ -120,6 +121,7 @@ case "$1" in
     chown tomcat:tomcat "$release/build.log"
 
     echo "Building Sakai $commit (log: $release/build.log)..."
+    cd "$release/source"
     if ! sudo -u tomcat -H env MAVEN_OPTS='-Xms512m -Xmx3072m' \
       "$MAVEN" -B -ntp -DskipTests -f "$release/source/master/pom.xml" clean install \
       >> "$release/build.log" 2>&1; then
