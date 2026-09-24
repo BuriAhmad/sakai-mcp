@@ -32,3 +32,28 @@ jobs:
 
       - name: Validate Sakai parent POM
         run: mvn -B -ntp -f apps/sakai/master/pom.xml validate
+
+  full-build:
+    name: Build all Sakai modules
+    needs: parent-pom
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      MAVEN_OPTS: -Xms512m -Xmx3072m
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Java 17 and Maven cache
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: apps/sakai/master/pom.xml
+
+      - name: Install Sakai parent project
+        run: mvn -B -ntp -DskipTests -f apps/sakai/master/pom.xml clean install
+
+      - name: Build Sakai application modules
+        run: mvn -B -ntp -DskipTests -f apps/sakai/pom.xml clean install

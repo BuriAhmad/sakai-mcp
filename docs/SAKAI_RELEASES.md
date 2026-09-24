@@ -5,7 +5,7 @@ This procedure targets only `rg-sakai-mcp-dev/vm-sakai-dev`. A Git push runs che
 ## First release checklist
 
 1. Finish the Sakai change in `apps/sakai/`, commit it, and push it to `main`.
-2. Wait for the repository and Sakai source GitHub checks to pass. The current Sakai check validates the parent POM; the release itself performs the full Maven build with tests skipped. Add focused tests for changed modules before treating a change as validated.
+2. Wait for the repository and Sakai source GitHub checks to pass. CI validates the parent POM and compiles all Sakai modules; the release repeats the full Maven build on the VM. Both builds currently skip tests, so add and run focused tests for the modules you change before treating a feature as validated.
 3. Confirm the change needs no database migration or irreversible runtime change. This release route backs up Tomcat application files, **not MySQL data**. Handle schema changes with a separate migration and database recovery plan.
 4. Ensure Azure MySQL is `Ready`. If the environment is stopped, run `./sakai start` first. Allow plenty of time before the VM's 19:00 Pakistan-time auto-shutdown.
 

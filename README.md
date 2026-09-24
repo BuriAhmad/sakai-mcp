@@ -2,7 +2,7 @@
 
 Sakai application source, Azure infrastructure, operations, and future MCP services in one repository.
 
-The canonical repository is `BuriAhmad/sakai-mcp`. GitHub Actions validates project shell scripts and Bicep infrastructure, and checks the Sakai parent POM when its source changes. Sakai source is tracked in `apps/sakai/`. These checks do not deploy code to Azure.
+The canonical repository is `BuriAhmad/sakai-mcp`. GitHub Actions validates project shell scripts and Bicep infrastructure, and builds Sakai when its source changes. Sakai source is tracked in `apps/sakai/`. These checks do not deploy code to Azure.
 
 ## First use on a Mac
 
