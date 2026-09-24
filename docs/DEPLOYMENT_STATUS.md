@@ -349,3 +349,20 @@ This is the chronological execution record for the Sakai 25.2 development sandbo
 - **Sakai VM: DEALLOCATED.** The access test did not leave VM compute running.
 - SSH port 22 remains restricted to one administrator public IPv4 `/32`, not the internet.
 - The repository has a private `BuriAhmad/sakai-mcp` GitHub remote with validation CI. Sakai application source is planned for this same repository.
+
+## 2026-09-24 — Tracked Sakai source and guarded releases
+
+### Completed successfully
+
+- Imported the official Sakai 25.2 source at upstream commit `b5b7800f0fcddf9d0db47276a66065189365d905` into `apps/sakai/` in the private monorepo.
+- Added `./sakai deploy COMMIT`, `./sakai rollback RELEASE_ID`, and the manual GitHub Actions release workflow. The GitHub-to-Azure identity uses an environment-scoped OIDC trust and resource-scoped Azure roles; its SSH key is separate from the Mac administrator key.
+- Passed GitHub's `check-only` release run, including OIDC login, selected-commit validation, temporary runner `/32` SSH access, VM key/sudo, VM preflight, and restoration of the prior administrator `/32` rule.
+- The first full release test exposed a staged-directory permission error before any new Tomcat artifacts were installed. Its automatic recovery restarted the original Tomcat files, and public `/portal` returned HTTP 200.
+- Corrected the permission and working-directory issue, then completed a full 454-module Sakai build from monorepo commit `e0553fef88a0ca149be3a33f0cd026aec88e9f16`. The source content is unchanged from the 25.2 import. The staged artifact switch, Tomcat restart, VM-local portal check, and public HTTPS portal check succeeded.
+- Verified `/opt/sakai-releases/current` records release `20260924T181142Z-e0553fef88a0`, its status is `healthy`, and the preceding Tomcat `webapps`, `components`, and `lib` directories remain as a 2.0 GiB rollback copy. Runtime properties and MySQL remained in place.
+
+### Current state
+
+- Tomcat was stopped cleanly after verification and the VM returned to **deallocated**, its state before this release work. The Azure MySQL server remained **Ready** as it was at the start of this work.
+- The GitHub `deploy` mode and manual rollback command are implemented but have **not** been exercised end to end. The GitHub `check-only` mode and desktop full deploy were exercised. The release checks are a portal smoke test, not a full LMS functional regression suite.
+- Deploying schema changes requires a separate database migration/backup plan. See `docs/SAKAI_RELEASES.md`.

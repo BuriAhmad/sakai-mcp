@@ -37,9 +37,11 @@ To restore the preceding application files after a successful release:
 
 Only the current release can be rolled back by this command. It does not reverse database migrations or content changes made while the new code ran. Keep the release and its backup directories until the change has been exercised; cleanup is a separate, reviewed operation.
 
+Each full release can retain several gigabytes of build output and a roughly 2 GiB rollback copy on the VM's 64 GiB disk. Check free space with `./sakai shell 'df -h /opt; sudo du -sh /opt/sakai-releases/*'` before repeated releases. Do not delete the current release or its backup to make room; review and remove only older, no-longer-needed releases in a separate maintenance step.
+
 ## Manual GitHub release
 
-The [Deploy Sakai to development VM](https://github.com/BuriAhmad/sakai-mcp/actions/workflows/deploy-sakai.yml) workflow runs only when manually started from `main`. Enter the full 40-character commit SHA and choose `check-only` first; then choose `deploy`. Its `sakai-dev` environment is limited to the `main` branch. The workflow uses a GitHub-federated Azure identity, a dedicated VM SSH key stored as an environment secret, and temporarily changes the same SSH rule to the runner's `/32`. It restores the prior rule when the job ends. If a runner is interrupted before cleanup, `./sakai open-ssh` restores access from your Mac.
+The [Deploy Sakai to development VM](https://github.com/BuriAhmad/sakai-mcp/actions/workflows/deploy-sakai.yml) workflow runs only when manually started from `main`. Enter the full 40-character commit SHA and choose `check-only` first; then choose `deploy`. Its `sakai-dev` environment is limited to the `main` branch. Starting the workflow is the manual release gate; this private repository has no separate required-reviewer approval rule. The workflow uses a GitHub-federated Azure identity, a dedicated VM SSH key stored as an environment secret, and temporarily changes the same SSH rule to the runner's `/32`. It restores the prior rule when the job ends. If a runner is interrupted before cleanup, `./sakai open-ssh` restores access from your Mac.
 
 GitHub's Azure identity has Reader access to this resource group, VM Contributor access to this one VM, and Network Contributor access to this one NSG. It does not receive your Mac's personal SSH key. The VM key can be revoked by removing the `sakai-mcp-github-deploy` entry from `/home/sakaiadmin/.ssh/authorized_keys` and deleting the `SAKAI_DEPLOY_SSH_KEY` environment secret.
 

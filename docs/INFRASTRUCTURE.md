@@ -48,13 +48,13 @@ Reserved-but-uncreated address ranges are `10.42.3.0/24` (future MCP/Container A
 ## Application layout and operations
 
 - Java: Eclipse Temurin 17.0.15+6 at `/opt/temurin17` (the Sakai 25 QA-tested runtime); Maven: 3.9.16; Tomcat: upstream 9.0.121 at `/opt/tomcat`.
-- Sakai source: tracked locally at `apps/sakai/` from tag `25.2`, commit `b5b7800f0fcddf9d0db47276a66065189365d905`. The initial VM checkout is `/opt/sakai-src` at that upstream commit. Later releases build exact repository commits under `/opt/sakai-releases/RELEASE_ID/source`; `/opt/sakai-releases/current` records the deployed release. See `docs/SAKAI_RELEASES.md`; installing the release pipeline does not itself deploy custom source.
+- Sakai source: tracked locally at `apps/sakai/` from tag `25.2`, commit `b5b7800f0fcddf9d0db47276a66065189365d905`. The initial VM checkout is `/opt/sakai-src` at that upstream commit. Later releases build exact repository commits under `/opt/sakai-releases/RELEASE_ID/source`; `/opt/sakai-releases/current` records the deployed release. The first verified release is `20260924T181142Z-e0553fef88a0` at commit `e0553fef88a0ca149be3a33f0cd026aec88e9f16`, with Sakai source unchanged from the imported 25.2 baseline. See `docs/SAKAI_RELEASES.md`.
 - Runtime properties: `/opt/tomcat/sakai/local.properties`, owner `tomcat:tomcat`, mode `0640`; passwords are not committed.
 - Tomcat service: `/etc/systemd/system/tomcat.service`, enabled for boot recovery. It uses the required Java module-open options for Sakai/Ignite; `auto.ddl=false` and the one-time `-Dsakai.demo=true` flag has been removed after the completed demo seed.
 - Nginx is the only public application listener. It forwards to `127.0.0.1:8080`, sets forwarded HTTPS headers, and uses `client_max_body_size 25M`.
 - Let’s Encrypt HTTPS is active for the Azure FQDN; certificate expiry is 2026-12-13 and Certbot renewal is scheduled.
 - Sakai content storage: database BLOBs. Sakai 25.2 default `bodyPath` and `bodyVolumes` are intentionally unset. Upload settings are left at the exact 20 MB Sakai defaults; proxy allowance is 25 MB.
-- The root `./sakai` command provides login, shell, copy, source-clone, start, stop, and status workflows. `./sakai shell` refreshes the single-address SSH rule before connecting. The destroy script requires the exact `DELETE rg-sakai-mcp-dev` confirmation and is not run by deployment automation.
+- The root `./sakai` command provides login, shell, copy, start, stop, status, deploy, and rollback workflows. `./sakai shell` refreshes the single-address SSH rule before connecting. The destroy script requires the exact `DELETE rg-sakai-mcp-dev` confirmation and is not run by deployment automation.
 - `./sakai deploy COMMIT` and `./sakai rollback RELEASE_ID` are the explicit code-only release path. A manual GitHub Actions workflow uses a federated Azure identity scoped to this resource group/VM/NSG and a separate VM SSH key; it restores the previous SSH `/32` after the job. Database migrations and runtime-secret changes are outside this release path.
 - Boot diagnostics is enabled. The temporary `VMAccessForLinux` recovery extension was removed after access recovery; no VM access extension remains installed.
 - Test/demo content: the official Sakai `SeedSitesAndUsersJob` was executed twice through the guarded `deployment/run-built-in-test-site-job.sh` wrapper. The second run used the upstream deterministic test-password option solely for verification, and both temporary properties were removed automatically afterward. Four small upload fixtures (PDF, PNG, ZIP, and PPTX) were stored in a generated user's personal Resources area using Sakai's authenticated built-in direct-upload endpoint; `CONTENT_RESOURCE_BODY_BINARY` is the confirmed content backend.
@@ -77,6 +77,10 @@ The public browser test verified login, workspace, Resources UI, and visibility 
 - Azure API readback confirms **`vm-sakai-dev` = `VM deallocated`** and **`mysql-sakai-dev-55a5701c-uae` = `Stopped`**. The public IP/FQDN, disk, MySQL storage/backups, VNet, private DNS, NSG, and resource group remain preserved; those persistent resources can still incur small charges.
 - Resume with `scripts/start-env.sh`; inspect with `scripts/status-env.sh`; stop again with `scripts/stop-env.sh`. `scripts/destroy-dev.sh` requires the exact `DELETE rg-sakai-mcp-dev` confirmation and was deliberately not run.
 - Azure CLI compatibility note: `stop-env.sh` polls the VM power state for `VM deallocated` rather than relying on an unavailable `az vm wait --deallocated` flag. This is the current reproducible source of truth.
+
+## Latest verified state (2026-09-24)
+
+After the code-only baseline release was built and verified over public HTTPS, Tomcat was stopped cleanly and `vm-sakai-dev` was returned to **VM deallocated**. MySQL was **Ready** before and after the release work. The NSG SSH rule remained a single administrator `/32`; the GitHub check-only job restored that rule after using its temporary runner address. The release's rollback files remain on the VM. See the dated entry in `docs/DEPLOYMENT_STATUS.md` for what was exercised and what was not.
 
 No credentials or generated secrets are stored in this repository; local deployment secrets are in ignored `deployment/.env` (mode 600).
 
