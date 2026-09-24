@@ -40,7 +40,12 @@ jobs:
           shellcheck --severity=error ./sakai "${files[@]}"
 
       - name: Check whitespace
-        run: git show --check --format= HEAD
+        shell: bash
+        run: |
+          if git grep -nI -E '[[:blank:]]+$'; then
+            echo 'Tracked files contain trailing whitespace.' >&2
+            exit 1
+          fi
 
       - name: Reject tracked local secrets
         shell: bash

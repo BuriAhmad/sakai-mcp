@@ -1333,50 +1333,50 @@ The next phase should be learning/exploring the deployed Sakai system and its AP
 
 This runbook was re-checked against the following official/current sources:
 
-1. **Sakai Release Date List** — confirms Sakai 25.2 as the active 25.x release (released 2 June 2026).  
+1. **Sakai Release Date List** — confirms Sakai 25.2 as the active 25.x release (released 2 June 2026).
    https://sakaiproject.atlassian.net/wiki/spaces/DOC/pages/17281679656/Sakai+Release+Date+list
 
-2. **Official Sakai GitHub repository** — lists Sakai 25.2 as a community-supported version.  
+2. **Official Sakai GitHub repository** — lists Sakai 25.2 as a community-supported version.
    https://github.com/sakaiproject/sakai
 
-3. **Sakai 25 Install Guide (Source)** — Java 17, Maven 3.9+, Tomcat 9, source checkout/build process, MySQL configuration, UTF-8 configuration, `-Dsakai.demo=true`, and the built-in `Create Test Sites` Quartz job.  
+3. **Sakai 25 Install Guide (Source)** — Java 17, Maven 3.9+, Tomcat 9, source checkout/build process, MySQL configuration, UTF-8 configuration, `-Dsakai.demo=true`, and the built-in `Create Test Sites` Quartz job.
    https://sakaiproject.atlassian.net/wiki/spaces/DOC/pages/33232421161/Sakai+25+Install+Guide+Source
 
-4. **Azure Database for MySQL version support policy** — confirms MySQL 8.0 remains supported by Azure Database for MySQL.  
+4. **Azure Database for MySQL version support policy** — confirms MySQL 8.0 remains supported by Azure Database for MySQL.
    https://learn.microsoft.com/en-us/azure/mysql/concepts-version-policy
 
-5. **Azure Database for MySQL private VNet networking documentation** — delegated subnet, VNet integration, and private DNS requirements.  
+5. **Azure Database for MySQL private VNet networking documentation** — delegated subnet, VNet integration, and private DNS requirements.
    https://learn.microsoft.com/en-us/azure/mysql/flexible-server/concepts-networking-vnet
 
-6. **Azure CLI: MySQL Flexible Server** — current CLI provisioning options for Flexible Server and private networking.  
+6. **Azure CLI: MySQL Flexible Server** — current CLI provisioning options for Flexible Server and private networking.
    https://learn.microsoft.com/en-us/cli/azure/mysql/flexible-server
 
-7. **Sakai default configuration properties** — source of truth to inspect for `ContentHostingService`, upload limits, quotas, and ZIP/resource settings. Codex must use the file from the exact checked-out Sakai 25.2 source when deploying.  
+7. **Sakai default configuration properties** — source of truth to inspect for `ContentHostingService`, upload limits, quotas, and ZIP/resource settings. Codex must use the file from the exact checked-out Sakai 25.2 source when deploying.
    https://github.com/sakaiproject/sakai/blob/master/config/configuration/bundles/src/bundle/org/sakaiproject/config/bundle/default.sakai.properties
 
-8. **Nginx `client_max_body_size` documentation** — request-body limit that must be configured so the reverse proxy does not reject valid Sakai uploads before they reach Tomcat/Sakai.  
+8. **Nginx `client_max_body_size` documentation** — request-body limit that must be configured so the reverse proxy does not reject valid Sakai uploads before they reach Tomcat/Sakai.
    https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
 
-9. **Azure Resource Groups** — recommends grouping resources that share the same lifecycle so they can be deployed, updated, and deleted together.  
+9. **Azure Resource Groups** — recommends grouping resources that share the same lifecycle so they can be deployed, updated, and deleted together.
    https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-cli
 
-10. **Azure IP Address Planning** — guidance for non-overlapping CIDRs, reserving address space, and accounting for Azure-reserved subnet addresses.  
+10. **Azure IP Address Planning** — guidance for non-overlapping CIDRs, reserving address space, and accounting for Azure-reserved subnet addresses.
     https://learn.microsoft.com/en-us/azure/networking/design-guide/ip-planning
 
-11. **Azure Default Outbound Access** — documents the 2026 move toward private subnets/default outbound access disabled for new VNet API behavior and the need for explicit outbound connectivity.  
+11. **Azure Default Outbound Access** — documents the 2026 move toward private subnets/default outbound access disabled for new VNet API behavior and the need for explicit outbound connectivity.
     https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/default-outbound-access
 
-12. **Azure Container Apps VNet Integration** — documents dedicated/delegated Container Apps networking and current subnet sizing guidance for workload-profiles environments.  
+12. **Azure Container Apps VNet Integration** — documents dedicated/delegated Container Apps networking and current subnet sizing guidance for workload-profiles environments.
     https://learn.microsoft.com/en-us/azure/container-apps/workload-profiles-manage-cli
 
-13. **Azure MySQL Stop/Start** — documents automatic restart after 30 continuous days stopped.  
+13. **Azure MySQL Stop/Start** — documents automatic restart after 30 continuous days stopped.
     https://learn.microsoft.com/en-us/azure/mysql/flexible-server/how-to-stop-start-server-portal
 
-14. **Azure RBAC Role Assignment Scope** — recommends using the smallest scope required for access.  
+14. **Azure RBAC Role Assignment Scope** — recommends using the smallest scope required for access.
     https://learn.microsoft.com/en-us/Azure/role-based-access-control/role-assignments
 
-15. **Azure Resource Locks** — documents `CanNotDelete`/`ReadOnly` locks and their inheritance/operational implications.  
+15. **Azure Resource Locks** — documents `CanNotDelete`/`ReadOnly` locks and their inheritance/operational implications.
     https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/lock-resources
 
-16. **Azure Resource Group Deletion** — documents deletion behavior, irreversibility, and the effect of locks/dependencies.  
+16. **Azure Resource Group Deletion** — documents deletion behavior, irreversibility, and the effect of locks/dependencies.
     https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/delete-resource-group
