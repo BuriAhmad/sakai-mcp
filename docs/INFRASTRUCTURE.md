@@ -48,13 +48,14 @@ Reserved-but-uncreated address ranges are `10.42.3.0/24` (future MCP/Container A
 ## Application layout and operations
 
 - Java: Eclipse Temurin 17.0.15+6 at `/opt/temurin17` (the Sakai 25 QA-tested runtime); Maven: 3.9.16; Tomcat: upstream 9.0.121 at `/opt/tomcat`.
-- Sakai source: tracked locally at `apps/sakai/` from tag `25.2`, commit `b5b7800f0fcddf9d0db47276a66065189365d905`. The current VM deployment copy is `/opt/sakai-src` at the same upstream commit; custom source is not deployed yet.
+- Sakai source: tracked locally at `apps/sakai/` from tag `25.2`, commit `b5b7800f0fcddf9d0db47276a66065189365d905`. The initial VM checkout is `/opt/sakai-src` at that upstream commit. Later releases build exact repository commits under `/opt/sakai-releases/RELEASE_ID/source`; `/opt/sakai-releases/current` records the deployed release. See `docs/SAKAI_RELEASES.md`; installing the release pipeline does not itself deploy custom source.
 - Runtime properties: `/opt/tomcat/sakai/local.properties`, owner `tomcat:tomcat`, mode `0640`; passwords are not committed.
 - Tomcat service: `/etc/systemd/system/tomcat.service`, enabled for boot recovery. It uses the required Java module-open options for Sakai/Ignite; `auto.ddl=false` and the one-time `-Dsakai.demo=true` flag has been removed after the completed demo seed.
 - Nginx is the only public application listener. It forwards to `127.0.0.1:8080`, sets forwarded HTTPS headers, and uses `client_max_body_size 25M`.
 - Let’s Encrypt HTTPS is active for the Azure FQDN; certificate expiry is 2026-12-13 and Certbot renewal is scheduled.
 - Sakai content storage: database BLOBs. Sakai 25.2 default `bodyPath` and `bodyVolumes` are intentionally unset. Upload settings are left at the exact 20 MB Sakai defaults; proxy allowance is 25 MB.
 - The root `./sakai` command provides login, shell, copy, source-clone, start, stop, and status workflows. `./sakai shell` refreshes the single-address SSH rule before connecting. The destroy script requires the exact `DELETE rg-sakai-mcp-dev` confirmation and is not run by deployment automation.
+- `./sakai deploy COMMIT` and `./sakai rollback RELEASE_ID` are the explicit code-only release path. A manual GitHub Actions workflow uses a federated Azure identity scoped to this resource group/VM/NSG and a separate VM SSH key; it restores the previous SSH `/32` after the job. Database migrations and runtime-secret changes are outside this release path.
 - Boot diagnostics is enabled. The temporary `VMAccessForLinux` recovery extension was removed after access recovery; no VM access extension remains installed.
 - Test/demo content: the official Sakai `SeedSitesAndUsersJob` was executed twice through the guarded `deployment/run-built-in-test-site-job.sh` wrapper. The second run used the upstream deterministic test-password option solely for verification, and both temporary properties were removed automatically afterward. Four small upload fixtures (PDF, PNG, ZIP, and PPTX) were stored in a generated user's personal Resources area using Sakai's authenticated built-in direct-upload endpoint; `CONTENT_RESOURCE_BODY_BINARY` is the confirmed content backend.
 

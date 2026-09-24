@@ -1,0 +1,99 @@
+name: Deploy Sakai to development VM
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: 'Full 40-character commit SHA from main to deploy'
+        required: true
+        type: string
+      mode:
+        description: 'Check access only, or perform the deployment'
+        required: true
+        default: check-only
+        type: choice
+        options:
+          - check-only
+          - deploy
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: sakai-dev-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy selected commit
+    runs-on: ubuntu-latest
+    environment: sakai-dev
+    timeout-minutes: 360
+    steps:
+      - name: Check out deployment code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Sign in to Azure with federated identity
+        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install dedicated VM SSH key
+        shell: bash
+        env:
+          DEPLOY_KEY: ${{ secrets.SAKAI_DEPLOY_SSH_KEY }}
+        run: |
+          test -n "$DEPLOY_KEY"
+          install -m 0700 -d "$RUNNER_TEMP/sakai-ssh"
+          printf '%s\n' "$DEPLOY_KEY" > "$RUNNER_TEMP/sakai-ssh/id_ed25519"
+          chmod 0600 "$RUNNER_TEMP/sakai-ssh/id_ed25519"
+
+      - name: Deploy and restore administrator SSH rule
+        shell: bash
+        env:
+          COMMIT: ${{ inputs.commit }}
+          MODE: ${{ inputs.mode }}
+          SAKAI_SSH_KEY: ${{ runner.temp }}/sakai-ssh/id_ed25519
+        run: |
+          set -Eeuo pipefail
+          [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]] || {
+            echo 'Enter the full lowercase SHA of a commit on main.' >&2
+            exit 2
+          }
+          nsg='nsg-sakai-app-dev'
+          group='rg-sakai-mcp-dev'
+          rule='allow-ssh-admin-only'
+          old_cidr="$(az network nsg rule show -g "$group" --nsg-name "$nsg" -n "$rule" --query sourceAddressPrefix -o tsv)"
+          runner_cidr="$(curl --fail --silent --show-error --max-time 20 https://api.ipify.org)/32"
+          restore_rule() {
+            current_cidr="$(az network nsg rule show -g "$group" --nsg-name "$nsg" -n "$rule" --query sourceAddressPrefix -o tsv 2>/dev/null || true)"
+            if [[ "$current_cidr" == "$runner_cidr" && "$old_cidr" != "$runner_cidr" ]]; then
+              az network nsg rule update -g "$group" --nsg-name "$nsg" -n "$rule" \
+                --source-address-prefixes "$old_cidr" --output none
+            fi
+          }
+          trap restore_rule EXIT
+          if [[ "$MODE" == check-only ]]; then
+            ./sakai deploy "$COMMIT" --check-only
+            ./sakai open-ssh
+            fqdn="$(az vm show -d -g "$group" -n vm-sakai-dev --query fqdns -o tsv)"
+            ssh_options=(-o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=accept-new -i "$SAKAI_SSH_KEY")
+            remote="sakaiadmin@$fqdn"
+            remote_dir="$(ssh "${ssh_options[@]}" "$remote" 'mktemp -d /var/tmp/sakai-preflight.XXXXXXXX')"
+            [[ "$remote_dir" =~ ^/var/tmp/sakai-preflight\.[A-Za-z0-9]{8}$ ]]
+            scp "${ssh_options[@]}" deployment/release-sakai-vm.sh "$remote:$remote_dir/"
+            # shellcheck disable=SC2029
+            ssh "${ssh_options[@]}" "$remote" "sudo -n bash '$remote_dir/release-sakai-vm.sh' preflight"
+            echo 'Azure identity, selected commit, SSH firewall, VM key, sudo, and VM release prerequisites are ready.'
+          elif [[ "$MODE" == deploy ]]; then
+            ./sakai deploy "$COMMIT"
+          else
+            echo "Unknown mode: $MODE" >&2
+            exit 2
+          fi
