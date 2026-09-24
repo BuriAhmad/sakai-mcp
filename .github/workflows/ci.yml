@@ -1,0 +1,68 @@
+name: Validate repository
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shell:
+    name: Shell scripts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install ShellCheck
+        run: sudo apt-get update -qq && sudo apt-get install -y shellcheck
+
+      - name: Check Bash syntax
+        shell: bash
+        run: |
+          while IFS= read -r -d '' file; do
+            bash -n "$file"
+          done < <(find . -type f -name '*.sh' -print0)
+          bash -n ./sakai
+
+      - name: Run ShellCheck
+        shell: bash
+        run: |
+          mapfile -d '' files < <(find deployment scripts -type f -name '*.sh' -print0)
+          shellcheck --severity=error ./sakai "${files[@]}"
+
+      - name: Check whitespace
+        run: git show --check --format= HEAD
+
+      - name: Reject tracked local secrets
+        shell: bash
+        run: |
+          if git ls-files --error-unmatch deployment/.env >/dev/null 2>&1; then
+            echo 'deployment/.env must never be tracked.' >&2
+            exit 1
+          fi
+          if git grep -n -E 'BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
+            echo 'A private key appears to be tracked.' >&2
+            exit 1
+          fi
+
+  bicep:
+    name: Bicep
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Compile infrastructure template
+        uses: azure/cli@9eb25b8360668fb0ecbafa808d40e2197b2f5f52 # v3.0.0
+        with:
+          azcliversion: latest
+          inlineScript: az bicep build --file deployment/infra/main.bicep --stdout >/dev/null

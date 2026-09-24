@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+usage() {
+  cat <<'EOF'
+Usage: ./sakai COMMAND [ARGS...]
+
+Everyday commands:
+  login                 Sign in to Azure and select this project's subscription
+  shell [COMMAND...]    Start the VM if needed, refresh SSH access, and connect
+  copy LOCAL REMOTE     Copy a local file to the VM
+  start                 Start the VM, database, and Sakai application
+  stop                  Stop/deallocate the environment to control costs
+  status                Show Azure and public application status
+  source                Clone the matching Sakai source locally
+  open-ssh              Refresh the NSG rule without connecting
+  help                  Show this help
+
+Examples:
+  ./sakai login
+  ./sakai shell
+  ./sakai shell 'cd /opt/sakai-src && git status'
+  ./sakai source
+EOF
+}
+
+command_name="${1:-help}"
+[[ $# -eq 0 ]] || shift
+
+case "$command_name" in
+  login)
+    command -v az >/dev/null 2>&1 || { echo "Error: Azure CLI is not installed." >&2; exit 1; }
+    az login
+    az account set --subscription '55a5701c-411e-45f1-9829-9c80f526d9eb'
+    az account show --query '{subscription:name,id:id,user:user.name}' --output table
+    ;;
+  shell) exec "$ROOT_DIR/scripts/ssh-sakai.sh" "$@" ;;
+  copy) exec "$ROOT_DIR/scripts/copy-to-sakai.sh" "$@" ;;
+  start) exec "$ROOT_DIR/scripts/start-env.sh" "$@" ;;
+  stop) exec "$ROOT_DIR/scripts/stop-env.sh" "$@" ;;
+  status) exec "$ROOT_DIR/scripts/status-env.sh" "$@" ;;
+  source) exec "$ROOT_DIR/scripts/clone-sakai-source.sh" "$@" ;;
+  open-ssh) exec "$ROOT_DIR/scripts/open-ssh-access.sh" "$@" ;;
+  help|-h|--help) usage ;;
+  *)
+    echo "Unknown command: $command_name" >&2
+    usage >&2
+    exit 2
+    ;;
+esac
