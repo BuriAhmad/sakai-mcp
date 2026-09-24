@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="org.sakaiproject.content.api.ContentPrintService"
+	    class="org.sakaiproject.content.impl.BasicContentPrintService">
+    </bean>
+
+    <bean id="org.sakaiproject.content.api.persistence.FileConversionServiceRepository"
+        class="org.sakaiproject.content.impl.persistence.FileConversionServiceRepositoryImpl">
+        <property name="sessionFactory" ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory"/>
+    </bean>
+
+    <bean id="org.sakaiproject.content.api.FileConversionService"
+        class="org.sakaiproject.content.impl.FileConversionServiceImpl"
+        destroy-method="destroy"
+        init-method="init">
+        <property name="transactionTemplate">
+            <bean class="org.springframework.transaction.support.TransactionTemplate">
+                <property name="transactionManager" ref="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="fileConversionServiceHibernateMappings"
+          class="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl">
+		<property name="annotatedClasses">
+			<list>
+				<value>org.sakaiproject.content.api.persistence.FileConversionQueueItem</value>
+			</list>
+		</property>
+	</bean>
+
+    <!-- database beans -->
+    <bean id="org.sakaiproject.content.impl.ContentServiceSqlDefault"   class="org.sakaiproject.content.impl.ContentServiceSqlDefault"/>
+    <bean id="org.sakaiproject.content.impl.ContentServiceSqlHSql"      class="org.sakaiproject.content.impl.ContentServiceSqlHSql"/>
+    <bean id="org.sakaiproject.content.impl.ContentServiceSqlMySql"     class="org.sakaiproject.content.impl.ContentServiceSqlMySql"/>
+    <bean id="org.sakaiproject.content.impl.ContentServiceSqlOracle"    class="org.sakaiproject.content.impl.ContentServiceSqlOracle"/>
+
+	<bean id="org.sakaiproject.content.api.ContentHostingService"
+			class="org.sakaiproject.content.impl.DbContentService"
+            init-method="init" destroy-method="destroy">
+
+		<property name="collectionSerializer"><ref bean="org.sakaiproject.content.api.ContentHostingService.collectionSerializer"/></property>
+        <property name="resourceSerializer"><ref bean="org.sakaiproject.content.api.ContentHostingService.resourceSerializer"/></property>
+        <!--
+        If you want to use the new serializers you have to let them migrate the data, set to true
+        so that they can write the new format when they update an item.
+        
+        -->
+        <property name="migrateData"><value>true</value></property>
+
+
+        <property name="collectionTableName">       <value>CONTENT_COLLECTION</value>           </property>
+        <property name="resourceTableName">         <value>CONTENT_RESOURCE</value>             </property>
+        <property name="resourceBodyTableName">     <value>CONTENT_RESOURCE_BODY_BINARY</value> </property>
+        <property name="locksInDb">                 <value>false</value>                        </property>
+        <property name="bodyPath">                  <null/>                                     </property>
+        <property name="bodyVolumes">               <null/>                                     </property>
+        <property name="autoDdl">                   <value>${auto.ddl}</value>                  </property>
+        <!-- This is set via code BaseContentService
+        <property name="siteQuota">                 <value>0</value>                            </property>
+        -->
+        <property name="availabilityEnabled"> <value>true</value>                         </property>
+        <property name="sortByPriorityEnabled">       <value>true</value>                         </property>
+        <property name="databaseBeans">
+           <map>
+              <entry key="default"><ref bean="org.sakaiproject.content.impl.ContentServiceSqlDefault"/></entry>
+              <entry key="hsqldb" ><ref bean="org.sakaiproject.content.impl.ContentServiceSqlHSql"   /></entry>
+              <entry key="mysql"  ><ref bean="org.sakaiproject.content.impl.ContentServiceSqlMySql"  /></entry>
+              <entry key="oracle" ><ref bean="org.sakaiproject.content.impl.ContentServiceSqlOracle" /></entry>
+           </map>
+        </property>
+        <property name="fileSystemHandler"><ref bean="org.sakaiproject.content.api.FileSystemHandler"/></property>
+    </bean>
+
+    <bean id="org.sakaiproject.content.api.FileSystemHandler.file" class="org.sakaiproject.content.impl.DefaultFileSystemHandler">
+        <!-- For the default implementation we need it to use the basePath rather than the id -->
+        <property name="useIdForFilePath" value="false" />
+    </bean>
+
+    <!-- Alias the default filesystem-backed handler to be used by ContentHosting; override the alias to plug in an alternative -->
+    <alias name="org.sakaiproject.content.api.FileSystemHandler.file" alias="org.sakaiproject.content.api.FileSystemHandler" />
+
+
+    <bean id="org.sakaiproject.content.impl.CollectionAccessFormatter"
+          class="org.sakaiproject.content.impl.CollectionAccessFormatter">
+        <property name="formattedText" ref="org.sakaiproject.util.api.FormattedText"/>
+        <property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService"/>
+        <property name="siteService" ref="org.sakaiproject.site.api.SiteService"/>
+    </bean>
+
+	<bean id="org.sakaiproject.content.api.ContentHostingHandlerResolver"
+			class="org.sakaiproject.content.impl.ContentHostingHandlerResolverImpl">
+	</bean>
+
+
+
+<!--
+	<bean id="uk.ac.cam.caret.ContentHostingHandlerFileSystemImpl.0000"
+			class="org.sakaiproject.content.impl.ContentHostingHandlerImplFileSystem">
+			<property name="contentHostingHandlerResolver" ><ref bean="org.sakaiproject.content.api.ContentHostingHandlerResolver"/></property>
+	</bean>
+-->
+
+	<bean id="org.sakaiproject.content.api.ContentTypeImageService"
+			class="org.sakaiproject.content.impl.BasicContentTypeImageService"
+            init-method="init" destroy-method="destroy">
+            
+        <property name="serverConfigurationService">
+        	<ref bean="org.sakaiproject.component.api.ServerConfigurationService"/>
+        </property>
+        
+        <!--    
+        <property name="imageFile"><value>content_type_images.properties</value></property>
+        <property name="nameFile"><value>content_type_names.properties</value></property>
+        <property name="extensionFile"><value>content_type_extensions.properties</value></property>
+        -->
+	</bean>
+
+    <bean id="org.sakaiproject.content.api.ContentFilterService"
+          class="org.sakaiproject.content.impl.ContentFilterServiceImpl">
+        <property name="outputFilters">
+            <list>
+                <ref bean="org.sakaiproject.content.impl.HtmlPageFilter"/>
+            </list>
+        </property>
+    </bean>
+
+	<bean id="org.sakaiproject.content.api.ContentResourceFilter.base"
+			class="org.sakaiproject.content.impl.BaseExtensionResourceFilter">
+        <property name="viewAll">   <value>true</value>  </property>
+        <property name="mimeTypes"> <list/>              </property>
+	</bean>
+
+	<bean id="org.sakaiproject.content.api.ContentChangeHandler" class="org.sakaiproject.content.api.ContentChangeHandlerImpl" />
+
+	<bean id="lockManagerHibernateMappings"
+          class="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl">
+		<property name="annotatedClasses">
+			<list>
+				<value>org.sakaiproject.content.hbm.Lock</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="org.sakaiproject.content.api.LockManager"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="target">
+            <bean class="org.sakaiproject.content.impl.LockManagerImpl">
+                <property name="sessionFactory" ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory"/>
+            </bean>
+        </property>
+        <property name="transactionManager" ref="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager"/>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="org.sakaiproject.content.api.ResourceTypeRegistry"
+			class="org.sakaiproject.content.impl.DbResourceTypeRegistry"
+            init-method="init" destroy-method="destroy">
+        <property name="sqlService"> <ref bean="org.sakaiproject.db.api.SqlService"/> </property>
+        <property name="autoDdl">    <value>${auto.ddl}</value>                       </property>
+        <property name="threadLocalManager"><ref bean="org.sakaiproject.thread_local.api.ThreadLocalManager"/></property>
+	</bean>
+	
+	<bean id="org.sakaiproject.content.impl.DropboxContextObserver"
+			class="org.sakaiproject.content.impl.DropboxContextObserver"
+            init-method="init" destroy-method="destroy">
+
+        <property name="contentService">
+        	<ref bean="org.sakaiproject.content.api.ContentHostingService"/>
+		</property>
+        <property name="entityManager">
+        	<ref bean="org.sakaiproject.entity.api.EntityManager"/>
+		</property>
+	</bean>
+
+
+
+	<bean id="org.sakaiproject.content.api.ContentHostingService.collectionSerializer"
+			class="org.sakaiproject.content.impl.serialize.impl.Type1BaseContentCollectionSerializer">
+        <property name="timeService">
+        	<ref bean="org.sakaiproject.time.api.TimeService"/>
+		</property>			
+	</bean>
+	
+	<bean id="org.sakaiproject.content.api.ContentHostingService.resourceSerializer"
+			class="org.sakaiproject.content.impl.serialize.impl.Type1BaseContentResourceSerializer">
+        <property name="timeService">
+        	<ref bean="org.sakaiproject.time.api.TimeService"/>
+		</property>			
+	</bean>
+
+
+    <bean id="org.sakaiproject.user.api.UserNotificationPreferencesRegistration.content"
+      parent="org.sakaiproject.user.api.UserNotificationPreferencesRegistration"
+      class="org.sakaiproject.content.user.prefs.ContentUserNotificationPreferencesRegistrationImpl"
+      init-method="init">
+      <property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService"/>
+      <property name="bundleLocation"><value>org.sakaiproject.localization.bundle.content.content</value></property>
+      <property name="sectionTitleBundleKey"><value>prefs_title</value></property>
+      <property name="sectionDescriptionBundleKey"><value>prefs_description</value></property>
+      <property name="overrideSectionTitleBundleKey"><value>prefs_title_override</value></property>
+      <property name="defaultValue"><value>3</value></property>
+      <property name="type"><value>sakai:content</value></property>
+      <property name="prefix"><value>rsrc</value></property>
+      <property name="toolId"><value>sakai.resources</value></property>
+      <property name="rawOptions">
+         <map>
+            <entry key="1"><value>prefs_opt1</value></entry>
+            <entry key="2"><value>prefs_opt2</value></entry>
+            <entry key="3"><value>prefs_opt3</value></entry>
+         </map>
+      </property>
+     <property name="overrideBySite"><value>false</value></property>
+     <property name="expandByDefault"><value>true</value></property>
+   </bean>
+
+
+            <bean id="org.sakaiproject.content.impl.HtmlPageFilter"
+                  class="org.sakaiproject.content.impl.HtmlPageFilter">
+              <property name="entityManager" ref="org.sakaiproject.entity.api.EntityManager"/>
+              <property name="preferencesService" ref="org.sakaiproject.user.api.PreferencesService" />
+              <property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService"/>
+              <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager"/>
+              <property name="formattedText" ref="org.sakaiproject.util.api.FormattedText" />
+            </bean>
+
+    <bean id="org.sakaiproject.elfinder.SakaiFsService"
+          class="org.sakaiproject.elfinder.impl.SakaiFsServiceImpl">
+        <property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService"/>
+        <property name="siteService" ref="org.sakaiproject.site.api.SiteService"/>
+        <property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService"/>
+    </bean>
+
+    <bean id="org.sakaiproject.content.impl.ContentSiteFsVolume"
+          class="org.sakaiproject.content.impl.ContentToolFsVolumeFactory"
+          init-method="init">
+        <property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService"/>
+        <property name="sakaiFsService" ref="org.sakaiproject.elfinder.SakaiFsService"/>
+        <property name="siteService" ref="org.sakaiproject.site.api.SiteService"/>
+        <property name="securityService" ref="org.sakaiproject.authz.api.SecurityService"/>
+        <property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService"/>
+        <property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService"/>
+        <property name="threadLocalManager" ref="org.sakaiproject.thread_local.api.ThreadLocalManager"/>
+    </bean>
+
+    <bean id="org.sakaiproject.content.impl.DropboxSiteFsVolume"
+          class="org.sakaiproject.content.impl.DropboxToolFsVolumeFactory"
+          init-method="init">
+        <property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService"/>
+        <property name="sakaiFsService" ref="org.sakaiproject.elfinder.SakaiFsService"/>
+        <property name="siteService" ref="org.sakaiproject.site.api.SiteService"/>
+        <property name="securityService" ref="org.sakaiproject.authz.api.SecurityService"/>
+        <property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService"/>
+        <property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService"/>
+        <property name="threadLocalManager" ref="org.sakaiproject.thread_local.api.ThreadLocalManager"/>
+    </bean>
+
+    <bean id="org.sakaiproject.content.impl.DropboxAuthzHandler" class="org.sakaiproject.content.impl.DropboxAuthzHandler">
+        <property name="contentService" ref="org.sakaiproject.content.api.ContentHostingService"/>
+        <property name="securityService" ref="org.sakaiproject.authz.api.SecurityService"/>
+        <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager"/>
+        <property name="siteService" ref="org.sakaiproject.site.api.SiteService"/>
+        <property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService"/>
+    </bean>
+</beans>

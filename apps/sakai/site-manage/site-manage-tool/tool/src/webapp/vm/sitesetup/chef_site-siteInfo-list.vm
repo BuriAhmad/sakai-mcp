@@ -1,0 +1,599 @@
+##<!-- $Header: /cvs/sakai2/legacy/tools/src/webapp/vm/sitesetup/chef_site-siteInfo-list.vm,v 1.6 2005/05/28 03:04:36 ggolden.umich.edu Exp $ -->
+
+<script>
+	$(document).ready(function () {
+
+		sakai.getSiteInfo('getSiteDesc','desc-modal','$tlang.getString("sitegen.siteinfolist.nosd")','$tlang.getString("sitegen.siteinfolist.nold")');
+		sakai.setupGroupModalLinks('group-modal','$tlang.getString("sinfo.list.groups.memb")','$tlang.getString("sinfo.list.groups.print")','$tlang.getString("sitegen.siteinfolist.name")','$tlang.getString("sitegen.siteinfolist.role")','$tlang.getString("sitegen.siteinfolist.email")');
+		sakai.setupSelectList('siteMembers','selunselallid','selectedSelected');
+		utils.setupUtils();
+
+		$(".info-accordion").accordion({
+			header: 'h4',
+			active: false,
+			collapsible: true,
+			heightStyle: 'content',
+			change: function(event, ui){
+				utils.resizeFrame();
+			},
+			activate: function(event, ui){
+				utils.resizeFrame();
+			}
+		});
+		$("#copyToClipboard").click(function(e) {
+			e.preventDefault();
+			copyToClipboardNoScroll(this, $(this).attr('href'));
+		});
+
+		document.querySelector('#publicInfoPopover') && new bootstrap.Popover(document.querySelector('#publicInfoPopover'));
+
+		$('#publicInfoTooltip').tooltip();
+		$('#unjoinInfoTooltip').tooltip();
+	});
+</script>
+
+<div class ="portletBody specialLink container-fluid">
+	<div id="group-modal"></div>
+	#if($menu)#toolbar($menu)#end
+	## header for site info page
+	<div class="page-header">
+		<h1>$tlang.getString("sinfo.other")</h1>
+	</div>
+
+	#if ($alertMessage)
+		<div class="sak-banner-error">$tlang.getString("gen.alert") $alertMessage</div>
+	#end
+	#chef_flashnotif()
+	#if($importQueued)
+		<div class="sak-banner-info">
+			#if($importQueuedNoEmail)
+				$tlang.getString("importQueuedNoEmail")
+			#else
+				$tlang.getString("importQueued")
+			#end
+		</div>
+		<div class="clear"></div>
+	#end
+	#if ($fromWSetup)
+		<form name="siteForm" id="siteForm" class="inlineForm" action="#toolForm("SiteAction")" method="post">
+			<input type="hidden" name="option" value="x" />
+			<input type="hidden" name="eventSubmit_doNavigate_to_site" value="x" />
+			<div class="navPanel">
+				<div class="itemNav">
+					#if ($!prevSite)
+						<input type="button" 
+							name="previous" 
+							value="&lt; $tlang.getString("sitegen.siteinfolist.previous1")" 
+							onclick="SPNR.disableControlsAndSpin( this, null );document.siteForm.option.value='$prevSite.Id';document.siteForm.submit();" accesskey="p" />
+					#else
+						<input type="submit" 
+								name="previous" 
+								value="&lt; $tlang.getString("sitegen.siteinfolist.previous1")" 
+								disabled="disabled" />
+					#end
+					<input type="button" 
+							name="back" 
+							value="$tlang.getString("sitegen.siteinfolist.return")" 
+							onclick="SPNR.disableControlsAndSpin( this, null );document.siteForm.option.value='';document.siteForm.submit();" accesskey="l" />
+					#if ($!nextSite)
+						<input type="button" 
+							name="next" 
+							value="$tlang.getString("sitegen.siteinfolist.next1") &gt;" 
+							onclick="SPNR.disableControlsAndSpin( this, null );document.siteForm.option.value='$nextSite.Id';document.siteForm.submit();" accesskey="n" />
+					#else
+						<input type="button" 
+							name="next" 
+							value="$tlang.getString("sitegen.siteinfolist.next1") &gt;" disabled="disabled" />
+					#end
+				</div>		
+			</div>		
+			<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
+		</form>
+	#end
+	<table class="table table-striped table-bordered table-hover" summary="$tlang.getString("sitegen.siteinfolist.summary")">
+		<tr>
+			<th>$tlang.getString("sitegen.siteinfolist.title")</th>
+			<td>$formattedText.escapeHtml($!siteTitle)</td>
+		</tr>
+		#if ($!isCourseSite)
+		<tr>
+			<th>
+				$tlang.getString("sitegen.siteinfolist.term")
+			</th>
+			<td>
+				$!term
+			</td>
+		</tr>
+		#if ($!allowUpdate)
+		<tr>
+			<th>
+				$tlang.getString("sitegen.siteinfolist.courses")
+			</th>
+			<td>
+				#foreach ($title in $providerCourseTitles)
+					$title<br />
+				#end
+				#foreach($id in $!cmRequestedCourseList)
+					$id.title $tlang.getString("man.requested")<br />
+				#end
+				#foreach($id in $!manualCourseList)
+					$id $tlang.getString("man.requested")<br />
+				#end
+			</td>
+		</tr>
+		#end
+		#end
+		
+		## As with site email addresses, only show UUID-based site URL if that
+		## is our only option (see http://bugs.sakaiproject.org/jira/browse/SAK-10510)
+		#if ($!siteFriendlyUrls.Empty)
+		<tr>
+			<th>
+				$tlang.getString("sitegen.siteinfolist.siteurl")
+			</th>
+			<td>
+				<a id="copyToClipboard" href="$!siteDefaultUrl" >$tlang.getString("sitegen.siteinfolist.copy.clip")</a>
+			</td>
+		</tr>
+		#else
+		#set ( $aliasIdx = 0 )
+		#foreach($siteFriendlyUrl in $!siteFriendlyUrls)
+		<tr>
+			<th>
+				#if ( $aliasIdx == 0 )
+					$tlang.getString("sitegen.siteinfolist.siteurl")
+				#else
+					&nbsp;
+				#end
+			</th>
+			<td>
+				$!siteFriendlyUrl
+			</td>
+		</tr>
+		#set ( $aliasIdx = $aliasIdx + 1 )
+		#end
+		#end
+
+			<tr>
+				<th>
+					$tlang.getString("sitegen.siteinfolist.sitecont")
+				</th>
+				<td>
+					$formattedText.escapeHtml($!contactName)#if($!contactEmail && !$contactEmail.equals("")), <a href="mailto:$!contactEmail">$!contactEmail</a>#end
+				</td>
+			</tr>
+		#if ($!allowUpdate)
+			<tr>
+				<th>
+					$tlang.getString("sitegen.siteinfolist.ava")
+				</th>
+				<td>
+					#if ($!published)
+						#if ($additionalAccess.size() > 0)
+							<ul class="attachList" style="margin:0">
+								#if ($!siteJoinable)
+									<li>$tlang.getString("sitegen.siteinfolist.sitecan")</li>
+								#else
+									<li>$tlang.getString("sitegen.siteinfolist.sitepar")</li>
+								#end
+							#foreach($role in $additionalAccess)
+								<li>$role</li>
+							#end
+							</ul>
+						#else
+							#if ($!siteJoinable)
+								$tlang.getString("sitegen.siteinfolist.sitecan")
+							#else
+								$tlang.getString("sitegen.siteinfolist.sitepar")
+							#end
+						#end
+					#else
+						## unpublished site
+							<span class="highlight">$tlang.getString("sitegen.siteinfolist.siteown")</span>
+					#end
+				</td>
+			</tr>
+			<tr>
+				<th>
+					$tlang.getString("sitegen.siteinfolist.crea")
+				</th>
+				<td>
+					$!siteCreationDate
+				</td>
+			</tr>
+			<tr>
+				<th>
+					$tlang.getString("sitegen.siteinfolist.modify")
+				</th>
+				<td>
+					$!siteModifiedTime
+				</td>
+			</tr>
+		#end
+
+		#if ($!allowUpdate)
+		
+			<tr>
+				<th>
+					$tlang.getString("sitegen.siteinfolist.usermodify")
+				</th>
+				<td>
+					$formattedText.escapeHtml($!siteModifiedBy)
+				</td>
+			</tr>
+			<tr>
+				<th>
+					$tlang.getString("ediacc.dismysit")
+				</th>
+				<td>
+					#if ($!published && $!include)
+						<span class="highlight">$tlang.getString("sitegen.siteinfolist.yes")</span>
+					#else
+						$tlang.getString("sitegen.siteinfolist.no")
+					#end
+					<button id="publicInfoPopover" class="info-icon" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top" data-bs-content='$tlang.getString("ediacc.dismysit.h")' aria-label='$tlang.getString("feat.more.info")'>
+						<i class="si si-info-circle"></i>
+					</button>
+				</td>
+			</tr>
+
+		#if ($!isCourseSite)
+			<tr>
+				<th>
+					$tlang.getString("sitegen.siteinfolist.app")
+				</th>
+				<td>
+					$!siteUnit
+				</td>
+			</tr>
+		#else
+			#if ($!siteIcon)
+				<tr>
+					<th>
+						$tlang.getString("sitegen.siteinfolist.icon")
+					</th>
+					<td>
+						<p class="textPanelFooter">$formattedText.escapeHtml($!siteIcon)</p>
+					</td>
+				</tr>	
+			#end
+		#end
+		#end
+            #if ($isMathJaxInstalled)
+            <tr>
+                <th>
+                $tlang.getString("sinfo.mathjax.name")
+                </th>
+                <td>
+                #if ($isMathJaxEnabledForSite)
+                    $tlang.getString("sinfo.mathjax.allowed")
+                #else
+                    $tlang.getString("sinfo.mathjax.notAllowed")
+                #end
+                </td>
+            </tr>
+            #end			
+
+            #if ($isSubPageNavEnabled)
+            <tr class="summary-subnav-enabled">
+                <th>
+                $tlang.getString("sinfo.subnav.name")
+                </th>
+                <td>
+                $tlang.getString("sinfo.subnav.enabled")
+                </td>
+            </tr>
+            #end
+
+		#if ($siteJoinable && $allowUnjoin)
+			<tr>
+				<th>
+					&nbsp;
+				</th>
+				<td>
+					<form name="unjoinSiteForm" class="inlineForm" method="post" action="#toolForm("SiteAction")">
+						<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
+						<input type="hidden" name="itemReference" value="$siteId"/>
+						<input type="submit" class="active" name="eventSubmit_doUnjoin" value="$tlang.getString("sitegen.siteinfolist.siteunjoin")" onclick="SPNR.disableControlsAndSpin( this, null );" />
+					</form>
+				</td>
+			</tr>
+		#end
+
+		</table>
+
+		#set ($desc = $siteDescription) 
+		#set ($ell= $tlang.getString("sinfo.list.desc.ellipse"))
+		#if (!$desc || $desc.length() == 0|| $desc ==" "|| $desc =="&nbsp;" || $desc =="" || $desc =="<br>" || $desc =="<br/>" || $desc.isEmpty() || $formattedText.escapeHtml($desc)=="&lt;br type=&quot;_moz&quot; /&gt;" )
+		#else
+		<h4>
+			$tlang.getString("sitegen.siteinfolist.sitedes")
+		</h4>
+		<div>
+			## strip the HTML, trim by x chars, add an ellipsis and add a link to the full description
+			$siteTextEdit.doPlainTextAndLimit($desc,100,"$ell")
+			<a class="getSiteDesc" href="#" id="$!siteId">$tlang.getString("sinfo.list.desc.more")</a>
+			<div id="desc-modal_$!siteId"></div>
+		</div>
+		#end
+		#if ($!sections.size() > 0)
+		<div class="info-accordion">
+			<h4 class="toggleAnchor specialLink">
+				<span>#if ($!viewRoster) $tlang.getString("sinfo.list.sections")#else $tlang.getString("sinfo.list.sections.student") #end</span>
+			</h4>
+			<div class="toggledContent">
+				<table class="table table-striped table-bordered table-hover">
+					<thead>
+						<tr>
+							<th>$tlang.getString("sinfo.list.sections.title")</th>
+							<th>$tlang.getString("sinfo.list.groups.memb")</th>
+							<th>$tlang.getString("group.description")</th>
+							#if ($!joinedJoinableGroups.size() > 0)
+								<th>$tlang.getString("sinfo.list.joinable.unjoin")</th>
+							#end
+						</tr>
+					</thead>
+					<tbody>
+					#foreach ($g in $!sections)
+						#set ($gdesc = "")
+						<tr>
+							<td>
+								<span id ="group$g.Id">$formattedText.escapeHtml($g.Title)</span>
+							</td>
+							#if ($!viewRoster || $!viewMembershipGroups.contains($g.Id)) 
+
+							<td>
+								<span class="itemAction"><a href="#" class="moreInfoGroups btn-link" id ="$g.Id" role="button">$tlang.getString("sinfo.list.groups.memb.view")</a></span>
+							</td>
+
+							#end
+							#if ($g.Description)
+							<td>
+								<span>$formattedText.escapeHtml($g.Description)</span>
+							</td>
+							#end
+
+							#if ($!joinedJoinableGroups.size() > 0)
+								<td>
+								#set($jgUnjoinable = false)
+								#set($jgLocked = false)
+								#foreach($jg in $!joinedJoinableGroups)
+									#if($jg.Id == $g.Id)
+										#if ($jg.unjoinable)
+											#set($jgUnjoinable = true)
+										#end
+										#if ($jg.Locked)
+											#set($jgLocked = true)
+										#end
+									#end
+								#end
+								#if ($jgUnjoinable)
+									#if ($jgLocked)
+										<span class="si si-locked" aria-hidden="true"></span>
+										<span class="sr-only">$tlang.getString("sinfo.list.joinable.locked")</span>
+									#else
+										<form name="unjoinableSectionForm" class="inlineForm" method="post" action="#toolForm("unjoinable-set")">
+											<input type="hidden" name="group-ref" value="$g.reference" />
+											<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
+											<input type="submit" name="eventSubmit_doUnjoinableSet" value="$tlang.getString("sinfo.list.joinable.unjoin")" title="$tlang.getString("sinfo.list.joinable.unjoin") $formattedText.escapeHtml($g.Title)" onclick="SPNR.disableControlsAndSpin( this, null );" />
+										</form>
+									#end
+								#end
+								</td>
+							#end
+						</tr>
+					#end
+					</tbody>
+				</table>
+			</div>
+		</div>
+		#end
+		#if ($!groups.size() > 0)
+		<div class="info-accordion">
+			<h4 class="toggleAnchor specialLink">
+				<span>#if ($!viewRoster) $tlang.getString("sinfo.list.groups")#else $tlang.getString("sinfo.list.groups.student") #end</span>
+			</h4>
+			<div class="toggledContent">
+				<table class="table table-striped table-bordered table-hover">
+					<thead>
+						<tr>
+							<th>$tlang.getString("group.title")</th>
+							#if ($!viewRoster || !$viewMembershipGroups.isEmpty())
+							<th>$tlang.getString("sinfo.list.groups.memb")</th>
+							#end
+							<th>$tlang.getString("group.description")</th>
+							#if ($!joinedJoinableGroups.size() > 0)
+								<th>$tlang.getString("sinfo.list.joinable.joinable-set")</th>
+								<th>$tlang.getString("sinfo.list.joinable.opendate")</th>
+								<th>$tlang.getString("sinfo.list.joinable.closedate")</th>
+								<th>
+									$tlang.getString("sinfo.list.joinable.unjoin")
+									<span id="unjoinInfoTooltip" class="fa fa-info-circle" title="$tlang.getString("sinfo.list.joinable.unjoin.info")"
+											aria-label="$tlang.getString("sinfo.list.joinable.unjoin.info")"></span>
+								</th>
+							#end
+						</tr>
+					</thead>
+					<tbody>
+					#foreach ($g in $!groups)
+						#set ($gdesc = "")
+						<tr>
+							<td>
+								<span id ="group$g.Id">$formattedText.escapeHtml($g.Title)</span>
+							</td>
+							#if ($!viewRoster || !$viewMembershipGroups.isEmpty())
+							<td>
+								#if ($viewMembershipGroups.contains($g.Id))
+								<input type="button"
+										class="group-membership-button"
+										data-group-id="$g.Id"
+										value="$tlang.getString("sinfo.list.groups.memb.view")"
+										title="$tlang.getString("sinfo.list.joinable.unjoin") $formattedText.escapeHtml($g.Title)" />
+								#end
+							</td>
+							#end
+							<td>
+							#if ($g.Description)
+								<span>$formattedText.escapeHtml($g.Description)</span>
+							#end
+							</td>
+
+							#if ($!joinedJoinableGroups.size() > 0)
+
+								#set($jgName = "")
+								#set($jgOpenDate = "")
+								#set($jgCloseDate = "")
+								#set($jgInteractableByDate = false)
+								#set($jgEnrolled = false)
+								#set($jgUnjoinable = false)
+								#set($jgLocked = false)
+
+								#foreach($jg in $!joinedJoinableGroups)
+									#if($jg.Id == $g.Id)
+
+										#set($jgName = $jg.joinableSet)
+										#set($jgOpenDate = $jg.joinableOpenDate)
+										#set($jgCloseDate = $jg.joinableCloseDate)
+										#if ($jg.interactableByDate)
+											#set($jgInteractableByDate = true)
+										#end
+										#if ($jg.enrolled)
+											#set($jgEnrolled = true)
+										#end
+										#if ($jg.unjoinable)
+											#set($jgUnjoinable = true)
+										#end
+										#if ($jg.Locked)
+											#set($jgLocked = true)
+										#end
+									#end
+								#end
+
+								<td>
+									<span>$formattedText.escapeHtml($jgName)</span>
+								</td>
+								<td>
+									<span>$formattedText.escapeHtml($jgOpenDate)</span>
+								</td>
+								<td>
+									<span>$formattedText.escapeHtml($jgCloseDate)</span>
+								</td>
+
+								<td>
+									#if ($jgEnrolled)
+										#if ($jgUnjoinable)
+											#if ($jgLocked)
+												<span class="si si-locked" aria-hidden="true"></span>
+												<span class="sr-only">$tlang.getString("sinfo.list.joinable.locked")</span>
+											#elseif ($jgInteractableByDate)
+												<form name="unjoinableGroupForm" class="inlineForm" method="post" action="#toolForm("unjoinable-set")">
+													<input type="hidden" name="group-ref" value="$g.reference" />
+													<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
+													<input type="submit" name="eventSubmit_doUnjoinableSet" value="$tlang.getString("sinfo.list.joinable.unjoin")" title="$tlang.getString("sinfo.list.joinable.unjoin") $formattedText.escapeHtml($g.Title)" onclick="SPNR.disableControlsAndSpin( this, null );" />
+												</form>
+											#else
+												<span>$tlang.getString("sinfo.list.joinable.unjoin.notavailable")</span>
+											#end
+										#else
+											<span>$tlang.getString("sinfo.list.joinable.unjoin.notenabled")</span>
+										#end
+									#elseif ($jgName != "")
+										<span>$tlang.getString("sinfo.list.joinable.unjoin.notenrolled")</span>
+									#end
+								</td>
+							#end
+						</tr>
+					#end
+					</tbody>
+				</table>
+			</div>
+		</div>
+		#end
+		#if ($!joinableGroups.size() > 0)
+		<div class="info-accordion">
+			<h4 class="toggleAnchor specialLink">
+				<span>#if ($!allowUpdate) $tlang.getString("sinfo.list.joinable.joinable-sets") #else $tlang.getString("sinfo.list.joinable.groups") #end</span>
+			</h4>
+			<div class="toggledContent">
+				<div class="sak-banner-info no-margin-top">
+					<span>$tlang.getString("sinfo.list.joinable.info")</span>
+				</div>
+				<table class="table table-striped table-bordered table-hover">
+					<thead>
+						<tr>
+							<th>
+								$tlang.getString("sinfo.list.joinable.title")
+							</th>
+							<th>
+								$tlang.getString("sinfo.list.joinable.joinable-set")
+							</th>
+							<th>
+								$tlang.getString("sinfo.list.joinable.size")
+							</th>
+							<th>
+								$tlang.getString("sinfo.list.joinable.members")
+							</th>
+							<th>
+								$tlang.getString("sinfo.list.joinable.opendate")
+							</th>
+							<th>
+								$tlang.getString("sinfo.list.joinable.closedate")
+							</th>
+							<th>
+								$tlang.getString("sinfo.list.joinable.join")
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+					#foreach ($g in $!joinableGroups)
+						<tr>
+							<td>
+								<span>$formattedText.escapeHtml($g.title)</span>
+							</td>
+							<td>
+								<span>$formattedText.escapeHtml($g.joinableSet)</span>
+							</td>
+							<td>
+								<span>$g.size ($g.max)</span>
+							</td>
+							<td>
+								#if ($g.preview)
+								<span>$formattedText.escapeHtml($g.memberDisplayNames)</span>
+								#else
+								<span>$tlang.getString("sinfo.list.joinable.na")</span>
+								#end
+							</td>
+
+							<td>
+								<span>$formattedText.escapeHtml($g.joinableOpenDate)</span>
+							</td>
+
+							<td>
+								<span>$formattedText.escapeHtml($g.joinableCloseDate)</span>
+							</td>
+
+							<td>
+								#if ($g.locked)
+								<span class="si si-locked" aria-hidden="true"></span>
+								<span class="sr-only">$tlang.getString("sinfo.list.joinable.locked")</span>
+								#elseif ($g.full)
+									<span>$tlang.getString("sinfo.list.joinable.full")</span>
+								#elseif ($g.interactableByDate)
+									<form name="joinableForm" class="inlineForm" method="post" action="#toolForm("joinable-set")">
+										<input type="hidden" name="joinable-group-ref" value="$g.reference" />
+										<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
+										<input type="submit" name="eventSubmit_doJoinableSet" value="$tlang.getString("sinfo.list.joinable.join")"
+												title="$tlang.getString("sinfo.list.joinable.join")" onclick="SPNR.disableControlsAndSpin( this, null );" />
+									</form>
+								#else
+									<span>$tlang.getString("sinfo.list.joinable.unjoin.notavailable")</span>
+								#end
+							</td>
+						</tr>
+					#end
+					</tbody>
+				</table>
+			</div>
+		</div>
+		#end
+</div>

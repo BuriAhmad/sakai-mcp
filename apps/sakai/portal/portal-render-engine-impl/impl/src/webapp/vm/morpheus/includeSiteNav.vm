@@ -1,0 +1,243 @@
+#macro(siteListItem $type $site $isExpanded)
+
+    ## Remove those special site chars. They don't play well with html attributes.
+    #set ($safeSiteId = $site.id.replace("!", "").replace("~", "").replace(".",""))
+
+    #if ($site.isPinned)
+        #set ($pinTitle = $rloader.sitenav_btn_unpin)
+        #set ($pinIconClass = "si si-pin-fill")
+    #else
+        #set ($pinTitle = $rloader.sitenav_btn_pin)
+        #set ($pinIconClass = "si si-pin")
+    #end
+
+    #if ($site.isCurrent)
+        #set ($currentSiteClass = "is-current-site fw-bold")
+        #set ($isExpanded = $currentExpanded)
+    #elseif ($type == "gateway")
+        #set ($isExpanded = "true")
+    #else
+        #set ($currentSiteClass = "")
+        #set ($isExpanded = "false")
+    #end
+
+    <li id="site-list-${type}-item-${safeSiteId}" class="site-list-item py-1 px-2 mx-3 mt-3 $!{currentSiteClass}" data-type="${type}" data-site="${site.id}">
+        #if ($site.isCurrent && ${sitePages.pageNavIconUrl} != "")
+            <img src="${sitePages.pageNavIconUrl}" alt="${rloader.sit_icon_alt}" class="img_site_toolmenu">
+        #end
+        <div class="site-list-item-head d-flex align-items-center py-1 w-100 justify-content-between">
+            <div class="site-link-block d-flex align-items-center rounded-end me-1 pe-2">
+                <button class="btn icon-button collapsed px-2 me-1"
+                        data-site-id="${site.id}"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#${type}-site-${safeSiteId}-page-list"
+                        aria-expanded="${isExpanded}"
+                        title="#if ($isExpanded == "true")$rloader.sitenav_collapse_tools#else$rloader.sitenav_expand_tools#end"
+                        aria-controls="${type}-site-${safeSiteId}-page-list">
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+
+                #set ($siteTitle = $ftext.escapeHtml(${site.title}))
+                #set ($displayTitle = $siteTitle)
+                #if ( ( ${tabDisplayLabel} == 2 ) && ( ${site.shortDescription} ) )
+                    #set ($displayTitle = $ftext.escapeHtml(${site.shortDescription}))
+                #end
+                <a href="$site.url" class="sidebar-site-title" title="${siteTitle}">${displayTitle}</a>
+
+            </div>
+            #if ($loggedIn && !${site.isHome})
+                #if (!$site.isHidden)
+                    <button class="d-inline-block p-1 site-opt-pin btn btn-transparent bi $!{pinIconClass}"
+                        data-pin-site="${site.id}"
+                        data-pinned="$!{site.isPinned}"
+                        data-site-title="${siteTitle}"
+                        title="${pinTitle}"
+                        aria-label="${pinTitle}">
+                    </button>
+                #else
+                    <span class="d-inline-block p-1 bi si si-eye-slash-fill"
+                        title="$rloader.sitenav_btn_hide"
+                        aria-label="$rloader.sitenav_btn_hide">
+                    </span>
+                #end
+            #end
+        </div>
+        <div id="${type}-site-${safeSiteId}-page-list" data-site-id="${site.id}" class="site-list-item-collapse collapse #if ($isExpanded == "true") show #end">
+            <ul class="site-page-list nav flex-column py-2">
+            #foreach ( $page in $site.pages )
+                #if ($site.isCurrent && $activePageId == $page.id)
+                    #set ($pageUrl = $page.resetUrl)
+                #else
+                    #set ($pageUrl = $page.url)
+                #end
+                #pageListItem ($page, $pageUrl, "${page.icon}", 4)
+            #end
+            #if ($site.childSites)
+                <li class="nav-item">
+                    <div class="ps-2">
+                        <div class="dropdown">
+                            <button class="btn btn-nav w-100 dropdown-toggle pe-3 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="d-flex align-items-center">
+                                    <span class="me-1 bi bi-diagram-2" aria-hidden="true"></span>
+                                    <span>$rloader.sitenav_sub_sites</span>
+                                </div>
+                            </button>
+                            <ul class="dropdown-menu w-100">
+                                #foreach($childSite in $site.childSites)
+                                    <li><a class="dropdown-item px-3 py-2" href="/portal/site/$childSite.id">$ftext.escapeHtml(${childSite.title})</a></li>
+                                #end
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            #end
+            </ul>
+        </div>
+    </li>
+#end
+
+#macro( pageListItem $page $url $icon $indentation)
+
+    #set ($hideClass = "")
+    #if ($page.isHiddenFromNavigation)
+        #set ($hideClass = "d-none")
+    #end
+
+    <li class="nav-item ms-${indentation} $!{hideClass}">
+        <a class="btn btn-nav w-100 ps-3 #if ($activePageId == $page.id)selected-page#end" data-page-id="${page.id}"
+                href="$!{url}"
+                title="${page.title}: ${page.description}">
+            <div class="d-flex text-start align-items-center">
+                <div class="d-flex me-auto rounded-end">
+                    <span class="me-1 $!{icon}" aria-hidden="true"></span>
+                    <span class="me-2">${page.title}</span>
+                </div>
+                <div>
+                #if ($page.hidden)
+                    <span class="bi bi-eye-slash-fill" aria-hidden="true"></span>
+                #end
+                #if ($page.locked)
+                    <span class="bi bi-lock-fill" aria-hidden="true"></span>
+                #end
+                </div>
+            </div>
+        </a>
+    </li>
+#end
+
+<!-- START VM includeSiteNav.vm -->
+<aside id="portal-nav-sidebar" class="d-none portal-nav-sidebar overflow-auto #if (${sidebarCollapsed})sidebar-collapsed#end" tabindex="-1" data-bs-backdrop="true" aria-labelledby="">
+    <div class="offcanvas-header d-md-none">
+        <h2 class="offcanvas-title">${rloader.sitenav_title}</h2>
+        <button type="button" class="btn-close text-reset ms-auto" data-bs-dismiss="offcanvas" aria-label="Close the sites sidebar"></button>
+    </div>
+    <nav id="toolMenu" role="navigation" aria-label="${rloader.sit_toolshead}" class="Mrphs-toolsNav__menu sakai-sitesAndToolsNav h-100 d-flex flex-column">
+        <h2 class="visually-hidden d-none d-md-block" id="totoolmenu">${rloader.sitenav_title}</h2>
+        #if (${userIsLoggedIn})
+            <div id="sites-section-first" class="sites-section">
+                <ul class="mb-0">
+                    #siteListItem("home", $sidebarSites.homeSite, false)
+                </ul>
+            </div>
+            <div class="sites-section pinned-site-section">
+                <h3 class="sites-section-heading #if (! $showSiteLabels) d-none #end">${rloader.sitenav_title_pinned}</h3>
+                <ul id="pinned-site-list" class="mb-0 #if ($sidebarSites.pinnedSites.empty)d-none#end">
+                    #foreach ($site in $sidebarSites.pinnedSites)
+                        #siteListItem("pinned", $site, false)
+                    #end
+                </ul>
+                #if (${showSiteLabels})
+                <div id="sites-no-pinned-label" class="ms-3 #if ($sidebarSites.pinnedSites.empty) d-block #else d-none #end">${rloader.sitenav_no_pinned}</div>
+                #else
+                <span id="sites-no-pinned-label"></span>
+                #end
+            </div>
+            <div class="sites-section #if ($sidebarSites.recentSites.empty)d-none#end">
+                <h3 class="sites-section-heading #if (! $showSiteLabels) d-none #end">${rloader.sitenav_title_recent}</h3>
+                <ul id="recent-site-list" class="mb-0">
+                    #foreach ($site in $sidebarSites.recentSites)
+                        #siteListItem("recent", $site, false)
+                    #end
+                </ul>
+            </div>
+        #else
+            #if ($sidebarSites.gatewaySite)
+                <div class="sites-section">
+                    <h3 class="visually-hidden sites-section-heading">${rloader.sitenav_title_current}</h3>
+                    <ul class="pt-2 mb-0">
+                        #siteListItem("gateway", $sidebarSites.gatewaySite, true)
+                    </ul>
+                </div>
+            #end
+        #end
+    </nav>
+
+    #if (${userIsLoggedIn})
+    <div class="sticky-footer w-100 d-flex ps-3">
+        <button id="sakai-view-all-sites"
+                type="button"
+                class="btn btn-transparent py-3"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#select-site-sidebar"
+                aria-controls="select-site-sidebar"
+                title="Open the view all sites sidebar"
+                aria-label="$rloader.sit_allsites"
+                title="$rloader.sit_allsites">
+            <span class="bi bi-grid-3x3-gap-fill d-none d-md-inline" aria-hidden="true"></span>
+            <span class="bi bi-arrow-right-circle-fill d-inline d-md-none" aria-hidden="true"></span>
+            <span class="ps-1">${rloader.sitenav_link_allsites}</span>
+        </button>
+    </div>
+    #end
+
+</aside>
+
+<script>
+    // focus the current site on load and prepare site description popovers
+    var previousSiteTitle = null;
+    const observerToolMenu = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList' && previousSiteTitle === null) {
+                const currentSiteElement = document.querySelector('.is-current-site');
+                const toolMenu = document.getElementById('toolMenu');
+                if (!toolMenu) return;
+                const listItems = Array.from(toolMenu.querySelectorAll('li.site-list-item'));
+                const currentIndex = listItems.indexOf(currentSiteElement.closest('li'));
+                const previousLi = currentIndex > 0 ? listItems[currentIndex - 1] : null;
+                if (previousLi) {
+                    previousSiteTitle = previousLi.querySelector('.sidebar-site-title');
+                    if (previousSiteTitle) {
+                        const rect = previousSiteTitle.getBoundingClientRect();
+                        previousSiteTitle.scrollIntoView({ behavior: 'auto', block: 'start' });
+                    }
+                }
+            }
+            else if (previousSiteTitle !== null) {
+                previousSiteTitle.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+        });
+    });
+    observerToolMenu.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener('load', () => {
+        observerToolMenu.disconnect();
+        // put the focus back on the portal wrapper so that keyboard navigation works
+        setTimeout(function() {
+            // Preserve focus on login fields if they're currently active
+            if (!["eid", "pw"].includes(document.activeElement?.id)) {
+                document.querySelector('.Mrphs-portalWrapper').focus();
+            }
+        }, 50);
+
+        [...document.querySelectorAll('[data-bs-toggle="popover"]')].forEach((el) => {
+            let opts = {
+                animation: false,
+            };
+            if (el.hasAttribute('data-bs-content-id')) {
+	        opts.content = document.getElementById(el.getAttribute('data-bs-content-id')).innerHTML;
+	        opts.html = true;
+                new bootstrap.Popover(el, opts);
+            }
+        })
+    });
+</script>
+<!-- END VM includeSiteNav.vm -->

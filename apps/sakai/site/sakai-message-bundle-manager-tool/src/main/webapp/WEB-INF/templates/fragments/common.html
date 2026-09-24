@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<head th:fragment="head">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link media="all" href="/library/skin/tool_base.css" rel="stylesheet" type="text/css" />
+<script src="/library/js/headscripts.js" type="text/javascript"></script>
+<title th:text="#{common.title}">Message Bundle Manager</title>
+</head>
+<div th:fragment="bootstrap">
+  <script>
+    (() => {
+      const toolFrameId = window.name || (window.frameElement && window.frameElement.id);
+      if (toolFrameId) {
+        setMainFrameHeight(toolFrameId);
+      }
+    })();
+  </script>
+</div>
+<th:block th:fragment="loadBundlesFromDb (enabled)">
+  <div th:unless="${enabled}">
+    <div class="sak-banner-warn" role="alert" th:text="#{common.warning}">
+      Message bundle editing is not activated, please see your Administrator.
+    </div>
+    <p></p>
+  </div>
+</th:block>
+<th:block th:fragment="admin (admin)">
+  <div th:unless="${admin}">
+    <div class="sak-banner-error" role="alert" th:text="#{common.danger}">
+      You must be an admin to use this tool, please see your Administrator.
+    </div>
+    <p></p>
+  </div>
+</th:block>
+</body>
+</html>

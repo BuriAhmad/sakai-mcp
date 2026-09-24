@@ -1,0 +1,31 @@
+## Adds $viewAsStudentLink options
+## Only display this if we're in view as student mode and it's not the home page
+#if ($viewAsStudentLink)
+<ol class="breadcrumb mb-2">
+  <li id="roleSwitch" class="role-switcher me-1">
+    #if ($roleSwitchState)
+    	<span>$rloader.getFormattedMessage("rs_roleSwapAdvice", $roleUrlValue)</span>
+    	<a href="$switchRoleUrl" id="roleSwitchAnchor" class="Mrphs-roleSwitch__anchor Mrphs-roleSwitch__exit">
+            <input type="submit" value="$rloader.getFormattedMessage("rs_exitRoleSwapWithRole", $roleUrlValue)"/>
+        </a>
+    #else
+        <div id="roleSwitchDropDown">
+            #if ($roleswapdropdown)
+            <div class="Mrphs-roleSwitch__anchor">
+                <select id="roleSwitchSelect" class="Mrphs-roleSwitch__dropdown" aria-label="${rloader.rs_menuExplanation}">
+                    <option value="" selected="selected">${rloader.rs_viewSiteAs}</option>
+                #foreach ( $role in $siteRoles )
+                    <option value="$switchRoleUrl$role$panelString">$role</option>
+                #end ## END of FOREACH ( $role in $siteRoles )
+                </select>
+            </div>
+            #else
+                <a href="$switchRoleUrl" id="roleSwitchAnchor" class="Mrphs-roleSwitch__link">
+                    <span>$rloader.getFormattedMessage("rs_enterRoleSwapWithRole", $roleUrlValue)</span>
+                </a>
+            #end ## END OF IF ($roleswapdropdown)
+        </div>
+    #end ## END of IF ($roleSwitchState)
+  </li>
+</ol>
+#end ## END of if ($viewAsStudentLink)

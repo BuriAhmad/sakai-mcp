@@ -1,0 +1,124 @@
+<!-- start: chef_assignments_student_view_assignment.vm -->
+#set ($submissionType = $assignment.TypeOfSubmission)
+#set($allowUpdateAssignment=$!service.allowUpdateAssignment($assignmentReference))
+<div class="container-fluid">
+	<h3 class="mb-4">
+		$tlang.getString("viewassig.viewass1") 	
+	</h3>
+	#if ($alertMessage)
+		<div class="alert alert-danger" role="alert">
+			<strong>$tlang.getString("gen.alert")</strong> $alertMessage
+		</div>
+	#end
+	#if (!$hideAssignmentFlag)
+		<p class="lead mb-3">
+			 $tlang.getString("gen.settfor") "$formattedText.escapeHtml($assignment.title)"
+		</p>
+		<div class="card mb-4">
+			<div class="card-body">
+				<dl class="row">
+					<dt class="col-sm-3">$tlang.getString("gen.creby")</dt>
+					<dd class="col-sm-9">$formattedText.escapeHtml($!creator)</dd>
+
+					#if ($!assignment.ContentId)
+						<dt class="col-sm-3">$tlang.getString("external.tool.label")</dt>
+						<dd class="col-sm-9">$!assignment.ContentId</dd>
+					#end
+
+					<dt class="col-sm-3">$tlang.getString("gen.open")</dt>
+					<dd class="col-sm-9">$!service.getUsersLocalDateTimeString($assignment.OpenDate)</dd>
+
+					<dt class="col-sm-3">$tlang.getString("gen.due.header")</dt>
+					<dd class="col-sm-9">
+						#if (!$assignment.HideDueDate || $!allowUpdateAssignment)
+							$!service.getUsersLocalDateTimeString($!assignment.DueDate)
+						#end
+					</dd>
+
+					#set ($closeDate = $assignment.CloseDate)
+					#if ($!closeDate)
+						<dt class="col-sm-3">$tlang.getString("gen.acesubunt")</dt>
+						<dd class="col-sm-9">$!service.getUsersLocalDateTimeString($closeDate)</dd>
+					#end
+
+					#if ($submissionType != 4)
+						##resubmit number
+						#if($!resubmitNumber)
+							<dt class="col-sm-3">$tlang.getString("allow.resubmit.number")</dt>
+							<dd class="col-sm-9">$resubmitNumber</dd>
+						#end
+						## resubmit close time
+						#if ($!resubmitCloseTime)
+							<dt class="col-sm-3">$tlang.getString("allow.resubmit.closeTime")</dt>
+							<dd class="col-sm-9">$resubmitCloseTime</dd>
+						#end
+					#end
+
+					<dt class="col-sm-3">$tlang.getString("gen.groupassignment")</dt>
+					<dd class="col-sm-9">
+						#if ($assignment.IsGroup)
+							<span class="badge bg-primary">$tlang.getString("gen.yes")</span>
+						#else
+							<span class="badge bg-secondary">$tlang.getString("gen.no")</span>
+						#end
+					</dd>
+
+					<dt class="col-sm-3">$tlang.getString("gen.gra")</dt>
+					<dd class="col-sm-9">
+						#set ($gradeScale = $assignment.TypeOfGrade.ordinal())
+						$gradeTypeTable.get($gradeScale)
+						#if ($gradeTypeTable.get($gradeScale) == $!tlang.getString("points"))
+							($tlang.getString("grade.max") $!service.getMaxPointGradeDisplay($!assignment.ScaleFactor, $!assignment.MaxGradePoint))
+						#end
+					</dd>
+				</dl>
+			</div>
+		</div>
+
+		<div class="card mb-4">
+			<div class="card-header">
+				<h4 class="card-title mb-0">$tlang.getString("gen.assinf")</h4>
+			</div>
+			<div class="card-body">
+				#set ($assignmentInstructions = $!assignment.Instructions)
+					#if ($assignmentInstructions && $assignmentInstructions.length() > 0)
+						$formattedText.escapeHtmlFormattedText($assignmentInstructions)
+				#end
+				
+				## assignment attachment
+				#attachmentFragment($assignment.Attachments $assignmentAttachmentReferences $!decoratedUrlMap false)
+			</div>
+		</div>
+
+		#supplementItems($!allowViewModelAnswer $!allowReadAssignmentNoteItem $!allowViewAllPurposeItem $!assignmentModelAnswerItem $!assignmentNoteItem $!assignmentAllPurposeItem)
+
+		#if ($taggable)
+			#parse ("/vm/assignment/chef_assignments_tags_list.vm")
+		#end
+	#else
+		<div class="d-flex align-items-center mb-3">
+			<button class="btn btn-link p-0" onclick="location='#toolLink("AssignmentAction" "doShow_view_assignment")'; return false;" title="$tlang.getString("viewassig.shoassinf")">
+				<i class="bi bi-chevron-right"></i>
+				$tlang.getString("gen.settfor") "$formattedText.escapeHtml($assignment.title)"
+			</button>
+		</div>
+	#end
+
+	<hr class="itemSeparator"/>
+	#if ($!nonElectronicType)
+		<p class="sak-banner-info">
+			$tlang.getString("nonelec_instruction")
+		</p>
+	#end
+
+	<form name="viewAssignmentsForm" action="#toolForm("AssignmentAction")" method="post">
+		<input type="hidden" name="assignmentId" value="$assignmentReference" />
+		<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+			<button type="submit" name="eventSubmit_doCancel_student_view_assignment" class="btn btn-primary" onclick="SPNR.disableControlsAndSpin( this, null );">
+				$tlang.getString("gen.don")
+			</button>
+		</div>
+		<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
+	</form>
+</div>
+<!-- end: chef_assignments_student_view_assignment.vm -->

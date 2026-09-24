@@ -1,0 +1,48 @@
+#if (${loggedIn})
+
+    <div id="Mrphs-footerApp">
+
+            #if (${sitePages.pageNavShowPresenceLoggedIn})
+
+                <h2 class="skip">${rloader.sit_presencehead}</h2>
+                <div id="footerAppPresence" class="Mrphs-footerApp__presence">
+                    <a href="#" id="presenceToggle" class="Mrphs-footerApp--toggle Mrphs-footerApp--toggle-users">
+                        <span class="Mrphs-footerApp--icon icon-sakai-users"></span>
+                        <span class="skip">Toggle users present panel</span>
+                    </a>
+                    <span class="skip">Number of users present:</span>
+                    <span id="presenceCount" class="Mrphs-footerApp--count Mrphs-footerApp--count-presence"></span>
+                </div>
+
+            #end ## END of IF (${sitePages.pageNavShowPresenceLoggedIn})
+
+    </div>
+
+#end ## End to IF (${loggedIn})
+
+#if ( ${loggedIn} && ${sitePages.pageNavShowPresenceLoggedIn} )
+
+    <div id="presenceArea" class="trayPopup Mrphs-presence__area is-hidden">
+        <div id="presenceWrapper" class="Mrphs-presence__area--wrapper">
+            <div id="presenceTitle" class="Mrphs-presence__area--title">
+                ${rloader.sit_presencetitle}
+                <a href="#" id="presenceClose" class="trayPopupClose Mrphs-presence__area--title--close"> </a>
+            </div>
+            <div id="presenceIframe" class="Mrphs-presence__area--iframe-div"></div>
+            <script>
+                //these are global variables...
+                var sakaiPresenceTimeDelay = ${sitePages.sakaiPresenceTimeDelay};
+                var sakaiPresenceFragment = "${sitePages.pageNavPresenceUrl}?output_fragment=yes&auto=true";
+                var sakaiLastPresenceTimeOut = setTimeout('delayedUpdatePresence()', sakaiPresenceTimeDelay);
+                var delayedUpdatePresence = function() {
+                    if (typeof updatePresence === 'function') {
+                        updatePresence();
+                    } else {
+                        sakaiLastPresenceTimeOut = setTimeout('delayedUpdatePresence()', sakaiPresenceTimeDelay);
+                    }
+                }; 
+            </script>
+        </div><!-- End of div#presenceWrapper -->
+    </div> <!-- End of div#presenceArea -->
+
+#end ## END of IF ( ${loggedIn} && ${sitePages.pageNavShowPresenceLoggedIn }

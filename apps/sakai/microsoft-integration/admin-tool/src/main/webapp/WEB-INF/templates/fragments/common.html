@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<head th:fragment="head">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link media="all" href="/library/skin/tool_base.css" rel="stylesheet" type="text/css" />
+	<script src="/library/js/headscripts.js" type="text/javascript"></script>
+	<script th:src="@{/js/common.js}" type="text/javascript"></script>
+	<title th:text="#{index_title}">Microsoft Admin Tool</title>
+</head>
+
+<div th:fragment="bootstrap">
+	<script>includeLatestJQuery('microsoft-admin');</script>
+	<script>includeWebjarLibrary('bootstrap');</script>
+	<script>
+		(function() {
+			const toolFrameId = window.name || (window.frameElement && window.frameElement.id);
+			if (toolFrameId) {
+			  setMainFrameHeight(toolFrameId);
+			}
+		})();
+	</script>
+</div>
+
+<th:block th:fragment="admin (admin)">
+	<div th:unless="${admin}" class="sak-banner-error" role="alert" th:text="#{common_danger}">
+		You must be an admin to use this tool, please contact your Administrator.
+	</div>
+</th:block>
+
+<th:block th:fragment="error">
+	<div th:if="${exception_error != null}">
+		<div class="sak-banner-error" id="exception_error"  th:text="${exception_error}"></div>
+
+		<script th:inline="javascript">
+			(function() {
+				setTimeout(() => {document.getElementById('exception_error').classList.add('hidden')}, 10000);
+			})();
+		</script>
+	</div>
+</th:block>
+</body>
+</html>

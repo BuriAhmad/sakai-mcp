@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+ 
+<body>
+<wicket:extend>
+	<script type="text/javascript" src="/library/webjars/jquery-i18n-properties/1.2.2/jquery.i18n.properties.min.js"></script>
+	
+	<div wicket:id="formFeedback" id="formFeedback">[formFeedback]</div>
+	<div class="page-header">
+		<h1><wicket:message key="shoppingAdminBulkTitle"/></h1>
+	</div>	
+	<div class="sak-banner-info">
+		<wicket:message key="shoppingAdminBulkInstructions"/>
+		<a href="#" wicket:message="aria-label:hideInstructions" name="hideSakBanner" onclick="$('.sak-banner-info').hide();" style="float: right;"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
+	</div>
+	
+	<form wicket:id="form" class="form-horizontal">
+		<div id="tabs">
+			<ul>
+				<li>
+					<a href="#tabs-2"><wicket:message key="addUpdateShoppingSettings"/></a>
+				</li>
+				<li>
+					<a href="#tabs-1"><wicket:message key="deleteShoppingSettings"/></a>
+				</li>
+			</ul>
+			<div id="tabs-1">
+				<span style="font-weight: bold"><wicket:message key="siteIds"/>:</span>&nbsp;<span class="instruction"><wicket:message key="siteIdsInfo"/></span>
+				<br/>
+				<textarea wicket:id="deleteSitesInput" rows="10" cols="80"></textarea>
+				<br/>
+				<input wicket:id="addDeleteSites" type="submit" value="Add" />
+				<br/>
+				<br/>	
+				<span style="font-weight: bold"><wicket:message key="sitesToBeDeleted"/>:</span>
+				<br/>
+				<table class="table" wicket:id="deleteSites"/>
+				<br/>
+			</div>
+			<div id="tabs-2">
+				<legend><wicket:message key="shoppingPeriodSettings"/></legend>
+					
+				<div class="form-group">
+					<label for="shoppingVisibilityStart" class="col-sm-2 control-label"><wicket:message key="startDate"/></label>
+					<div class="col-sm-4">
+						<input wicket:id="shoppingVisibilityStart" class="form-control" id="shoppingVisibilityStart"  name="shoppingVisibilityStart" type="text" />
+					</div>
+				</div>
+			
+				<div class="form-group">
+					<label for="shoppingVisibilityEnd" class="col-sm-2 control-label"><wicket:message key="endDate"/></label>
+					<div class="col-sm-4">
+						<input wicket:id="shoppingVisibilityEnd" class="form-control" id="shoppingVisibilityEnd" name="shoppingVisibilityEnd" type="text" />
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<wicket:enclosure child="shoppingRole">
+						<div id="shoppingRoleLabel"  class="col-sm-2 control-label"><wicket:message key="shoppersBecome"/></div>
+						<div class="col-sm-4">
+							<select wicket:message="name:shoppingRole" aria-labelledby="shoppingRoleLabel" wicket:id="shoppingRole" class="form-control"></select>
+						</div>
+					</wicket:enclosure>
+				</div>
+				
+				<div class="form-group">
+					<div class="col-sm-2 control-label"><wicket:message key="showToolsHeader"/></div>	
+					<div class="col-sm-6">
+						<div id="shoppingtabs">
+							<ul>
+								<li><a href="#shoppingtabs-1"><wicket:message key=".anon"/></a></li>
+								<li><a href="#shoppingtabs-2"><wicket:message key=".auth"/></a></li>
+							</ul>
+							<div id="shoppingtabs-1">
+								<label for="showPublicTools" class="control-label"><wicket:message key="showPublicToolsHeader"/></label>
+								<select id="showPublicTools" wicket:id="showPublicTools" name="showPublicTools"  multiple="multiple" class="shoppingSetting form-control">
+								</select>
+							</div>
+							<div id="shoppingtabs-2">
+								<label for="showAuthTools" class="control-label"><wicket:message key="showAuthToolsHeader"/></label>
+								<select id="showAuthTools" wicket:id="showAuthTools" name="showAuthTools"  multiple="multiple" class="shoppingSetting form-control">
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<div class="col-sm-2 control-label"><wicket:message key="advanced"/></div>
+					
+					<div class="col-sm-10">
+						<label for="revokeInstructorOverrideCheckbox">
+							<input type="checkbox" wicket:id="revokeInstructorOverrideCheckbox" id="revokeInstructorOverrideCheckbox"/>
+							<wicket:message key="shoppingPeriodRevokeInstructorEditable"/>
+						</label>
+					</div>
+					<div class="col-sm-10 col-sm-offset-2">
+						<label for="revokePublicOptCheckbox">
+							<input type="checkbox" wicket:id="revokePublicOptCheckbox" id="revokePublicOptCheckbox"/>
+							<wicket:message key="shoppingPeriodRevokePublicOptCheckbox"/>
+						</label>
+					</div>
+				</div>		
+				
+				<fieldset>
+					<legend><wicket:message key="sitesToBeAdded"/></legend>
+					<div class="form-group">
+						<div id="addSitesInputLabel" class="col-sm-2 control-label"><wicket:message key="siteIds"/></div>
+						<div class="col-sm-6">
+							<textarea wicket:id="addSitesInput" aria-labelledby="addSitesInputLabel" class="form-control col-sm-10" wicket:message="placeholder:siteIdsInfo,name:addSitesInput" rows="10" cols="80">
+							</textarea>
+						
+							<input wicket:id="addAddSites" wicket:message="aria-label:add" class="btn-primary" type="submit" value="Add" />
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<table class="table col-sm-6 col-sm-offset-2" wicket:id="addSites"/>
+					</div>
+				</fieldset>
+				<div class="act">
+					<input wicket:id="update" type="submit" wicket:message="aria-label:save" value="Save" class="active" />
+					<input wicket:id="cancel" type="submit" wicket:message="aria-label:cancel" value="Cancel" />
+				</div>
+			
+					
+				
+				
+			</div>
+		</div>
+		
+		</form>
+		<div wicket:id="formFeedback2" id="formFeedback2">[formFeedback]</div>
+	
+	<script type="text/javascript" src="/delegatedaccess-tool/javascript/ShoppingEditBulkPage.js"></script>
+</wicket:extend>
+</body>
+</html>

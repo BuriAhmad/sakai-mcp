@@ -1,0 +1,58 @@
+{{#each members}}
+    <div class="roster-member-card photogrid roster-entry">
+        <div class="roster-picture-card">
+            <sakai-user-photo user-id="{{userId}}"
+                label="{{tr 'profile_picture_alt'}} {{displayName}}"
+                title="{{tr 'profile_picture_alt'}} {{displayName}}"
+                classes="roster-photo"
+                {{#if official}}
+                official
+                {{else}}
+                    {{#unless canViewProfilePicture}}
+                    blank
+                    {{/unless}}
+                {{/if}}
+                {{#if ../printMode}}
+                print
+                {{/if}}
+                profile-popup="on"
+            >
+            </sakai-user-photo>
+        </div> <!-- /roster-picture-card -->
+
+        <div class="roster-info-card">
+            {{#unless ../hideNames}}
+            <div class="roster-card-value">
+                {{#if ../../viewProfile}}
+                <a href="javascript:;" class="profile" data-user-id="{{userId}}">
+                {{/if}}
+                <span>{{{getName ../firstNameLastName}}}</span>
+                {{#if nickname}}
+                <span title="{{nickname}}"> "{{nickname}}"</span>
+                {{/if}}
+                {{#if ../../viewProfile}}
+                </a>
+                {{/if}}
+            </div>
+            {{/unless}}
+
+            {{#if ../viewPronouns}}
+                {{#if pronouns}}
+                <div class="roster-card-value pronouns">{{{pronouns}}}</div>
+                {{/if}}
+            {{/if}}
+
+            {{#if ../viewUserDisplayId}}
+            <div class="roster-card-value">
+                {{#if ../../viewProfile}}
+                <a href="javascript:;" class="profile" data-user-id="{{userId}}">
+                {{/if}}
+                {{displayId}}
+                {{#if ../../viewProfile}}
+                </a>
+                {{/if}}
+            </div>
+            {{/if}}
+        </div> <!-- /roster-info-card -->
+    </div> <!-- /roster-member-card -->
+{{/each}}

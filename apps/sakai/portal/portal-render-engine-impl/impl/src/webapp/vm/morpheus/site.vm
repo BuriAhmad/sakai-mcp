@@ -1,0 +1,94 @@
+##<!-- START VM site.vm --> ## Comments seen before doctype. Internet Explorer will go into the quirks mode.
+## Create a variable that is a dollar sign for later
+#set ( $d = "$")
+
+#parse("/vm/morpheus/includeStandardHead.vm")
+
+    #if (!${loggedIn})
+        #set ($loggedInClass = "is-logged-out")
+    #end
+
+    #if (${sidebarCollapsed})
+        #set ($sidebarCollapsedClass = "sidebar-collapsed")
+        #set ($sidebarCollapseBtnTitle = $rloader.mainnav_btn_sidebar_expand)
+        #set ($portalNavSidebarIcon = "portal-nav-sidebar-icon-collapsed")
+    #else
+        #set ($sidebarCollapseBtnTitle = $rloader.mainnav_btn_sidebar_collapse)
+        #set ($portalNavSidebarIcon = "portal-nav-sidebar-icon")
+    #end
+
+
+    <noscript>
+        <span id="portal_js_warn" class="Mrphs-noJs js-warn-no-js">${rloader.sit_noscript_message}</span>
+    </noscript>
+    
+    #if ( ${bufferedResponse} && ${responseHead} )
+    #else 
+        ${sakai_html_head_js}
+    #end ## END of IF ( ${bufferedResponse} && ${responseHead} )
+
+    <body class="Mrphs-portalBody overflow-hidden $!{loggedInClass}" data-bs-no-jquery="true">
+
+        #parse("/vm/morpheus/snippets/noscript-snippet.vm")
+
+        #if (${roleSwitchState}) 
+            #set ($roleSwitchClass = "swapped-view")
+        #end
+
+        <div id="pageBody"
+             class="Mrphs-portalWrapper vh-100 portal-container $!{roleSwitchClass} $!{sidebarCollapsedClass}" tabindex="0">
+            <div class="portal-pasystem"></div>
+            ## Skip Nav (a11y links)
+            #parse("/vm/morpheus/snippets/skipNav-snippet.vm")
+
+            ## Header
+            #parse("/vm/morpheus/snippets/header-snippet.vm")
+
+            #parse("/vm/morpheus/snippets/picture-changer-snippet.vm")
+
+            #parse("/vm/morpheus/moresites.vm")
+
+            ## Sites sidebar
+            #parse("/vm/morpheus/includeSiteNav.vm")
+
+            ## Page
+            #parse("/vm/morpheus/includePage.vm")
+
+            ## Help sidebar
+            ##parse("/vm/morpheus/snippets/help-snippet.vm")
+
+            ## Notification sidebar
+            #parse("/vm/morpheus/snippets/notifications-snippet.vm")
+
+            #parse("/vm/morpheus/snippets/calendar-snippet.vm")
+
+            ## Search sidebar
+            #parse("/vm/morpheus/snippets/search-snippet.vm")
+
+            ## Qicklinks sidebar
+            #parse("/vm/morpheus/snippets/quicklinks-snippet.vm")
+
+            ## Profile sidebar
+            #parse("/vm/morpheus/snippets/profile-snippet.vm")
+
+            ## Mobile footer
+            #parse("/vm/morpheus/includeMobileFooter.vm")
+        </div> <!-- end Mrphs-portalWrapper -->
+
+        <!-- END VM site.vm -->
+        ## Make sure we at least have a jQuery 1.12 or higher, log messages
+    #set ( $d = "$")
+        #parse("/vm/morpheus/includeAnalytics.vm")
+
+        #parse("/vm/morpheus/includeBodyScripts.vm")
+
+        #parse("/vm/morpheus/includePASystem.vm")
+
+        #parse("/vm/morpheus/includeCookieNotice.vm")
+
+        #parse("/vm/morpheus/includeGoogleTM-NoScript.vm")
+
+        ${includeExtraHead}
+
+    </body>
+</html>

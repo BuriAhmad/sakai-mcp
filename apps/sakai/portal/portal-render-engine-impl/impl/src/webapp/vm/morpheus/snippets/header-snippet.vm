@@ -1,0 +1,41 @@
+## Header that shows institution and/or banner logos
+
+<header class="portal-header d-flex align-items-center justify-content-between" role="banner">
+
+  <div class="d-flex align-items-center h-100 ms-3 ms-md-0 #if (${userIsLoggedIn}) w-100 #end">
+    <div id="logoWrapper" class="portal-header-logo d-flex h-100 align-items-center">
+      <button id="sidebar-collapse-button" class="btn icon-button btn-sidebar-collapse portal-header-hamburger-button me-1 ms-3 d-none d-md-block"
+          type="button"
+          data-portal-sidebar-collapsed="$!{sidebarCollapsed}"
+          data-bs-toggle="tooltip"
+          data-bs-placement="bottom"
+          title="${sidebarCollapseBtnTitle}"
+          aria-controls="portal-nav-sidebar">
+        <span class="bi ${portalNavSidebarIcon}" aria-hidden="true"></span>
+      </button>
+      <a class="btn btn-logo mx-2 ms-md-0" href="/portal" title="$rloader.portal_home">
+        <span class="visually-hidden">$rloader.portal_home</span>
+      </a>
+    </div>
+    #parse("/vm/morpheus/includeGatewayNav.vm")
+    #parse("/vm/morpheus/includePortalHeaderBreadcrumb.vm")
+  </div>
+
+  <a href="#" class="sak-sysInd-systemAlerts nav-link d-none align-items-center text-white me-auto" onclick="alert('Somehow we will get the dismissed PA System alert to re-appear');">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-diamond me-1 text-warning" viewBox="0 0 16 16">
+      <path d="M6.95.435c.58-.58 1.52-.58 2.1 0l6.515 6.516c.58.58.58 1.519 0 2.098L9.05 15.565c-.58.58-1.519.58-2.098 0L.435 9.05a1.482 1.482 0 0 1 0-2.098L6.95.435zm1.4.7a.495.495 0 0 0-.7 0L1.134 7.65a.495.495 0 0 0 0 .7l6.516 6.516a.495.495 0 0 0 .7 0l6.516-6.516a.495.495 0 0 0 0-.7L8.35 1.134z"/>
+      <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+    </svg>
+    <span class="d-none d-md-inline">View System Alert</span>
+  </a>
+
+  #if (!${userIsLoggedIn})
+    #if (${loginTopLogin})
+      #parse("/vm/morpheus/includeLoginNav.vm")
+    #else
+      #parse("/vm/morpheus/snippets/loginImage-snippet.vm")
+    #end
+  #else
+    #parse("/vm/morpheus/includeAccountNav.vm")
+  #end
+</header>

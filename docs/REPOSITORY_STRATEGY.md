@@ -7,16 +7,16 @@ Keep three concerns separate:
 | Concern | Source of truth | Location |
 | --- | --- | --- |
 | Azure infrastructure and operations | This `sakai-mcp` Git repository | Mac + its future Git remote |
-| Upstream/custom Sakai application | This `sakai-mcp` Git repository | Planned `sakai/` directory; `/opt/sakai-src` is only a deployed checkout |
+| Upstream/custom Sakai application | This `sakai-mcp` Git repository | `apps/sakai/` locally; `/opt/sakai-src` is only a deployed checkout |
 | Runtime data and secrets | Azure MySQL/storage and ignored environment files | Azure + `deployment/.env` |
 
 The VM must not be the only place containing code changes. Edit locally, commit locally, push to a Git remote, and deploy a known commit. Avoid editing `/opt/sakai-src` directly except for emergency diagnosis; any emergency change should immediately be reproduced as a normal Git commit.
 
 ## Local Sakai source
 
-The planned `sakai/` directory will contain the Sakai 25.2 source and project changes directly in this repository. Import the official source at the exact commit currently deployed on the VM, `b5b7800f0fcddf9d0db47276a66065189365d905`, after checking the source snapshot for size and generated files. Do not copy its nested `.git` directory into this repository.
+The `apps/sakai/` directory contains the Sakai 25.2 source and project changes directly in this repository. Its baseline is the official commit currently deployed on the VM, `b5b7800f0fcddf9d0db47276a66065189365d905`. The source is imported without a nested `.git` directory.
 
-The `sakai/` import has not happened yet. Once it is tracked, edit it here, commit to this repository, and deploy a tested commit to Azure. A local source checkout consumes disk space only; it does **not** run Java, Tomcat, MySQL, containers, or Azure resources.
+Edit Sakai here, commit to this repository, and deploy a tested commit to Azure. A local source checkout consumes disk space only; it does **not** run Java, Tomcat, MySQL, containers, or Azure resources.
 
 ## What should run locally
 
@@ -40,7 +40,8 @@ sakai-mcp/
 ├── scripts/             human-friendly operations
 ├── services/
 │   └── mcp/             future MCP source, tests, container file
-└── sakai/               tracked Sakai source and project changes
+└── apps/
+    └── sakai/           tracked Sakai source and project changes
 ```
 
 When the MCP is implemented, add:
@@ -57,7 +58,7 @@ No Azure Container App exists yet. Choose its hosting model only after the MCP's
 
 ## Git workflow
 
-The canonical infrastructure and future MCP repository is the private GitHub repository `BuriAhmad/sakai-mcp`. GitHub Actions validates shell syntax, runs ShellCheck, checks that local secrets remain untracked, and compiles the Bicep template.
+The canonical Sakai, infrastructure, and future MCP repository is the private GitHub repository `BuriAhmad/sakai-mcp`. GitHub Actions validates project shell syntax, runs ShellCheck, checks that local secrets remain untracked, and compiles the Bicep template.
 
 Use small branches and pull requests for infrastructure and application changes. Protect the main branch when more than one person contributes. Sakai changes will be committed alongside the MCP and infrastructure in this repository.
 

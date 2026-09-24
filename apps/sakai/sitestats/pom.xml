@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.sakaiproject</groupId>
+    <artifactId>master</artifactId>
+    <version>25.2</version>
+    <relativePath>../master/pom.xml</relativePath>
+  </parent>
+
+  <name>Sakai SiteStats</name>
+  <groupId>org.sakaiproject.sitestats</groupId>
+  <artifactId>sitestats</artifactId>
+  <description>SiteStats is a tool for Sakai for showing site usage statistics.</description>
+  <url>http://confluence.sakaiproject.org/confluence/display/STAT</url>
+  <packaging>pom</packaging>
+
+  <!-- Project versions -->
+  <properties>
+    <commons-betwixt.version>0.8</commons-betwixt.version>
+    <fop.version>2.11</fop.version>
+    <jfreechart.version>1.5.3</jfreechart.version>
+    <sst.wicket.version>9.21.0</sst.wicket.version>
+  </properties>
+
+  <!-- Project modules -->
+  <modules>
+    <module>sitestats-api</module>
+    <module>sitestats-bundle</module>
+    <module>sitestats-impl</module>
+    <module>sitestats-impl-hib</module>
+    <module>sitestats-tool</module>
+  </modules>
+
+  <!-- Project related dependencies -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>sitestats-bundle</artifactId>
+        <version>${project.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>sitestats-impl</artifactId>
+        <version>${project.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>sitestats-impl-hib</artifactId>
+        <version>${project.version}</version>
+        <type>jar</type>
+        <scope>provided</scope>
+      </dependency>
+      <!-- Apache Commons -->
+      <dependency>
+        <groupId>commons-betwixt</groupId>
+        <artifactId>commons-betwixt</artifactId>
+        <version>${commons-betwixt.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <!-- Apache others -->
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>fop</artifactId>
+        <version>${fop.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>xmlgraphics-commons</artifactId>
+        <version>${fop.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi</artifactId>
+        <version>${sakai.poi.version}</version>
+      </dependency>
+      <!-- Apache Wicket -->
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket</artifactId>
+        <version>${sst.wicket.version}</version>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-extensions</artifactId>
+        <version>${sst.wicket.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-ioc</artifactId>
+        <version>${sst.wicket.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-spring</artifactId>
+        <version>${sst.wicket.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-spring-annot</artifactId>
+        <version>${sst.wicket.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-datetime</artifactId>
+        <version>${sst.wicket.version}</version>
+      </dependency>
+      <!-- JFreeChart -->
+      <dependency>
+        <groupId>org.jfree</groupId>
+        <artifactId>jfreechart</artifactId>
+        <version>${jfreechart.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

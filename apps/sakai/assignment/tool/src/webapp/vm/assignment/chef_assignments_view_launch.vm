@@ -1,0 +1,25 @@
+<!-- start: chef_assignments_view_launch.vm  -->
+<div class="portletBody">
+#if ($!assignment)
+<script type="module" src="/webcomponents/bundles/lti.js"></script>
+#if ($!newpage == true)
+<p>
+ <sakai-lti-popup auto-launch="true" launch-url="$value_ContentLaunchURL"></sakai-lti-popup>
+</p>
+#else
+<p>
+<sakai-lti-iframe
+  allow-resize="yes"
+  launch-url="$!value_ContentLaunchURL"
+  height="$!height"
+  allow="${browser-feature-allow}">
+</sakai-lti-iframe>
+</p>
+#end
+#else
+<h4>$tlang.getString("external.tool.notavail")</h4>
+#end
+
+
+</div>
+<!-- end: chef_assignments_view_launch.vm  -->

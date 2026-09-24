@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+ 
+<head>
+	<title><wicket:message key="app.title" /></title>
+</head>     
+<body>
+	<div class="portletBody">
+		<ul class="navIntraTool actionToolbar" wicket:id="gradebookPageNav">
+			<li class="firstToolBarItem">
+				<span>
+					<a wicket:id="gradebookPageLink">
+						<span wicket:id="screenreaderlabel" class="sr-only"></span>
+						<wicket:message key="link.gradebook" />
+					</a>
+				</span>
+			</li>
+			<li>
+				<span>
+					<a wicket:id="quickEntryPageLink">
+						<span wicket:id="screenreaderlabel" class="sr-only"></span>
+						<wicket:message key="link.quickentry" />
+					</a>
+				</span>
+			</li>
+			<li>
+				<span>
+					<a wicket:id="importExportPageLink">
+						<span wicket:id="screenreaderlabel" class="sr-only"></span>
+						<wicket:message key="link.importexport" />
+					</a>
+				</span>
+			</li>
+			<li>
+				<span>
+					<a wicket:id="permissionsPageLink">
+						<span wicket:id="screenreaderlabel" class="sr-only"></span>
+						<wicket:message key="link.permissions" />
+					</a>
+				</span>
+			</li>
+			<li>
+				<span>
+					<a wicket:id="settingsPageLink">
+						<span wicket:id="screenreaderlabel" class="sr-only"></span>
+						<wicket:message key="link.settings" />
+					</a>
+				</span>
+			</li>
+		</ul>
+		
+		<div wicket:id="feedback">Feedback messages go here</div>
+		
+		<wicket:child />
+	
+	</div>
+</body>
+</html>

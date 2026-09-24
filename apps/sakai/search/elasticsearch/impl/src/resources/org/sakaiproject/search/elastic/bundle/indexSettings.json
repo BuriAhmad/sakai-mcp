@@ -1,0 +1,30 @@
+{
+    "number_of_shards": 5,
+    "index": {
+        "max_ngram_diff": 20
+    },
+    "analysis": {
+        "filter": {
+            "substring": {
+                "type": "ngram",
+                "min_gram": 2,
+                "max_gram": 20
+            }
+        },
+        "analyzer": {
+            "standard": {
+                "type": "standard",
+                "max_token_length" : "255"
+            },
+            "str_search_analyzer": {
+                "tokenizer": "keyword",
+                "filter": ["lowercase"]
+            },
+            "str_index_analyzer": {
+                "tokenizer": "keyword",
+                "filter": ["lowercase", "substring"]
+            }
+        }
+    }
+}
+

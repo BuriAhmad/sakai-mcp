@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+
+<!-- =========== FACES CONFIGURATION FILE ================================== -->
+	<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+				  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd"
+				  version="2.3">
+  <!-- =================== Bundle ============== -->
+	<application>
+    	<message-bundle>org.sakaiproject.umem.tool.bundle.Messages</message-bundle>
+	    <locale-config>
+	      <default-locale>en</default-locale>
+	    </locale-config>
+	</application>    
+ 	<managed-bean>
+		<description>
+			Dynamic Resource Bundle Loader
+		</description>
+		<managed-bean-name>msgs</managed-bean-name>
+		<managed-bean-class>org.sakaiproject.util.ResourceLoader</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<description>Bundle baseName</description>
+			<property-name>baseName</property-name>
+			<value>org.sakaiproject.umem.tool.bundle.Messages</value>
+		</managed-property>
+	</managed-bean>
+
+
+  <!-- =================== Tool Beans ============== -->
+	<managed-bean>
+		<description>User List Bean</description>
+		<managed-bean-name>UserListBean</managed-bean-name>
+		<managed-bean-class>org.sakaiproject.umem.tool.ui.UserListBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<description>Site List Bean</description>
+		<managed-bean-name>SiteListBean</managed-bean-name>
+		<managed-bean-class>org.sakaiproject.umem.tool.ui.SiteListBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<navigation-rule>
+          <from-view-id>/usermembership/*</from-view-id>
+
+          <navigation-case>
+            <from-outcome>userlist</from-outcome>
+            <to-view-id>/usermembership/userlist.jsp</to-view-id>
+            <redirect/>
+          </navigation-case>
+
+          <navigation-case>
+            <from-outcome>sitelist</from-outcome>
+            <to-view-id>/usermembership/sitelist.jsp</to-view-id>
+            <redirect/>
+          </navigation-case>
+
+          <navigation-case>
+            <from-outcome>unauthorized</from-outcome>
+            <to-view-id>/usermembership/unauthorized.jsp</to-view-id>
+            <redirect/>
+          </navigation-case>
+    </navigation-rule>
+
+</faces-config>

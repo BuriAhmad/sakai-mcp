@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.sakaiproject</groupId>
+    <artifactId>master</artifactId>
+    <version>25.2</version>
+    <relativePath>../master/pom.xml</relativePath>
+  </parent>
+
+  <name>Sakai Emailtemplateservice Base POM (emailtemplateservice)</name>
+  <groupId>org.sakaiproject.emailtemplateservice</groupId>
+  <artifactId>emailtemplateservice</artifactId>
+  <packaging>pom</packaging>
+  <organization>
+    <name>Sakai Project</name>
+    <url>https://www.sakailms.org/</url>
+  </organization>
+  <inceptionYear>2007</inceptionYear>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <modules>
+    <module>tool</module>
+  </modules>
+
+</project>

@@ -1,8 +1,8 @@
 # sakai-mcp
 
-Infrastructure, operations, and future MCP services for the Sakai development environment on Azure.
+Sakai application source, Azure infrastructure, operations, and future MCP services in one repository.
 
-The canonical infrastructure repository is `BuriAhmad/sakai-mcp`. GitHub Actions validates all shell scripts and compiles the Bicep infrastructure template on pushes and pull requests.
+The canonical repository is `BuriAhmad/sakai-mcp`. GitHub Actions validates project shell scripts and Bicep infrastructure, and checks the Sakai parent POM when its source changes. Sakai source is tracked in `apps/sakai/`. These checks do not deploy code to Azure.
 
 ## First use on a Mac
 
@@ -26,7 +26,7 @@ Useful commands:
 ./sakai stop                           # stop compute when finished
 ```
 
-See [VM access](docs/VM_ACCESS.md) for the security model and troubleshooting, and [repository strategy](docs/REPOSITORY_STRATEGY.md) before changing Sakai or adding the MCP service.
+See [VM access](docs/VM_ACCESS.md) for the security model, [Sakai source](docs/SAKAI_SOURCE.md) for the imported code, and [repository strategy](docs/REPOSITORY_STRATEGY.md) before adding the MCP service.
 
 ## Layout
 
@@ -34,4 +34,4 @@ See [VM access](docs/VM_ACCESS.md) for the security model and troubleshooting, a
 - `scripts/` — guarded operational scripts
 - `docs/` — architecture, runbooks, and decisions
 - `services/` — project-owned application services (the future MCP belongs here)
-- `sakai/` — planned tracked Sakai application source (not imported yet)
+- `apps/sakai/` — tracked Sakai application source and project changes

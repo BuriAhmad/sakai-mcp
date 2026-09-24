@@ -1,0 +1,68 @@
+{
+    "_source": {
+        "enabled": "false"
+    },
+    "properties": {
+        "siteid": {
+            "type": "keyword",
+            "store": "true"
+        },
+        "creatorDisplayName": {
+            "type": "text",
+            "store": "true"
+        },
+        "creatorUserName": {
+            "type": "text",
+            "store": "true"
+        },
+        "creatorId": {
+            "type": "keyword",
+            "store": "true"
+        },
+        "title": {
+            "type": "text",
+            "store": "true",
+            "term_vector" : "with_positions_offsets",
+            "search_analyzer": "str_search_analyzer",
+            "analyzer": "str_index_analyzer"
+        },
+        "url": {
+            "type": "keyword",
+            "store": "true"
+        },
+        "reference": {
+            "type": "keyword",
+            "store": "true"
+        },
+        "id": {
+            "type": "keyword",
+            "store": "true"
+        },
+        "tool": {
+            "type": "keyword",
+            "store": "true"
+        },
+        "container": {
+            "type": "keyword",
+            "store": "true"
+        },
+        "type": {
+            "type": "keyword",
+            "store": "true"
+        },
+        "subtype": {
+            "type": "keyword",
+            "store": "true"
+        },
+        "indexed": {
+            "type": "boolean",
+            "null_value": "false",
+            "store": "false"
+        },
+        "contents": {
+            "type": "text",
+            "analyzer": "standard",
+            "store": "false"
+        }
+    }
+}

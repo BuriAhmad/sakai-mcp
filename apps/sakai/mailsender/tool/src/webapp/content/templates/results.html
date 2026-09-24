@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
+        <link href="/mailsender-tool/content/css/MailSender.css" type="text/css" rel="stylesheet" media="all" />
+        <script src="/library/js/headscripts.js"></script>
+    </head> 
+    <body>
+        <div class="portletBody">
+            <div id="menu" th:insert="~{fragments/menus :: main (compose)}" />
+            <br/>
+            <span th:text="#{message.sent.to}" style="margin-bottom: 5px ">Message sent to:</span>
+            <ul th:each="user:${listaus}">
+                <li th:text="${user}"></li>
+            </ul>
+            <div th:if="${badem && invemails != null && invemails.size() > 0}" style="margin-top: 10px">
+                <span th:text="#{invalid.email.addresses}" >The following users do not have valid email addresses:</span>
+                <ul th:each="invuser:${invemails}">
+                    <li th:text="${invuser}"></li>
+                </ul>  
+            </div>
+        </div>
+    </body>
+</html>

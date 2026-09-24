@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+
+    <body>
+        <wicket:panel>
+
+			<div class="form-group form-group-sm mt-3">
+				<label wicket:for="title" class="col-xs-3 control-label">
+					<wicket:message key="label.addgradeitem.title" />
+				</label>
+				<div class="col-xs-7">
+     				<input wicket:id="title" type="text" class="form-control" />
+   	 			</div>
+			</div>
+			<div class="form-group form-group-sm">
+				<label wicket:for="points" class="col-xs-3 control-label">
+					<wicket:container wicket:id="pointsLabel" />
+				</label>
+				<div class="col-xs-2">
+					<input wicket:id="points" type="text" class="form-control" />
+				</div>
+			</div>
+			<div wicket:id="scaleGradesContainer" class="form-group form-group-sm">
+				<div class="col-xs-offset-3 col-xs-6">
+					<div class="checkbox">
+						<label>
+							<input wicket:id="scaleGrades" type="checkbox" />
+							<span><wicket:message key="label.addgradeitem.scalegrades" /></span>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group form-group-sm">
+				<div class="col-xs-offset-3 col-xs-6">
+					<div class="checkbox">
+						<label>
+							<input wicket:id="extraCredit" type="checkbox" />
+							<span><wicket:message key="label.addgradeitem.extracredit" /></span>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group form-group-sm">
+				<div class="col-xs-offset-3 col-xs-9">
+					<sakai-rubric-association wicket:id="sakai-rubric-association"></sakai-rubric-association>
+				</div>
+			</div>
+			<div class="d-flex align-items-center input-group input-group-sm">
+				<label wicket:for="duedate" class="col-xs-3 control-label">
+					<wicket:message key="label.addgradeitem.due" />
+				</label>
+				<div class="d-flex align-items-center justify-content-evenly ms-3">
+					<input wicket:id="duedate" type="text" class="form-control gb-datepicker gb-input" aria-describedby="duedate-help" />
+				</div>
+			</div>
+			<div class="form-group form-group-sm" wicket:id="categoryWrap">
+				<label wicket:for="category" class="col-xs-3 control-label">
+					<wicket:message key="label.addgradeitem.category" />
+				</label>
+				<div class="col-xs-7">
+					<select wicket:id="category" class="select">
+						<option>test</option>
+					</select>
+					<span wicket:id="noCategoriesMessage" class="help-block"><wicket:message key="label.addgradeitem.nocategories"></wicket:message></span>
+					<div class="instruction"><wicket:message key="label.addgradeitem.nocategoryassigned"></wicket:message></div>
+				</div>
+				
+			</div>
+			<div class="form-group form-group-sm">
+				<div class="col-xs-offset-3 col-xs-6">
+					<div class="checkbox">
+						<label>
+							<input wicket:id="released" type="checkbox" />
+							<span><wicket:message key="label.addgradeitem.release" /></span>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group form-group-sm">
+				<div class="col-xs-offset-3 col-xs-6">
+					<div class="checkbox">
+						<label>
+							<input wicket:id="counted" type="checkbox" />
+							<span><wicket:message key="label.addgradeitem.include" /></span>
+						</label>
+					</div>
+				</div>
+			</div>
+        </wicket:panel>
+    </body>
+</html>

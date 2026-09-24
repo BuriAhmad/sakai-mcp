@@ -1,0 +1,425 @@
+/*
+CSS for the UC Berkeley's implementation of the Sakai Messages Tool
+
+Copyright 2009 University of California, Berkeley
+
+Licensed under the Educational Community License (ECL), Version 2.0 or the New
+BSD license. You may not use this file except in compliance with one these
+Licenses.
+*/
+
+/* 
+ * Tab Selected Bkgrnd Color: #777F92
+ * Tab Unselected Bkgrnd Color: #8CA9C5
+ * Tab Unselected Border Color: #666
+ * Box Bkgrnd Color: #EBECED
+ * Box Border Color: #D0D3D7
+ */
+
+.sakai-ppkr {
+    display: none;
+    background-color: var(--sakai-background-color-1);
+    width: 540px;
+    padding: 6px;
+}
+
+.sakai-ppkr form {
+    margin: 0; 
+}
+
+.sakai-ppkr .instructions {
+    font-style: italic;
+    padding-left: 0.2em;
+    margin-top: 0;
+}
+
+/* Filter Section */
+
+.sakai-ppkr-filter {
+    margin-bottom: 0.4em;
+}
+
+.sakai-ppkr .header-title {
+    font-style: normal;
+    display: block;
+    font-size: 1.1em;
+    color: var(--sakai-text-color-1);
+}
+
+.sakai-ppkr-search-field {
+    margin: 0.1em 0 0.6em 0.4em;
+    width: 430px;
+}
+
+.sakai-ppkr-filter-fields {
+    border: 1px solid var(--sakai-border-color);
+    padding: 0.4em 0.6em;
+}
+
+.sakai-ppkr-filter-fields label {
+    font-size: 1em !important;
+    margin-left: 0 !important;
+}
+
+/* lists */
+
+.sakai-ppkr-source {
+    float: left;
+    top: 0;
+    display: inline;
+}
+
+.sakai-ppkr-collection {
+    margin-left: 16px;
+}
+
+.sakai-ppkr-collection, .sakai-ppkr-source {
+    width: 266px;
+}
+
+.sakai-ppkr-source, .sakai-ppkr-collection {
+    display: block;
+    float: left;
+    clear: right;
+    position: relative;
+}
+
+.sakai-ppkr-source select {
+    font-size: 0.8em;
+}
+
+.sakai-ppkr-header, .sakai-ppkr-source-picker, .sakai-ppkr-collection-picker {
+    border: 1px solid var(--sakai-border-color);
+    background-color: var(--sakai-background-color-2);
+    margin-bottom: 2px;
+}
+
+.sakai-ppkr-header {
+    padding: 3px 6px;
+}
+
+.sakai-ppkr-header h3 {
+    margin: 0;
+    font-size: 1.3em;
+}
+
+.sakai-ppkr-submit {
+    display:block;
+    clear: both;
+    text-align: right;
+    padding-top: 0.4em;
+}
+
+.sakai-ppkr-submit input[type="text"] {
+    margin-left: 6px;
+    width: 124px;
+}
+.sakai-ppkr-source-footer, .sakai-ppkr-collection-footer {
+    border-top: 1px solid var(--sakai-border-color);
+    padding: 5px 12px;
+}
+
+.sakai-ppkr-source-list-header, .sakai-ppkr-collection-list-header {
+    border-bottom: 1px solid var(--sakai-border-color);
+    padding: 4px 6px;
+    font-size: 1em;
+}
+
+.sakai-ppkr-source-list-header .sakai-ppkr-num-filtered {
+    float: right;
+}
+
+/* Scroller */
+
+.sakai-ppkr .scroller {
+	overflow: auto;
+	overflow-x: hidden;
+	overflow-y: auto;
+	background-color: var(--sakai-background-color-1);
+    height: 248px;
+    margin: 0;
+    padding: 0;
+}
+
+.sakai-ppkr-source-list div, .sakai-ppkr-collection-list div  {
+    cursor: pointer;
+    padding: 6px;
+    border-bottom: 1px solid var(--sakai-border-color);
+    background-repeat: no-repeat;
+    background-position: 6px 6px;
+}
+
+.sakai-ppkr-source-list div {
+    padding-left:  24px;
+}
+
+.sakai-ppkr-collection-list div {
+    padding-right: 24px;
+}
+
+.scroller div.even {
+    background-color: var(--sakai-background-color-2);
+}
+
+.sakai-ppkr-source-list div.selected {
+	background-color: var(--warnBanner-bgcolor);
+}
+
+.sakai-ppkr-source-list div.key-highlight, #collection div.key-highlight {
+	background-color: var(--warnBanner-bgcolor);
+	color: var(--warnBanner-color);
+	border: 2px solid var(--warnBanner-bordercolor);
+	padding: 4px 4px 0 5px;
+}
+
+.sakai-ppkr-collection-list div.key-highlight {
+	padding: 4px 4px 0 19px;
+}
+
+.sakai-ppkr-collection-list div {
+	padding-right: 24px;
+}
+
+.sakai-ppkr-btn-add-all, .sakai-ppkr-btn-remove-all {
+    cursor: pointer;
+    text-decoration: underline !important;
+}
+
+.sakai-ppkr-btn-add-all {
+    margin: 0 3px;
+}
+
+.sakai-ppkr-btn-remove-all {
+    float: right;
+	margin-right: 14px;
+}
+
+.sakai-ppkr-item-indent {
+    padding-left: 18px;
+}
+
+.sakai-ppkr-to-container-scroller, .messages-to-field, .sakai-ppkr-to-choice {
+    width: 537px;
+}
+
+.sakai-ppkr-to-container-scroller, .messages-to-field {
+    margin-top: 2px;
+    border: 1px solid var(--sakai-border-color);
+    min-height: 34px;
+    overflow: auto;
+    padding-bottom: 3px;
+}
+
+.messages-to-field { 
+    border-color: var(--sakai-border-color);
+    max-height: 116px;
+    padding: 3px;
+}
+
+html>body .messages-to-field { 
+    max-height: 124px;
+    height: auto;
+}
+
+.sakai-ppkr-to-container p {
+    color: var(--sakai-text-color-dimmed);
+    margin: 0.4em 0.6em 0.2em; 
+}
+
+.sakai-ppkr-to-choice {
+    float:left;
+    margin: 0.4em 0.6em;
+}
+
+.sakai-ppkr-to-choice a {
+    white-space: nowrap;
+}
+
+.display-sakai-ppkr {
+    display: block;
+    float: right !important;
+    color: var(--sakai-text-color-1) !important;
+}
+
+.sakai-ppkr-by-role input[type="checkbox"] {
+    float: left;
+    margin: 1px 0 0;
+}
+
+.sakai-ppkr-by-role label {
+    display: block;
+    margin-left: 0.4em;
+}
+
+.jsfFormTable td {
+    border-bottom: 1px solid var(--sakai-border-color);
+}
+
+.sakai-ppkr-token {
+    font-size: 0.9em;
+    display: block;
+    white-space: nowrap;
+    float: left;
+    background-color: var(--infoBanner-bgcolor);
+    border: 1px solid var(--infoBanner-bordercolor);
+    color: var(--infoBanner-color);
+    margin: 2px 0 0 2px;
+    padding: 1px 1px 1px 4px;
+    border-radius: 4px;
+}
+
+.token-all {
+    background-color: var(--sakai-color-purple--lighter-6);
+    border-color: var(--sakai-color-purple--lighter-3);
+    font-style: italic;
+}
+
+.token-role-participates {
+     background-color: var(--sakai-color-red--lighter-6);
+}
+
+.token-hidden { 
+    display: none;
+}
+
+.token-inactive { 
+    color: var(--sakai-text-color-dimmed);
+}
+
+.ppkr-remove { 
+    cursor: pointer;
+    color: var(--sakai-text-color-1);
+    font-size: 90%;
+    font-weight: bold;
+    font-style: normal;
+    background-color: transparent;
+    padding: 0 4px 2px;
+    border-radius: 50%;
+}
+
+.ppkr-remove:hover { 
+    color: var(--errorBanner-color);
+    background-color: var(--errorBanner-bgcolor);
+}
+
+.jsfFormTable td.sakai-ppkr-from {
+    vertical-align: middle;
+}
+
+.sakai-ppkr-collection-counter, .sakai-ppkr-source-counter, .sakai-ppkr-source-total {
+    font-weight: bolder;
+}
+
+/* Overrides for jQuery UI Dialog styles */
+
+.ui-dialog {
+    margin-top: 2em;
+} 
+
+
+.ui-dialog .ui-dialog-title {
+    font-size: 1.1em !important;
+    float:left;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    padding: 0.5em 0.3em 0.5em 1em !important;
+}
+
+/* overrides to tool_base.css */
+
+.jsfFormTable td .shorttext label {
+    width: auto !important;
+}
+
+.shorttext label, .filepicker label {
+    width: auto !important;
+}
+
+.title-text{
+    font-weight: bold;
+    font-size: 110%;
+}
+
+.forumsRankName {
+ color: var(--sakai-text-color-1);
+ font-size: 0.95em;
+ font-weight: bold;
+ padding-bottom: 0 !important;
+ padding-left: 0 !important;
+ padding-right: 0 !important;
+ padding-top: 0 !important;
+ text-align: left;
+ white-space: nowrap;
+}
+
+.addrank_msgbox{
+        background-color: var(--warnBanner-bgcolor);
+        border: 1px solid var(--warnBanner-bordercolor);
+        color: var(--warnBanner-color);
+        padding: 5px;
+        margin: 5px 10px 10px 10px;
+        border-radius: 5px;
+}
+.addrank_msgtext{
+    color: var(--sakai-text-color-1);
+    font-size: 95%;
+}
+
+.ranktable-name {
+	width:250px;
+}
+.ranktable-image {
+	width:250px;
+}
+.ranktable-assignto {
+	width:250px;
+}
+.ranktable-minpost {
+	width:250px;
+}
+.ranktable-delete {
+	width:250px;
+}
+
+.rankeditor-col1 {
+	width:150px;
+}
+
+.ui-widget-header {
+    background-image: url(../images/headerBg.jpg);
+    border: 0px;
+    background-repeat:repeat-x;
+    color: var(--sakai-background-color-1);
+    font-weight: bold; 
+}
+
+.section_header {
+font-size: 1em;
+font-weight: bold;
+margin-bottom: 0;
+margin-left: 0;
+margin-right: 0;
+margin-top: 0;
+}
+
+
+a:link{
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+a:visited{
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+a:hover,a:focus{
+    color: var(--link-hover-color);
+    text-decoration: underline !important;
+}
+
+a:active{
+    color: var(--link-active-color);
+    text-decoration: underline !important;
+}

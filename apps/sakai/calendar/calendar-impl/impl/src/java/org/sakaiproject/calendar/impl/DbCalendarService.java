@@ -1,0 +1,292 @@
+/**********************************************************************************
+ * $URL$
+ * $Id$
+ ***********************************************************************************
+ *
+ * Copyright (c) 2003, 2004, 2005, 2006, 2007, 2008 The Sakai Foundation
+ *
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.opensource.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ **********************************************************************************/
+
+package org.sakaiproject.calendar.impl;
+
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.sakaiproject.calendar.api.Calendar;
+import org.sakaiproject.calendar.api.CalendarEdit;
+import org.sakaiproject.calendar.api.CalendarEvent;
+import org.sakaiproject.calendar.api.CalendarEventEdit;
+import org.sakaiproject.db.api.SqlService;
+import org.sakaiproject.entity.api.Entity;
+import org.sakaiproject.javax.PagingPosition;
+import org.sakaiproject.time.api.TimeRange;
+import org.sakaiproject.util.BaseDbDoubleStorage;
+import org.sakaiproject.util.DoubleStorageUser;
+
+/**
+* <p>DbCalendarService fills out the BaseCalendarService with a database implementation.</p>
+* <p>The sql scripts in src/sql/chef_calendar.sql must be run on the database.</p>
+*/
+@Slf4j
+public class DbCalendarService
+	extends BaseCalendarService
+{
+	/** The name of the db table holding calendar calendars. */
+	protected String m_cTableName = "CALENDAR_CALENDAR";
+
+	/** The name of the db table holding calendar events. */
+	protected String m_rTableName = "CALENDAR_EVENT";
+
+	/** If true, we do our locks in the remote database, otherwise we do them here. */
+	protected boolean m_locksInDb = true;
+
+	protected static final String[] FIELDS = { "EVENT_START", "EVENT_END", "RANGE_START", "RANGE_END" };
+
+	private static final DateTimeFormatter RFC_1123_UTC =
+		DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC);
+
+	/*******************************************************************************
+	* Constructors, Dependencies and their setter methods
+	*******************************************************************************/
+
+	/** Dependency: SqlService */
+	protected SqlService m_sqlService = null;
+
+	/**
+	 * Dependency: SqlService.
+	 * @param service The SqlService.
+	 */
+	public void setSqlService(SqlService service)
+	{
+		m_sqlService = service;
+	}
+
+	/**
+	 * Configuration: set the table name for the container.
+	 * @param path The table name for the container.
+	 */
+	public void setContainerTableName(String name)
+	{
+		m_cTableName = name;
+	}
+
+	/**
+	 * Configuration: set the table name for the resource.
+	 * @param path The table name for the resource.
+	 */
+	public void setResourceTableName(String name)
+	{
+		m_rTableName = name;
+	}
+
+	/**
+	 * Configuration: set the locks-in-db
+	 * @param path The storage path.
+	 */
+	public void setLocksInDb(String value)
+	{
+		m_locksInDb = Boolean.valueOf(value).booleanValue();
+	}
+
+	/** Configuration: to run the ddl on init or not. */
+	protected boolean m_autoDdl = false;
+
+	/**
+	 * Configuration: to run the ddl on init or not.
+	 * 
+	 * @param value
+	 *        the auto ddl value.
+	 */
+	public void setAutoDdl(String value)
+	{
+		m_autoDdl = Boolean.valueOf(value).booleanValue();
+	}
+
+	/*******************************************************************************
+	* Init and Destroy
+	*******************************************************************************/
+
+	/**
+	 * Final initialization, once all dependencies are set.
+	 */
+	public void init()
+	{
+		try
+		{
+			// if we are auto-creating our schema, check and create
+			if (m_autoDdl)
+			{
+				m_sqlService.ddl(this.getClass().getClassLoader(), "sakai_calendar");
+			}
+
+			super.init();
+			
+			log.info("init(): tables: {} {} locks-in-db: {}", m_cTableName, m_rTableName, m_locksInDb);
+		}
+		catch (Throwable t)
+		{
+			log.warn("init(): ", t);
+		}
+	}
+
+	/*******************************************************************************
+	* BaseCalendarService extensions
+	*******************************************************************************/
+
+	/**
+	* Construct a Storage object.
+	* @return The new storage object.
+	*/
+	protected Storage newStorage()
+	{
+		return new DbStorage(this);
+
+	}	// newStorage
+
+	/*******************************************************************************
+	* Storage implementation
+	*******************************************************************************/
+
+	/**
+	* Covers for the BaseDbStorage, providing Chat parameters
+	* Note: base class containers are reference based, this service is still id based - converted here %%%
+	*/
+	protected class DbStorage
+		extends BaseDbDoubleStorage
+		implements Storage
+	{
+		/**
+		* Construct.
+		* @param user The StorageUser class to call back for creation of Resource and Edit objects.
+		*/
+		public DbStorage(DoubleStorageUser user)
+		{
+			// TODO: what about owner, draft?
+			super(m_cTableName, "CALENDAR_ID", m_rTableName, "EVENT_ID", "CALENDAR_ID",
+					"EVENT_START", /* owner, draft, pubview */null, null, null, FIELDS, m_locksInDb, "calendar", "event", user, m_sqlService);
+
+		}	// DbStorage
+
+		/** Calendar **/
+		
+		public boolean checkCalendar(String ref) { return super.getContainer(ref) != null; }
+
+		public Calendar getCalendar(String ref) { return (Calendar) super.getContainer(ref); }
+
+		public List getCalendars() { return super.getAllContainers(); }
+
+		public CalendarEdit putCalendar(String ref)
+			{ return (CalendarEdit) super.putContainer(ref); }
+
+		public CalendarEdit editCalendar(String ref)
+			{ return (CalendarEdit) super.editContainer(ref); }
+
+		public void commitCalendar(CalendarEdit edit)
+			{ super.commitContainer(edit); }
+
+		public void cancelCalendar(CalendarEdit edit)
+			{ super.cancelContainer(edit); }
+
+		public void removeCalendar(CalendarEdit edit)
+			{ super.removeContainer(edit); }
+
+		/** Event **/
+		
+		public boolean checkEvent(Calendar calendar, String messageId)
+			{ return super.checkResource(calendar, messageId); }
+
+		public CalendarEvent getEvent(Calendar calendar, String id)
+			{ return (CalendarEvent) super.getResource(calendar, id); }
+
+		public List getEvents(Calendar calendar, TimeRange range, Integer limit) {
+
+			PagingPosition page = limit == null ? null : new PagingPosition(1, limit);
+			String rangeFilter = range == null ? null : getRangeFilter();
+			List<Object> rangeValues = getRangeValues(range);
+
+			return super.getAllResources(calendar, null, rangeFilter, true, page, rangeValues);
+		}
+
+		private String getRangeFilter() {
+
+			// Overlap test simplified: [start, end] overlaps (a, b) iff
+			// start < b AND end > a. Using strict inequalities preserves
+			// the original semantics from the OR expression.
+			return "(RANGE_START < ? and RANGE_END > ?)";
+		}
+
+		private List<Object> getRangeValues(TimeRange range) {
+
+			if (range == null) return null;
+
+			long startDate = range.firstTime().getTime();
+			long endDate = range.lastTime().getTime();
+
+			// We don't have accurate timezone information at this point; normalize to UTC day boundaries (end exclusive).
+			long oneHour = 60L * 60L * 1000L;
+			ZonedDateTime startDayUtc = Instant.ofEpochMilli(startDate)
+				.atZone(ZoneOffset.UTC).toLocalDate().atStartOfDay(ZoneOffset.UTC);
+			ZonedDateTime endDayUtcExclusive = Instant.ofEpochMilli(endDate)
+				.atZone(ZoneOffset.UTC).toLocalDate().plusDays(1).atStartOfDay(ZoneOffset.UTC);
+			startDate = startDayUtc.toInstant().toEpochMilli();
+			endDate = endDayUtcExclusive.toInstant().toEpochMilli();
+			// This will work until 9 Oct 246953 07:00:00
+			Integer startDateHours = (int) (startDate / oneHour);
+			Integer endDateHours = (int) (endDate / oneHour);
+			
+			ZonedDateTime startUtc = Instant.ofEpochMilli(startDate).atZone(ZoneOffset.UTC);
+			ZonedDateTime endUtc = Instant.ofEpochMilli(endDate).atZone(ZoneOffset.UTC);
+			if (log.isDebugEnabled()) {
+				log.debug("Selecting Range from {} to {}",
+					RFC_1123_UTC.format(startUtc), RFC_1123_UTC.format(endUtc));
+			}
+
+			List<Object> rangeValues = new ArrayList<>();
+			// Bind order matches (RANGE_START < ?) and (RANGE_END > ?)
+			rangeValues.add(endDateHours);
+			rangeValues.add(startDateHours);
+			return rangeValues;
+		}
+
+		public CalendarEventEdit putEvent(Calendar calendar,String id)
+			{ return (CalendarEventEdit) super.putResource(calendar, id, null); }
+
+		public CalendarEventEdit editEvent(Calendar calendar, String messageId)
+			{ return (CalendarEventEdit) super.editResource(calendar, messageId); }
+
+		public void commitEvent(Calendar calendar, CalendarEventEdit edit)
+			{ super.commitResource(calendar, edit); }
+
+		public void cancelEvent(Calendar calendar, CalendarEventEdit edit)
+			{ super.cancelResource(calendar, edit); }
+
+		public void removeEvent(Calendar calendar, CalendarEventEdit edit)
+			{ super.removeResource(calendar, edit); }
+		
+		public Entity readContainerTest(String xml) {
+			return readContainer(xml);
+		}
+		public Entity readResourceTest(Entity container, String xml) {
+			return readResource(container, xml);
+		}
+
+	}   // DbStorage
+}	// DbCachedCalendarService

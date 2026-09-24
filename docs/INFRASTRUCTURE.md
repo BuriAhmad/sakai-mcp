@@ -48,7 +48,7 @@ Reserved-but-uncreated address ranges are `10.42.3.0/24` (future MCP/Container A
 ## Application layout and operations
 
 - Java: Eclipse Temurin 17.0.15+6 at `/opt/temurin17` (the Sakai 25 QA-tested runtime); Maven: 3.9.16; Tomcat: upstream 9.0.121 at `/opt/tomcat`.
-- Sakai source: `/opt/sakai-src`, tag `25.2`, commit `b5b7800f0fcddf9d0db47276a66065189365d905`.
+- Sakai source: tracked locally at `apps/sakai/` from tag `25.2`, commit `b5b7800f0fcddf9d0db47276a66065189365d905`. The current VM deployment copy is `/opt/sakai-src` at the same upstream commit; custom source is not deployed yet.
 - Runtime properties: `/opt/tomcat/sakai/local.properties`, owner `tomcat:tomcat`, mode `0640`; passwords are not committed.
 - Tomcat service: `/etc/systemd/system/tomcat.service`, enabled for boot recovery. It uses the required Java module-open options for Sakai/Ignite; `auto.ddl=false` and the one-time `-Dsakai.demo=true` flag has been removed after the completed demo seed.
 - Nginx is the only public application listener. It forwards to `127.0.0.1:8080`, sets forwarded HTTPS headers, and uses `client_max_body_size 25M`.

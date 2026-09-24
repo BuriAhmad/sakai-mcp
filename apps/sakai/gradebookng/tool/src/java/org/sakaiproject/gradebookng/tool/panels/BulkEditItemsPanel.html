@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+
+<body>
+	<wicket:panel>
+
+		<form class="form-vertical" wicket:id="form">
+
+			<table class="table table-striped table-bordered table-hover" style="width: auto;">
+				<thead>
+					<tr>
+						<th class="col-md-4"><wicket:message key="bulkedit.column.header.gradebookitem" /></th>
+						<th class="col-md-1"><wicket:message key="bulkedit.column.header.release" />
+							<div>
+								<input type="checkbox" id="releaseToggleAll" onchange="releaseToggleCheckboxes();" wicket:message="aria-label:label.addgradeitem.release.toggle.all" />
+								<label for="releaseToggleAll" wicket:id="releaseToggleAllLabel" class="fs-6 text-secondary">Toggle All</label>
+							</div>
+						</th>
+						<th class="col-md-1"><wicket:message key="bulkedit.column.header.include" />
+							<div>
+								<input type="checkbox" id="includeToggleAll" onchange="includeToggleCheckboxes();" wicket:message="aria-label:label.addgradeitem.include.toggle.all" />
+								<label for="includeToggleAll" wicket:id="includeToggleAllLabel" class="fs-6 text-secondary">Toggle All</label>
+							</div>
+						</th>
+						<th class="col-md-1"><wicket:message key="bulkedit.column.header.delete" />
+							<div>
+								<input type="checkbox" id="deleteToggleAll" onchange="deleteToggleCheckboxes();" wicket:message="aria-label:label.addgradeitem.delete.toggle.all" />
+								<label for="deleteToggleAll" wicket:id="deleteToggleAllLabel" class="fs-6 text-secondary">Toggle All</label>
+							</div>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr wicket:id="listView">
+						<td><span wicket:id="itemTitle" class="itemTitle" >item title</span></td>
+						<td><input wicket:id="release" type="checkbox" class="release" wicket:message="aria-label:label.addgradeitem.release" /></td>
+						<td><input wicket:id="include" type="checkbox" class="include" wicket:message="aria-label:label.addgradeitem.include"  /></td>
+						<td><input wicket:id="delete" type="checkbox" class="deleteBox" wicket:message="aria-label:label.addgradeitem.delete" onclick="disableAndStrikeoutOneRow(this);"/></td>
+					</tr>
+				</tbody>
+			</table>
+			
+				
+			<div class="act">
+				<button id="gb-bulk-edit-fake-submit" class="active"><wicket:message key="button.savechanges" /></button>
+				<button id="gb-bulk-edit-real-submit" type="submit" wicket:id="submit" class="d-none active"><wicket:message key="button.savechanges" /></button>
+				<button type="submit" wicket:id="cancel" class="btn-link"><wicket:message key="button.cancel" /></button>
+			</div>
+
+		</form>
+
+		<script id="bulkEditConfirmationModalTemplate" type="text/template">
+			<div class="modal gb-bulk-edit-confirmation">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h3 class="modal-title"><wicket:message key="bulkedit.confirmation.title" /></h3>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="sak-banner-warn"><wicket:message key="bulkedit.confirmation.warning" /></div>
+						</div>
+						<div class="modal-footer act">
+							<button type="button" class="btn btn-primary gb-bulk-edit-continue" data-bs-dismiss="modal"><wicket:message key="bulkedit.confirmation.continue" /></button>
+							<button type="button" class="btn btn-secondary gb-bulk-edit-cancel" data-bs-dismiss="modal"><wicket:message key="bulkedit.confirmation.cancel" /></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+	</wicket:panel>
+</body>
+</html>

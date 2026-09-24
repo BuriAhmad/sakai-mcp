@@ -1,0 +1,14 @@
+##
+## the Page part of the standard view, with page navigation
+##
+<!-- START VM includePageWithNav.vm -->
+#* TODO: decide - Trinity chopping block
+    <div id="pageBody" class="d-flex">
+*#    
+        #parse("/vm/morpheus/includeSiteNav.vm")
+#*
+        #parse("/vm/morpheus/includeSiteHierarchy.vm")
+*#
+        #parse("/vm/morpheus/includePage.vm")
+    
+<!-- END VM includePageWithNav.vm -->

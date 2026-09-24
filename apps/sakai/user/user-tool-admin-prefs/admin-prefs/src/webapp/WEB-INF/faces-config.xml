@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+        	        http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd"
+			  version="2.3">
+
+	<navigation-rule>
+		<from-view-id>/prefs/edit.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>list</from-outcome>
+			<to-view-id>/prefs/list.jsp</to-view-id>
+			<redirect/>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/prefs/list.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>edit</from-outcome>
+			<to-view-id>/prefs/edit.jsp</to-view-id>
+			<redirect/>
+		</navigation-case>
+	</navigation-rule>
+
+	<managed-bean>
+		<description>
+			The Tool controller bean for the Admin Prefs Tool
+		</description>
+		<managed-bean-name>AdminPrefsTool</managed-bean-name>
+		<managed-bean-class>org.sakaiproject.user.tool.AdminPrefsTool</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<description>API Dependency: session manager</description>
+			<property-name>sessionManager</property-name>
+			<value>#{Components["org.sakaiproject.tool.api.SessionManager"]}</value>
+		</managed-property>
+		<managed-property>
+			<description>API Dependency: preferences service</description>
+			<property-name>preferencesService</property-name>
+			<value>#{Components["org.sakaiproject.user.api.PreferencesService"]}</value>
+		</managed-property>
+	</managed-bean>
+
+</faces-config>

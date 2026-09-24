@@ -42,7 +42,7 @@ jobs:
       - name: Check whitespace
         shell: bash
         run: |
-          if git grep -nI -E '[[:blank:]]+$'; then
+          if git grep -nI -E '[[:blank:]]+$' -- . ':(exclude)apps/sakai/**'; then
             echo 'Tracked files contain trailing whitespace.' >&2
             exit 1
           fi
@@ -54,7 +54,7 @@ jobs:
             echo 'deployment/.env must never be tracked.' >&2
             exit 1
           fi
-          if git grep -n -E 'BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'; then
+          if git grep -n -E '^-----BEGIN (RSA|OPENSSH|EC) PRIVATE KEY-----'; then
             echo 'A private key appears to be tracked.' >&2
             exit 1
           fi

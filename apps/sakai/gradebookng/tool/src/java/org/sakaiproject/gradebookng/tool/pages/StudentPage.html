@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+
+<body>
+<wicket:extend>
+  
+	<div class="row">
+		<div class="col-sm-12">
+			<h2 wicket:id="heading">Grade Report for Tony Stark</h2>
+			<button type="button" class="btn btn-link btn-xs gb-summary-print pull-right"><wicket:message key="button.print" /></button>
+		</div>
+	</div>
+
+	<div wicket:id="summary" id="studentGradeSummary"></div>
+
+	<script>
+		$(document).ready(function() {
+			new GradebookGradeSummary($("#studentGradeSummary"));
+		});
+	</script>
+	<script id="chartStudentsGradeMessage" type="text/template">
+		<wicket:message key="chart.students.grade.message"/>
+	</script>
+	<script id="chartYourGradeMessage" type="text/template">
+		<wicket:message key="chart.yourgrade.message"/>
+	</script>
+
+</wicket:extend>
+</body>
+</html>

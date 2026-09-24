@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+        http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd"
+              version="2.3">
+
+  <application>
+    <message-bundle>UserAuditMessages</message-bundle>
+    <locale-config>
+      <default-locale>en</default-locale>
+    </locale-config>
+  </application>
+  
+  <managed-bean>
+    <managed-bean-name>eventLog</managed-bean-name>
+    <managed-bean-class>org.sakaiproject.userauditservice.tool.UserAuditEventLog</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  
+  <navigation-rule>
+    <from-view-id>/eventLog.jsp</from-view-id>
+  </navigation-rule>
+</faces-config>

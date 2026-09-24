@@ -1,0 +1,124 @@
+/**
+ * Copyright (c) 2010-2017 The Apereo Foundation
+ *
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *             http://opensource.org/licenses/ecl2
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+* Licensed to The Apereo Foundation under one or more contributor license
+* agreements. See the NOTICE file distributed with this work for
+* additional information regarding copyright ownership.
+*
+* The Apereo Foundation licenses this file to you under the Educational
+* Community License, Version 2.0 (the "License"); you may not use this file
+* except in compliance with the License. You may obtain a copy of the
+* License at:
+*
+* http://opensource.org/licenses/ecl2.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+package org.sakaiproject.roster.tool;
+
+import java.io.IOException;
+import java.util.Locale;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import org.sakaiproject.portal.util.PortalUtils;
+import org.sakaiproject.roster.api.SakaiProxy;
+import org.sakaiproject.util.api.LocaleService;
+
+/**
+ * <code>RosterTool</code> performs basic checks and outputs a prebuilt startup
+ * page.
+ * 
+ * @author Daniel Robinson (d.b.robinson@lancaster.ac.uk)
+ * @author Adrian Fish (a.fish@lancaster.ac.uk)
+ */
+@Slf4j
+public class RosterTool extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
+
+	private SakaiProxy sakaiProxy;
+    private LocaleService localeService;
+
+    public void init(ServletConfig config) throws ServletException {
+
+        super.init(config);
+
+        try {
+            ApplicationContext context
+                = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+            sakaiProxy = (SakaiProxy) context.getBean("org.sakaiproject.roster.api.SakaiProxy");
+            localeService = (LocaleService) context.getBean("org.sakaiproject.util.api.LocaleService");
+        } catch (Throwable t) {
+            throw new ServletException("Failed to initialise RosterTool servlet.", t);
+        }
+    }
+
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+
+		String userId = sakaiProxy.getCurrentUserId();
+
+        Locale locale = localeService.getLocaleForCurrentSiteAndUser();
+
+        String language = locale.getLanguage();
+
+        String country = locale.getCountry();
+            
+        if (country != null && !country.equals("")) {
+            language += "_" + country;
+        }
+
+		request.setAttribute("sakaiHtmlHead", (String) request.getAttribute("sakai.html.head"));
+		request.setAttribute("userId", userId);
+		request.setAttribute("state", sakaiProxy.getDefaultRosterStateString());
+		request.setAttribute("siteId", sakaiProxy.getCurrentSiteId());
+        request.setAttribute("language", language);
+		request.setAttribute("defaultSortColumn", sakaiProxy.getDefaultSortColumn());
+        request.setAttribute("defaultOverviewMode", sakaiProxy.getDefaultOverviewMode());
+        request.setAttribute("firstNameLastName", sakaiProxy.getFirstNameLastName());
+		request.setAttribute("hideSingleGroupFilter", sakaiProxy.getHideSingleGroupFilter());
+        request.setAttribute("viewUserDisplayId", sakaiProxy.getViewUserDisplayId());
+        request.setAttribute("viewUserProperty", sakaiProxy.getViewUserProperty());
+        request.setAttribute("viewCandidateDetails", sakaiProxy.getViewCandidateDetails());
+        request.setAttribute("viewPronouns", sakaiProxy.getViewPronouns());
+        request.setAttribute("viewUserNamePronunciation", sakaiProxy.getViewUserNamePronunciation());
+        request.setAttribute("viewProfileLink", sakaiProxy.getViewProfileLink());
+        request.setAttribute("officialPicturesByDefault", sakaiProxy.getOfficialPicturesByDefault());
+        request.setAttribute("viewEmail", sakaiProxy.getViewEmail());
+		request.setAttribute("showPermsToMaintainers", sakaiProxy.showPermsToMaintainers());
+		request.setAttribute("siteMaintainer", sakaiProxy.isSiteMaintainer(sakaiProxy.getCurrentSiteId()));
+        request.setAttribute("showVisits", sakaiProxy.getShowVisits());
+        request.setAttribute("profileNamePronunciationLink", sakaiProxy.getProfileToolLink(null, sakaiProxy.getCurrentSiteId()));
+        request.setAttribute("portalCDNQuery", PortalUtils.getCDNQuery());
+
+        response.setContentType("text/html");
+        request.getRequestDispatcher("/WEB-INF/bootstrap.jsp").include(request, response);
+	}
+}

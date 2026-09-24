@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<script th:fragment="wizardJs" th:inline="javascript">
+  /*<![CDATA[*/
+  var groupManager = groupManager || {};
+
+  groupManager.previousWizardStep = step => {
+
+    const wizardAction = document.getElementById("wizardAction");
+    if (wizardAction) {
+      wizardAction.value = step;
+      document.querySelector(".autogroups-wizard-form").submit();
+    }
+  };
+
+  /*]]>*/
+</script>
+<script th:fragment="importJs" th:inline="javascript">
+    /*<![CDATA[*/
+    // Button spinners
+    const bulkCreateButton = document.getElementById("bulk-creation-submit-button");
+    bulkCreateButton && bulkCreateButton.addEventListener("click", e => {
+        SPNR.disableControlsAndSpin(bulkCreateButton, null);
+    });
+    const bulkCreateCancelButton = document.getElementById("bulk-creation-cancel-button");
+    bulkCreateCancelButton && bulkCreateCancelButton.addEventListener("click", e => {
+        SPNR.disableControlsAndSpin(bulkCreateCancelButton, null);
+        window.location.href = bulkCreateCancelButton.getAttribute('data-url');
+    });
+    /*]]>*/
+</script>
+<script th:fragment="importConfirmJs" th:inline="javascript">
+    /*<![CDATA[*/
+    // Button spinners
+    const bulkCreateButton = document.getElementById("bulk-creation-submit-button");
+    bulkCreateButton && bulkCreateButton.addEventListener("click", e => {
+        SPNR.disableControlsAndSpin(bulkCreateButton, null);
+    });
+    document.querySelectorAll("#bulk-creation-back-button, #bulk-creation-cancel-button").forEach(el => {
+        el.addEventListener("click", () => {
+            SPNR.disableControlsAndSpin(el, null);
+            window.location.href = el.getAttribute('data-url');
+        });
+    });
+    /*]]>*/
+</script>
+<script th:fragment="indexJs" th:inline="javascript">
+  /*<![CDATA[*/
+  var groupManager = groupManager || {};
+
+  groupManager.checkSubmitButton = () => {
+
+    const anyCheckboxEnabled = 
+      document.querySelectorAll(".group-manager-delete-checkbox:checked").length > 0;
+
+    const submitButton = document.getElementById("delete-groups-submit-button");
+    submitButton && (submitButton.disabled = !anyCheckboxEnabled);
+  };
+
+  groupManager.showOrHideConfirmationDialog = action => {
+
+    const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById("confirmation-modal"));
+    action === "show" ? modal.show() : modal.hide();
+  };
+
+  const gmCancelButton = document.getElementById("delete-groups-cancel-button");
+  gmCancelButton && gmCancelButton.addEventListener("click", e => {
+
+    e.preventDefault();
+    SPNR.disableControlsAndSpin(gmCancelButton, null);
+    window.location = window.location.href.replace("/sakai-site-group-manager.helper", "");
+  });
+
+  const gmSelectAllCheckbox = document.getElementById("group-manager-index-select-all");
+  gmSelectAllCheckbox && gmSelectAllCheckbox.addEventListener("click", e => {
+
+    document.querySelectorAll(".group-manager-delete-checkbox")
+      .forEach(box => box.checked = e.target.checked);
+    const submitButton = document.getElementById("delete-groups-submit-button");
+    submitButton && (submitButton.disabled = !e.target.checked);
+  });
+
+  document.querySelectorAll(".group-manager-delete-checkbox").forEach(box => {
+
+      box.addEventListener("click", e => {
+        if (!e.target.checked) gmSelectAllCheckbox.checked = false;
+      });
+  });
+
+  const gmForm = document.getElementById("group-manager-form");
+  gmForm?.addEventListener("submit", e => {
+
+    e.preventDefault();
+    groupManager.showOrHideConfirmationDialog("show");
+    const deletedGroupsList = document.getElementById("deleted-groups-list");
+    deletedGroupsList.innerHTML = "";
+    document.querySelectorAll(".group-manager-delete-checkbox:checked")
+      .forEach(box => deletedGroupsList.innerHTML += `<li>${box.getAttribute("groupinfo")}</li>`);
+  });
+
+  const gmConfirm = document.getElementById("modal-btn-confirm");
+  gmConfirm && gmConfirm.addEventListener("click", () => {
+
+    gmForm && gmForm.submit();
+    groupManager.showOrHideConfirmationDialog("hide");
+  });
+
+  const cancel = document.getElementById("modal-btn-cancel");
+  cancel && cancel.addEventListener("click", () => {
+    groupManager.showOrHideConfirmationDialog("hide");
+  });
+
+  /*]]>*/
+</script>
+
+<script th:fragment="joinableSetJs" th:inline="javascript">
+  /*<![CDATA[*/
+    //Disable the submit button
+    const submitButton = document.getElementById("create-joinableset-submit-button");
+    submitButton && (submitButton.disabled = true);
+
+    const groupTitle = document.getElementById("groupTitle");
+    const groupNumber = document.getElementById("groupNumber");
+    const isGroupMemberRequired = groupNumber.dataset.required === 'true';
+    const groupMaxMembers = document.getElementById("groupMaxMembers");
+    const joinableOpenDate = document.getElementById("joinableOpenDate");
+    const joinableCloseDate = document.getElementById("joinableCloseDate");
+    const setReminder = document.getElementById("setReminder");
+    const setReminderLbl = document.getElementById("setReminderLbl");
+
+    // Immediately invoked function
+    (function() {
+      setReminder.disabled = !joinableCloseDate.value;
+    })();
+
+    joinableCloseDate.addEventListener("blur", e => {
+      if (joinableCloseDate.validity.badInput) {
+        setReminder.disabled = true;
+        setReminderLbl.classList.add("disabled");
+      } else {
+        setReminder.disabled = false;
+        setReminderLbl.classList.remove("disabled");
+      }
+    });
+
+    //Enable or disable the submit button depending on the required fields
+    [groupTitle, groupNumber, groupMaxMembers, joinableOpenDate, joinableCloseDate].forEach(field => {
+
+      field.addEventListener("keyup", () => {
+
+        document.querySelectorAll('#createnewjoinableset-form input[type="submit"]').forEach(submit => {
+            submit.disabled = !groupTitle.value || (isGroupMemberRequired && groupNumber.value <= 0) ||
+              groupMaxMembers.value <= 0 || joinableOpenDate.validity.badInput || joinableCloseDate.validity.badInput;
+        });
+      });
+    });
+
+    // Button spinners
+    document.querySelectorAll("#create-joinableset-submit-button, #save-joinableset-submit-button").forEach(el => {
+        el.addEventListener("click", () => {
+            SPNR.disableControlsAndSpin(el, null);
+        });
+    });
+    const joinableSetCancelButton = document.getElementById("create-joinableset-cancel-button");
+    joinableSetCancelButton && joinableSetCancelButton.addEventListener("click", e => {
+        SPNR.disableControlsAndSpin(joinableSetCancelButton, null);
+        window.location.href = joinableSetCancelButton.getAttribute('data-url');
+    });
+
+  var confirmationModal = function (callback) {
+
+    const showOrHideConfirmationDialog = action => {
+
+      const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById("confirmation-modal"));
+      action === "show" ? modal.show() : modal.hide();
+    };
+
+    const deleteButton = document.getElementById("delete-joinableset-submit-button");
+    deleteButton && deleteButton.addEventListener("click", e => {
+
+      e.preventDefault();
+      showOrHideConfirmationDialog("show");
+    });
+
+    const confirmButton = document.getElementById("modal-btn-confirm");
+    confirmButton && confirmButton.addEventListener("click", () => {
+
+      showOrHideConfirmationDialog("hide");
+      window.location.replace(deleteButton.getAttribute("href"));
+    });
+
+    const cancelButton = document.getElementById("modal-btn-cancel");
+    cancelButton && cancelButton.addEventListener("click", () => {
+
+      callback(false);
+      showOrHideConfirmationDialog("hide");
+   });
+  };
+
+  confirmationModal(function (confirm) {
+    if (confirm) {
+      document.getElementById('group-manager-form').submit();
+    }
+  });
+/*]]>*/
+</script>
+
+<script th:fragment="groupJs" th:inline="javascript">
+  /*<![CDATA[*/
+  // Load the select2 library
+  includeLatestJQuery('sakai-site-group-manager');
+  includeWebjarLibrary('select2');
+
+  const groupTitle = document.getElementById("groupTitle");
+
+  //Disable or enable the submit depending on the group title value.
+  const submitButton = document.getElementById("create-group-submit-button");
+  submitButton && (submitButton.disabled = !groupTitle?.value);
+
+  //Enable or disable the submit button depending on the required fields
+  groupTitle?.addEventListener("keyup", e => submitButton && (submitButton.disabled = !e.target.value));
+
+  document.querySelectorAll("#groupMembershipFilter, #groupJoinableShowAllUsers")
+    .forEach(el => {
+
+      el.addEventListener("change", e => {
+
+        const gmJoinableShowAllUsersCheckbox = document.getElementById("groupJoinableShowAllUsers");
+        const groupParams = {
+          filterByGroupId: e.target.value,
+          groupId: document.getElementById("groupId")?.value,
+          currentTitle: groupTitle?.value,
+          currentDescription: document.getElementById("groupDescription")?.value,
+          currentShowAllUsers: gmJoinableShowAllUsersCheckbox?.checked ? true : false,
+        };
+        window.location = `group?${new URLSearchParams(groupParams)}`;
+      })
+    });
+
+  const groupJoinableSet = document.getElementById("groupJoinableSet");
+  const joinableOptionsDiv = document.getElementById("joinableOptionsDiv");
+  if (!groupJoinableSet?.value) {
+    joinableOptionsDiv && (joinableOptionsDiv.style.display = "none");
+  }
+
+  groupJoinableSet && groupJoinableSet.addEventListener("change", e => {
+    if (joinableOptionsDiv) {
+      joinableOptionsDiv.style.display = e.target.value === "" ? "none" : "block";
+    }
+  });
+
+  //Initialize the select2 component after jQuery is available (portal loads it post-parse)
+  document.addEventListener('DOMContentLoaded', () => {
+    var searchPlaceHolderText = /*[[#{groups.multiselect.search}]]*/;
+    jQuery('#groupMembers').select2({
+      placeholder: searchPlaceHolderText,
+      allowClear: true,
+      closeOnSelect: false,
+      width: '100%'
+    });
+  });
+
+  // Button spinners
+  document.querySelectorAll("#create-group-submit-button, #save-group-submit-button").forEach(el => {
+      el.addEventListener("click", () => {
+          SPNR.disableControlsAndSpin(el, null);
+      });
+  });
+  const cancelGroupButton = document.getElementById("create-group-cancel-button");
+  cancelGroupButton && cancelGroupButton.addEventListener("click", e => {
+      SPNR.disableControlsAndSpin(cancelGroupButton, null);
+      window.location.href = cancelGroupButton.getAttribute('data-url');
+  });
+  /*]]>*/
+</script>
+
+<script th:fragment="autoGroupsStep1Js" th:inline="javascript">
+  /*<![CDATA[*/
+  const allRolesCheckbox = document.getElementById("group-manager-select-all-roles");
+  allRolesCheckbox && allRolesCheckbox.addEventListener("click", e => {
+
+    document.querySelectorAll(".group-manager-role-checkbox")
+      .forEach(box => box.checked = e.target.checked);
+  });
+
+  const autoGroupsContinueButton = document.getElementById("autogroups-continue-button");
+  autoGroupsContinueButton && autoGroupsContinueButton.addEventListener("click", e => {
+    SPNR.disableControlsAndSpin(autoGroupsContinueButton, null);
+  });
+  const autoGroupsCancelButton = document.getElementById("autogroups-cancel-button");
+  autoGroupsCancelButton && autoGroupsCancelButton.addEventListener("click", e => {
+    SPNR.disableControlsAndSpin(autoGroupsCancelButton, null);
+    window.location.href = autoGroupsCancelButton.getAttribute('data-url');
+  });
+  /*]]>*/
+</script>
+
+<script th:fragment="autoGroupsStep2Js" th:inline="javascript">
+  /*<![CDATA[*/
+  const selectSectionDiv = document.getElementById("selectSectionDiv");
+  const useSectionsRadio = document.getElementById("sectionOptionUseSections");
+  useSectionsRadio && useSectionsRadio.addEventListener("change", e => {
+    selectSectionDiv && (selectSectionDiv.style.display = "block");
+  });
+
+  const dontUse = document.getElementById("sectionOptionDontUseSections");
+  dontUse && dontUse.addEventListener("change", e => {
+    selectSectionDiv && (selectSectionDiv.style.display = "none");
+  });
+
+  const allSectionsRadio = document.getElementById("group-manager-select-all-sections");
+  allSectionsRadio && allSectionsRadio.addEventListener("click", e => {
+
+    document.querySelectorAll(".group-manager-step2-checkbox")
+      .forEach(box => box.checked = e.target.checked);
+  });
+
+  const backButton = document.getElementById("autogroups-back-button");
+  backButton && backButton.addEventListener("click", () => {
+    SPNR.disableControlsAndSpin(backButton, null);
+    document.getElementById("wizardAction").value = "back";
+    document.getElementById("autogroups-wizard-step2-form").submit();
+  });
+
+  // Button spinners
+  const autoGroupsContinueButton = document.getElementById("autogroups-continue-button");
+  autoGroupsContinueButton && autoGroupsContinueButton.addEventListener("click", e => {
+    SPNR.disableControlsAndSpin(autoGroupsContinueButton, null);
+  });
+  const autoGroupsCancelButton = document.getElementById("autogroups-cancel-button");
+  autoGroupsCancelButton && autoGroupsCancelButton.addEventListener("click", e => {
+    SPNR.disableControlsAndSpin(autoGroupsCancelButton, null);
+    window.location.href = autoGroupsCancelButton.getAttribute('data-url');
+  });
+  /*]]>*/
+</script>
+
+<script th:fragment="autoGroupsStep3Js" th:inline="javascript">
+  /*<![CDATA[*/
+  const options = document.getElementById("mixtureStructureOptions");
+  document.getElementById("mixtureConfiguration")?.addEventListener("change", () => {
+    options && (options.style.display = "block");
+  });
+  document.getElementById("pureConfiguration")?.addEventListener("click", e => {
+    options && (options.style.display = e.target.checked ? "none" : "block");
+  });
+
+  const splitByGroups = document.getElementById("splitByGroups");
+  const splitByGroupsOptions = document.getElementById("splitByGroupsOptions");
+  const splitByUsers = document.getElementById("splitByUsers");
+  const splitByUsersOptions = document.getElementById("splitByUsersOptions");
+  const groupSelectedClass = 'optGroupSelectSelected';
+  const byUser = document.getElementById("splitByUser");
+  byUser && byUser.addEventListener("change", () => {
+
+    splitByGroups && splitByGroups.classList.remove(groupSelectedClass);
+    splitByUsers && splitByUsers.classList.add(groupSelectedClass);
+    splitByGroupsOptions && (splitByGroupsOptions.style.display = "none");
+    splitByUsersOptions && (splitByUsersOptions.style.display = "block");
+  });
+
+  const byGroup = document.getElementById("splitByGroup");
+  byGroup && byGroup.addEventListener("change", () => {
+
+    splitByUsers && splitByUsers.classList.remove(groupSelectedClass);
+    splitByGroups && splitByGroups.classList.add(groupSelectedClass);
+    splitByUsersOptions && (splitByUsersOptions.style.display = "none");
+    splitByGroupsOptions && (splitByGroupsOptions.style.display = "block");
+  });
+
+  const backButton = document.getElementById("autogroups-back-button");
+  backButton && backButton.addEventListener("click", () => {
+    SPNR.disableControlsAndSpin(backButton, null);
+    document.getElementById('wizardAction').value = "back";
+    document.getElementById("autogroups-wizard-step3-form").submit();
+  });
+
+  // Button spinners
+  const autoGroupsContinueButton = document.getElementById("autogroups-continue-button");
+  autoGroupsContinueButton && autoGroupsContinueButton.addEventListener("click", e => {
+    SPNR.disableControlsAndSpin(autoGroupsContinueButton, null);
+  });
+  const autoGroupsCancelButton = document.getElementById("autogroups-cancel-button");
+  autoGroupsCancelButton && autoGroupsCancelButton.addEventListener("click", e => {
+    SPNR.disableControlsAndSpin(autoGroupsCancelButton, null);
+    window.location.href = autoGroupsCancelButton.getAttribute('data-url');
+  });
+  /*]]>*/
+</script>
+
+<script th:fragment="autoGroupsStep4Js" th:inline="javascript">
+  /*<![CDATA[*/
+  document.querySelectorAll("#autogroups-back-button-top, #autogroups-back-button").forEach(el => {
+
+    el.addEventListener("click", () => {
+      SPNR.disableControlsAndSpin(el, null);
+      document.getElementById("wizardAction").value = "back";
+      document.getElementById("autogroups-wizard-step4-form").submit();
+    });
+  });
+
+  // Button spinners
+  document.querySelectorAll("#autogroups-creategroups-button, #autogroups-creategroups-button-top").forEach(el => {
+    el.addEventListener("click", () => {
+      SPNR.disableControlsAndSpin(el, null);
+    });
+  });
+  document.querySelectorAll("#autogroups-cancel-button, #autogroups-cancel-button-top").forEach(el => {
+    el.addEventListener("click", () => {
+      SPNR.disableControlsAndSpin(el, null);
+      window.location.href = el.getAttribute('data-url');
+    });
+  });
+  /*]]>*/
+</script>
+
+</body>
+</html>

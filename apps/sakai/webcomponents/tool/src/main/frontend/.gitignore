@@ -1,0 +1,13 @@
+**/*.js
+!bundle-entry-points/*.js
+!packages/**/*.js
+
+## temp folders
+/.tmp/
+bundles
+/coverage/
+coverage/
+/storybook-static/
+/screenshots/.current/
+/screenshots/.diff/
+meta.json

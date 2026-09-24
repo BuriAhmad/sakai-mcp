@@ -1,0 +1,50 @@
+##<!-- $Header: /cvs/sakai2/legacy/tools/src/webapp/vm/sitesetup/chef_site-siteInfo-importSelection.vm,v 1.0 2007/10/29 08:00:00 tnguyen.iupui.edu Exp $ -->
+<div class="portletBody">
+	#if($menu)#toolbar($menu)#end
+	##header for import from site page
+	<div class="page-header">
+		<h1>$tlang.getString("java.import")</h1>
+	</div>
+
+	#if ($alertMessage)
+		<div class="sak-banner-error">$tlang.getString("sitinfimp.alert") $alertMessage</div>
+	#end
+	<form name="importSelectionForm" action="#toolForm("$action")" method="post">
+		## import is possible when use has maintain rights on at least one site other than the current one
+		#if ($!sites && $sites.size()>1)
+			<p class="instruction">
+				$tlang.getString("sitinfimp.selection")
+			</p>
+			<br>
+			<ul>
+				<li>
+					<a href="#toolLink("SiteAction" "doMenu_siteInfo_import")" class="siteimport-method-link" title ="$tlang.getString('sitinfimp.import')">
+						$tlang.getString("sitinfimp.import")
+					</a>
+					<p class="siteimport-method-info">$tlang.getString("sitinfimp.import.info")</p>
+				</li>
+				<li>
+					<a href="#toolLink("SiteAction" "doMenu_siteInfo_importMigrate")" class="siteimport-method-link" title ="$tlang.getString('sitinfimp.migrate')">
+						$tlang.getString("sitinfimp.migrate")
+					</a>
+					<p class="siteimport-method-info">$tlang.getString("sitinfimp.migrate.info")</p>
+				</li>
+				<li>
+					<a href="#toolLink("SiteAction" "doMenu_siteInfo_import_user")" class="siteimport-method-link" title ="$tlang.getString('sitinfimp.import.user')">
+						$tlang.getString("sitinfimp.import.user")
+					</a>
+					<p class="siteimport-method-info">$tlang.getString("sitinfimp.import.user.info")</p>
+				</li>
+			</ul>
+		#else
+			## show "no site available warning"
+			<p class="instruction">
+				$tlang.getString("import.noOtherSite")
+			</p>
+			<p class="act">
+				<input type="submit" accesskey="x" name="eventSubmit_doCancel" value="$tlang.getString("sitinfimp.can")" onclick="SPNR.disableControlsAndSpin( this, null );" />
+			</p>
+		#end
+		<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
+	</form>
+</div>
