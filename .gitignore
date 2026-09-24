@@ -5,8 +5,5 @@ deployment/ssh-config
 deployment/artifacts/
 *.log
 
-# Sakai is a large, independent upstream Git repository. Keep its clone local.
-source/sakai/
-
 # OS/editor files
 .DS_Store

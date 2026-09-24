@@ -23,7 +23,6 @@ Useful commands:
 ./sakai shell                          # open a VM terminal
 ./sakai shell 'cd /opt/sakai-src && git status'
 ./sakai copy ./file.txt /tmp/file.txt
-./sakai source                         # clone Sakai 25.2 locally
 ./sakai stop                           # stop compute when finished
 ```
 
@@ -35,4 +34,4 @@ See [VM access](docs/VM_ACCESS.md) for the security model and troubleshooting, a
 - `scripts/` — guarded operational scripts
 - `docs/` — architecture, runbooks, and decisions
 - `services/` — project-owned application services (the future MCP belongs here)
-- `source/sakai/` — optional local upstream Sakai checkout, ignored by this repository
+- `sakai/` — planned tracked Sakai application source (not imported yet)

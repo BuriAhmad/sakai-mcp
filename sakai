@@ -14,7 +14,6 @@ Everyday commands:
   start                 Start the VM, database, and Sakai application
   stop                  Stop/deallocate the environment to control costs
   status                Show Azure and public application status
-  source                Clone the matching Sakai source locally
   open-ssh              Refresh the NSG rule without connecting
   help                  Show this help
 
@@ -22,7 +21,6 @@ Examples:
   ./sakai login
   ./sakai shell
   ./sakai shell 'cd /opt/sakai-src && git status'
-  ./sakai source
 EOF
 }
 
@@ -41,7 +39,6 @@ case "$command_name" in
   start) exec "$ROOT_DIR/scripts/start-env.sh" "$@" ;;
   stop) exec "$ROOT_DIR/scripts/stop-env.sh" "$@" ;;
   status) exec "$ROOT_DIR/scripts/status-env.sh" "$@" ;;
-  source) exec "$ROOT_DIR/scripts/clone-sakai-source.sh" "$@" ;;
   open-ssh) exec "$ROOT_DIR/scripts/open-ssh-access.sh" "$@" ;;
   help|-h|--help) usage ;;
   *)

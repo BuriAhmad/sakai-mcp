@@ -339,7 +339,7 @@ This is the chronological execution record for the Sakai 25.2 development sandbo
 
 ### Completed successfully
 
-- Added the root `./sakai` command for Azure login, VM shell, file copy, environment lifecycle, status, and local source checkout.
+- Added the root `./sakai` command for Azure login, VM shell, file copy, environment lifecycle, and status.
 - Replaced the brittle fixed-address SSH workflow with a guarded refresh of the existing NSG rule to the caller's current public IPv4 `/32`; SSH still requires the installed private key and password login remains disabled.
 - Verified the complete path from this Mac: refreshed the rule, started the deallocated VM, connected as `sakaiadmin`, ran a harmless hostname command, and deallocated the VM again.
 - Added a repository strategy for a separate local Sakai checkout and future project-owned MCP service.
@@ -348,4 +348,4 @@ This is the chronological execution record for the Sakai 25.2 development sandbo
 
 - **Sakai VM: DEALLOCATED.** The access test did not leave VM compute running.
 - SSH port 22 remains restricted to one administrator public IPv4 `/32`, not the internet.
-- The parent repository is prepared for its private `BuriAhmad/sakai-mcp` GitHub remote with validation CI. Sakai application source remains a separate future fork.
+- The repository has a private `BuriAhmad/sakai-mcp` GitHub remote with validation CI. Sakai application source is planned for this same repository.

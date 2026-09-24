@@ -7,37 +7,16 @@ Keep three concerns separate:
 | Concern | Source of truth | Location |
 | --- | --- | --- |
 | Azure infrastructure and operations | This `sakai-mcp` Git repository | Mac + its future Git remote |
-| Upstream/custom Sakai application | A separate Sakai Git repository or fork | `source/sakai/` locally; `/opt/sakai-src` is only a deployed checkout |
+| Upstream/custom Sakai application | This `sakai-mcp` Git repository | Planned `sakai/` directory; `/opt/sakai-src` is only a deployed checkout |
 | Runtime data and secrets | Azure MySQL/storage and ignored environment files | Azure + `deployment/.env` |
 
 The VM must not be the only place containing code changes. Edit locally, commit locally, push to a Git remote, and deploy a known commit. Avoid editing `/opt/sakai-src` directly except for emergency diagnosis; any emergency change should immediately be reproduced as a normal Git commit.
 
 ## Local Sakai source
 
-Run:
+The planned `sakai/` directory will contain the Sakai 25.2 source and project changes directly in this repository. Import the official source at the exact commit currently deployed on the VM, `b5b7800f0fcddf9d0db47276a66065189365d905`, after checking the source snapshot for size and generated files. Do not copy its nested `.git` directory into this repository.
 
-```bash
-./sakai source
-```
-
-This clones the official Sakai `25.2` repository into `source/sakai/` and creates a local `sakai-mcp/25.2` work branch. The directory is ignored by this infrastructure repository because Sakai has its own large Git history. A source checkout consumes local disk space only. It does **not** run Java, Tomcat, MySQL, containers, or Azure resources.
-
-For project modifications, create a Sakai fork and either set its URL on the first clone:
-
-```bash
-SAKAI_GIT_URL=git@github.com:YOUR_ACCOUNT/sakai.git ./sakai source
-```
-
-or configure the remotes afterward:
-
-```bash
-cd source/sakai
-git remote rename origin upstream
-git remote add origin git@github.com:YOUR_ACCOUNT/sakai.git
-git push -u origin sakai-mcp/25.2
-```
-
-The same project fork/commit should eventually be checked out by the build/deployment process on Azure.
+The `sakai/` import has not happened yet. Once it is tracked, edit it here, commit to this repository, and deploy a tested commit to Azure. A local source checkout consumes disk space only; it does **not** run Java, Tomcat, MySQL, containers, or Azure resources.
 
 ## What should run locally
 
@@ -52,7 +31,7 @@ Cloning source is cheap; running duplicate databases and application servers is 
 
 ## Future MCP service
 
-The MCP is project-owned code, so place it under `services/mcp/`, not inside the upstream Sakai checkout. A practical future layout is:
+The MCP is project-owned code, so place it under `services/mcp/`. The intended layout is:
 
 ```text
 sakai-mcp/
@@ -61,8 +40,7 @@ sakai-mcp/
 ├── scripts/             human-friendly operations
 ├── services/
 │   └── mcp/             future MCP source, tests, container file
-└── source/
-    └── sakai/           separate ignored Sakai Git checkout
+└── sakai/               tracked Sakai source and project changes
 ```
 
 When the MCP is implemented, add:
@@ -81,6 +59,6 @@ No Azure Container App exists yet. Choose its hosting model only after the MCP's
 
 The canonical infrastructure and future MCP repository is the private GitHub repository `BuriAhmad/sakai-mcp`. GitHub Actions validates shell syntax, runs ShellCheck, checks that local secrets remain untracked, and compiles the Bicep template.
 
-Use small branches and pull requests for infrastructure and application changes. Protect the main branch when more than one person contributes. Sakai application modifications still belong in a separate Sakai fork, not in this repository's history.
+Use small branches and pull requests for infrastructure and application changes. Protect the main branch when more than one person contributes. Sakai changes will be committed alongside the MCP and infrastructure in this repository.
 
 Do not commit private keys, `.env` files, generated credentials, database dumps, build outputs, or user-uploaded Sakai content.
