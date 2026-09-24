@@ -8,6 +8,7 @@ This procedure targets only `rg-sakai-mcp-dev/vm-sakai-dev`. A Git push runs che
 2. Wait for the repository and Sakai source GitHub checks to pass. CI validates the parent POM and compiles all Sakai modules; the release repeats the full Maven build on the VM. Both builds currently skip tests, so add and run focused tests for the modules you change before treating a feature as validated.
 3. Confirm the change needs no database migration or irreversible runtime change. This release route backs up Tomcat application files, **not MySQL data**. Handle schema changes with a separate migration and database recovery plan.
 4. Ensure Azure MySQL is `Ready`. If the environment is stopped, run `./sakai start` first. Allow plenty of time before the VM's 19:00 Pakistan-time auto-shutdown.
+5. Review the repository's [Dependabot alerts](https://github.com/BuriAhmad/sakai-mcp/security/dependabot) before any production use. Importing upstream Sakai brought a large existing dependency-alert backlog; this dev release workflow does not resolve it.
 
 From the repo root on a Mac:
 

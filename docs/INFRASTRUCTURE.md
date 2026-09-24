@@ -82,6 +82,10 @@ The public browser test verified login, workspace, Resources UI, and visibility 
 
 After the code-only baseline release was built and verified over public HTTPS, Tomcat was stopped cleanly and `vm-sakai-dev` was returned to **VM deallocated**. MySQL was **Ready** before and after the release work. The NSG SSH rule remained a single administrator `/32`; the GitHub check-only job restored that rule after using its temporary runner address. The release's rollback files remain on the VM. See the dated entry in `docs/DEPLOYMENT_STATUS.md` for what was exercised and what was not.
 
+## Latest verified state (2026-09-25)
+
+The full Sakai GitHub CI build, manual GitHub deployment, and manual desktop rollback were all exercised successfully. The GitHub deployment briefly selected commit `0bf7f762c563080f50274b029bc7cf64573d7419`; rollback restored the preceding `e0553fef88a0ca149be3a33f0cd026aec88e9f16` application files. Public HTTPS `/portal` returned 200 before and after rollback. Tomcat was then stopped cleanly and the VM was returned to **VM deallocated**. MySQL remains **Ready**. About 15 GiB of release and recovery files remain on the VM; check disk space before repeated releases. See `docs/DEPLOYMENT_STATUS.md` and `docs/SAKAI_RELEASES.md`.
+
 No credentials or generated secrets are stored in this repository; local deployment secrets are in ignored `deployment/.env` (mode 600).
 
 ## Provisioning blocker

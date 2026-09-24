@@ -366,3 +366,18 @@ This is the chronological execution record for the Sakai 25.2 development sandbo
 - Tomcat was stopped cleanly after verification and the VM returned to **deallocated**, its state before this release work. The Azure MySQL server remained **Ready** as it was at the start of this work.
 - The GitHub `deploy` mode and manual rollback command are implemented but have **not** been exercised end to end. The GitHub `check-only` mode and desktop full deploy were exercised. The release checks are a portal smoke test, not a full LMS functional regression suite.
 - Deploying schema changes requires a separate database migration/backup plan. See `docs/SAKAI_RELEASES.md`.
+
+## 2026-09-25 — Full CI, GitHub deployment, and manual rollback verification
+
+### Completed successfully
+
+- Expanded the Sakai GitHub check from parent-POM validation to a full 454-module Maven build (tests skipped). The first clean-runner build passed in about 18 minutes; repository checks passed too.
+- Started the manual GitHub Actions `deploy` mode for commit `0bf7f762c563080f50274b029bc7cf64573d7419`. Its environment-scoped OIDC login, dedicated SSH key, temporary runner `/32` rule, VM start, source transfer, Maven build, staged Tomcat switch, local portal check, public HTTPS check, and restoration of the prior administrator SSH `/32` all passed.
+- Verified release `20260924T190514Z-0bf7f762c563` was `healthy`, public HTTPS `/portal` returned 200, and its preceding application directories were saved as a 2.2 GiB rollback copy.
+- Ran `./sakai rollback 20260924T190514Z-0bf7f762c563`. It restored the preceding application directories, restarted Tomcat, waited for the portal, and exited successfully. The release is marked `rolled-back`; `/opt/sakai-releases/current` again points to `20260924T181142Z-e0553fef88a0`. Public HTTPS `/portal` returned 200 after rollback.
+
+### Current state
+
+- Tomcat was stopped cleanly and the VM returned to **deallocated**. MySQL remains **Ready**, matching its state before this release work. SSH remains restricted to the Mac administrator's single `/32`.
+- About 15 GiB of release source/build output and rollback evidence remains under `/opt/sakai-releases/`; the VM had about 34 GiB free after testing. Do not discard the current release or rollback evidence without a reviewed cleanup step.
+- The workflow provides build and portal smoke checks, not a full LMS feature regression suite or database migration/rollback. Focused tests are still required for future Sakai code changes.
