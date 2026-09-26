@@ -25,6 +25,7 @@ import org.sakaiproject.util.SakaiContextLoaderListener;
 import org.sakaiproject.util.ToolListener;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 public class WebAppConfiguration implements WebApplicationInitializer {
@@ -43,6 +44,11 @@ public class WebAppConfiguration implements WebApplicationInitializer {
                         EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE),
                         true,
                         "/*");
+
+        // RequestFilter establishes Sakai's outer request context first. The MCP
+        // adapter then replaces it with a short-lived, token-bound user context.
+        servletContext.addFilter("sakai.mcp.bearer", new DelegatingFilterProxy("mcpBearerFilter", rootContext))
+                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/mcp/v1/*");
 
         ServletRegistration.Dynamic servlet = servletContext.addServlet("sakai.webapi", new DispatcherServlet(rootContext));
         servlet.setAsyncSupported(true);

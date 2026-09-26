@@ -47,6 +47,9 @@ jobs:
             exit 1
           fi
 
+      - name: Check repository guidance
+        run: bash ./scripts/check-repo-context.sh
+
       - name: Reject tracked local secrets
         shell: bash
         run: |

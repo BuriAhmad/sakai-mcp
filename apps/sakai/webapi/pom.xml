@@ -26,6 +26,10 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.sakaiproject.common</groupId>
             <artifactId>sakai-common-api</artifactId>
         </dependency>
@@ -78,6 +82,11 @@
         <dependency>
             <groupId>org.sakaiproject.edu-services.course-management</groupId>
             <artifactId>coursemanagement-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.edu-services.sections</groupId>
+            <artifactId>sections-api</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.sakaiproject.announcement</groupId>

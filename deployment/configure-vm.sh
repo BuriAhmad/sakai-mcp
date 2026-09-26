@@ -77,7 +77,8 @@ EOF
 $SUDO chmod 0750 "$TOMCAT_HOME/bin/setenv.sh"
 $SUDO chown "$TOMCAT_USER:$TOMCAT_USER" "$TOMCAT_HOME/bin/setenv.sh"
 
-$SUDO sed -i 's/port="8080" protocol="HTTP\/1.1"/port="8080" protocol="HTTP\/1.1" URIEncoding="UTF-8"/' "$TOMCAT_HOME/conf/server.xml"
+"$(dirname "$0")/ensure-sakai-java-opens.sh"
+"$(dirname "$0")/configure-tomcat-proxy.sh"
 $SUDO tee /etc/systemd/system/tomcat.service >/dev/null <<'EOF'
 [Unit]
 Description=Apache Tomcat 9 serving Sakai

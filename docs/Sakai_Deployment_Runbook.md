@@ -949,6 +949,8 @@ Configure:
 - forwarding to the local Tomcat connector;
 - Sakai's `serverUrl`/`serverName` to match the externally visible address.
 
+For this Nginx-to-Tomcat deployment, run `deployment/configure-tomcat-proxy.sh` as part of VM configuration. It binds port 8080 to loopback and configures Tomcat's `RemoteIpValve` to honor Nginx's `X-Forwarded-Proto`. Verify that an authenticated Sakai form renders an `https://` action; a correct `serverUrl` alone does not establish the servlet request scheme.
+
 Externally expose normal HTTPS rather than public Tomcat port `8080`.
 
 
