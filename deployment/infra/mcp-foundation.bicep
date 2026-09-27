@@ -62,11 +62,18 @@ resource workspace 'Microsoft.OperationalInsights/workspaces@2025-07-01' = {
   }
 }
 
-resource environment 'Microsoft.App/managedEnvironments@2025-07-01' = {
+resource environment 'Microsoft.App/managedEnvironments@2026-03-02-preview' = {
   name: 'cae-mcp-sakai-dev'
   location: location
   tags: tags
   properties: {
+    environmentMode: 'WorkloadProfiles'
+    workloadProfiles: [
+      {
+        name: 'Consumption'
+        workloadProfileType: 'Consumption'
+      }
+    ]
     appLogsConfiguration: {
       destination: 'log-analytics'
       logAnalyticsConfiguration: {

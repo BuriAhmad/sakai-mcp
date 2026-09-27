@@ -2140,6 +2140,8 @@ A sandbox may initially use one warm replica for simpler debugging, but the fina
 
 Do not proceed to rich clients until basic OAuth challenge, token validation, Sakai connectivity, and all five tools work through a low-level test client or direct protocol harness.
 
+**2026-09-27: PASS for Phase 18.** The requested checkpoint and clean tree were confirmed, the selected subscription and live Sakai state were rechecked, and the fresh foundation what-if proposed seven creates and ten ignored existing resources. The foundation applied, and the certificate/private key were placed in its RBAC Key Vault without printing them. The exact-commit GitHub bootstrap path scanned and published an immutable image. The app what-if proposed one create and fifteen ignored resources. Its first apply failed because Azure had created the environment in Express mode and Express rejected Key Vault URL secret references. The foundation template now requests WorkloadProfiles/Consumption explicitly; the transition completed, and the Container App applied with a ready revision. Live `/live`, `/ready`, protected-resource metadata, unauthenticated Bearer challenge, authenticated initialization, and the exact five-tool catalog passed. The scheduled Sakai VM shutdown interrupted the first tool matrix; after restarting the VM and waiting for public `/portal` 200, low-level synthetic-user tests proved all five tools, student privileged-call denial, distinct user data, one permitted announcement create, and student visibility of that announcement. See [`evidence/mcp/phase-18-runtime.md`](evidence/mcp/phase-18-runtime.md). Phase 19 and Phase 20 have not begun.
+
 ---
 
 # 22. Phase 19 — Verify MCP OAuth discovery and protected-resource behavior
