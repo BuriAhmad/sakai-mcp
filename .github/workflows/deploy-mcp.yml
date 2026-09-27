@@ -8,12 +8,13 @@ on:
         required: true
         type: string
       mode:
-        description: 'Build and scan only, or deploy a new digest revision'
+        description: 'Build and scan, push a bootstrap image, or deploy a new digest revision'
         required: true
         default: check-only
         type: choice
         options:
           - check-only
+          - bootstrap
           - deploy
 
 permissions:
@@ -64,7 +65,7 @@ jobs:
             "sakai-mcp:$SOURCE_COMMIT" "$SOURCE_COMMIT"
 
       - name: Sign in to Azure with existing federated identity
-        if: inputs.mode == 'deploy'
+        if: inputs.mode == 'deploy' || inputs.mode == 'bootstrap'
         uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -77,3 +78,10 @@ jobs:
         env:
           SOURCE_COMMIT: ${{ inputs.commit }}
         run: deployment/release-mcp.sh "$SOURCE_COMMIT" "sakai-mcp:$SOURCE_COMMIT"
+
+      - name: Push scanned image for first app deployment
+        if: inputs.mode == 'bootstrap'
+        shell: bash
+        env:
+          SOURCE_COMMIT: ${{ inputs.commit }}
+        run: deployment/release-mcp.sh "$SOURCE_COMMIT" "sakai-mcp:$SOURCE_COMMIT" --push-only

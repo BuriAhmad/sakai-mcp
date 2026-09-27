@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-if [[ $# -ne 2 ]]; then
-  echo 'Usage: deployment/release-mcp.sh SOURCE_COMMIT SCANNED_LOCAL_IMAGE' >&2
+if [[ $# -lt 2 || $# -gt 3 || ( $# -eq 3 && "$3" != '--push-only' ) ]]; then
+  echo 'Usage: deployment/release-mcp.sh SOURCE_COMMIT SCANNED_LOCAL_IMAGE [--push-only]' >&2
   exit 2
 fi
 
 source_commit="$1"
 local_image="$2"
+push_only="${3:-}"
 [[ "$source_commit" =~ ^[0-9a-f]{40}$ ]] || { echo 'SOURCE_COMMIT must be a full lowercase Git SHA.' >&2; exit 2; }
 [[ -n "$local_image" ]] || { echo 'A locally built and scanned image tag is required.' >&2; exit 2; }
 command -v az >/dev/null || { echo 'Azure CLI is required.' >&2; exit 2; }
@@ -37,21 +38,23 @@ registry_count="$(az acr list --resource-group "$resource_group" --query 'length
 [[ "$registry_count" == 1 ]] || { echo 'Expected exactly one MCP ACR in the resource group.' >&2; exit 2; }
 registry_name="$(az acr list --resource-group "$resource_group" --query '[0].name' -o tsv)"
 registry_server="$(az acr show --resource-group "$resource_group" --name "$registry_name" --query loginServer -o tsv)"
-app_json="$(az containerapp show --resource-group "$resource_group" --name "$app_name" -o json 2>/dev/null)" || {
-  echo 'MCP Container App is absent. Complete the Phase 18 Bicep bootstrap before this revision release.' >&2
-  exit 2
-}
-previous_image="$(python3 -c 'import json,sys; a=json.load(sys.stdin); print(a["properties"]["template"]["containers"][0]["image"])' <<< "$app_json")"
-app_fqdn="$(python3 -c 'import json,sys; a=json.load(sys.stdin); print(a["properties"]["configuration"]["ingress"]["fqdn"])' <<< "$app_json")"
-configured_origin="$(python3 -c 'import json,sys; a=json.load(sys.stdin); e=a["properties"]["template"]["containers"][0]["env"]; print(next((v.get("value", "") for v in e if v.get("name")=="MCP_PUBLIC_URL"), ""))' <<< "$app_json")"
-[[ -n "$registry_server" && -n "$app_fqdn" && "$app_fqdn" != None ]] || {
-  echo 'MCP registry or HTTPS ingress is incomplete.' >&2
-  exit 2
-}
-[[ "$configured_origin" == "https://${app_fqdn}" ]] || {
-  echo 'Container App public URL does not match its verified ingress FQDN.' >&2
-  exit 2
-}
+if [[ "$push_only" != '--push-only' ]]; then
+  app_json="$(az containerapp show --resource-group "$resource_group" --name "$app_name" -o json 2>/dev/null)" || {
+    echo 'MCP Container App is absent. Complete the Phase 18 Bicep bootstrap before this revision release.' >&2
+    exit 2
+  }
+  previous_image="$(python3 -c 'import json,sys; a=json.load(sys.stdin); print(a["properties"]["template"]["containers"][0]["image"])' <<< "$app_json")"
+  app_fqdn="$(python3 -c 'import json,sys; a=json.load(sys.stdin); print(a["properties"]["configuration"]["ingress"]["fqdn"])' <<< "$app_json")"
+  configured_origin="$(python3 -c 'import json,sys; a=json.load(sys.stdin); e=a["properties"]["template"]["containers"][0]["env"]; print(next((v.get("value", "") for v in e if v.get("name")=="MCP_PUBLIC_URL"), ""))' <<< "$app_json")"
+  [[ -n "$registry_server" && -n "$app_fqdn" && "$app_fqdn" != None ]] || {
+    echo 'MCP registry or HTTPS ingress is incomplete.' >&2
+    exit 2
+  }
+  [[ "$configured_origin" == "https://${app_fqdn}" ]] || {
+    echo 'Container App public URL does not match its verified ingress FQDN.' >&2
+    exit 2
+  }
+fi
 
 tag="${registry_server}/sakai-mcp:${source_commit}"
 echo "Publishing scanned commit $source_commit to $registry_name."
@@ -61,6 +64,13 @@ docker push "$tag" >/dev/null
 digest="$(az acr manifest show-metadata --registry "$registry_name" --name "sakai-mcp:$source_commit" --query digest -o tsv)"
 [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]] || { echo 'ACR did not return an immutable SHA-256 digest.' >&2; exit 1; }
 image="${registry_server}/sakai-mcp@${digest}"
+
+if [[ "$push_only" == '--push-only' ]]; then
+  echo "Scanned image ready for Phase 18 app bootstrap: $image"
+  echo "Commit: $source_commit"
+  echo "Lock SHA-256: $lock_sha"
+  exit 0
+fi
 
 echo "Previous image: $previous_image"
 echo "Deploying digest: $image"
