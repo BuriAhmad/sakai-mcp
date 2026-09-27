@@ -1,0 +1,79 @@
+name: Build or deploy MCP to development Container App
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: 'Full 40-character commit SHA from main to build'
+        required: true
+        type: string
+      mode:
+        description: 'Build and scan only, or deploy a new digest revision'
+        required: true
+        default: check-only
+        type: choice
+        options:
+          - check-only
+          - deploy
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: mcp-dev-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build, scan, and optionally deploy selected commit
+    runs-on: ubuntu-latest
+    environment: sakai-dev
+    timeout-minutes: 60
+    steps:
+      - name: Check out deployment code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Validate exact commit and extract MCP source
+        shell: bash
+        env:
+          SOURCE_COMMIT: ${{ inputs.commit }}
+        run: |
+          set -Eeuo pipefail
+          [[ "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]] || {
+            echo 'Enter a full lowercase Git SHA from main.' >&2
+            exit 2
+          }
+          git merge-base --is-ancestor "$SOURCE_COMMIT" origin/main || {
+            echo 'The selected commit is not on origin/main.' >&2
+            exit 2
+          }
+          mkdir -p "$RUNNER_TEMP/mcp-source"
+          git archive "$SOURCE_COMMIT" services/mcp | tar -x -C "$RUNNER_TEMP/mcp-source"
+
+      - name: Build and scan exact-commit MCP image
+        shell: bash
+        env:
+          SOURCE_COMMIT: ${{ inputs.commit }}
+        run: |
+          scripts/build-mcp-image.sh \
+            "$RUNNER_TEMP/mcp-source/services/mcp" \
+            "sakai-mcp:$SOURCE_COMMIT" "$SOURCE_COMMIT"
+
+      - name: Sign in to Azure with existing federated identity
+        if: inputs.mode == 'deploy'
+        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Push immutable digest and deploy MCP revision
+        if: inputs.mode == 'deploy'
+        shell: bash
+        env:
+          SOURCE_COMMIT: ${{ inputs.commit }}
+        run: deployment/release-mcp.sh "$SOURCE_COMMIT" "sakai-mcp:$SOURCE_COMMIT"

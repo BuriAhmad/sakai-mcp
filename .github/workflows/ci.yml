@@ -103,3 +103,14 @@ jobs:
           uv run --no-sync pytest -q
           uv run --no-sync ruff check src tests
           uv run --no-sync mypy src
+
+  mcp-image:
+    name: MCP image and security scans
+    needs: mcp-python
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build, scan source and locked dependencies, and scan image
+        run: scripts/build-mcp-image.sh services/mcp "sakai-mcp:ci-$GITHUB_SHA" "$GITHUB_SHA"

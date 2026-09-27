@@ -2097,6 +2097,8 @@ After MCP revision deployment:
 - no session-affinity behavior is introduced;
 - logs show revision/commit identity.
 
+**2026-09-27: IN PROGRESS; local image build/runtime smoke PASS, full image scan and GitHub CI NOT RUN to completion.** The manual exact-commit `check-only`/`deploy` workflow, pinned non-root Dockerfile, source/dependency/secret/image scan script, digest-based Container App revision script, and release documentation are implemented. A first Debian 12 image scan found 62 high/critical findings (60 without a published fix, two fixable vendored build-tool packages). The runtime was moved to pinned Debian 13 and build tools removed; that image built and passed local `/live`, `/ready`, unauthenticated MCP challenge, and metadata checks. Its image scan was interrupted by local Docker disk exhaustion, so the Phase 17 gate remains open pending a complete scan and GitHub workflow results. The `deploy` mode is deliberately NOT RUN before Phase 18 bootstrap. See [`evidence/mcp/phase-17-build-release.md`](evidence/mcp/phase-17-build-release.md) and [`MCP_RELEASES.md`](MCP_RELEASES.md).
+
 ---
 
 # 21. Phase 18 — Deploy/configure the MCP runtime

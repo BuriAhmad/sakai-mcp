@@ -1,0 +1,21 @@
+# Building and releasing the development MCP service
+
+The MCP service has its own manual release path. A push to `main` validates its Python package, protocol/security tests, source and dependency scan, container build, and image scan. It does not deploy Sakai or MCP. Sakai continues to use `./sakai deploy COMMIT` and `./sakai rollback RELEASE_ID`.
+
+## Exact-commit check
+
+The [Build or deploy MCP](https://github.com/BuriAhmad/sakai-mcp/actions/workflows/deploy-mcp.yml) workflow accepts one full commit SHA on `main`. Run it with `check-only` first. It archives `services/mcp/` from that exact commit, installs locked production dependencies into a non-root Python 3.11 image, and runs the pinned Trivy scanner against the source/lockfile and image. Its source archive contains no local credentials or test-user files. The scanner reports counts only; detailed results stay on the disposable runner. The workflow's `deploy` choice repeats the build and scans, then uses the existing `sakai-dev` GitHub/Azure federated identity. No long-lived Azure client secret is used.
+
+Locally, `scripts/build-mcp-image.sh services/mcp sakai-mcp:local FULL_COMMIT_SHA` exercises the same build and scan path. The image labels record the source commit and SHA-256 of `uv.lock`. The final runtime image has no build tooling, runs as UID/GID 10001, and has no certificate or private key baked in. Scanner image and Python base image are pinned by digest. A high or critical finding with an available fix, a critical finding without a fix, or any detected secret fails the gate. High findings without published fixes are counted and must be recorded in the phase evidence and reviewed when the base digest is updated.
+
+## Azure deployment prerequisites
+
+Phase 18 must first apply the reviewed MCP foundation Bicep in `deployment/infra/`, put the OBO private key and certificate in Key Vault without logging their contents, build/push a digest image, and apply the app Bicep after a what-if. The app's public URL, Entra metadata, Sakai origin, secret references, identity, ingress, probes, and scaling remain defined by the app template. Its `sourceCommit` and `lockSha256` parameters must match the image labels. Do not use the Sakai VM deployment script for MCP.
+
+For later workflow-driven revisions, give the **existing federated GitHub deploy principal** AcrPush on the MCP ACR and Container Apps Contributor on `ca-mcp-sakai-dev` only. Its current Sakai VM/NSG permissions do not provide either new grant. The existing `sakai-dev` GitHub environment restricts releases to `main`. The release script refuses a wrong subscription, missing app, ambiguous registry inventory, or an image whose labels disagree with the selected commit. It pushes the scanned image and resolves its ACR SHA-256 manifest digest before calling `az containerapp update` with that immutable digest. It sets `APP_COMMIT` and `APP_LOCK_SHA256` for audit correlation, then checks `/live`, `/ready`, unauthenticated Bearer challenge, protected-resource metadata, selected digest, revision readiness, and disabled affinity. It does not change Sakai.
+
+The workflow's `deploy` mode is **not exercised in Phase 17** because the MCP foundation and app do not exist yet. Phase 18 owns the first live deployment and role grants. Do not interpret a successful `check-only` as a deployed service.
+
+## Revision rollback
+
+The release output records the previous digest and new revision. If a new revision must be reverted, inspect `az containerapp revision list -g rg-sakai-mcp-dev -n ca-mcp-sakai-dev`, select the last verified ready revision, and create a new revision from it with `az containerapp revision copy -g rg-sakai-mcp-dev -n ca-mcp-sakai-dev --from-revision REVISION_NAME`. Recheck the same HTTPS health, OAuth, and authenticated tool behavior. This changes only the MCP Container App revision; it does not undo announcements or Sakai runtime state. The Container App retains up to three inactive revisions, so record a known-good digest before the retention window expires.

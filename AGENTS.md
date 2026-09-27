@@ -6,7 +6,7 @@ This repository owns the Sakai development environment's Azure infrastructure, o
 
 - `deployment/` — Bicep and VM/application deployment; follow `deployment/AGENTS.md`.
 - `scripts/` and `./sakai` — local operations and the human-facing CLI.
-- `services/mcp/` — reserved for the project-owned MCP service; see its README. It has no implementation yet.
+- `services/mcp/` — project-owned Python MCP service, tests, and container source; follow its README and scoped `AGENTS.md`.
 - `docs/` — architecture, access instructions, runbooks, and deployment history.
 - `apps/sakai/` — tracked Sakai application source and project changes.
 
@@ -20,7 +20,7 @@ This repository owns the Sakai development environment's Azure infrastructure, o
 ## Useful commands
 
 - `./sakai help` lists local operations; `./sakai status` reads the current environment.
-- CI checks Bash syntax, ShellCheck errors, whitespace, tracked secrets, Bicep compilation, and repository guidance coverage.
+- CI checks Bash syntax, ShellCheck errors, whitespace, tracked secrets, Bicep compilation, repository guidance, and MCP tests, types, and security scans.
 
 ## Keep this guide current
 

@@ -2,6 +2,16 @@
 @minLength(80)
 param image string
 
+@description('Full 40-character source commit used to build the image.')
+@minLength(40)
+@maxLength(40)
+param sourceCommit string
+
+@description('SHA-256 of the dependency lockfile used to build the image.')
+@minLength(64)
+@maxLength(64)
+param lockSha256 string
+
 @description('Canonical public HTTPS origin of the Container App, without a trailing slash.')
 param mcpPublicUrl string
 
@@ -104,6 +114,8 @@ resource app 'Microsoft.App/containerApps@2025-07-01' = {
           }
           env: [
             { name: 'ENVIRONMENT', value: 'development' }
+            { name: 'APP_COMMIT', value: sourceCommit }
+            { name: 'APP_LOCK_SHA256', value: lockSha256 }
             { name: 'MCP_PUBLIC_URL', value: mcpPublicUrl }
             { name: 'SAKAI_BASE_URL', value: sakaiBaseUrl }
             { name: 'ENTRA_TENANT_ID', value: entraTenantId }
