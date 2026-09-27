@@ -14,7 +14,7 @@ Phase 18 must first apply the reviewed MCP foundation Bicep in `deployment/infra
 
 For later workflow-driven revisions, give the **existing federated GitHub deploy principal** AcrPush on the MCP ACR and Container Apps Contributor on `ca-mcp-sakai-dev` only. Its current Sakai VM/NSG permissions do not provide either new grant. The existing `sakai-dev` GitHub environment restricts releases to `main`. The release script refuses a wrong subscription, missing app, ambiguous registry inventory, or an image whose labels disagree with the selected commit. It pushes the scanned image and resolves its ACR SHA-256 manifest digest before calling `az containerapp update` with that immutable digest. It sets `APP_COMMIT` and `APP_LOCK_SHA256` for audit correlation, then checks `/live`, `/ready`, unauthenticated Bearer challenge, protected-resource metadata, selected digest, revision readiness, and disabled affinity. It does not change Sakai.
 
-The workflow's `deploy` mode is **not exercised in Phase 17** because the MCP foundation and app do not exist yet. Phase 18 owns the first live deployment and role grants. Do not interpret a successful `check-only` as a deployed service.
+The workflow's `check-only` mode passed on [2026-09-27](https://github.com/BuriAhmad/sakai-mcp/actions/runs/36322365794). Its `deploy` mode is **not exercised in Phase 17** because the MCP foundation and app do not exist yet. Phase 18 owns the first live deployment and role grants. Do not interpret a successful `check-only` as a deployed service.
 
 ## Revision rollback
 
