@@ -69,11 +69,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Compile infrastructure template
+      - name: Compile infrastructure templates
         uses: azure/cli@9eb25b8360668fb0ecbafa808d40e2197b2f5f52 # v3.0.0
         with:
           azcliversion: latest
-          inlineScript: az bicep build --file deployment/infra/main.bicep --stdout >/dev/null
+          inlineScript: |
+            for file in deployment/infra/*.bicep; do
+              az bicep build --file "$file" --stdout >/dev/null
+            done
 
   mcp-python:
     name: MCP Python service

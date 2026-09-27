@@ -1,6 +1,6 @@
 # Deployment paths
 
-- `infra/` defines the Azure development resources; see `infra/README.md`.
+- `infra/` defines the Azure development resources and staged MCP Container Apps templates; see `infra/README.md`. The existing `scripts/deploy-infra.sh` remains the Sakai VM/MySQL path and does not apply the MCP templates.
 - `configure-vm.sh`, `configure-sakai.sh`, and `deploy-sakai.sh` document the **original Sakai 25.2 bootstrap**. `deploy-sakai.sh` intentionally refuses a modified source checkout.
 - `configure-tomcat-proxy.sh` is the repeatable Tomcat reverse-proxy configuration used by `configure-vm.sh`. It binds the HTTP connector to loopback and trusts forwarded HTTPS scheme information only from local Nginx. For an existing VM, run it through `./sakai shell 'bash -s' < deployment/configure-tomcat-proxy.sh`, restart Tomcat, then check public `/portal` and an authenticated form action. It saves the previous `server.xml` once as `server.xml.pre-mcp-proxy` for configuration rollback.
 - `ensure-sakai-java-opens.sh` adds the Java module options required by the tracked Sakai 25.2 Docker runtime and used by its tests. `configure-vm.sh` calls it after writing `setenv.sh`. On an existing VM, run `./sakai shell 'bash -s' < deployment/ensure-sakai-java-opens.sh`, restart Tomcat, and check the affected tool UI and public `/portal`. It saves the previous `setenv.sh` once as `setenv.sh.pre-mcp-java-opens`.

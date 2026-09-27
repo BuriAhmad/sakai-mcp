@@ -1928,7 +1928,7 @@ Minimum assertions:
 
 If live Sakai integration tests are included in CI, gate them behind explicit environment/workflow controls rather than running against the sandbox on every ordinary unit-test job.
 
-**2026-09-27: IN PROGRESS; local suite PASS, GitHub CI NOT RUN.** Synthetic tests are organized under `unit/`, `integration/`, `protocol/`, and `security/`; the composed integration test uses in-memory Entra/Sakai fakes and no live credentials. Thirty-nine tests, Ruff, mypy, and local Actionlint passed. The existing repository validation workflow now includes a pinned uv/Python 3.11 MCP job; its first GitHub run is pending. See [`evidence/mcp/phase-15-local-ci.md`](evidence/mcp/phase-15-local-ci.md).
+**2026-09-27: PASS.** Synthetic tests are organized under `unit/`, `integration/`, `protocol/`, and `security/`; the composed integration test uses in-memory Entra/Sakai fakes and no live credentials. Thirty-nine tests, Ruff, mypy, and local Actionlint passed. The existing repository validation workflow's Python 3.11 MCP job, shell job, and Bicep job all passed at commit `065522755c7ae928605905771d1366e5276eb9cb`. See [`evidence/mcp/phase-15-local-ci.md`](evidence/mcp/phase-15-local-ci.md).
 
 ---
 
@@ -2020,6 +2020,8 @@ Record planned new/changed resources.
 ## Phase 16 gate
 
 Codex must be able to explain which resources were reused and which are genuinely new before applying infrastructure changes.
+
+**2026-09-27: PASS for the Phase 16 gate; infrastructure apply NOT RUN.** Repository/live inventory, both local Bicep compilations, and the foundation Azure what-if passed. The preview proposes seven creates (five foundation resources and two scoped role assignments), with ten existing Sakai resources ignored and no updates/deletes. The existing resource group and public Sakai HTTPS endpoint are reused. No VNet integration is needed for the verified public bearer-protected Sakai route. The app what-if awaits the staged foundation deployment in Phase 18. See [`evidence/mcp/phase-16-inventory.md`](evidence/mcp/phase-16-inventory.md).
 
 ---
 

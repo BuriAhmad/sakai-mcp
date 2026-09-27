@@ -2,7 +2,7 @@
 
 This directory controls Azure resources and the Sakai VM/application setup. Read the relevant section of `docs/Sakai_Deployment_Runbook.md` before changing a deployment path; use `docs/INFRASTRUCTURE.md` for the current intended architecture.
 
-- `deployment/infra/` contains the Bicep template and parameters. Its README explains deployment inputs.
+- `deployment/infra/` contains the Sakai template and separate staged MCP foundation/app Bicep templates. Its README explains deployment inputs; do not rerun the Sakai VM/MySQL deployment to release the MCP app.
 - `deployment/README.md` distinguishes original bootstrap from the guarded Sakai release path; follow `docs/SAKAI_RELEASES.md` for deploy and rollback.
 - Keep the database private, keep SSH limited to the administrator's current `/32` address, and do not expose Tomcat directly. Preserve the resource-group boundary and cost controls unless a task explicitly changes them.
 - Keep Tomcat's HTTP connector bound to loopback and its forwarded-scheme trust limited to local Nginx. `configure-tomcat-proxy.sh` owns this repeatable setting; verify an HTTPS Sakai form action after proxy changes.
