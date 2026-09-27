@@ -38,6 +38,8 @@ To restore the preceding application files after a successful release:
 
 Only the current release can be rolled back by this command. It does not reverse database migrations or content changes made while the new code ran. Keep the release and its backup directories until the change has been exercised; cleanup is a separate, reviewed operation.
 
+For the MCP development adapter, the current verified release and rollback ID are recorded in [`phase-8-release.md`](evidence/mcp/phase-8-release.md). The runtime-only MCP property block is separate from the code release; `configure-mcp-sakai.sh false ...` can disable that route when supplied the same verified non-secret metadata, followed by a guarded restart/release. A code rollback does not remove announcements already posted, Entra registrations/grants, or the property block. Repeat ordinary student/instructor login, bearer denial, own-data, cross-course, and write-permission checks after a Sakai MCP change.
+
 Each full release can retain several gigabytes of build output and a roughly 2 GiB rollback copy on the VM's 64 GiB disk. Check free space with `./sakai shell 'df -h /opt; sudo du -sh /opt/sakai-releases/*'` before repeated releases. Do not delete the current release or its backup to make room; review and remove only older, no-longer-needed releases in a separate maintenance step.
 
 ## Manual GitHub release

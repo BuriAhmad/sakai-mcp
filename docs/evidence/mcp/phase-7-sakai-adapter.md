@@ -1,6 +1,6 @@
 # Phase 7 — Sakai adapter progress (2026-09-26)
 
-Status: **IN PROGRESS; local source and focused-test checks PASS; deployment gate NOT RUN**.
+Status: **PASS; Phase 7 predeployment gate satisfied**.
 
 The implementation is confined to tracked Sakai WebAPI source. The outer Sakai `RequestFilter` remains first. A second filter maps only `/mcp/v1/*` (within the `/api` webapp) and is disabled by default. It requires a secure request and bearer token, validates the signature against a configured HTTPS Entra JWKS with an RS256 allowlist, checks configured issuer/tenant/downstream audience/scope and token times, and requires the observed singleton-array `extn.SakaiEid`. It does not accept caller identity headers or a website cookie as authentication for the MCP path.
 
@@ -12,4 +12,4 @@ The five V1 Sakai routes are now implemented: current-user course listing, own g
 
 The tracked `deployment/configure-mcp-sakai.sh` now provides a repeatable, default-disabled runtime property block with a one-time backup; Bash syntax and ShellCheck errors pass. It has not yet been applied to the VM.
 
-Remaining checks before Phase 7 PASS: create the intended source commit, build that exact commit through the supported Sakai path, and finalize the post-deployment normal-login and rollback checks. Applying runtime properties, proving Tomcat/Spring filter and cookie behavior, testing live bearer mapping/cross-course denials, and checking normal login after deployment belong to Phase 8. No Sakai deployment occurred in this milestone.
+The intended source commit `d97ce2f7ee45734b95526017ccad0c429c0a9a22` was pushed to `origin/main`. The existing full Sakai build workflow [run 36262764735](https://github.com/BuriAhmad/sakai-mcp/actions/runs/36262764735) completed successfully, including the parent POM and all application modules. The existing `./sakai deploy HEAD --check-only` preflight also passed for that commit. The ordinary student/instructor website regression plan and known previous release target are recorded in the Phase 8 preflight. Phase 7 is therefore PASS. Applying runtime properties, proving Tomcat/Spring filter and cookie behavior, testing live bearer mapping/cross-course denials, and checking normal login after deployment belong to Phase 8. No Sakai deployment occurred in this milestone.

@@ -1,6 +1,6 @@
 # Sakai WebAPI MCP adapter
 
-The Sakai-side V1 adapter lives in tracked `apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/`. Its servlet paths are relative to Sakai's existing `/api` WebAPI context. It is **disabled by default** and must not be enabled until the Phase 7 and 8 gates in the [runbook](../MCP_IMPLEMENTATION_RUNBOOK.md) are satisfied.
+The Sakai-side V1 adapter lives in tracked `apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/`. Its servlet paths are relative to Sakai's existing `/api` WebAPI context. It is **disabled by default**; enabling it for the development release requires the Phase 7 predeployment gate, and the release is accepted only after the Phase 8 live checks in the [runbook](../MCP_IMPLEMENTATION_RUNBOOK.md).
 
 ## Runtime properties
 
@@ -40,4 +40,4 @@ JAVA_HOME=/opt/homebrew/opt/openjdk@17 mvn -f apps/sakai/pom.xml -pl webapi -am 
   -Dtest='Mcp*Test,LoginControllerTests' -Dsurefire.failIfNoSpecifiedTests=false test
 ```
 
-The local command and focused results are recorded in [`phase-7-sakai-adapter.md`](../evidence/mcp/phase-7-sakai-adapter.md). The exact-release-commit VM build, post-deployment negative tests, and rollback still use the repository's existing [Sakai deployment runbook](../Sakai_Deployment_Runbook.md).
+The local command and focused results are recorded in [`phase-7-sakai-adapter.md`](../evidence/mcp/phase-7-sakai-adapter.md). The development adapter was deployed through the existing guarded exact-commit release and passed the live delegated and ordinary-login checks in [`phase-8-release.md`](../evidence/mcp/phase-8-release.md). For subsequent changes, use the same [Sakai release procedure](../SAKAI_RELEASES.md) and repeat the focused tests and public acceptance checks. Code rollback does not revert the runtime MCP property block or any announcement created after deployment.

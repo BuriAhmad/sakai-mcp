@@ -1361,7 +1361,7 @@ No Sakai deployment until:
 - normal Sakai login regression test plan is ready;
 - rollback target/procedure is known.
 
-**2026-09-26: IN PROGRESS; gate NOT RUN.** The path-scoped bearer filter, downstream JWT verifier, all five V1 Sakai routes, and focused tests are in tracked `apps/sakai/webapi/`. The Java 17 repository reactor compile and 21 focused MCP/login tests passed; see [`evidence/mcp/phase-7-sakai-adapter.md`](evidence/mcp/phase-7-sakai-adapter.md). A repeatable runtime-property script is prepared. The intended source commit and exact-commit build remain before this gate can pass; applying the properties and live mapping/permission/filter/login tests are Phase 8 work.
+**2026-09-27: PASS.** The path-scoped bearer filter, downstream JWT verifier, all five V1 Sakai routes, and focused tests are in tracked `apps/sakai/webapi/`. The Java 17 repository reactor compile and 21 focused MCP/login tests passed. The exact pushed source commit `d97ce2f7ee45734b95526017ccad0c429c0a9a22` passed the existing full Sakai source build. The normal-login regression plan and previous release rollback target are recorded; see [`evidence/mcp/phase-7-sakai-adapter.md`](evidence/mcp/phase-7-sakai-adapter.md) and [`evidence/mcp/phase-8-preflight.md`](evidence/mcp/phase-8-preflight.md). Applying runtime properties and live mapping/permission/filter/login tests are Phase 8 work.
 
 ---
 
@@ -1472,6 +1472,8 @@ The Sakai customization is accepted only when:
 - rollback readiness is confirmed;
 - any non-code state change is separately documented.
 
+**2026-09-27: PASS.** Exact pushed commit `d97ce2f7ee45734b95526017ccad0c429c0a9a22` was deployed through the existing guarded release. The VM build, local and public HTTPS portal gates, ordinary student/instructor login and course navigation, 16/16 delegated bearer smoke checks, browser-cookie-only denial, and rollback-copy readback passed. The runtime property backup, Entra changes, and one synthetic announcement are separately recorded as non-code state. See [`evidence/mcp/phase-8-release.md`](evidence/mcp/phase-8-release.md).
+
 ---
 
 # 12. Phase 9 — Implement `services/mcp/` configuration and authenticated principal
@@ -1521,12 +1523,13 @@ Define one request principal carrying verified identity information, conceptuall
 ```text
 tenant_id
 oid
-institutional_id
 scopes
 client/application metadata if reliably available
 ```
 
 Do not accept the acting Sakai user as a tool argument.
+
+**Phase 6 verified adjustment:** the inbound MCP audience token does not carry `extn.SakaiEid`. The principal must not invent or infer an institutional ID from UPN/email. Keep the verified `tid + oid` as the caller identity and obtain the institutional ID only from the separate OBO Sakai API token. The `INSTITUTIONAL_ID_CLAIM` setting applies to downstream validation.
 
 ## 12.3 Inbound MCP token verification
 
@@ -1566,6 +1569,8 @@ valid token
 
 Do not call Sakai until invalid audience/issuer/scope tests demonstrably fail closed.
 
+**2026-09-27: PASS.** The configuration model, inbound `tid + oid` principal, pinned-SDK token verifier, and synthetic fail-closed unit tests are implemented. Local `pytest`, Ruff, and mypy checks passed, and a fresh actual Entra delegated MCP token validated against tenant JWKS. No Sakai client exists in this phase, so invalid tokens cannot call Sakai. See [`evidence/mcp/phase-9-config-auth.md`](evidence/mcp/phase-9-config-auth.md). The separate Phase 8 deployment gate remains pending.
+
 ---
 
 # 13. Phase 10 — Implement OBO provider
@@ -1597,6 +1602,8 @@ Before using the downstream token, verify at minimum that the token response:
 - represents the same human identity;
 - contains the trusted institutional identifier claim required by Sakai.
 
+For this tenant, the downstream claim is `extn.SakaiEid` and its issued-token value is a one-element JSON array of strings. Reject absent, blank, non-string, or multi-value forms; never use UPN/email as a fallback.
+
 The Sakai server will validate the token independently again.
 
 ## 13.4 Cache
@@ -1617,6 +1624,8 @@ Test:
 - wrong inbound MCP audience cannot be used;
 - missing downstream permission/consent fails clearly;
 - downstream token is never logged.
+
+**2026-09-27: PASS for the OBO provider.** The pinned MSAL certificate path exchanges a verified MCP token for a distinct Sakai API token. It independently validates the downstream signature, issuer, tenant, audience, delegated scope, same `oid`, and singleton `extn.SakaiEid`; two real synthetic users preserved separate identities. Local negative tests and bounded HTTP timeouts passed. Runtime Key Vault credential distribution belongs to the later infrastructure phase. See [`evidence/mcp/phase-10-obo.md`](evidence/mcp/phase-10-obo.md).
 
 ---
 
@@ -1685,6 +1694,8 @@ Mock Sakai responses for:
 - transient 5xx;
 - timeout before request reaches server;
 - timeout after a create may have committed.
+
+**2026-09-27: PASS for the isolated Sakai HTTP client.** The fixed-origin adapter acquires OBO per call, bounds time and response size, maps stable errors, retries only safe transient reads, and never retries an uncertain announcement create. Thirty combined local auth/OBO/client tests pass. Live adapter acceptance remains in Phase 8; see [`evidence/mcp/phase-11-sakai-client.md`](evidence/mcp/phase-11-sakai-client.md).
 
 ---
 

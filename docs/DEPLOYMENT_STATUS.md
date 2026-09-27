@@ -2,6 +2,14 @@
 
 This is the chronological execution record for the Sakai 25.2 development sandbox.
 
+## 2026-09-27 — Sakai MCP development adapter release
+
+- Pushed exact source commit `d97ce2f7ee45734b95526017ccad0c429c0a9a22`; repository validation, 21 focused Java MCP/login tests, and the full Sakai GitHub build passed.
+- Applied the tracked `configure-mcp-sakai.sh` property block with verified non-secret Entra metadata, retaining a one-time runtime-property backup. No VM source edit or database schema migration was made.
+- `./sakai deploy d97ce2f7ee45734b95526017ccad0c429c0a9a22` built on the VM and passed local and public HTTPS health. Release `20260927T075226Z-d97ce2f7ee45` is healthy; the previous application directories remain available to `./sakai rollback 20260927T075226Z-d97ce2f7ee45`.
+- Public delegated smoke passed 16/16, plus browser-cookie-only denial. Ordinary student and instructor password login and course navigation passed. One synthetic announcement was created and seen by an authorized student.
+- The VM and MySQL remained running/Ready at last readback. Live state must be checked with `./sakai status`. [Sanitized evidence](evidence/mcp/phase-8-release.md) records the security matrix and non-code state.
+
 ## 2026-09-14 — Phase 1: Azure inventory
 
 ### Attempted
