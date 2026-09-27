@@ -51,9 +51,9 @@ PY
 
 echo 'Scanning MCP source and locked dependencies.'
 docker run --rm \
+  --user "$(id -u):$(id -g)" --env TRIVY_CACHE_DIR=/reports/cache \
   --mount "type=bind,source=$context_dir,target=/src,readonly" \
   --mount "type=bind,source=$scan_dir,target=/reports" \
-  --mount "type=bind,source=$scan_dir/cache,target=/root/.cache/trivy" \
   "$scanner" fs --quiet --scanners vuln,secret --severity HIGH,CRITICAL \
   --skip-dirs /src/.venv --skip-dirs /src/.pytest_cache --skip-dirs /src/.mypy_cache \
   --format json --output /reports/source.json /src
@@ -68,8 +68,8 @@ docker save --output "$scan_dir/image.tar" "$image_tag"
 
 echo 'Scanning the built image.'
 docker run --rm \
+  --user "$(id -u):$(id -g)" --env TRIVY_CACHE_DIR=/reports/cache \
   --mount "type=bind,source=$scan_dir,target=/reports" \
-  --mount "type=bind,source=$scan_dir/cache,target=/root/.cache/trivy" \
   "$scanner" image --quiet --scanners vuln,secret --severity HIGH,CRITICAL \
   --input /reports/image.tar --format json --output /reports/image.json
 summarize_scan "$scan_dir/image.json"
