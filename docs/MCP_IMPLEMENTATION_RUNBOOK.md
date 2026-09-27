@@ -1472,7 +1472,7 @@ The Sakai customization is accepted only when:
 - rollback readiness is confirmed;
 - any non-code state change is separately documented.
 
-**2026-09-27: PASS.** Exact pushed commit `d97ce2f7ee45734b95526017ccad0c429c0a9a22` was deployed through the existing guarded release. The VM build, local and public HTTPS portal gates, ordinary student/instructor login and course navigation, 16/16 delegated bearer smoke checks, browser-cookie-only denial, and rollback-copy readback passed. The runtime property backup, Entra changes, and one synthetic announcement are separately recorded as non-code state. See [`evidence/mcp/phase-8-release.md`](evidence/mcp/phase-8-release.md).
+**2026-09-27: PASS.** The guarded Sakai release and acceptance checks passed; detailed results and non-code state are in [`evidence/mcp/phase-8-release.md`](evidence/mcp/phase-8-release.md). The earlier [`phase-8-preflight.md`](evidence/mcp/phase-8-preflight.md) is a historical predeployment snapshot, superseded by that release report.
 
 ---
 
@@ -1569,7 +1569,7 @@ valid token
 
 Do not call Sakai until invalid audience/issuer/scope tests demonstrably fail closed.
 
-**2026-09-27: PASS.** The configuration model, inbound `tid + oid` principal, pinned-SDK token verifier, and synthetic fail-closed unit tests are implemented. Local `pytest`, Ruff, and mypy checks passed, and a fresh actual Entra delegated MCP token validated against tenant JWKS. No Sakai client exists in this phase, so invalid tokens cannot call Sakai. See [`evidence/mcp/phase-9-config-auth.md`](evidence/mcp/phase-9-config-auth.md). The separate Phase 8 deployment gate remains pending.
+**2026-09-27: PASS.** Configuration, inbound principal verification, and fail-closed tests passed; details are in [`evidence/mcp/phase-9-config-auth.md`](evidence/mcp/phase-9-config-auth.md). Phase 8 deployment subsequently passed; its detailed acceptance is in [`evidence/mcp/phase-8-release.md`](evidence/mcp/phase-8-release.md).
 
 ---
 
@@ -1865,7 +1865,7 @@ Do not infer `human_approved=true`.
 
 Integrate with the repository's/Azure environment's existing observability approach. Add only the MCP-specific traces/metrics/log correlation required for V1.
 
-**2026-09-27: IN PROGRESS; local audit/redaction PASS, Azure telemetry NOT RUN.** Each tool call now emits a JSON audit event with request ID, pseudonymous actor/course/object references, tool/read-write classification, outcome, and latency. The request ID propagates to Sakai; ordinary HTTP URL and expected SDK tool-error INFO logs are suppressed. No token, key, grade, submission, or announcement body is logged. Azure Log Analytics/OpenTelemetry wiring remains a later runtime milestone. See [`evidence/mcp/phase-13-audit.md`](evidence/mcp/phase-13-audit.md).
+**2026-09-27: IN PROGRESS.** Local structured audit and redaction passed; Azure telemetry/OpenTelemetry acceptance remains open. See [`evidence/mcp/phase-13-audit.md`](evidence/mcp/phase-13-audit.md). This outstanding work has no explicit dependency on Phase 19's OAuth discovery/token matrix and is not a gate to starting Phase 19; retain it for the later observability and final acceptance work. Do not treat Phase 13 as complete until its telemetry acceptance is evidenced.
 
 ---
 
@@ -1890,7 +1890,7 @@ Readiness may validate critical local initialization/configuration and, if depen
 
 Record the final probe contract in `services/mcp/README.md` and deployment definitions.
 
-**2026-09-27: PASS for local probe contract; cloud probe execution NOT RUN.** Unauthenticated `GET /live` and `GET /ready` return 200 only after local settings/credentials construct the app. Neither probes Entra or Sakai, so their transient outage cannot cause restart storms. Both routes passed local ASGI tests. See [`evidence/mcp/phase-14-health.md`](evidence/mcp/phase-14-health.md).
+**2026-09-27: PASS for the probe contract.** Local tests and Phase 18 cloud `/live` and `/ready` checks passed; the Phase 14 report's cloud `NOT RUN` records its earlier checkpoint. See [`evidence/mcp/phase-14-health.md`](evidence/mcp/phase-14-health.md) and [`evidence/mcp/phase-18-runtime.md`](evidence/mcp/phase-18-runtime.md).
 
 ---
 
@@ -2021,7 +2021,7 @@ Record planned new/changed resources.
 
 Codex must be able to explain which resources were reused and which are genuinely new before applying infrastructure changes.
 
-**2026-09-27: PASS for the Phase 16 gate; infrastructure apply NOT RUN.** Repository/live inventory, both local Bicep compilations, and the foundation Azure what-if passed. The preview proposes seven creates (five foundation resources and two scoped role assignments), with ten existing Sakai resources ignored and no updates/deletes. The existing resource group and public Sakai HTTPS endpoint are reused. No VNet integration is needed for the verified public bearer-protected Sakai route. The app what-if awaits the staged foundation deployment in Phase 18. See [`evidence/mcp/phase-16-inventory.md`](evidence/mcp/phase-16-inventory.md).
+**2026-09-27: PASS for inventory and infrastructure preview.** Phase 16 did not apply resources; Phase 18 later deployed the foundation and app. The dated preview details remain in [`evidence/mcp/phase-16-inventory.md`](evidence/mcp/phase-16-inventory.md), with deployment results in [`evidence/mcp/phase-18-runtime.md`](evidence/mcp/phase-18-runtime.md).
 
 ---
 
@@ -2097,7 +2097,7 @@ After MCP revision deployment:
 - no session-affinity behavior is introduced;
 - logs show revision/commit identity.
 
-**2026-09-27: PASS for Phase 17 build, scan, and release-workflow gate; cloud deployment NOT RUN.** The manual exact-commit `check-only`/`deploy` workflow, pinned non-root Dockerfile, source/dependency/secret/image scan script, digest-based Container App revision script, and release documentation are implemented. A first Debian 12 image scan failed on two fixable vendored build-tool findings; the pinned Debian 13 runtime removes those build tools. The revised image passed local health/auth/metadata smoke and both GitHub [repository validation](https://github.com/BuriAhmad/sakai-mcp/actions/runs/36322342429) and exact-commit [manual `check-only`](https://github.com/BuriAhmad/sakai-mcp/actions/runs/36322365794) at `9de148ca3b607b0016f431f92b1797325f4bf100`. Final scans found zero critical, zero fixable high, zero secrets, and 44 high image findings without published fixes. The `deploy` mode, ACR push, and Container App smoke are **NOT RUN** until Phase 18 creates the foundation and initial app and grants the existing GitHub identity scoped permissions. See [`evidence/mcp/phase-17-build-release.md`](evidence/mcp/phase-17-build-release.md) and [`MCP_RELEASES.md`](MCP_RELEASES.md).
+**2026-09-27: PASS for build, scan, and release-workflow validation.** Phase 17's dated report records that deployment had not yet run; Phase 18 later bootstrapped and deployed the app. See [`evidence/mcp/phase-17-build-release.md`](evidence/mcp/phase-17-build-release.md) for that checkpoint and [`evidence/mcp/phase-18-runtime.md`](evidence/mcp/phase-18-runtime.md) for deployment evidence.
 
 ---
 
@@ -2140,7 +2140,7 @@ A sandbox may initially use one warm replica for simpler debugging, but the fina
 
 Do not proceed to rich clients until basic OAuth challenge, token validation, Sakai connectivity, and all five tools work through a low-level test client or direct protocol harness.
 
-**2026-09-27: PASS for Phase 18.** The requested checkpoint and clean tree were confirmed, the selected subscription and live Sakai state were rechecked, and the fresh foundation what-if proposed seven creates and ten ignored existing resources. The foundation applied, and the certificate/private key were placed in its RBAC Key Vault without printing them. The exact-commit GitHub bootstrap path scanned and published an immutable image. The app what-if proposed one create and fifteen ignored resources. Its first apply failed because Azure had created the environment in Express mode and Express rejected Key Vault URL secret references. The foundation template now requests WorkloadProfiles/Consumption explicitly; the transition completed, and the Container App applied with a ready revision. Live `/live`, `/ready`, protected-resource metadata, unauthenticated Bearer challenge, authenticated initialization, and the exact five-tool catalog passed. The scheduled Sakai VM shutdown interrupted the first tool matrix; after restarting the VM and waiting for public `/portal` 200, low-level synthetic-user tests proved all five tools, student privileged-call denial, distinct user data, one permitted announcement create, and student visibility of that announcement. See [`evidence/mcp/phase-18-runtime.md`](evidence/mcp/phase-18-runtime.md). Phase 19 and Phase 20 have not begun.
+**2026-09-27: PASS.** The foundation, initial app, live health/auth checks, and low-level five-tool gate passed. Detailed deployment and test results are in [`evidence/mcp/phase-18-runtime.md`](evidence/mcp/phase-18-runtime.md). Phase 19 is the next implementation phase.
 
 ---
 
