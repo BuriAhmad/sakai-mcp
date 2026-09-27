@@ -3,10 +3,10 @@ import asyncio
 import httpx
 import pytest
 from mcp.server.auth.provider import AccessToken
-from test_auth import settings
 
 from sakai_mcp.obo import DownstreamToken
 from sakai_mcp.sakai_client import ErrorCode, SakaiClient, SakaiError
+from tests.helpers import settings
 
 
 class FakeOBO:

@@ -1805,6 +1805,8 @@ Expected result: deny; no Sakai data/write.
 
 All five tools pass service-level unit tests before cloud deployment.
 
+**2026-09-27: PASS for local service and protocol checks.** The pinned MCP Python 2.2 server exposes exactly five annotated V1 tools over authenticated, stateless Streamable HTTP at `/mcp`. Thirty-six local service tests pass, including unauthenticated HTTP denial and an authenticated protocol tool call. A local ASGI-to-Entra-OBO-to-public-Sakai synthetic-user matrix passed 10/10 after normalizing the observed Sakai 25.2 numeric submission timestamp. The tool catalog is static because there is no safe, authoritative coarse capability feed; manual student calls to instructor tools are denied by Sakai. Cloud deployment and client compatibility remain later gates. See [`evidence/mcp/phase-12-server.md`](evidence/mcp/phase-12-server.md).
+
 ---
 
 # 16. Phase 13 — Observability and audit in `services/mcp/`
@@ -1863,6 +1865,8 @@ Do not infer `human_approved=true`.
 
 Integrate with the repository's/Azure environment's existing observability approach. Add only the MCP-specific traces/metrics/log correlation required for V1.
 
+**2026-09-27: IN PROGRESS; local audit/redaction PASS, Azure telemetry NOT RUN.** Each tool call now emits a JSON audit event with request ID, pseudonymous actor/course/object references, tool/read-write classification, outcome, and latency. The request ID propagates to Sakai; ordinary HTTP URL and expected SDK tool-error INFO logs are suppressed. No token, key, grade, submission, or announcement body is logged. Azure Log Analytics/OpenTelemetry wiring remains a later runtime milestone. See [`evidence/mcp/phase-13-audit.md`](evidence/mcp/phase-13-audit.md).
+
 ---
 
 # 17. Phase 14 — MCP health/readiness behavior
@@ -1885,6 +1889,8 @@ Do not make liveness depend on Sakai or Entra availability.
 Readiness may validate critical local initialization/configuration and, if dependency checks are included, must use tight timeouts and carefully considered failure semantics.
 
 Record the final probe contract in `services/mcp/README.md` and deployment definitions.
+
+**2026-09-27: PASS for local probe contract; cloud probe execution NOT RUN.** Unauthenticated `GET /live` and `GET /ready` return 200 only after local settings/credentials construct the app. Neither probes Entra or Sakai, so their transient outage cannot cause restart storms. Both routes passed local ASGI tests. See [`evidence/mcp/phase-14-health.md`](evidence/mcp/phase-14-health.md).
 
 ---
 
@@ -1921,6 +1927,8 @@ Minimum assertions:
 - no server-side elicitation dependency.
 
 If live Sakai integration tests are included in CI, gate them behind explicit environment/workflow controls rather than running against the sandbox on every ordinary unit-test job.
+
+**2026-09-27: IN PROGRESS; local suite PASS, GitHub CI NOT RUN.** Synthetic tests are organized under `unit/`, `integration/`, `protocol/`, and `security/`; the composed integration test uses in-memory Entra/Sakai fakes and no live credentials. Thirty-nine tests, Ruff, mypy, and local Actionlint passed. The existing repository validation workflow now includes a pinned uv/Python 3.11 MCP job; its first GitHub run is pending. See [`evidence/mcp/phase-15-local-ci.md`](evidence/mcp/phase-15-local-ci.md).
 
 ---
 

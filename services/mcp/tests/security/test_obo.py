@@ -3,7 +3,6 @@ from datetime import UTC, datetime, timedelta
 
 import jwt
 import pytest
-from test_auth import KEY, TENANT, settings, token
 
 from sakai_mcp.auth import EntraTokenVerifier
 from sakai_mcp.obo import (
@@ -12,6 +11,7 @@ from sakai_mcp.obo import (
     InvalidUpstreamToken,
     OBOProvider,
 )
+from tests.helpers import KEY, TENANT, settings, token
 
 
 def downstream(object_id: str, eid: object, **changes):

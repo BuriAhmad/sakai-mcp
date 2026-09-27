@@ -6,11 +6,11 @@ import random
 from enum import StrEnum
 from typing import Any
 from urllib.parse import quote
-from uuid import uuid4
 
 import httpx
 from mcp.server.auth.provider import AccessToken
 
+from sakai_mcp.audit import current_request_id
 from sakai_mcp.config import Settings
 from sakai_mcp.obo import ExchangeUnavailable, OBOError, OBOProvider
 
@@ -118,7 +118,7 @@ class SakaiClient:
             raise SakaiError(ErrorCode.UNAUTHENTICATED) from None
         headers = {
             "Authorization": f"Bearer {delegated.token}",
-            "X-Correlation-ID": str(uuid4()),
+            "X-Correlation-ID": current_request_id(),
             "Accept": "application/json",
         }
         attempts = 3 if method == "GET" else 1
