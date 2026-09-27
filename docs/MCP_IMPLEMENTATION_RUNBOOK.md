@@ -2166,6 +2166,8 @@ Record sanitized HTTP headers/statuses only.
 
 Do not store bearer token values in evidence.
 
+**2026-09-28: BLOCKED.** Live challenge, protected-resource discovery, authorization-server metadata, valid-token acceptance, and MCP/Sakai audience separation passed. The deployed protected-resource `resource` is the Container App HTTPS origin (with a trailing slash), while Entra registers and issues the MCP audience as a different `api://` URI. The canonical resource/Entra match gate therefore fails. Claim-specific negative cases pass locally but remain unproved against the deployed issuer. See [`evidence/mcp/phase-19-oauth-discovery.md`](evidence/mcp/phase-19-oauth-discovery.md). Resolve the resource identity design and repeat the live matrix before Phase 20.
+
 ---
 
 # 23. Phase 20 — MCP protocol/conformance testing
