@@ -1867,6 +1867,8 @@ Integrate with the repository's/Azure environment's existing observability appro
 
 **2026-09-27: IN PROGRESS.** Local structured audit and redaction passed; Azure telemetry/OpenTelemetry acceptance remains open. See [`evidence/mcp/phase-13-audit.md`](evidence/mcp/phase-13-audit.md). This outstanding work has no explicit dependency on Phase 19's OAuth discovery/token matrix and is not a gate to starting Phase 19; retain it for the later observability and final acceptance work. Do not treat Phase 13 as complete until its telemetry acceptance is evidenced.
 
+**2026-09-28: FINAL PASS.** Deployed structured events reached the existing Container Apps Log Analytics destination with correlation IDs, pseudonymous actor/course/object references, five-tool coverage, outcomes including authorization denial, latency, revision, and commit. Bounded console/audit queries found no token, header, secret, or LMS payload markers. A separate OpenTelemetry exporter is not used for V1. See the deployed closeout in [`evidence/mcp/phase-13-audit.md`](evidence/mcp/phase-13-audit.md).
+
 ---
 
 # 17. Phase 14 — MCP health/readiness behavior
