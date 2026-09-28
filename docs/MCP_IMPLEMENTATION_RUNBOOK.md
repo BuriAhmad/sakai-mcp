@@ -2405,7 +2405,7 @@ For each client that will be described as supporting client-side write approval:
 
 If a client cannot reliably provide the required write-approval UX in a particular mode, document that mode as unsupported/restricted for enabled Sakai writes rather than weakening server authorization.
 
-**2026-09-28: IN PROGRESS / BLOCKED on native OAuth client setup and interactive approval.** Inspector 2.8.0 CLI proved only the five-tool catalog and a read through a temporary bearer-injecting diagnostic proxy; it did not exercise its own OAuth or write approval. Current official Claude/ChatGPT guidance was checked, but neither host was connected or tested. The existing Entra test client lacks their exact redirect callbacks; no registration or client-side permission change was silently made. No cancellation/Allow result or client compatibility claim is made. See [`evidence/mcp/phase-25-client-compatibility.md`](evidence/mcp/phase-25-client-compatibility.md).
+**2026-09-28: IN PROGRESS / awaiting manual native OAuth and interactive approval.** Inspector 2.8.0 CLI proved only the five-tool catalog and a read through a temporary bearer-injecting diagnostic proxy; it did not exercise its own OAuth or write approval. The existing Entra test client now has the exact Inspector Web callback `http://localhost:6274/oauth/callback`, with its sole delegated `mcp.access` permission unchanged. No native OAuth flow, cancellation/Allow result, or host compatibility claim is made yet. See [`evidence/mcp/phase-25-client-compatibility.md`](evidence/mcp/phase-25-client-compatibility.md).
 
 ---
 

@@ -1,6 +1,6 @@
 # Phase 25 — client compatibility and approval (2026-09-28)
 
-Status: **IN PROGRESS / BLOCKED at native OAuth and human approval testing**. No client-side cancellation or approved-write result is claimed. Phases 26 and 27 were tested independently and checkpointed; their server results do not close this client gate.
+Status: **IN PROGRESS / awaiting manual native OAuth and human approval testing**. The existing test client is now configured for Inspector's exact Web callback. No native OAuth, client-side cancellation, or approved-write result is claimed. Phases 26 and 27 were tested independently and checkpointed; their server results do not close this client gate.
 
 ## Current product facts checked before client claims
 
@@ -14,9 +14,11 @@ The actual published Inspector **2.8.0 CLI** was run with modern 2026-07-28 era 
 
 The proxy deliberately bypassed Inspector's own OAuth flow, so this demonstrates only CLI transport/catalog/read behavior with a pre-obtained delegated token. It does **not** establish native client connection/authentication, approval display, Cancel/Reject, Allow/exactly-one create, persistent allow, or autonomous-mode behavior. Inspector is not claimed as an approval-enforcing host. No compatibility claim is made for Claude, Claude Code, OpenCode, or ChatGPT.
 
-## Concrete blocking configuration/action
+## Native OAuth setup prepared (2026-09-28)
 
-The existing Entra synthetic test client (`sakai-mcp-dev-test-client`) has only `http://localhost` registered as a public redirect URI. Inspector's exact callback paths and Claude's hosted callback are not registered. A native OAuth host test therefore needs a reviewed client registration/redirect configuration, followed by interactive synthetic-user sign-in and actual Cancel/Allow UI actions. Adding a hosted callback to a client registration changes where authorization codes may be returned and is an explicit security choice; it was not silently made. The project should select a dedicated least-privilege test client or an approved change to the current test client, register only the exact required callbacks, then test the chosen host with `create_course_announcement` set to `Needs approval`. The human must perform any sign-in/approval action that cannot be completed safely by the agent. Before any approved synthetic create, generate a unique title, verify absence, issue one intentional call, and reconcile the resulting Sakai object ID; never blindly replay an ambiguous result. Preserve no server-side elicitation and no content-based deduplication.
+Official Inspector 2.8.0 Web documentation specifies `http://localhost:6274/oauth/callback`. That exact URI was added to the existing public test client (`sakai-mcp-dev-test-client`), preserving its existing `http://localhost` URI. The client still requests only the existing delegated `mcp.access` scope; no other client, scope, API permission, or consent grant was added. Inspector's CLI/TUI callback (`http://127.0.0.1:6276/oauth/callback`) was not added because this test uses the Web UI. The callback is configured, but an interactive native OAuth flow has not yet been performed.
+
+Next, the human must perform Inspector's native Entra sign-in and the interactive tests. Inspector's manual Run Tool action is not host approval evidence. For any later real host claiming approval, configure `create_course_announcement` as `Needs approval`; before an approved synthetic create, verify a unique title is absent, make one intentional call, and reconcile its Sakai object ID. Never blindly replay an ambiguous result. Preserve no server-side elicitation and no content-based deduplication.
 
 Client matrix at this checkpoint:
 
