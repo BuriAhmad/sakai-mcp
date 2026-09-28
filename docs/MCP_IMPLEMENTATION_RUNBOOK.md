@@ -2353,6 +2353,8 @@ Expected behavior follows the Phase 3 chosen strategy:
 
 Confirm generic HTTP retry middleware does not automatically replay announcement POSTs.
 
+**2026-09-28: PASS.** Deployed synthetic write/denial/same-text operations passed 11/11, normal Sakai portal readback confirmed visibility, and a committed-then-lost-response adapter test proved one POST plus read reconciliation with no replay. No durable operation marker or automatic create retry is claimed. See [`evidence/mcp/phase-24-write-safety.md`](evidence/mcp/phase-24-write-safety.md). Phase 25 was not started in this session.
+
 ---
 
 # 28. Phase 25 — Client approval and compatibility acceptance

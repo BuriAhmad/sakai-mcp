@@ -115,6 +115,28 @@ def test_preconnect_create_failure_is_dependency_unavailable_without_retry():
     assert calls == 1
 
 
+def test_committed_create_with_lost_response_is_reconciled_by_read_without_replay():
+    announcements = []
+    post_calls = 0
+
+    def handler(request):
+        nonlocal post_calls
+        if request.method == "POST":
+            post_calls += 1
+            announcements.append({"id": "created-once", "title": "Synthetic check"})
+            raise httpx.ReadTimeout("synthetic response lost after commit", request=request)
+        assert request.method == "GET"
+        return httpx.Response(200, json={"announcements": announcements})
+
+    adapter = client(handler)
+    with pytest.raises(SakaiError) as error:
+        asyncio.run(adapter.create_course_announcement(principal(), "course-a", "Synthetic check", "Synthetic body"))
+    assert error.value.code == ErrorCode.AMBIGUOUS_WRITE_OUTCOME
+    visible = asyncio.run(adapter.get_course_announcements(principal(), "course-a"))
+    assert [row["id"] for row in visible] == ["created-once"]
+    assert post_calls == 1
+
+
 def test_invalid_course_id_and_oversize_response_are_rejected():
     with pytest.raises(SakaiError) as error:
         asyncio.run(client(lambda _: httpx.Response(200, json={"grades": []})).get_my_grades(principal(), ""))

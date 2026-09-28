@@ -6,8 +6,8 @@ from mcp.server.auth.provider import AccessToken
 from mcp.server.mcpserver.exceptions import ToolError
 
 import sakai_mcp.server as server_module
-from sakai_mcp.auth import EntraTokenVerifier
 from sakai_mcp.asgi import canonicalize_resource_metadata
+from sakai_mcp.auth import EntraTokenVerifier
 from sakai_mcp.sakai_client import ErrorCode, SakaiError
 from sakai_mcp.server import create_server
 from tests.helpers import settings
