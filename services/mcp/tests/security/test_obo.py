@@ -3,6 +3,7 @@ from datetime import UTC, datetime, timedelta
 
 import jwt
 import pytest
+from jwt import PyJWKClientConnectionError
 
 from sakai_mcp.auth import EntraTokenVerifier
 from sakai_mcp.obo import (
@@ -84,6 +85,29 @@ def test_missing_consent_fails_without_exposing_response():
             access("00000000-0000-0000-0000-000000000001")
         ))
     assert "sensitive" not in str(error.value)
+
+
+def test_downstream_jwks_outage_is_dependency_failure_and_recovers():
+    a = "00000000-0000-0000-0000-000000000001"
+    healthy = False
+
+    def signing_key(_):
+        if not healthy:
+            raise PyJWKClientConnectionError("synthetic private JWKS detail")
+        return KEY.public_key()
+
+    config = settings()
+    inbound = EntraTokenVerifier(config, lambda _: KEY.public_key())
+    obo = OBOProvider(
+        config, inbound,
+        exchange=lambda *_: {"access_token": downstream(a, ["synthetic-1"])},
+        downstream_signing_key=signing_key,
+    )
+    with pytest.raises(ExchangeUnavailable) as error:
+        asyncio.run(obo.acquire(access(a)))
+    assert "private" not in str(error.value)
+    healthy = True
+    assert asyncio.run(obo.acquire(access(a))).object_id == a
 
 
 @pytest.mark.parametrize(

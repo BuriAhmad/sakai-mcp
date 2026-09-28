@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 
+import pytest
 from mcp.server.auth.provider import AccessToken
 
 import sakai_mcp.audit as audit_module
@@ -45,3 +46,23 @@ def test_audit_logs_safe_fields_without_identity_or_content(monkeypatch, capsys)
     assert event["outcome"] == "OK"
     assert event["actor_ref"] and event["course_ref"] and event["created_ref"] and event["request_id"]
     assert logging.getLogger("httpx").level == logging.WARNING
+
+
+def test_failure_audit_redacts_details_and_resets_request_context(capsys):
+    configure_logging("INFO")
+    before = current_request_id()
+
+    async def run():
+        with pytest.raises(RuntimeError):
+            async with audit_call("get_my_grades", "read", "private-course"):
+                assert current_request_id() != before
+                raise RuntimeError("private bearer and grade body")
+
+    asyncio.run(run())
+    assert audit_module._request_id.get() is None
+    assert audit_module._created_ref.get() is None
+    output = capsys.readouterr().out
+    assert "private" not in output and "bearer" not in output
+    event = json.loads(output.strip().splitlines()[-1])
+    assert event["outcome"] == "INTERNAL_ERROR"
+    assert event["request_id"]

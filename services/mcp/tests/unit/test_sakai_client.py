@@ -144,3 +144,50 @@ def test_invalid_course_id_and_oversize_response_are_rejected():
     with pytest.raises(SakaiError) as error:
         asyncio.run(client(lambda _: httpx.Response(200, content=b"x" * 1_000_001)).list_my_courses(principal()))
     assert error.value.code == ErrorCode.INTERNAL_ERROR
+
+
+@pytest.mark.parametrize("failure", ["connect", "read", "rate-limit", "malformed", "oversize"])
+def test_read_failures_are_bounded_and_recover_after_dependency_restoration(failure):
+    attempts = 0
+    healthy = False
+
+    def handler(request):
+        nonlocal attempts
+        attempts += 1
+        if healthy:
+            return httpx.Response(200, json={"courses": [{"id": "course-a"}]})
+        if failure == "connect":
+            raise httpx.ConnectTimeout("private Sakai detail", request=request)
+        if failure == "read":
+            raise httpx.ReadTimeout("private Sakai detail", request=request)
+        if failure == "rate-limit":
+            return httpx.Response(429, text="private Sakai detail")
+        if failure == "malformed":
+            return httpx.Response(200, text="private Sakai detail")
+        return httpx.Response(200, content=b"x" * 1_000_001)
+
+    adapter = client(handler)
+    with pytest.raises(SakaiError) as error:
+        asyncio.run(adapter.list_my_courses(principal()))
+    expected = {
+        "connect": ErrorCode.DEPENDENCY_UNAVAILABLE,
+        "read": ErrorCode.DEPENDENCY_UNAVAILABLE,
+        "rate-limit": ErrorCode.RATE_LIMITED,
+        "malformed": ErrorCode.INTERNAL_ERROR,
+        "oversize": ErrorCode.INTERNAL_ERROR,
+    }[failure]
+    assert error.value.code == expected
+    assert "private" not in str(error.value)
+    assert attempts == (3 if failure in ("connect", "read") else 1)
+    healthy = True
+    assert asyncio.run(adapter.list_my_courses(principal())) == [{"id": "course-a"}]
+    assert attempts == (4 if failure in ("connect", "read") else 2)
+
+
+def test_declared_oversize_body_is_rejected_before_stream_consumption():
+    def handler(_):
+        return httpx.Response(200, headers={"content-length": "1000001"}, content=b"private body")
+
+    with pytest.raises(SakaiError) as error:
+        asyncio.run(client(handler).list_my_courses(principal()))
+    assert error.value.code == ErrorCode.INTERNAL_ERROR

@@ -11,7 +11,7 @@ import msal  # type: ignore[import-untyped]
 import requests
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes
-from jwt import PyJWKClient
+from jwt import PyJWKClient, PyJWKClientConnectionError
 from mcp.server.auth.provider import AccessToken
 
 from sakai_mcp.auth import EntraTokenVerifier
@@ -156,6 +156,8 @@ class OBOProvider:
                 or any(ord(char) < 32 or ord(char) == 127 for char in eid_values[0])
             ):
                 raise InvalidDownstreamToken("Invalid Sakai token")
-        except (jwt.PyJWTError, KeyError, TypeError, ValueError, OSError):
+        except (PyJWKClientConnectionError, OSError):
+            raise ExchangeUnavailable("Sakai signing keys unavailable") from None
+        except (jwt.PyJWTError, KeyError, TypeError, ValueError):
             raise InvalidDownstreamToken("Invalid Sakai token") from None
         return DownstreamToken(token, tenant, object_id, eid_values[0], claims["exp"])
