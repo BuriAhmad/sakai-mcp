@@ -2521,6 +2521,8 @@ Attempt cross-course and nonexistent IDs regardless of content prompts.
 
 Expected: deny/not-found according to secure semantics.
 
+**2026-09-28: PASS for the representative server-side gate.** Synthetic announcement and submission-metadata injection strings remained data; forged cross-course, unauthorized write, and nonexistent-ID calls retained Sakai denials. External host/model interpretation was not tested or claimed. See [`evidence/mcp/phase-28-malicious-content.md`](evidence/mcp/phase-28-malicious-content.md).
+
 ---
 
 # 32. Phase 29 — Reliability and failure-mode testing
