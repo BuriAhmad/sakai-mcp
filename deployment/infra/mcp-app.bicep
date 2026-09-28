@@ -15,6 +15,12 @@ param lockSha256 string
 @description('Canonical public HTTPS origin of the Container App, without a trailing slash.')
 param mcpPublicUrl string
 
+@description('Canonical hostname bound directly to the Container App.')
+param mcpHostname string = 'mcp.smartdigest.app'
+
+@description('Azure-managed certificate created during the DNS-validated hostname bootstrap.')
+param managedCertificateName string = 'mc-cae-mcp-sakai--mcp-smartdigest--7680'
+
 @description('Verified Sakai HTTPS origin.')
 param sakaiBaseUrl string
 
@@ -50,6 +56,11 @@ resource environment 'Microsoft.App/managedEnvironments@2025-07-01' existing = {
   name: 'cae-mcp-sakai-dev'
 }
 
+resource mcpCertificate 'Microsoft.App/managedEnvironments/managedCertificates@2025-07-01' existing = {
+  parent: environment
+  name: managedCertificateName
+}
+
 resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   name: 'id-mcp-sakai-dev'
 }
@@ -80,6 +91,13 @@ resource app 'Microsoft.App/containerApps@2025-07-01' = {
         targetPort: 8000
         transport: 'http'
         allowInsecure: false
+        customDomains: [
+          {
+            name: mcpHostname
+            bindingType: 'SniEnabled'
+            certificateId: mcpCertificate.id
+          }
+        ]
         stickySessions: {
           affinity: 'none'
         }

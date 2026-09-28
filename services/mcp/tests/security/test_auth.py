@@ -37,7 +37,7 @@ def test_signature_and_claim_negatives():
         token(nbf=now + timedelta(minutes=2)),
         token(iss="https://login.microsoftonline.com/other/v2.0"),
         token(tid="00000000-0000-0000-0000-000000000000"),
-        token(aud="api://other"),
+        token(aud="https://other.example.test"),
         token(scp="other.scope"),
         token(oid=""),
         token(oid=None),
@@ -64,5 +64,7 @@ def test_configuration_rejects_insecure_urls_and_invalid_audience():
         settings(mcp_jwks_uri="http://keys.example.test/jwks")
     with pytest.raises(ValidationError):
         settings(mcp_audience="https://unrelated.example.test")
+    with pytest.raises(ValidationError):
+        settings(mcp_public_url="https://mcp.example.test/mcp")
     with pytest.raises(ValidationError):
         settings(sakai_base_url="https://sakai.example.test/other")

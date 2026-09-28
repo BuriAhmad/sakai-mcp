@@ -7,6 +7,7 @@ from mcp.server.mcpserver.exceptions import ToolError
 
 import sakai_mcp.server as server_module
 from sakai_mcp.auth import EntraTokenVerifier
+from sakai_mcp.asgi import canonicalize_resource_metadata
 from sakai_mcp.sakai_client import ErrorCode, SakaiError
 from sakai_mcp.server import create_server
 from tests.helpers import settings
@@ -122,6 +123,26 @@ def test_streamable_http_rejects_missing_bearer():
     response = asyncio.run(run())
     assert response.status_code == 401
     assert "Bearer" in response.headers["www-authenticate"]
+
+
+def test_protected_resource_metadata_uses_exact_canonical_uri():
+    config = settings()
+    server = create_server(config, FakeClient(), EntraTokenVerifier(config, lambda _: None))
+    app = server.streamable_http_app(stateless_http=True, json_response=True, host="mcp.example.test")
+    canonicalize_resource_metadata(app, config)
+
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app), base_url="https://mcp.example.test") as client:
+            return await client.get("/.well-known/oauth-protected-resource")
+
+    response = asyncio.run(run())
+    assert response.status_code == 200
+    assert response.json() == {
+        "resource": "https://mcp.example.test",
+        "authorization_servers": [str(config.mcp_issuer)],
+        "scopes_supported": ["mcp.access"],
+        "bearer_methods_supported": ["header"],
+    }
 
 
 def test_streamable_http_accepts_valid_bearer_and_lists_five_tools():

@@ -10,12 +10,12 @@ from sakai_mcp.config import Settings
 
 KEY = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 TENANT = UUID("11111111-1111-4111-8111-111111111111")
-RESOURCE = "api://22222222-2222-4222-8222-222222222222"
+RESOURCE = "https://mcp.example.test"
 
 
 def settings(**changes):
     values = {
-        "mcp_public_url": "https://mcp.example.test/mcp",
+        "mcp_public_url": RESOURCE,
         "sakai_base_url": "https://sakai.example.test",
         "entra_tenant_id": TENANT,
         "mcp_resource_client_id": UUID("22222222-2222-4222-8222-222222222222"),

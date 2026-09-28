@@ -19,6 +19,7 @@ command -v python3 >/dev/null || { echo 'Python 3 is required.' >&2; exit 2; }
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 resource_group='rg-sakai-mcp-dev'
 app_name='ca-mcp-sakai-dev'
+canonical_origin='https://mcp.smartdigest.app'
 expected_subscription='55a5701c-411e-45f1-9829-9c80f526d9eb'
 selected_subscription="$(az account show --query id -o tsv)"
 [[ "$selected_subscription" == "$expected_subscription" ]] || {
@@ -45,15 +46,19 @@ if [[ "$push_only" != '--push-only' ]]; then
   }
   previous_image="$(python3 -c 'import json,sys; a=json.load(sys.stdin); print(a["properties"]["template"]["containers"][0]["image"])' <<< "$app_json")"
   app_fqdn="$(python3 -c 'import json,sys; a=json.load(sys.stdin); print(a["properties"]["configuration"]["ingress"]["fqdn"])' <<< "$app_json")"
-  configured_origin="$(python3 -c 'import json,sys; a=json.load(sys.stdin); e=a["properties"]["template"]["containers"][0]["env"]; print(next((v.get("value", "") for v in e if v.get("name")=="MCP_PUBLIC_URL"), ""))' <<< "$app_json")"
   [[ -n "$registry_server" && -n "$app_fqdn" && "$app_fqdn" != None ]] || {
     echo 'MCP registry or HTTPS ingress is incomplete.' >&2
     exit 2
   }
-  [[ "$configured_origin" == "https://${app_fqdn}" ]] || {
-    echo 'Container App public URL does not match its verified ingress FQDN.' >&2
-    exit 2
-  }
+  mcp_hostname="${canonical_origin#https://}"
+  python3 -c '
+import json
+import sys
+app = json.loads(sys.stdin.read())
+hostname = sys.argv[1]
+domains = app["properties"]["configuration"]["ingress"].get("customDomains", [])
+assert any(d.get("name") == hostname and d.get("bindingType") == "SniEnabled" for d in domains), "Canonical hostname is not SNI-bound on the Container App."
+' <<< "$app_json" "$mcp_hostname"
 fi
 
 tag="${registry_server}/sakai-mcp:${source_commit}"
@@ -76,9 +81,10 @@ echo "Previous image: $previous_image"
 echo "Deploying digest: $image"
 az containerapp update --resource-group "$resource_group" --name "$app_name" \
   --image "$image" --set-env-vars "APP_COMMIT=$source_commit" "APP_LOCK_SHA256=$lock_sha" \
+  "MCP_PUBLIC_URL=$canonical_origin" "MCP_AUDIENCE=$canonical_origin" \
   --output none
 
-origin="https://${app_fqdn}"
+origin="$canonical_origin"
 curl --fail --silent --show-error --max-time 15 --retry 24 --retry-delay 10 --retry-all-errors \
   "$origin/live" >/dev/null
 curl --fail --silent --show-error --max-time 15 --retry 12 --retry-delay 5 --retry-all-errors \
@@ -96,7 +102,7 @@ grep -Eiq '^www-authenticate: *Bearer' "$headers" || {
 }
 curl --fail --silent --show-error --max-time 20 \
   "$origin/.well-known/oauth-protected-resource" | \
-  python3 -c 'import json,sys; data=json.load(sys.stdin); assert data.get("resource") and data.get("authorization_servers")'
+  python3 -c 'import json,sys; data=json.load(sys.stdin); assert data.get("resource") == sys.argv[1]; assert data.get("authorization_servers")' "$origin"
 
 az containerapp show --resource-group "$resource_group" --name "$app_name" -o json | \
   python3 -c '
@@ -107,6 +113,8 @@ expected_image, expected_commit = sys.argv[1:]
 assert app["properties"]["template"]["containers"][0]["image"] == expected_image
 env = {entry["name"]: entry.get("value") for entry in app["properties"]["template"]["containers"][0]["env"]}
 assert env.get("APP_COMMIT") == expected_commit
+assert env.get("MCP_PUBLIC_URL") == "https://mcp.smartdigest.app"
+assert env.get("MCP_AUDIENCE") == "https://mcp.smartdigest.app"
 assert app["properties"]["configuration"]["ingress"].get("stickySessions", {}).get("affinity", "none").lower() == "none"
 assert app["properties"]["latestRevisionName"] == app["properties"]["latestReadyRevisionName"]
 ' "$image" "$source_commit"

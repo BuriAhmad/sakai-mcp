@@ -42,11 +42,31 @@ class Settings(BaseSettings):
             raise ValueError("Sakai base URL must be an HTTPS origin")
         return value
 
-    @field_validator("mcp_audience", "sakai_audience")
+    @field_validator("mcp_public_url")
     @classmethod
-    def require_resource_audience(cls, value: str) -> str:
+    def require_mcp_origin(cls, value: HttpUrl) -> HttpUrl:
+        if value.path not in (None, "", "/") or value.query:
+            raise ValueError("MCP public URL must be an HTTPS origin")
+        return value
+
+    @field_validator("mcp_audience")
+    @classmethod
+    def require_canonical_mcp_audience(cls, value: str, info) -> str:
+        public_url = info.data.get("mcp_public_url")
+        if (
+            public_url is None
+            or value != str(public_url).rstrip("/")
+            or value != value.strip()
+            or not value.startswith("https://")
+        ):
+            raise ValueError("MCP audience must exactly match the canonical public HTTPS origin")
+        return value
+
+    @field_validator("sakai_audience")
+    @classmethod
+    def require_sakai_resource_audience(cls, value: str) -> str:
         if not value.startswith("api://") or not value[6:] or value != value.strip():
-            raise ValueError("MCP audience must be a nonempty api:// resource identifier")
+            raise ValueError("Sakai audience must be a nonempty api:// resource identifier")
         return value
 
     @field_validator("mcp_required_scope", "sakai_downstream_scope")
