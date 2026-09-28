@@ -2168,6 +2168,8 @@ Do not store bearer token values in evidence.
 
 **2026-09-28: BLOCKED.** Live challenge, protected-resource discovery, authorization-server metadata, valid-token acceptance, and MCP/Sakai audience separation passed. The deployed protected-resource `resource` is the Container App HTTPS origin (with a trailing slash), while Entra registers and issues the MCP audience as a different `api://` URI. The canonical resource/Entra match gate therefore fails. Claim-specific negative cases pass locally but remain unproved against the deployed issuer. See [`evidence/mcp/phase-19-oauth-discovery.md`](evidence/mcp/phase-19-oauth-discovery.md). Resolve the resource identity design and repeat the live matrix before Phase 20.
 
+**2026-09-28: PASS after canonical migration.** The same MCP registration now uses `https://mcp.smartdigest.app` as the canonical HTTPS Application ID URI, and deployed discovery/verifier/token audiences match it. Full live and local negative coverage passed; the initial blocked result remains documented above. See [`evidence/mcp/phase-19-oauth-discovery.md`](evidence/mcp/phase-19-oauth-discovery.md). Phase 20 was not started.
+
 ---
 
 # 23. Phase 20 — MCP protocol/conformance testing
