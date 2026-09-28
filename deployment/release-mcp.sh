@@ -84,6 +84,22 @@ az containerapp update --resource-group "$resource_group" --name "$app_name" \
   "MCP_PUBLIC_URL=$canonical_origin" "MCP_AUDIENCE=$canonical_origin" \
   --output none
 
+ready_revision=''
+for attempt in {1..30}; do
+  latest_revision="$(az containerapp show --resource-group "$resource_group" --name "$app_name" \
+    --query properties.latestRevisionName -o tsv)"
+  ready_revision="$(az containerapp show --resource-group "$resource_group" --name "$app_name" \
+    --query properties.latestReadyRevisionName -o tsv)"
+  if [[ -n "$latest_revision" && "$latest_revision" == "$ready_revision" ]]; then
+    break
+  fi
+  sleep 10
+done
+[[ -n "$ready_revision" && "$latest_revision" == "$ready_revision" ]] || {
+  echo 'Latest MCP revision did not become ready within five minutes.' >&2
+  exit 1
+}
+
 origin="$canonical_origin"
 curl --fail --silent --show-error --max-time 15 --retry 24 --retry-delay 10 --retry-all-errors \
   "$origin/live" >/dev/null
