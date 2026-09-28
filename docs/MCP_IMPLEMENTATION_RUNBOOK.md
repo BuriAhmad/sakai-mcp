@@ -2250,6 +2250,8 @@ Also test forged IDs:
 
 Sakai authorization is the expected final authority.
 
+**2026-09-28: PASS.** The deployed synthetic A/B/instructor MCP matrix passed 18/18, including cross-course and forged assignment/object denials and one reconciled synthetic authorized announcement. Group grader filtering passed in current Sakai controller tests; the live fixture has no separate group grader. See [`evidence/mcp/phase-22-authorization.md`](evidence/mcp/phase-22-authorization.md).
+
 ---
 
 # 26. Phase 23 — Tool exposure tests
