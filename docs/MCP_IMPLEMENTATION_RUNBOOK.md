@@ -2477,6 +2477,8 @@ Required proof:
 
 This is a hard security gate.
 
+**2026-09-28: PASS for the tested V1 matrix.** Two 180-call runs at concurrency 18 kept Student A, Student B, and Instructor A baselines isolated; foreign-course and missing-assignment denials stayed denied. Both active replicas handled all three pseudonymous actors. Sakai filter/verifier tests passed 10/10, including concurrent thread-local isolation and exception cleanup. The temporary min=2 scale was restored to the tracked 0/2 target. See [`evidence/mcp/phase-27-concurrency-isolation.md`](evidence/mcp/phase-27-concurrency-isolation.md).
+
 ---
 
 # 31. Phase 28 — Prompt-injection and malicious-content sanity tests
