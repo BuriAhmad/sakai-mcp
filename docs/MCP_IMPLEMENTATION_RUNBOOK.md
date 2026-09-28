@@ -2711,6 +2711,8 @@ real sandbox data
 - rollback readiness confirmed;
 - any database/config/secret changes documented separately from code rollback.
 
+**2026-09-28: BLOCKED for full Phase 31 PASS.** Independent current-revision delegated MCP, OBO, Sakai read/denial, catalog, health, and audit checks passed. The required real supported client, native OAuth, and write Cancel/Allow acceptance remain untested in Phase 25. See [`evidence/mcp/phase-31-final-acceptance.md`](evidence/mcp/phase-31-final-acceptance.md).
+
 ---
 
 # 35. Repository-specific implementation checklist
