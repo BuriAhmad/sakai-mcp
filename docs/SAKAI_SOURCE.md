@@ -1,6 +1,6 @@
 # Sakai source in this repository
 
-`apps/sakai/` is a tracked copy of the official Sakai 25.2 source. Its starting point is upstream commit `b5b7800f0fcddf9d0db47276a66065189365d905`, the same commit recorded for the current VM deployment. The upstream repository is <https://github.com/sakaiproject/sakai> and its license is retained at `apps/sakai/LICENSE`.
+`apps/sakai/` is a tracked copy of the official Sakai 25.2 source. Its starting point is upstream commit `b5b7800f0fcddf9d0db47276a66065189365d905`; the development VM runs a later project release containing the tracked MCP customization. The upstream repository is <https://github.com/sakaiproject/sakai> and its license is retained at `apps/sakai/LICENSE`.
 
 The source is part of this repository's Git history. Edit and commit it here alongside the MCP service and deployment code. There is no nested `.git` directory and no second project remote to push.
 
