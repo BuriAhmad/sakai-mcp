@@ -2622,6 +2622,8 @@ Update:
 
 Keep root `AGENTS.md` concise and point to `services/mcp/AGENTS.md` only if MCP-specific instructions are needed.
 
+**2026-09-28: PASS.** The Sakai source workflow now runs 21 focused MCP/login tests after its full build; the pushed workflow and main CI passed. Bicep, image/security scans, release guards, branch policy, and documentation were reviewed. See [`evidence/mcp/phase-30-repository-policy.md`](evidence/mcp/phase-30-repository-policy.md).
+
 ---
 
 # 34. Phase 31 — Final end-to-end acceptance
