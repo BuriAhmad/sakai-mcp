@@ -45,4 +45,6 @@ Tracked implementation files:
 
 ## Runtime verification record
 
-Update this section with the exact deployment commit and results after applying the release. A read-only API comparison before migration attempted Sakai `/api/login` with the ignored synthetic Student A and Instructor A credentials, but the current server rejected those credentials. Do not change account passwords to work around this; restore or replace only through the established synthetic-account setup if needed, then rerun the role checks.
+- Exact Sakai source commit deployed: `3ab722667ff40c6da51afe0d8456e7e29396e57b`; release `20260928T112025Z-3ab722667ff4` is healthy and `/portal` returned HTTP 200.
+- Existing fixture migration: Course A and Course B each logged `Standardized course navigation`; a safe repeat logged `Course navigation is already standardized` for each. The temporary migration autorun and ID list were then removed from runtime `local.properties`.
+- Instructor/student UI and permission checks, and new-course Worksite Setup verification, remain outstanding. Read-only `/api/login` attempts using the ignored synthetic Student A and Instructor A credentials were rejected. Do not reset account passwords to work around this; restore or replace only through the established synthetic-account setup, then run those checks.
