@@ -2190,6 +2190,8 @@ At implementation time:
 
 Do not hard-code a claim in this runbook that a future client still negotiates the same protocol revision. Record what was actually observed.
 
+**2026-09-28: PASS for the fixed V1 server surface.** Deployed 2026-07-28 stateless and 2025-11-25 handshake flows, focused official conformance scenarios, tool catalog/call semantics, and malformed/unsupported handling passed. The broad scenario has six diagnostic-tool/subscription fixture gaps and is not claimed as full-suite certification. See [`evidence/mcp/phase-20-protocol.md`](evidence/mcp/phase-20-protocol.md). Phase 13 telemetry is next.
+
 ---
 
 # 24. Phase 21 — End-to-end authentication and identity tests
