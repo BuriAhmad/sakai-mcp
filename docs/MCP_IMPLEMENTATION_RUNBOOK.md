@@ -2448,6 +2448,8 @@ Confirm the deployment does not require session affinity for correctness.
 
 If empirical evidence unexpectedly demonstrates a genuine state requirement, stop and document the exact requirement before changing architecture. Do not quietly enable sticky sessions as a workaround.
 
+**2026-09-28: PASS for V1.** Two ready replicas on temporary revision `0000005` served 72/72 modern/legacy authenticated read checks; Log Analytics attributed all three synthetic actors to each replica. Affinity stayed `none`, health passed, and the image/source were unchanged. Min replicas remains temporarily 2 for Phase 27 and must return to the tracked 0/2 dev target afterward. See [`evidence/mcp/phase-26-multi-replica.md`](evidence/mcp/phase-26-multi-replica.md).
+
 ---
 
 # 30. Phase 27 — Concurrency isolation tests
