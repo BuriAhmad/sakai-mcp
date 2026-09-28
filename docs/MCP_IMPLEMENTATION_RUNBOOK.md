@@ -2220,6 +2220,8 @@ Sakai token sent to MCP            DENY
 
 Evidence must prove the same external human identity survives OBO while audiences remain distinct.
 
+**2026-09-28: PASS.** Live Student A/B MCP→OBO→Sakai results matched each user's direct Sakai fixture and differed in released grades; token audiences rejected at the opposite boundary. Current-source MCP and Sakai tests passed claim-isolating negatives and request-context cleanup. The inability to mint selected invalid claims from the real single-tenant issuer is documented without claiming live-issued proof. See [`evidence/mcp/phase-21-identity.md`](evidence/mcp/phase-21-identity.md).
+
 ---
 
 # 25. Phase 22 — Authorization matrix through MCP
