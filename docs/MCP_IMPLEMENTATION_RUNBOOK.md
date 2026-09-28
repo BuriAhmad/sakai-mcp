@@ -2287,6 +2287,8 @@ Expected:
 
 Test client caching/refresh behavior and document limitations. If a client snapshots tools, server authorization must remain correct anyway.
 
+**2026-09-28: PASS with static-catalog UX limitation.** Deployed Student A and Instructor A catalogs expose exactly the five fixed schemas; no internal, assignment-write, or arbitrary REST tool can be called. Manual Student A privileged calls are denied by Sakai. The catalog remains static because there is no safe coarse capability feed, as allowed and documented in Phase 15.5; per-client caching UX remains Phase 25. See [`evidence/mcp/phase-23-tool-exposure.md`](evidence/mcp/phase-23-tool-exposure.md).
+
 ---
 
 # 27. Phase 24 — Announcement write safety and duplicate/retry tests
