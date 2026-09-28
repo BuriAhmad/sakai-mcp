@@ -53,6 +53,7 @@ public class StandardCourseLayoutMigrationJob implements Job {
     };
     private static final List<String> OVERVIEW_TOOL_IDS = Arrays.asList(
         "sakai.iframe.site", "sakai.synoptic.announcement", "sakai.summary.calendar");
+    private static final List<String> REQUIRED_TOOL_IDS = requiredToolIds();
 
     @Setter private SiteService siteService;
     @Setter private SecurityService securityService;
@@ -65,6 +66,10 @@ public class StandardCourseLayoutMigrationJob implements Job {
         Set<String> requestedIds = configuredIds == null ? new HashSet<>() : new HashSet<>(Arrays.asList(configuredIds));
         if (requestedIds.isEmpty()) {
             log.info("No course-site IDs were configured; no sites were changed.");
+            return;
+        }
+        if (!awaitToolRegistrations()) {
+            log.error("Required standard course tools did not all register; no course sites were changed.");
             return;
         }
         SecurityAdvisor advisor = (userId, function, reference) -> SecurityAdvisor.SecurityAdvice.ALLOWED;
@@ -94,6 +99,40 @@ public class StandardCourseLayoutMigrationJob implements Job {
         } finally {
             securityService.popAdvisor(advisor);
         }
+    }
+
+    /**
+     * Quartz AutoRun fires before Tomcat has necessarily deployed every tool WAR.
+     * Wait on this worker thread so the migration never writes a partial layout.
+     */
+    private boolean awaitToolRegistrations() throws JobExecutionException {
+        for (int attempt = 1; attempt <= 90; attempt++) {
+            List<String> missing = new ArrayList<>();
+            for (String toolId : REQUIRED_TOOL_IDS) {
+                if (toolManager.getTool(toolId) == null) missing.add(toolId);
+            }
+            if (missing.isEmpty()) return true;
+            if (attempt == 90) {
+                log.error("Timed out waiting for required standard course tools to register: {}", missing);
+                return false;
+            }
+            if (attempt == 1 || attempt % 6 == 0) {
+                log.info("Waiting for standard course tool registrations: {}", missing);
+            }
+            try {
+                Thread.sleep(10_000L);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new JobExecutionException("Interrupted while waiting for course tool registrations", e);
+            }
+        }
+        return false;
+    }
+
+    private static List<String> requiredToolIds() {
+        List<String> toolIds = new ArrayList<>(OVERVIEW_TOOL_IDS);
+        toolIds.addAll(Arrays.asList(NAVIGATION_TOOL_IDS));
+        return toolIds;
     }
 
     private void migrate(Site site) throws Exception {
