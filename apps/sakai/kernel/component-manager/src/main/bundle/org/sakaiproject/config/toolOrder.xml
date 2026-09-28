@@ -11,22 +11,20 @@
 	</category>
 
 	<category name="course">
-		<tool id = "sakai.iframe.site" />
-		<tool id = "sakai.synoptic.chat" />
-		<tool id = "sakai.synoptic.messagecenter" />
-		<tool id = "sakai.synoptic.announcement" />
 		<tool id = "home" selected = "true" />
-		<tool id = "sakai.syllabus" />
+		<tool id = "sakai.syllabus" selected = "true" />
 		<tool id = "sakai.lessonbuildertool" />
-		<tool id = "sakai.schedule" />
+		<tool id = "sakai.schedule" selected = "true" />
 		<tool id = "sakai.announcements" selected = "true" />
-		<tool id = "sakai.resources" />
-		<tool id = "sakai.forums" />
-		<tool id = "sakai.assignment" />
-		<tool id = "sakai.assignment.grades" />
-		<tool id = "sakai.samigo" />
-		<tool id = "sakai.gradebookng" />
-		<tool id = "sakai.dropbox" />
+		<tool id = "sakai.resources" selected = "true" />
+		<tool id = "sakai.conversations" selected = "true" />
+		<tool id = "sakai.poll" selected = "true" />
+		<tool id = "sakai.forums" selected = "true" />
+		<tool id = "sakai.assignment.grades" selected = "true" />
+		<tool id = "sakai.samigo" selected = "true" />
+		<tool id = "sakai.gradebookng" selected = "true" />
+		<tool id = "sakai.dropbox" selected = "true" />
+		<tool id = "sakai.mailtool" selected = "true" />
 		<tool id = "sakai.chat" />
 		<tool id = "sakai.rwiki" />
 		<tool id = "sakai.mailbox" />
@@ -34,7 +32,7 @@
 		<tool id = "sakai.iframe" />
 		<tool id = "sakai.presentation" />
 		<tool id = "sakai.sections" />
-		<tool id = "sakai.site.roster" />
+		<tool id = "sakai.site.roster2" selected = "true" />
 		<tool id = "sakai.siteinfo" required = "true" />
 
 	</category>
@@ -51,7 +49,6 @@
 		<tool id = "sakai.announcements" />
 		<tool id = "sakai.resources" />
 		<tool id = "sakai.forums" />
-		<tool id = "sakai.assignment" />
 		<tool id = "sakai.assignment.grades" />
 		<tool id = "sakai.samigo" />
 		<tool id = "sakai.gradebookng" />
@@ -63,7 +60,7 @@
 		<tool id = "sakai.iframe" />
 		<tool id = "sakai.presentation" />
 		<tool id = "sakai.sections" />
-		<tool id = "sakai.site.roster" />
+		<tool id = "sakai.site.roster2" />
 		<tool id = "sakai.siteinfo" required = "true" />
 
 	</category>

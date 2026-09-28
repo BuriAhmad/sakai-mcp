@@ -17,6 +17,7 @@ Everyday commands:
   open-ssh              Refresh the NSG rule without connecting
   deploy COMMIT          Build and deploy a pushed Sakai commit to the dev VM
   rollback RELEASE_ID    Restore the release immediately before RELEASE_ID
+  migrate-course-layout Apply tracked standard defaults to Course A/B fixtures
   help                  Show this help
 
 Examples:
@@ -45,6 +46,7 @@ case "$command_name" in
   open-ssh) exec "$ROOT_DIR/scripts/open-ssh-access.sh" "$@" ;;
   deploy) exec "$ROOT_DIR/scripts/deploy-sakai-release.sh" "$@" ;;
   rollback) exec "$ROOT_DIR/scripts/rollback-sakai-release.sh" "$@" ;;
+  migrate-course-layout) exec "$ROOT_DIR/scripts/migrate-course-site-layout.sh" "$@" ;;
   help|-h|--help) usage ;;
   *)
     echo "Unknown command: $command_name" >&2
