@@ -46,7 +46,7 @@ def canonicalize_resource_metadata(app: Starlette, settings: Settings) -> Starle
             return Response(status_code=204, headers=headers)
         return JSONResponse(
             {
-                "resource": settings.mcp_audience,
+                "resource": str(settings.mcp_public_url).rstrip("/"),
                 "authorization_servers": [str(settings.mcp_issuer)],
                 "scopes_supported": [settings.mcp_required_scope],
                 "bearer_methods_supported": ["header"],

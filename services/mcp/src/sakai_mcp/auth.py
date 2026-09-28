@@ -80,7 +80,7 @@ class EntraTokenVerifier:
             client_id=principal.client_id,
             scopes=sorted(principal.scopes),
             expires_at=claims["exp"],
-            resource=self.settings.mcp_audience,
+            resource=str(self.settings.mcp_public_url).rstrip("/"),
             subject=f"{principal.tenant_id}:{principal.object_id}",
             claims={"tid": principal.tenant_id, "oid": principal.object_id},
         )

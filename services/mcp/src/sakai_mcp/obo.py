@@ -105,7 +105,7 @@ class OBOProvider:
             raise InvalidUpstreamToken("Invalid MCP token")
         principal, _ = verified
         if (
-            upstream.resource != self.settings.mcp_audience
+            upstream.resource != str(self.settings.mcp_public_url).rstrip("/")
             or self.settings.mcp_required_scope not in upstream.scopes
             or upstream.claims is None
             or upstream.claims.get("tid") != principal.tenant_id
@@ -134,7 +134,7 @@ class OBOProvider:
                 key=self._downstream_signing_key(token),
                 algorithms=["RS256"],
                 audience=self.settings.sakai_audience,
-                issuer=str(self.settings.mcp_issuer),
+                issuer=str(self.settings.sakai_issuer),
                 options={"require": ["exp", "nbf", "iss", "aud", "tid", "oid", "scp"]},
                 leeway=60,
             )

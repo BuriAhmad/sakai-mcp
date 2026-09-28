@@ -63,7 +63,7 @@ def test_configuration_rejects_insecure_urls_and_invalid_audience():
     with pytest.raises(ValidationError):
         settings(mcp_jwks_uri="http://keys.example.test/jwks")
     with pytest.raises(ValidationError):
-        settings(mcp_audience="https://unrelated.example.test")
+        settings(mcp_audience="22222222-2222-4222-8222-222222222223")
     with pytest.raises(ValidationError):
         settings(mcp_public_url="https://mcp.example.test/mcp")
     with pytest.raises(ValidationError):

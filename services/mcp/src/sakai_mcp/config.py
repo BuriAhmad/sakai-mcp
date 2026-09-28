@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     mcp_resource_client_id: UUID
     mcp_issuer: HttpUrl
     mcp_audience: str
+    sakai_issuer: HttpUrl
     mcp_required_scope: str = "mcp.access"
     mcp_jwks_uri: HttpUrl
     sakai_resource_client_id: UUID
@@ -28,7 +29,7 @@ class Settings(BaseSettings):
     page_size_max: int = Field(default=50, ge=1, le=100)
     log_level: str = "INFO"
 
-    @field_validator("mcp_public_url", "sakai_base_url", "mcp_issuer", "mcp_jwks_uri")
+    @field_validator("mcp_public_url", "sakai_base_url", "mcp_issuer", "sakai_issuer", "mcp_jwks_uri")
     @classmethod
     def require_https(cls, value: HttpUrl) -> HttpUrl:
         if value.scheme != "https" or value.username or value.password or value.fragment:
@@ -51,15 +52,10 @@ class Settings(BaseSettings):
 
     @field_validator("mcp_audience")
     @classmethod
-    def require_canonical_mcp_audience(cls, value: str, info) -> str:
-        public_url = info.data.get("mcp_public_url")
-        if (
-            public_url is None
-            or value != str(public_url).rstrip("/")
-            or value != value.strip()
-            or not value.startswith("https://")
-        ):
-            raise ValueError("MCP audience must exactly match the canonical public HTTPS origin")
+    def require_v2_mcp_audience(cls, value: str, info) -> str:
+        client_id = info.data.get("mcp_resource_client_id")
+        if client_id is None or value != str(client_id) or value != value.strip():
+            raise ValueError("MCP v2 token audience must match the MCP app client ID")
         return value
 
     @field_validator("sakai_audience")

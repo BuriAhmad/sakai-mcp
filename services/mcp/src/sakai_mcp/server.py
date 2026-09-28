@@ -93,7 +93,7 @@ def create_server(settings: Settings, client: SakaiClient, verifier: TokenVerifi
             issuer_url=AnyHttpUrl(str(settings.mcp_issuer)),
             resource_server_url=AnyHttpUrl(str(settings.mcp_public_url)),
             required_scopes=[settings.mcp_required_scope],
-            validate_token_resource=False,  # Entra's HTTPS resource audience is checked by our verifier.
+            validate_token_resource=False,  # The v2 GUID aud and HTTPS resource URI are verified separately.
         ),
     )
 

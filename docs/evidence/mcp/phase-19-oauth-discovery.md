@@ -1,6 +1,6 @@
 # Phase 19 — OAuth discovery and protected resource (2026-09-28)
 
-Initial result: **BLOCKED; the resource identity gate failed in the deployed configuration**. Final result after migration: **PASS** (2026-09-28; details below).
+Initial result: **BLOCKED; the resource identity gate failed in the deployed configuration**. An interim HTTPS-resource/v1-token migration passed its direct checks, then the official Microsoft Entra MCP guidance exposed a token-version mismatch. Final result remains pending the v2-compatible deployment and complete retest described below.
 
 ## State and sources
 
@@ -57,6 +57,8 @@ The initial blocked attempt above is preserved as the first event in this report
 - Exact MCP source commit `6de2c832eeec020da0b9def762c9c6a6359ddaf0` passed the repository's remote build and image security scan, then deployed successfully in [workflow run 36382843265](https://github.com/BuriAhmad/sakai-mcp/actions/runs/36382843265). A first run exposed a readiness race in its final probe; the tracked script was corrected to wait for latest/ready revision equality, then the exact-commit release passed. Deployed image: `acrsmcpdevo6wzl5rvdbkwc.azurecr.io/sakai-mcp@sha256:255d8b2e8f0349824fa953d8e33a8157ef978b8bb3e69bb8fd226c0829c9fc98`. Its scan reported zero critical findings, zero fixable high findings, 44 high findings without a published fix, and zero secrets.
 
 ### Repeated Phase 19 gate
+
+The first post-hostname deployment and table below document the intermediate v1 token result. It is retained as historical evidence, but it is superseded by the v2-compatible MCP token contract required by the current Microsoft Entra MCP guidance. The existing MCP registration has since been changed in place to request v2 tokens; the final gate must use the v2 issuer and GUID `aud`, while the canonical HTTPS URL remains the Application ID URI/resource indicator. The downstream Sakai resource remains on its existing v1 issuer and distinct audience.
 
 | Gate | Evidence | Result |
 | --- | --- | --- |

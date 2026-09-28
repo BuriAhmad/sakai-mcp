@@ -46,7 +46,9 @@ if [[ "$push_only" != '--push-only' ]]; then
   }
   previous_image="$(python3 -c 'import json,sys; a=json.load(sys.stdin); print(a["properties"]["template"]["containers"][0]["image"])' <<< "$app_json")"
   app_fqdn="$(python3 -c 'import json,sys; a=json.load(sys.stdin); print(a["properties"]["configuration"]["ingress"]["fqdn"])' <<< "$app_json")"
-  [[ -n "$registry_server" && -n "$app_fqdn" && "$app_fqdn" != None ]] || {
+  entra_tenant_id="$(python3 -c 'import json,sys; e={x["name"]:x.get("value","") for x in json.load(sys.stdin)["properties"]["template"]["containers"][0]["env"]}; print(e.get("ENTRA_TENANT_ID", ""))' <<< "$app_json")"
+  mcp_client_id="$(python3 -c 'import json,sys; e={x["name"]:x.get("value","") for x in json.load(sys.stdin)["properties"]["template"]["containers"][0]["env"]}; print(e.get("MCP_RESOURCE_CLIENT_ID", ""))' <<< "$app_json")"
+  [[ -n "$registry_server" && -n "$app_fqdn" && "$app_fqdn" != None && -n "$entra_tenant_id" && -n "$mcp_client_id" ]] || {
     echo 'MCP registry or HTTPS ingress is incomplete.' >&2
     exit 2
   }
@@ -81,7 +83,10 @@ echo "Previous image: $previous_image"
 echo "Deploying digest: $image"
 az containerapp update --resource-group "$resource_group" --name "$app_name" \
   --image "$image" --set-env-vars "APP_COMMIT=$source_commit" "APP_LOCK_SHA256=$lock_sha" \
-  "MCP_PUBLIC_URL=$canonical_origin" "MCP_AUDIENCE=$canonical_origin" \
+  "MCP_PUBLIC_URL=$canonical_origin" "MCP_AUDIENCE=$mcp_client_id" \
+  "MCP_ISSUER=https://login.microsoftonline.com/$entra_tenant_id/v2.0" \
+  "MCP_JWKS_URI=https://login.microsoftonline.com/$entra_tenant_id/discovery/v2.0/keys" \
+  "SAKAI_ISSUER=https://sts.windows.net/$entra_tenant_id/" \
   --output none
 
 ready_revision=''
@@ -130,7 +135,10 @@ assert app["properties"]["template"]["containers"][0]["image"] == expected_image
 env = {entry["name"]: entry.get("value") for entry in app["properties"]["template"]["containers"][0]["env"]}
 assert env.get("APP_COMMIT") == expected_commit
 assert env.get("MCP_PUBLIC_URL") == "https://mcp.smartdigest.app"
-assert env.get("MCP_AUDIENCE") == "https://mcp.smartdigest.app"
+assert env.get("MCP_AUDIENCE") == env.get("MCP_RESOURCE_CLIENT_ID")
+tenant = env["ENTRA_TENANT_ID"]
+assert env.get("MCP_ISSUER") == f"https://login.microsoftonline.com/{tenant}/v2.0"
+assert env.get("SAKAI_ISSUER") == f"https://sts.windows.net/{tenant}/"
 assert app["properties"]["configuration"]["ingress"].get("stickySessions", {}).get("affinity", "none").lower() == "none"
 assert app["properties"]["latestRevisionName"] == app["properties"]["latestReadyRevisionName"]
 ' "$image" "$source_commit"

@@ -27,7 +27,7 @@ def test_composed_pipeline_keeps_users_and_write_permission_separate():
         now = datetime.now(UTC)
         downstream = jwt.encode(
             {
-                "iss": str(config.mcp_issuer),
+                "iss": str(config.sakai_issuer),
                 "tid": str(TENANT),
                 "oid": upstream["oid"],
                 "aud": config.sakai_audience,

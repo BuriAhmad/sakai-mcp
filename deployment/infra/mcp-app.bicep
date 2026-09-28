@@ -27,8 +27,8 @@ param sakaiBaseUrl string
 param entraTenantId string
 param mcpResourceClientId string
 param mcpIssuer string
-param mcpAudience string
 param mcpJwksUri string
+param sakaiIssuer string
 param sakaiResourceClientId string
 param sakaiAudience string
 
@@ -139,8 +139,9 @@ resource app 'Microsoft.App/containerApps@2025-07-01' = {
             { name: 'ENTRA_TENANT_ID', value: entraTenantId }
             { name: 'MCP_RESOURCE_CLIENT_ID', value: mcpResourceClientId }
             { name: 'MCP_ISSUER', value: mcpIssuer }
-            { name: 'MCP_AUDIENCE', value: mcpAudience }
+            { name: 'MCP_AUDIENCE', value: mcpResourceClientId }
             { name: 'MCP_JWKS_URI', value: mcpJwksUri }
+            { name: 'SAKAI_ISSUER', value: sakaiIssuer }
             { name: 'SAKAI_RESOURCE_CLIENT_ID', value: sakaiResourceClientId }
             { name: 'SAKAI_AUDIENCE', value: sakaiAudience }
             { name: 'OBO_PRIVATE_KEY_FILE', value: '/mnt/secrets/private-key.pem' }

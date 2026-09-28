@@ -17,7 +17,7 @@ from tests.helpers import KEY, TENANT, settings, token
 def downstream(object_id: str, eid: object, **changes):
     now = datetime.now(UTC)
     claims = {
-        "iss": f"https://login.microsoftonline.com/{TENANT}/v2.0",
+        "iss": f"https://sts.windows.net/{TENANT}/",
         "tid": str(TENANT),
         "aud": settings().sakai_audience,
         "oid": object_id,

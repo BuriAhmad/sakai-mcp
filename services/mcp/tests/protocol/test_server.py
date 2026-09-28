@@ -150,7 +150,12 @@ def test_streamable_http_accepts_valid_bearer_and_lists_five_tools():
         async def verify_token(self, token):
             if token != "valid":
                 return None
-            return AccessToken(token=token, client_id="test", scopes=["mcp.access"], resource=settings().mcp_audience)
+            return AccessToken(
+                token=token,
+                client_id="test",
+                scopes=["mcp.access"],
+                resource=str(settings().mcp_public_url).rstrip("/"),
+            )
 
     server = create_server(settings(), FakeClient(), FakeVerifier())
     app = server.streamable_http_app(stateless_http=True, json_response=True, host="mcp.example.test")
