@@ -2577,6 +2577,8 @@ Expected:
 - statelessness preserved;
 - no local session dependency.
 
+**2026-09-28: PASS for the bounded reliability gate.** Synthetic dependency faults verified fail-closed mapping, bounded reads, single-attempt ambiguous writes, recovery, redacted audit, and local health/readiness semantics. A downstream JWKS outage classification defect was fixed and deployed at exact commit; the new revision passed a fresh delegated live read. One transient public connection refusal recovered during read-only revision/cold-start probes. See [`evidence/mcp/phase-29-reliability.md`](evidence/mcp/phase-29-reliability.md).
+
 ---
 
 # 33. Phase 30 — CI/CD and repository policy finalization
