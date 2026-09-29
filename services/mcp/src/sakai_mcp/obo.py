@@ -105,7 +105,7 @@ class OBOProvider:
             raise InvalidUpstreamToken("Invalid MCP token")
         principal, _ = verified
         if (
-            upstream.resource != str(self.settings.mcp_public_url).rstrip("/")
+            upstream.resource != self.settings.mcp_resource_uri
             or self.settings.mcp_required_scope not in upstream.scopes
             or upstream.claims is None
             or upstream.claims.get("tid") != principal.tenant_id

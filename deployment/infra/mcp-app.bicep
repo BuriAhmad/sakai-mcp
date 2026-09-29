@@ -12,7 +12,7 @@ param sourceCommit string
 @maxLength(64)
 param lockSha256 string
 
-@description('Canonical public HTTPS origin of the Container App, without a trailing slash.')
+@description('Canonical public HTTPS origin of the Container App, without a trailing slash. The MCP OAuth resource is this origin plus /mcp.')
 param mcpPublicUrl string
 
 @description('Canonical hostname bound directly to the Container App.')

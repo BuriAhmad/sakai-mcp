@@ -20,6 +20,7 @@ root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 resource_group='rg-sakai-mcp-dev'
 app_name='ca-mcp-sakai-dev'
 canonical_origin='https://mcp.smartdigest.app'
+canonical_resource="$canonical_origin/mcp"
 expected_subscription='55a5701c-411e-45f1-9829-9c80f526d9eb'
 selected_subscription="$(az account show --query id -o tsv)"
 [[ "$selected_subscription" == "$expected_subscription" ]] || {
@@ -122,8 +123,8 @@ grep -Eiq '^www-authenticate: *Bearer' "$headers" || {
   exit 1
 }
 curl --fail --silent --show-error --max-time 20 \
-  "$origin/.well-known/oauth-protected-resource" | \
-  python3 -c 'import json,sys; data=json.load(sys.stdin); assert data.get("resource") == sys.argv[1]; assert data.get("authorization_servers")' "$origin"
+  "$origin/.well-known/oauth-protected-resource/mcp" | \
+  python3 -c 'import json,sys; data=json.load(sys.stdin); assert data.get("resource") == sys.argv[1]; assert data.get("scopes_supported") == [sys.argv[1] + "/mcp.access"]; assert data.get("authorization_servers")' "$canonical_resource"
 
 az containerapp show --resource-group "$resource_group" --name "$app_name" -o json | \
   python3 -c '

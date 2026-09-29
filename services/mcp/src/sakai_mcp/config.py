@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     page_size_max: int = Field(default=50, ge=1, le=100)
     log_level: str = "INFO"
 
+    @property
+    def mcp_resource_uri(self) -> str:
+        """OAuth identity for the fixed Streamable HTTP endpoint."""
+        return f"{str(self.mcp_public_url).rstrip('/')}/mcp"
+
     @field_validator("mcp_public_url", "sakai_base_url", "mcp_issuer", "sakai_issuer", "mcp_jwks_uri")
     @classmethod
     def require_https(cls, value: HttpUrl) -> HttpUrl:

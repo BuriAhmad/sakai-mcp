@@ -33,7 +33,7 @@ def add_health_routes(app: Starlette) -> Starlette:
 
 
 def canonicalize_resource_metadata(app: Starlette, settings: Settings) -> Starlette:
-    """Keep the RFC 9728 resource URI in its interoperable no-trailing-slash form."""
+    """Advertise the exact path-based Entra Application ID URI."""
 
     async def metadata(request: Request) -> Response:
         headers = {
@@ -44,7 +44,7 @@ def canonicalize_resource_metadata(app: Starlette, settings: Settings) -> Starle
         }
         if request.method == "OPTIONS":
             return Response(status_code=204, headers=headers)
-        resource = str(settings.mcp_public_url).rstrip("/")
+        resource = settings.mcp_resource_uri
         return JSONResponse(
             {
                 "resource": resource,
@@ -55,7 +55,7 @@ def canonicalize_resource_metadata(app: Starlette, settings: Settings) -> Starle
             headers=headers,
         )
 
-    path = "/.well-known/oauth-protected-resource"
+    path = "/.well-known/oauth-protected-resource/mcp"
     matches = [i for i, route in enumerate(app.routes) if getattr(route, "path", None) == path]
     if len(matches) != 1:
         raise RuntimeError("MCP protected-resource metadata route was not registered exactly once")
