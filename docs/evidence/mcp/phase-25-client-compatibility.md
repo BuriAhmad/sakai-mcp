@@ -1,6 +1,6 @@
 # Phase 25 — client compatibility and approval (2026-09-28)
 
-Status: **IN PROGRESS / awaiting manual native OAuth and human approval testing**. The existing test client is now configured for Inspector's exact Web callback. No native OAuth, client-side cancellation, or approved-write result is claimed. Phases 26 and 27 were tested independently and checkpointed; their server results do not close this client gate.
+Status: **IN PROGRESS / native Inspector connection observed; manual tool and real-host approval testing remain**. The existing test client has Inspector's exact Web callback and only the delegated MCP scope. No Inspector tool result, client-side cancellation, or approved-write result is claimed. Phases 26 and 27 were tested independently and checkpointed; their server results do not close this client gate.
 
 ## Current product facts checked before client claims
 
@@ -40,16 +40,23 @@ With the human's approval, the existing MCP resource app gained the additional A
 
 The [exact-commit MCP release](https://github.com/BuriAhmad/sakai-mcp/actions/runs/36528150871) passed its build, scans, revision update, health, challenge, and metadata checks. Azure reports ready revision `ca-mcp-sakai-dev--0000009` at image digest `sha256:938b098240b403b2a40fc741edb49e72d85340cec040b78ab659fd3ebe02e51e`. Live `POST /mcp` without a token returns `401` with `resource_metadata=https://mcp.smartdigest.app/.well-known/oauth-protected-resource/mcp`; that document returns `resource=https://mcp.smartdigest.app/mcp` and `scopes_supported=["https://mcp.smartdigest.app/mcp/mcp.access"]`. A read-only authorization probe with this exact resource, scope, existing client ID, and loopback callback reached Microsoft's sign-in page without `AADSTS9010010` or `AADSTS50011`. This probe did not sign in or acquire a token.
 
-**Native OAuth remains unproved.** The human must clear Inspector's stored OAuth state, update the saved server's OAuth scope to `https://mcp.smartdigest.app/mcp/mcp.access`, and retry as Student A. No Inspector callback completion, authenticated tool call, Sakai side effect, or real-host approval is claimed from this correction.
+**At this deployment checkpoint, native OAuth remained unproved.** The human still needed to clear Inspector's stored OAuth state, update the saved server's OAuth scope to `https://mcp.smartdigest.app/mcp/mcp.access`, and retry as Student A.
 
-Next, the human must perform Inspector's native Entra sign-in and the interactive tests. Inspector's manual Run Tool action is not host approval evidence. For any later real host claiming approval, configure `create_course_announcement` as `Needs approval`; before an approved synthetic create, verify a unique title is absent, make one intentional call, and reconcile its Sakai object ID. Never blindly replay an ambiguous result. Preserve no server-side elicitation and no content-based deduplication.
+## Native Inspector connection observed (2026-09-29)
+
+The human supplied a screenshot of the official Inspector 2.8.0 Web UI showing the saved `sakai-mcp` entry **Connected** to `https://mcp.smartdigest.app/mcp` over Streamable HTTP, negotiating MCP `2025-11-25`. A read-only inspection of Inspector's ignored local OAuth storage found refreshed discovery metadata for `resource=https://mcp.smartdigest.app/mcp` and `scopes_supported=["https://mcp.smartdigest.app/mcp/mcp.access"]`, plus a saved access token. Without recording the token or any account identifier, the decoded token claims were checked against the current Entra directory: tenant, MCP client-ID audience, delegated `mcp.access` scope, and synthetic Student A object ID all matched. This is evidence of a real native OAuth client connection as Student A, distinct from the earlier bearer-proxy diagnostic. The screenshot and local token check do not show any Inspector `tools/list` or `tools/call` result; no Sakai read, authorization decision, announcement write, or normal Sakai cross-check is claimed yet.
+
+To reproduce this Web client setup, launch the published package with `npx -y @modelcontextprotocol/inspector@2.8.0` and open its printed local Inspector page. Configure a Streamable HTTP server URL of `https://mcp.smartdigest.app/mcp` with protocol era `Legacy (2025-11-25 handshake)`, existing public test-client ID `8f8a7edc-fbda-43bd-b199-275c139a8e68`, and OAuth scope `https://mcp.smartdigest.app/mcp/mcp.access`. The Web redirect used in the actual attempt is `http://127.0.0.1:6274/oauth/callback`. In the saved server's Settings → OAuth, **Clear stored OAuth state** before reconnecting after metadata or scope changes; a process restart or refresh-token option does not necessarily replace cached discovery metadata. The human operates Inspector and the Microsoft login. No password or token belongs in this report.
+
+Next, the human must manually run Inspector's Student A tool catalog, reads, and denied call; then clear the OAuth session and proceed one identity at a time through Student B and Instructor A. Inspector's manual Run Tool action is not host approval evidence. For any later real host claiming approval, configure `create_course_announcement` as `Needs approval`; before an approved synthetic create, verify a unique title is absent, make one intentional call, and reconcile its Sakai object ID. Never blindly replay an ambiguous result. Preserve no server-side elicitation and no content-based deduplication.
 
 Client matrix at this checkpoint:
 
 | Client | Connection/auth | Catalog | Read | Write approval | Cancellation | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | Inspector 2.8.0 CLI via local bearer proxy | Transport only; native OAuth untested | Five tools observed | One successful Student A read after one proxy error | Not applicable as approval host | Not tested | Diagnostic only |
+| Inspector 2.8.0 Web, Student A | Connected to remote `/mcp`; native Entra OAuth token claims matched Student A | Not yet observed | Not yet observed | Not applicable as approval host | Not tested | Connection milestone only |
 | Claude remote custom connector | Not tested | Not tested | Not tested | Not tested | Not tested | Awaiting client registration and interactive OAuth |
 | Claude Code / OpenCode / ChatGPT | Not tested | Not tested | Not tested | Not tested | Not tested | No support claim |
 
-The next Phase 25 step is a native OAuth connection in a selected real host, then the runbook's full read, pre-execution approval, Cancel/no-write, Allow/exactly-one, persistent-allow, and autonomous-mode matrix. Phase 25 must remain unpassed until that evidence exists.
+The next Phase 25 step is the human-operated Inspector tool matrix across three identities, followed by the runbook's real LLM-host read, pre-execution approval, Cancel/no-write, Allow/exactly-one, persistent-allow, and autonomous-mode matrix. Phase 25 must remain unpassed until that evidence exists.

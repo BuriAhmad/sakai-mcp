@@ -2,6 +2,8 @@
 
 Initial result: **BLOCKED; the resource identity gate failed in the deployed configuration**. An interim HTTPS-resource/v1-token migration passed its direct checks, then the official Microsoft Entra MCP guidance exposed a token-version mismatch. Final result after v2-compatible deployment and full retest: **PASS** (2026-09-28).
 
+This is a dated Phase 19 result. Phase 25 later changed the active protected-resource identity from the origin to the `/mcp` path for native Inspector OAuth; see [`phase-25-client-compatibility.md`](phase-25-client-compatibility.md) for the current URI, registration, and manual-client status.
+
 ## State and sources
 
 - Started from clean `main`/`origin/main` at `685a7b67adc5444d16cb636f0d83313599819385`; selected Azure for Students subscription `55a5701c-411e-45f1-9829-9c80f526d9eb` and tenant `6831cfbb-6904-4f1a-8dba-0ab09b803a9c`.
