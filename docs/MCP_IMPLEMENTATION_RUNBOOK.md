@@ -2405,7 +2405,7 @@ For each client that will be described as supporting client-side write approval:
 
 If a client cannot reliably provide the required write-approval UX in a particular mode, document that mode as unsupported/restricted for enabled Sakai writes rather than weakening server authorization.
 
-**2026-09-28: IN PROGRESS / awaiting manual native OAuth and interactive approval.** Inspector 2.8.0 CLI proved only the five-tool catalog and a read through a temporary bearer-injecting diagnostic proxy; it did not exercise its own OAuth or write approval. The existing Entra test client now has the exact Inspector Web callback `http://localhost:6274/oauth/callback`, with its sole delegated `mcp.access` permission unchanged. No native OAuth flow, cancellation/Allow result, or host compatibility claim is made yet. See [`evidence/mcp/phase-25-client-compatibility.md`](evidence/mcp/phase-25-client-compatibility.md).
+**2026-09-29: IN PROGRESS / awaiting manual native OAuth and interactive approval.** Inspector 2.8.0 CLI previously proved only the five-tool catalog and a read through a temporary bearer-injecting diagnostic proxy. A first native Web OAuth attempt reached Entra but failed before sign-in with `AADSTS9010010` because protected-resource metadata advertised a bare scope. The existing test-client callback and delegated `mcp.access` permission were unchanged. The metadata now advertises the Entra-qualified scope; exact-commit revision `ca-mcp-sakai-dev--0000008` is ready and the public metadata verifies the correction. Native user sign-in, Inspector identity/authorization tests, and real-host Cancel/Allow approval remain unproved. See [`evidence/mcp/phase-25-client-compatibility.md`](evidence/mcp/phase-25-client-compatibility.md).
 
 ---
 
