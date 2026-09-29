@@ -140,7 +140,7 @@ def test_protected_resource_metadata_uses_exact_canonical_uri():
     assert response.json() == {
         "resource": "https://mcp.example.test",
         "authorization_servers": [str(config.mcp_issuer)],
-        "scopes_supported": ["mcp.access"],
+        "scopes_supported": ["https://mcp.example.test/mcp.access"],
         "bearer_methods_supported": ["header"],
     }
 

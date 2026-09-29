@@ -44,11 +44,12 @@ def canonicalize_resource_metadata(app: Starlette, settings: Settings) -> Starle
         }
         if request.method == "OPTIONS":
             return Response(status_code=204, headers=headers)
+        resource = str(settings.mcp_public_url).rstrip("/")
         return JSONResponse(
             {
-                "resource": str(settings.mcp_public_url).rstrip("/"),
+                "resource": resource,
                 "authorization_servers": [str(settings.mcp_issuer)],
-                "scopes_supported": [settings.mcp_required_scope],
+                "scopes_supported": [f"{resource}/{settings.mcp_required_scope}"],
                 "bearer_methods_supported": ["header"],
             },
             headers=headers,
