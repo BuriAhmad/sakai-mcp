@@ -26,6 +26,8 @@ Commit `9f388f3bda3eb1e98b7756010de2435235915f7a` changed only the protected-res
 
 **Native OAuth remains unproved.** The human must reconnect Inspector and complete Entra sign-in. The correction removes the observed authorization-request mismatch; it does not establish an authenticated MCP session, user-specific tools, or a host approval UI.
 
+On the next human-operated Inspector attempt, Student A reached the Microsoft sign-in flow and was then interrupted by a Microsoft Authenticator registration prompt. The human did not complete registration or the OAuth callback. A read-only Graph query returned no Conditional Access policies, while queries for security defaults and authentication-method policy were denied because the current Azure CLI token lacks policy-read permission. The precise tenant setting behind the prompt is therefore unconfirmed. Native OAuth and MCP user tests remain pending; no tenant security setting was changed.
+
 Next, the human must perform Inspector's native Entra sign-in and the interactive tests. Inspector's manual Run Tool action is not host approval evidence. For any later real host claiming approval, configure `create_course_announcement` as `Needs approval`; before an approved synthetic create, verify a unique title is absent, make one intentional call, and reconcile its Sakai object ID. Never blindly replay an ambiguous result. Preserve no server-side elicitation and no content-based deduplication.
 
 Client matrix at this checkpoint:
