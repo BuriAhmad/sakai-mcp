@@ -16,7 +16,7 @@ The proxy deliberately bypassed Inspector's own OAuth flow, so this demonstrates
 
 ## Native OAuth setup prepared (2026-09-28)
 
-Official Inspector 2.8.0 Web documentation specifies `http://localhost:6274/oauth/callback`. That exact URI was added to the existing public test client (`sakai-mcp-dev-test-client`), preserving its existing `http://localhost` URI. The client still requests only the existing delegated `mcp.access` scope; no other client, scope, API permission, or consent grant was added. Inspector's CLI/TUI callback (`http://127.0.0.1:6276/oauth/callback`) was not added because this test uses the Web UI. The callback is configured, but an interactive native OAuth flow has not yet been performed.
+Official Inspector 2.8.0 Web documentation specifies `http://localhost:6274/oauth/callback`. That URI was initially added to the existing public test client (`sakai-mcp-dev-test-client`), preserving its existing `http://localhost` URI. The client still requests only the existing delegated `mcp.access` scope; no other client, scope, API permission, or consent grant was added. Inspector's CLI/TUI callback (`http://127.0.0.1:6276/oauth/callback`) was not added because this test uses the Web UI. A later actual Web authorization request used the `127.0.0.1:6274` callback instead; the exact callback correction is recorded below.
 
 ## Native OAuth discovery correction (2026-09-29)
 
@@ -26,7 +26,11 @@ Commit `9f388f3bda3eb1e98b7756010de2435235915f7a` changed only the protected-res
 
 **Native OAuth remains unproved.** The human must reconnect Inspector and complete Entra sign-in. The correction removes the observed authorization-request mismatch; it does not establish an authenticated MCP session, user-specific tools, or a host approval UI.
 
-On the next human-operated Inspector attempt, Student A reached the Microsoft sign-in flow and was then interrupted by a Microsoft Authenticator registration prompt. The human did not complete registration or the OAuth callback. A read-only Graph query returned no Conditional Access policies, while queries for security defaults and authentication-method policy were denied because the current Azure CLI token lacks policy-read permission. The precise tenant setting behind the prompt is therefore unconfirmed. Native OAuth and MCP user tests remain pending; no tenant security setting was changed.
+On the next human-operated Inspector attempt, Student A reached the Microsoft sign-in flow and was then interrupted by a Microsoft Authenticator registration prompt. The human did not complete registration or the OAuth callback. A read-only Graph query returned no Conditional Access policies, while queries for security defaults and authentication-method policy were denied because the current Azure CLI token lacks policy-read permission. A subsequent human-provided Entra admin-center screenshot showed Security defaults enabled at that point. Native OAuth and MCP user tests remain pending. This session did not change that tenant setting.
+
+## Inspector Web callback correction (2026-09-29)
+
+A subsequent human-operated authorization request failed at Entra with `AADSTS50011`. The error named the exact redirect URI `http://127.0.0.1:6274/oauth/callback` for the existing test-client app ID; the registration then contained only `http://localhost:6274/oauth/callback` and `http://localhost`. The exact `127.0.0.1:6274` URI was added to that same public test client. A readback confirmed all three public-client redirects and the unchanged sole delegated MCP `mcp.access` permission. No new client, Graph/API permission, scope, consent grant, or MCP deployment was introduced. The human must retry the native OAuth flow; no successful callback or authenticated Inspector tool call is claimed yet.
 
 Next, the human must perform Inspector's native Entra sign-in and the interactive tests. Inspector's manual Run Tool action is not host approval evidence. For any later real host claiming approval, configure `create_course_announcement` as `Needs approval`; before an approved synthetic create, verify a unique title is absent, make one intentional call, and reconcile its Sakai object ID. Never blindly replay an ambiguous result. Preserve no server-side elicitation and no content-based deduplication.
 
