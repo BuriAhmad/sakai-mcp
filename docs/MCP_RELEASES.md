@@ -2,6 +2,8 @@
 
 The MCP service has its own manual release path. A push to `main` validates its Python package, protocol/security tests, source and dependency scan, container build, and image scan. It does not deploy Sakai or MCP. Sakai continues to use `./sakai deploy COMMIT` and `./sakai rollback RELEASE_ID`.
 
+The `deploy` mode requires the MCP Container App already running. It refuses to restart an app paused with `./sakai stop`; request `./sakai start` first. See [Pause and resume](PAUSE_AND_RESUME.md).
+
 ## Exact-commit check
 
 The [Build or deploy MCP](https://github.com/BuriAhmad/sakai-mcp/actions/workflows/deploy-mcp.yml) workflow accepts one full commit SHA on `main`. Run it with `check-only` first. It archives `services/mcp/` from that exact commit, installs locked production dependencies into a non-root Python 3.11 image, and runs the pinned Trivy scanner against the source/lockfile and image. Its source archive contains no local credentials or test-user files. The scanner reports counts only; detailed results stay on the disposable runner. The workflow's `deploy` choice repeats the build and scans, then uses the existing `sakai-dev` GitHub/Azure federated identity. No long-lived Azure client secret is used.

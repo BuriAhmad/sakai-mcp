@@ -11,8 +11,8 @@ Everyday commands:
   login                 Sign in to Azure and select this project's subscription
   shell [COMMAND...]    Connect to an already-running VM
   copy LOCAL REMOTE     Copy a local file to the VM
-  start                 Explicitly start MySQL and allocate the VM
-  stop                  Explicitly stop MySQL and deallocate the VM
+  start                 Explicitly resume MySQL, VM, and MCP app
+  stop                  Explicitly stop MCP app and MySQL, deallocate VM
   status                Show Azure resource and public application status
   open-ssh              Refresh the NSG rule without connecting
   deploy COMMIT          Build and deploy a pushed Sakai commit to the dev VM

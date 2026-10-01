@@ -4,8 +4,22 @@ SUBSCRIPTION_ID='55a5701c-411e-45f1-9829-9c80f526d9eb'
 RESOURCE_GROUP='rg-sakai-mcp-dev'
 VM_NAME='vm-sakai-dev'
 MYSQL_NAME='mysql-sakai-dev-55a5701c-uae'
+MCP_APP_NAME='ca-mcp-sakai-dev'
 [[ "$(az account show --query id -o tsv)" == "$SUBSCRIPTION_ID" ]] || { echo 'Wrong Azure subscription.' >&2; exit 1; }
 [[ "$(az group exists -n "$RESOURCE_GROUP")" == 'true' ]] || { echo "Missing resource group $RESOURCE_GROUP." >&2; exit 1; }
+MCP_APP_URI="https://management.azure.com/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.App/containerApps/$MCP_APP_NAME"
+mcp_state="$(az rest --method get --uri "$MCP_APP_URI?api-version=2025-07-01" --query properties.runningStatus -o tsv)"
+if [[ "$mcp_state" == 'Running' ]]; then
+  az rest --method post --uri "$MCP_APP_URI/stop?api-version=2025-07-01" --output none
+elif [[ "$mcp_state" != 'Stopped' ]]; then
+  echo "MCP app is $mcp_state; wait for a stable state before stopping." >&2
+  exit 1
+fi
+for _ in {1..40}; do
+  [[ "$(az rest --method get --uri "$MCP_APP_URI?api-version=2025-07-01" --query properties.runningStatus -o tsv)" == 'Stopped' ]] && break
+  sleep 15
+done
+[[ "$(az rest --method get --uri "$MCP_APP_URI?api-version=2025-07-01" --query properties.runningStatus -o tsv)" == 'Stopped' ]] || { echo 'MCP app did not stop within 10 minutes.' >&2; exit 1; }
 FQDN="$(az vm show -d -g "$RESOURCE_GROUP" -n "$VM_NAME" --query fqdns -o tsv 2>/dev/null || true)"
 vm_state="$(az vm get-instance-view -g "$RESOURCE_GROUP" -n "$VM_NAME" --query "instanceView.statuses[?starts_with(code, 'PowerState/')].code | [0]" -o tsv)"
 if [[ "$vm_state" != 'PowerState/deallocated' ]]; then
@@ -35,5 +49,6 @@ VM_STATE="$(az vm get-instance-view -g "$RESOURCE_GROUP" -n "$VM_NAME" --query "
 MYSQL_STATE="$(az mysql flexible-server show -g "$RESOURCE_GROUP" -n "$MYSQL_NAME" --query state -o tsv)"
 echo "VM state: $VM_STATE"
 echo "MySQL state: $MYSQL_STATE"
+echo 'MCP app state: Stopped'
 echo 'Persistent disks, MySQL storage/backups, public IP, registry, logs, and other resources can still incur charges.'
 echo 'MySQL can automatically restart after 30 continuous days stopped. Check ./sakai status periodically.'

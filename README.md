@@ -22,11 +22,11 @@ Useful commands:
 
 ```bash
 ./sakai status                         # inspect the environment
-./sakai start                          # explicitly start MySQL + VM + application
+./sakai start                          # explicitly resume MySQL + VM + MCP app
 ./sakai shell                          # open a VM terminal
 ./sakai shell 'cd /opt/sakai-src && git status'
 ./sakai copy ./file.txt /tmp/file.txt
-./sakai stop                           # explicitly stop MySQL + deallocate VM
+./sakai stop                           # explicitly stop MCP app + MySQL; deallocate VM
 ./sakai deploy HEAD --check-only       # verify a pushed Sakai commit
 ./sakai deploy HEAD                    # build and release it to the dev VM
 ./sakai rollback RELEASE_ID            # restore the previous Tomcat files

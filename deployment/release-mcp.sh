@@ -45,6 +45,11 @@ if [[ "$push_only" != '--push-only' ]]; then
     echo 'MCP Container App is absent. Complete the Phase 18 Bicep bootstrap before this revision release.' >&2
     exit 2
   }
+  app_running_status="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["properties"].get("runningStatus", "unknown"))' <<< "$app_json")"
+  [[ "$app_running_status" == Running ]] || {
+    echo "MCP Container App is $app_running_status. Explicitly run './sakai start' before deploying a revision." >&2
+    exit 2
+  }
   previous_image="$(python3 -c 'import json,sys; a=json.load(sys.stdin); print(a["properties"]["template"]["containers"][0]["image"])' <<< "$app_json")"
   app_fqdn="$(python3 -c 'import json,sys; a=json.load(sys.stdin); print(a["properties"]["configuration"]["ingress"]["fqdn"])' <<< "$app_json")"
   entra_tenant_id="$(python3 -c 'import json,sys; e={x["name"]:x.get("value","") for x in json.load(sys.stdin)["properties"]["template"]["containers"][0]["env"]}; print(e.get("ENTRA_TENANT_ID", ""))' <<< "$app_json")"

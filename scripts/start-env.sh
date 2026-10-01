@@ -4,6 +4,7 @@ SUBSCRIPTION_ID='55a5701c-411e-45f1-9829-9c80f526d9eb'
 RESOURCE_GROUP='rg-sakai-mcp-dev'
 VM_NAME='vm-sakai-dev'
 MYSQL_NAME='mysql-sakai-dev-55a5701c-uae'
+MCP_APP_NAME='ca-mcp-sakai-dev'
 [[ "$(az account show --query id -o tsv)" == "$SUBSCRIPTION_ID" ]] || { echo 'Wrong Azure subscription.' >&2; exit 1; }
 [[ "$(az group exists -n "$RESOURCE_GROUP")" == 'true' ]] || { echo "Missing resource group $RESOURCE_GROUP." >&2; exit 1; }
 mysql_state="$(az mysql flexible-server show -g "$RESOURCE_GROUP" -n "$MYSQL_NAME" --query state -o tsv)"
@@ -34,6 +35,19 @@ FQDN="$(az vm show -d -g "$RESOURCE_GROUP" -n "$VM_NAME" --query fqdns -o tsv)"
 for _ in {1..90}; do
   if curl -fsS --connect-timeout 10 --max-time 30 -o /dev/null "https://$FQDN/portal"; then
     echo "Sakai is healthy: https://$FQDN/portal"
+    MCP_APP_URI="https://management.azure.com/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.App/containerApps/$MCP_APP_NAME"
+    mcp_state="$(az rest --method get --uri "$MCP_APP_URI?api-version=2025-07-01" --query properties.runningStatus -o tsv)"
+    if [[ "$mcp_state" == 'Stopped' ]]; then
+      az rest --method post --uri "$MCP_APP_URI/start?api-version=2025-07-01" --output none
+    elif [[ "$mcp_state" != 'Running' ]]; then
+      echo "MCP app is $mcp_state; wait for a stable state before starting." >&2
+      exit 1
+    fi
+    for _ in {1..40}; do
+      [[ "$(az rest --method get --uri "$MCP_APP_URI?api-version=2025-07-01" --query properties.runningStatus -o tsv)" == 'Running' ]] && break
+      sleep 15
+    done
+    [[ "$(az rest --method get --uri "$MCP_APP_URI?api-version=2025-07-01" --query properties.runningStatus -o tsv)" == 'Running' ]] || { echo 'MCP app did not start within 10 minutes.' >&2; exit 1; }
     "$(dirname "$0")/status-env.sh"
     exit 0
   fi

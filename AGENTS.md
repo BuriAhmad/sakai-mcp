@@ -14,7 +14,7 @@ This repository owns the Sakai development environment's Azure infrastructure, o
 
 - Use the tracked Bicep, scripts, and service code for intended behavior. Use `docs/REPOSITORY_STRATEGY.md` for repository boundaries and `docs/INFRASTRUCTURE.md` for the Azure architecture.
 - Use `docs/VM_ACCESS.md` for SSH access and `docs/Sakai_Deployment_Runbook.md` for deployment procedures. `docs/DEPLOYMENT_STATUS.md` is a dated execution record, not a current-state inventory.
-- Use `docs/PAUSE_AND_RESUME.md` for cost, preservation, and exact pause/resume commands. Never start or stop the VM or MySQL, schedule a start, or change MCP capacity merely because an alert arrived or a local edit/push occurred. Allocation changes require the user's explicit request or permission. Read-only status checks are fine.
+- Use `docs/PAUSE_AND_RESUME.md` for cost, preservation, and exact pause/resume commands. Never start or stop the VM, MySQL, or MCP app, schedule a start, or change MCP capacity merely because an alert arrived or a local edit/push occurred. Runtime state changes require the user's explicit request or permission. Read-only status checks are fine.
 - Check changing Azure facts with `./sakai status` or read-only Azure queries. Verify the selected subscription before any Azure change. Do not infer live state from documentation.
 - Keep secrets, private keys, database dumps, generated credentials, and uploaded content out of Git. Runtime data and secrets belong in Azure or ignored local files such as `deployment/.env`.
 
