@@ -88,7 +88,7 @@ sakai_open_ssh_for_this_mac() {
   echo 'SSH remains restricted to one public IPv4 address.'
 }
 
-sakai_ensure_vm_running() {
+sakai_require_vm_running() {
   sakai_require_azure_login
 
   local power_state
@@ -100,15 +100,8 @@ sakai_ensure_vm_running() {
       --output tsv
   )"
 
-  if [[ "$power_state" == 'PowerState/running' ]]; then
-    return
-  fi
-
-  echo "Starting $SAKAI_VM_NAME (current state: ${power_state:-unknown})..."
-  az vm start \
-    --resource-group "$SAKAI_RESOURCE_GROUP" \
-    --name "$SAKAI_VM_NAME" \
-    --output none
+  [[ "$power_state" == 'PowerState/running' ]] || \
+    sakai_die "$SAKAI_VM_NAME is ${power_state:-unknown}. Run './sakai start' only when you intend to allocate the environment."
 }
 
 sakai_vm_fqdn() {

@@ -7,8 +7,8 @@ source "$SCRIPT_DIR/lib/azure.sh"
 
 sakai_require_command ssh
 sakai_require_private_key
+sakai_require_vm_running
 sakai_open_ssh_for_this_mac
-sakai_ensure_vm_running
 
 FQDN="$(sakai_vm_fqdn)"
 [[ -n "$FQDN" ]] || sakai_die 'VM has no public FQDN.'

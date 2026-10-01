@@ -14,8 +14,8 @@ sakai_require_command ssh
 sakai_require_command scp
 sakai_require_private_key
 sakai_require_azure_login
+sakai_require_vm_running
 sakai_open_ssh_for_this_mac
-sakai_ensure_vm_running
 fqdn="$(sakai_vm_fqdn)"
 [[ "$fqdn" =~ ^[A-Za-z0-9.-]+$ && -n "$fqdn" ]] || sakai_die 'VM has no valid public FQDN.'
 

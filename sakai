@@ -9,11 +9,11 @@ Usage: ./sakai COMMAND [ARGS...]
 
 Everyday commands:
   login                 Sign in to Azure and select this project's subscription
-  shell [COMMAND...]    Start the VM if needed, refresh SSH access, and connect
+  shell [COMMAND...]    Connect to an already-running VM
   copy LOCAL REMOTE     Copy a local file to the VM
-  start                 Start the VM, database, and Sakai application
-  stop                  Stop/deallocate the environment to control costs
-  status                Show Azure and public application status
+  start                 Explicitly start MySQL and allocate the VM
+  stop                  Explicitly stop MySQL and deallocate the VM
+  status                Show Azure resource and public application status
   open-ssh              Refresh the NSG rule without connecting
   deploy COMMIT          Build and deploy a pushed Sakai commit to the dev VM
   rollback RELEASE_ID    Restore the release immediately before RELEASE_ID

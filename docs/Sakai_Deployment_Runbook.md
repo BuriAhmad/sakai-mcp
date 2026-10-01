@@ -1202,6 +1202,8 @@ DESTROY ENVIRONMENT
 
 ### Stop Order
 
+For the current guarded commands, cost caveats, and preservation scope, use [Pause and resume](PAUSE_AND_RESUME.md).
+
 A reasonable controlled stop sequence is:
 
 ```text

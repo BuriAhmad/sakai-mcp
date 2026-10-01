@@ -5,8 +5,11 @@
 Use:
 
 ```bash
+./sakai start
 ./sakai shell
 ```
+
+Start only when you explicitly want to allocate the environment. `shell` will fail clearly if the VM is deallocated.
 
 The command performs three separate checks:
 
@@ -28,6 +31,7 @@ Then run:
 
 ```bash
 ./sakai login
+./sakai start
 ./sakai shell
 ```
 
@@ -82,4 +86,4 @@ The network path works, but the selected private key does not match a public key
 
 Connection timeout
 
-Run `./sakai open-ssh`, confirm any VPN did not change the public address, and retry. `./sakai shell` also starts a deallocated VM automatically.
+Run `./sakai status`, then `./sakai open-ssh` if the VM is running; confirm any VPN did not change the public address, and retry. A deallocated VM requires an explicit `./sakai start`.

@@ -51,6 +51,7 @@ sakai_require_command scp
 sakai_require_command curl
 sakai_require_private_key
 sakai_require_azure_login
+sakai_require_vm_running
 
 db_state="$(az mysql flexible-server show \
   --resource-group "$SAKAI_RESOURCE_GROUP" \
@@ -69,7 +70,6 @@ release_id="$(date -u +%Y%m%dT%H%M%SZ)-${commit:0:12}"
 echo 'This build stops Tomcat for its duration and may take a long time.'
 echo "Release ID: $release_id"
 sakai_open_ssh_for_this_mac
-sakai_ensure_vm_running
 fqdn="$(sakai_vm_fqdn)"
 [[ "$fqdn" =~ ^[A-Za-z0-9.-]+$ && -n "$fqdn" ]] || sakai_die 'VM has no valid public FQDN.'
 

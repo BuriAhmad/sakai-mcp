@@ -27,6 +27,8 @@ This document describes the actual deployed architecture. It is updated as resou
 - MySQL: `mysql-sakai-dev-55a5701c-uae` (the `-uae` suffix is a deliberate reservation workaround; actual location is Korea Central), MySQL 8.0.21, `Standard_B1ms` burstable, 20 GB Premium_LRS, 360 IOPS, 7-day locally redundant backup, no HA, public access disabled.
 - Budget: `sakai-dev-monthly-20usd`, USD 20/month at resource-group scope, 80% actual and 100% forecast email alerts.
 
+For the current pause/resume contract, retained costs, and the October 2026 forecast alert, see [Pause and resume](PAUSE_AND_RESUME.md). The dated state observations below are historical; use `./sakai status` for live state.
+
 ## Planned architecture
 
 ```text

@@ -10,8 +10,8 @@ source "$SCRIPT_DIR/lib/azure.sh"
 sakai_require_command scp
 sakai_require_private_key
 [[ -e "$1" ]] || sakai_die "Local path does not exist: $1"
+sakai_require_vm_running
 sakai_open_ssh_for_this_mac
-sakai_ensure_vm_running
 
 FQDN="$(sakai_vm_fqdn)"
 [[ -n "$FQDN" ]] || sakai_die 'VM has no public FQDN.'
