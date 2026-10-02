@@ -17,7 +17,7 @@ Everyday commands:
   open-ssh              Refresh the NSG rule without connecting
   deploy COMMIT          Build and deploy a pushed Sakai commit to the dev VM
   rollback RELEASE_ID    Restore the release immediately before RELEASE_ID
-  migrate-course-layout Apply tracked standard defaults to Course A/B fixtures
+  migrate-course-layout Apply course layout and Student roster defaults to Course A/B
   help                  Show this help
 
 Examples:

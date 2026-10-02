@@ -13,7 +13,7 @@
 	<category name="course">
 		<tool id = "home" selected = "true" />
 		<tool id = "sakai.syllabus" selected = "true" />
-		<tool id = "sakai.lessonbuildertool" />
+		<tool id = "sakai.lessonbuildertool" selected = "true" />
 		<tool id = "sakai.schedule" selected = "true" />
 		<tool id = "sakai.announcements" selected = "true" />
 		<tool id = "sakai.resources" selected = "true" />

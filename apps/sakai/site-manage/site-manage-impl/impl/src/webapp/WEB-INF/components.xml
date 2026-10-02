@@ -191,6 +191,7 @@
     <bean id="org.sakaiproject.sitemanage.impl.job.StandardCourseLayoutMigrationJob"
         class="org.sakaiproject.sitemanage.impl.job.StandardCourseLayoutMigrationJob">
         <property name="siteService" ref="org.sakaiproject.site.api.SiteService"/>
+        <property name="authzGroupService" ref="org.sakaiproject.authz.api.AuthzGroupService"/>
         <property name="securityService" ref="org.sakaiproject.authz.api.SecurityService"/>
         <property name="toolManager" ref="org.sakaiproject.tool.api.ToolManager"/>
         <property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService"/>
