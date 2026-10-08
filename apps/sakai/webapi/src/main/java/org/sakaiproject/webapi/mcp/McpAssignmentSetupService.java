@@ -278,7 +278,7 @@ public class McpAssignmentSetupService {
                 || !assignmentRef(a).equals(i.getReference()) || !a.getTitle().equals(i.getName())
                 || !Objects.equals(id(i.getCategoryId()), gb.category_id()) || i.getPoints() == null
                 || BigDecimal.valueOf(i.getPoints()).compareTo(BigDecimal.valueOf(a.getMaxGradePoint()).divide(BigDecimal.valueOf(a.getScaleFactor()))) != 0
-                || !Objects.equals(i.getDueDate(), Date.from(a.getDueDate()))) throw failure(HttpStatus.CONFLICT);
+                || i.getDueDate() == null || i.getDueDate().getTime() != a.getDueDate().toEpochMilli()) throw failure(HttpStatus.CONFLICT);
     }
     private void linkCalendar(Assignment a) throws Exception {
         Calendar calendar = metadata.calendar(a.getContext());

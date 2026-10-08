@@ -180,6 +180,24 @@ public class McpAssignmentSetupServiceTest {
         assertEquals("unchanged", service.publish("course-a", "assignment-a", replay).get("outcome"));
         verify(grading, times(1)).addExternalAssessmentUnreleased(any(), any(), any(), any(), any(), any(), any(), any(), any());
     }
+    @Test public void postedReplayAcceptsJdbcTimestampForSameDueInstant() throws Exception {
+        service.create("course-a", request("draft", "none", BigDecimal.TEN)); stageGradebook();
+        assertEquals("complete", service.publish("course-a", "assignment-a", new McpAssignmentSetupService.Publish(
+                metadata.revision(saved), externalGradebook(), "none")).get("outcome"));
+        // Hibernate hydrates Date columns as Timestamp; Timestamp.equals(Date) is false for equal instants.
+        items.get(0).setDueDate(java.sql.Timestamp.from(saved.getDueDate()));
+        assertEquals("unchanged", service.publish("course-a", "assignment-a", new McpAssignmentSetupService.Publish(
+                metadata.revision(saved), externalGradebook(), "none")).get("outcome"));
+        verify(grading, times(1)).addExternalAssessmentUnreleased(any(), any(), any(), any(), any(), any(), any(), any(), any());
+    }
+    @Test public void postedReplayRejectsChangedJdbcDueInstant() throws Exception {
+        service.create("course-a", request("draft", "none", BigDecimal.TEN)); stageGradebook();
+        service.publish("course-a", "assignment-a", new McpAssignmentSetupService.Publish(
+                metadata.revision(saved), externalGradebook(), "none"));
+        items.get(0).setDueDate(java.sql.Timestamp.from(saved.getDueDate().plusSeconds(1)));
+        assertEquals(HttpStatus.CONFLICT, assertThrows(ResponseStatusException.class, () -> service.publish("course-a", "assignment-a",
+                new McpAssignmentSetupService.Publish(metadata.revision(saved), externalGradebook(), "none"))).getStatus());
+    }
     @Test public void gradebookFailureLeavesDraftAndKnownAssignmentForRecovery() throws Exception {
         service.create("course-a", request("draft", "none", BigDecimal.TEN));
         doThrow(new IllegalStateException("private database detail")).when(grading)
