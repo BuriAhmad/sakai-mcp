@@ -749,6 +749,11 @@ public interface GradingService extends EntityProducer {
                                       Date dueDate, String externalServiceDescription, String externalData, Boolean ungraded, Long categoryId, String gradableReference)
             throws ConflictingAssignmentNameException, ConflictingExternalIdException, AssignmentHasIllegalPointsException, InvalidCategoryException;
 
+    /** Create an external assessment private from its first persistence, for staged publication. */
+    public void addExternalAssessmentUnreleased(String gradebookUid, String siteId, String externalId,
+            String title, Double points, Date dueDate, String externalServiceDescription, Long categoryId,
+            String gradableReference);
+
     /**
      *  Update an external assessment
      * @param gradebookUid
@@ -990,6 +995,9 @@ public interface GradingService extends EntityProducer {
      *
      */
     public void updateGradeMapping(Long gradeMappingId, Map<String, Double> gradeMap);
+
+    /** Read backing-object existence without the lazy initialization performed by getGradebook. */
+    public boolean isGradebookInitialized(String gradebookUid);
 
     public boolean isGradebookGroupEnabled(String siteId);
     public List<Gradebook> getGradebookGroupInstances(String siteId);

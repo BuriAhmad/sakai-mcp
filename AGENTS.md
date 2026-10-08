@@ -8,11 +8,14 @@ This repository owns the Sakai development environment's Azure infrastructure, o
 - `scripts/` and `./sakai` — local operations and the human-facing CLI.
 - `services/mcp/` — project-owned Python MCP service, tests, and container source; follow its README and scoped `AGENTS.md`.
 - `docs/` — architecture, access instructions, runbooks, and deployment history.
+- `skills/` — repository-owned agent Skill definitions; the repository [assignment setup Skill](skills/sakai-assignment-setup/SKILL.md) is not runtime-enabled.
 - `apps/sakai/` — tracked Sakai application source and project changes.
 
 ## Sources of truth
 
 - Use the tracked Bicep, scripts, and service code for intended behavior. Use `docs/REPOSITORY_STRATEGY.md` for repository boundaries and `docs/INFRASTRUCTURE.md` for the Azure architecture.
+- For the next instructor workflow, read [assignment setup design](docs/SAKAI_ASSIGNMENT_SETUP.md); it defines the opt-in local implementation, tool contracts and native services without expanding the default V1 catalog. Its local evidence records pending runtime/release gates.
+- Consult [the Sakai integration guide](docs/SAKAI_INTEGRATION_GUIDE.md) before adding Sakai capabilities to MCP, adapters, provisioning scripts, or dependent agent skills; it records verified interfaces, source locations, and remaining gaps.
 - Use `docs/VM_ACCESS.md` for SSH access and `docs/Sakai_Deployment_Runbook.md` for deployment procedures. `docs/DEPLOYMENT_STATUS.md` is a dated execution record, not a current-state inventory.
 - Use `docs/PAUSE_AND_RESUME.md` for cost, preservation, and exact pause/resume commands. Never start or stop the VM, MySQL, or MCP app, schedule a start, or change MCP capacity merely because an alert arrived or a local edit/push occurred. Runtime state changes require the user's explicit request or permission. Read-only status checks are fine.
 - Check changing Azure facts with `./sakai status` or read-only Azure queries. Verify the selected subscription before any Azure change. Do not infer live state from documentation.

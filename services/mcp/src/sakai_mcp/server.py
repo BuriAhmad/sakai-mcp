@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime
 from math import isfinite
-from typing import Any
+from typing import Any, Literal, get_type_hints
 
 from mcp.server.auth.middleware.auth_context import get_access_token
 from mcp.server.auth.provider import AccessToken, TokenVerifier
@@ -10,9 +10,17 @@ from mcp.server.auth.settings import AuthSettings
 from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import ToolAnnotations
-from pydantic import AnyHttpUrl
+from pydantic import AnyHttpUrl, ValidationError
 
-from sakai_mcp.audit import audit_call, record_created
+from sakai_mcp.assessment_models import (
+    AssessmentContext,
+    CreateAssignmentRequest,
+    GradebookConfiguration,
+    PublishAssignmentRequest,
+    Resubmission,
+    SetupResult,
+)
+from sakai_mcp.audit import audit_call, record_created, record_outcome
 from sakai_mcp.config import Settings
 from sakai_mcp.sakai_client import ErrorCode, SakaiClient, SakaiError
 
@@ -146,5 +154,69 @@ def create_server(settings: Settings, client: SakaiClient, verifier: TokenVerifi
                 return {"announcement": announcement}
             except SakaiError as error:
                 raise ToolError(error.code.value) from None
+
+    if settings.assignment_setup_enabled:
+        @server.tool(description="Inspect instructor assessment metadata, links and completeness before setup.", annotations=READ_HINTS)
+        async def get_course_assessment_context(
+            course_id: str, window_start: str | None = None, window_end: str | None = None
+        ) -> AssessmentContext:
+            async with audit_call("get_course_assessment_context", "read", course_id):
+                try:
+                    return await client.get_course_assessment_context(_principal(), course_id, window_start, window_end)
+                except SakaiError as error:
+                    raise ToolError(error.code.value) from None
+
+        async def create_assignment(
+            course_id: str, title: str, instructions: str, timezone: str, visible_at: str | None,
+            open_at: str, due_at: str, close_at: str, max_points: float,
+            submission_type: Literal["text_only", "attachments_only", "text_and_attachments", "non_electronic", "single_attachment"],
+            resubmission: Resubmission, publication: Literal["draft", "published"],
+            attachment_resource_refs: list[str], gradebook: GradebookConfiguration,
+            calendar_deadline: Literal["none", "course_calendar"],
+        ) -> SetupResult:
+            async with audit_call("create_assignment", "write", course_id):
+                try:
+                    request = CreateAssignmentRequest(
+                        course_id=course_id, title=title, instructions=instructions, timezone=timezone,
+                        visible_at=visible_at, open_at=open_at, due_at=due_at, close_at=close_at,
+                        max_points=max_points, submission_type=submission_type, resubmission=resubmission,
+                        publication=publication, attachment_resource_refs=attachment_resource_refs,
+                        gradebook=gradebook, calendar_deadline=calendar_deadline,
+                    )
+                    result = await client.create_assignment(_principal(), request)
+                    record_created(result.assignment_id)
+                    if result.outcome == "partial":
+                        record_outcome("PARTIAL_SUCCESS")
+                    return result
+                except ValidationError:
+                    raise ToolError(ErrorCode.VALIDATION_ERROR.value) from None
+                except SakaiError as error:
+                    raise ToolError(error.code.value) from None
+
+        async def publish_assignment(
+            course_id: str, assignment_id: str, expected_assignment_revision: str,
+            gradebook: GradebookConfiguration, calendar_deadline: Literal["none", "course_calendar"],
+        ) -> SetupResult:
+            async with audit_call("publish_assignment", "write", course_id, assignment_id):
+                try:
+                    request = PublishAssignmentRequest(
+                        course_id=course_id, assignment_id=assignment_id,
+                        expected_assignment_revision=expected_assignment_revision,
+                        gradebook=gradebook, calendar_deadline=calendar_deadline,
+                    )
+                    result = await client.publish_assignment(_principal(), request)
+                    if result.outcome == "partial":
+                        record_outcome("PARTIAL_SUCCESS")
+                    return result
+                except ValidationError:
+                    raise ToolError(ErrorCode.VALIDATION_ERROR.value) from None
+                except SakaiError as error:
+                    raise ToolError(error.code.value) from None
+
+        # Publish the same field bounds as the validated contracts, including nested definitions.
+        create_assignment.__annotations__.update(get_type_hints(CreateAssignmentRequest, include_extras=True))
+        publish_assignment.__annotations__.update(get_type_hints(PublishAssignmentRequest, include_extras=True))
+        server.add_tool(create_assignment, description="Create a points-based site assignment and coordinate approved linked objects. Never replay an ambiguous create.", annotations=WRITE_HINTS)
+        server.add_tool(publish_assignment, description="Promote or resume one known assignment using its observed revision. Creates only missing owned links.", annotations=WRITE_HINTS)
 
     return server

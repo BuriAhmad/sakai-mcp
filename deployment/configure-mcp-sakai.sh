@@ -3,9 +3,9 @@ set -Eeuo pipefail
 
 # Run on the VM through the existing ./sakai shell path before an exact-commit
 # release. Values are non-secret Entra metadata obtained from issued tokens.
-# Usage: bash -s -- true TENANT ISSUER AUDIENCE SCOPE JWKS_URI < this-script
-if [[ $# -ne 6 ]]; then
-  echo 'Usage: configure-mcp-sakai.sh true|false TENANT ISSUER AUDIENCE SCOPE JWKS_URI' >&2
+# Usage: bash -s -- true TENANT ISSUER AUDIENCE SCOPE JWKS_URI [ASSIGNMENT_SETUP] < this-script
+if [[ $# -lt 6 || $# -gt 7 ]]; then
+  echo 'Usage: configure-mcp-sakai.sh true|false TENANT ISSUER AUDIENCE SCOPE JWKS_URI [true|false]' >&2
   exit 2
 fi
 
@@ -18,7 +18,10 @@ import sys
 import tempfile
 
 path = Path(sys.argv[1])
-enabled, tenant, issuer, audience, scope, jwks_uri = sys.argv[2:]
+enabled, tenant, issuer, audience, scope, jwks_uri = sys.argv[2:8]
+assignment_enabled = sys.argv[8] if len(sys.argv) == 9 else None
+if assignment_enabled is not None and assignment_enabled not in ('true', 'false'):
+    raise SystemExit('Assignment setup flag must be true or false')
 if enabled not in ('true', 'false'):
     raise SystemExit('MCP enable flag must be true or false')
 if not re.fullmatch(r'[0-9a-fA-F-]{36}', tenant):
@@ -36,6 +39,11 @@ if not path.is_file():
 begin = '# BEGIN project Sakai MCP integration'
 end = '# END project Sakai MCP integration'
 source = path.read_text()
+if assignment_enabled is None:
+    previous_flags = re.findall(r'^mcp\.assignment\.setup\.enabled=(true|false)$', source, re.MULTILINE)
+    if len(previous_flags) > 1:
+        raise SystemExit('Duplicate assignment setup properties')
+    assignment_enabled = previous_flags[0] if previous_flags else 'false'
 if source.count(begin) != source.count(end) or source.count(begin) > 1:
     raise SystemExit('MCP property block markers are inconsistent')
 if begin in source:
@@ -51,6 +59,7 @@ block = '\n'.join((begin,
     f'mcp.integration.audience={audience}',
     f'mcp.integration.scope={scope}',
     f'mcp.integration.jwksUri={jwks_uri}',
+    f'mcp.assignment.setup.enabled={assignment_enabled}',
     end))
 updated = source.rstrip() + '\n\n' + block + '\n'
 if updated == path.read_text():

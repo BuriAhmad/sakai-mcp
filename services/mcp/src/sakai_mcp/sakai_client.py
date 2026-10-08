@@ -5,11 +5,19 @@ import json
 import random
 from enum import StrEnum
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 import httpx
 from mcp.server.auth.provider import AccessToken
+from pydantic import ValidationError
 
+from sakai_mcp.assessment_models import (
+    AssessmentContext,
+    CreateAssignmentRequest,
+    PublishAssignmentRequest,
+    SetupResult,
+)
+from sakai_mcp.assessment_validation import validate_create, validate_window
 from sakai_mcp.audit import current_request_id
 from sakai_mcp.config import Settings
 from sakai_mcp.obo import ExchangeUnavailable, OBOError, OBOProvider
@@ -25,6 +33,7 @@ class ErrorCode(StrEnum):
     DEPENDENCY_UNAVAILABLE = "DEPENDENCY_UNAVAILABLE"
     AMBIGUOUS_WRITE_OUTCOME = "AMBIGUOUS_WRITE_OUTCOME"
     INTERNAL_ERROR = "INTERNAL_ERROR"
+    UNSUPPORTED_CAPABILITY = "UNSUPPORTED_CAPABILITY"
 
 
 class SakaiError(Exception):
@@ -100,6 +109,68 @@ class SakaiClient:
             raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME)
         return announcement
 
+    def _require_assignment_setup(self) -> None:
+        if not self.settings.assignment_setup_enabled:
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+
+    async def get_course_assessment_context(
+        self, principal: AccessToken, course_id: str, window_start: str | None = None, window_end: str | None = None
+    ) -> AssessmentContext:
+        self._require_assignment_setup()
+        try:
+            validate_window(window_start, window_end)
+        except ValueError:
+            raise SakaiError(ErrorCode.VALIDATION_ERROR) from None
+        path = f"/api/mcp/v1/courses/{_segment(course_id)}/assessment-context"
+        if window_start is not None:
+            path += "?" + urlencode({"window_start": window_start, "window_end": window_end})
+        value = await self._request("GET", path, principal)
+        try:
+            context = AssessmentContext.model_validate(value)
+            if context.course.id != course_id:
+                raise ValueError("Unexpected course")
+            return context
+        except (ValidationError, ValueError):
+            raise SakaiError(ErrorCode.INTERNAL_ERROR) from None
+
+    async def create_assignment(self, principal: AccessToken, request: CreateAssignmentRequest) -> SetupResult:
+        self._require_assignment_setup()
+        try:
+            validate_create(request)
+        except ValueError:
+            raise SakaiError(ErrorCode.VALIDATION_ERROR) from None
+        path = f"/api/mcp/v1/courses/{_segment(request.course_id)}/assignments"
+        value = await self._request("POST", path, principal, request.model_dump(exclude={"course_id"}), unsupported=True)
+        return self._setup_result(value, request.course_id)
+
+    async def publish_assignment(self, principal: AccessToken, request: PublishAssignmentRequest) -> SetupResult:
+        self._require_assignment_setup()
+        path = f"/api/mcp/v1/courses/{_segment(request.course_id)}/assignments/{_segment(request.assignment_id)}/publish"
+        value = await self._request("POST", path, principal, request.model_dump(exclude={"course_id", "assignment_id"}), unsupported=True)
+        return self._setup_result(value, request.course_id, request.assignment_id)
+
+    @staticmethod
+    def _setup_result(value: dict[str, Any], course_id: str, assignment_id: str | None = None) -> SetupResult:
+        try:
+            result = SetupResult.model_validate(value)
+            if result.course_id != course_id or (assignment_id is not None and result.assignment_id != assignment_id):
+                raise ValueError("Unexpected object")
+            if result.assignment is not None and result.assignment.id != result.assignment_id:
+                raise ValueError("Mismatched assignment")
+            if result.outcome != "partial" and (result.assignment is None or result.failure or result.remaining_steps):
+                raise ValueError("Unverified completion")
+            if result.outcome != "partial" and (
+                result.verified_at is None
+                or result.gradebook.status not in ("not_requested", "linked")
+                or result.calendar.status not in ("not_requested", "linked")
+            ):
+                raise ValueError("Unverified links")
+            if result.outcome == "partial" and (result.failure is None or not result.remaining_steps):
+                raise ValueError("Missing recovery information")
+            return result
+        except (ValidationError, ValueError):
+            raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME) from None
+
     @staticmethod
     def _list(result: dict[str, Any], key: str) -> list[dict[str, Any]]:
         rows = result.get(key)
@@ -108,7 +179,8 @@ class SakaiClient:
         return rows
 
     async def _request(
-        self, method: str, path: str, principal: AccessToken, payload: dict[str, str] | None = None
+        self, method: str, path: str, principal: AccessToken, payload: dict[str, Any] | None = None,
+        *, unsupported: bool = False
     ) -> dict[str, Any]:
         try:
             delegated = await self.obo.acquire(principal)
@@ -128,7 +200,7 @@ class SakaiClient:
                     async with self._http.stream(
                         method, self._base + path, headers=headers, json=payload
                     ) as response:
-                        self._raise_for_status(response.status_code, method)
+                        self._raise_for_status(response.status_code, method, unsupported=unsupported)
                         length = response.headers.get("content-length")
                         if length and length.isdecimal() and int(length) > 1_000_000:
                             raise SakaiError(ErrorCode.INTERNAL_ERROR if method == "GET" else ErrorCode.AMBIGUOUS_WRITE_OUTCOME)
@@ -159,9 +231,11 @@ class SakaiClient:
         raise SakaiError(ErrorCode.DEPENDENCY_UNAVAILABLE)
 
     @staticmethod
-    def _raise_for_status(status: int, method: str) -> None:
+    def _raise_for_status(status: int, method: str, *, unsupported: bool = False) -> None:
         if 200 <= status < 300:
             return
+        if status == 501 and unsupported:
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
         if method == "POST" and status >= 500:
             raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME)
         codes = {
@@ -171,6 +245,7 @@ class SakaiClient:
             404: ErrorCode.NOT_FOUND,
             409: ErrorCode.CONFLICT,
             422: ErrorCode.VALIDATION_ERROR,
+            501: ErrorCode.UNSUPPORTED_CAPABILITY,
             429: ErrorCode.RATE_LIMITED,
             502: ErrorCode.DEPENDENCY_UNAVAILABLE,
             503: ErrorCode.DEPENDENCY_UNAVAILABLE,

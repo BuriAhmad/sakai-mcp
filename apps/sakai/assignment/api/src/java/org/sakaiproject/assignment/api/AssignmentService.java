@@ -298,6 +298,15 @@ public interface AssignmentService extends EntityProducer {
      */
     public Assignment addAssignment(String context) throws PermissionException;
 
+    /** Persist an initially private draft; never persist a posted skeleton during setup. */
+    public Assignment addDraftAssignment(String context) throws PermissionException;
+
+    /** Serialize setup of one known assignment across processes using its database row.
+     * The callback must use ordinary permission-checked services; this grants no authority.
+     */
+    public <T> T withAssignmentLock(String assignmentId, java.util.function.Function<Assignment, T> action)
+            throws IdUnusedException, PermissionException;
+
     /**
      * Creates and adds a new Assignment to the service which is a copy of an existing Assignment.
      *

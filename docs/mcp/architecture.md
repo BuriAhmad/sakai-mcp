@@ -2,6 +2,10 @@
 
 The implementation plan and phase gates are in [`../MCP_IMPLEMENTATION_RUNBOOK.md`](../MCP_IMPLEMENTATION_RUNBOOK.md). The Sakai 25.2 endpoint choices and their source evidence are in [`../evidence/mcp/phase-3-sakai-api-reconnaissance.md`](../evidence/mcp/phase-3-sakai-api-reconnaissance.md).
 
+For capabilities beyond the current V1 routes, consult the [Sakai integration guide](../SAKAI_INTEGRATION_GUIDE.md): it maps SOAP, EntityBroker, tool APIs and internal services, separates tested paths from unverified candidates, and records provisioning-only UI workarounds.
+
+The [assignment setup design](../SAKAI_ASSIGNMENT_SETUP.md) and [proposed contracts](assignment-setup-contracts.json) describe the next instructor workflow and its separate [draft Skill](../../skills/sakai-assignment-setup/SKILL.md). Disabled-by-default local source implements a delegated coordinator for native Assignment-owned Gradebook and Calendar links; the current V1 catalog and acceptance gates remain unchanged.
+
 V1 is a delegated, user-scoped Streamable HTTP MCP service under `services/mcp/`. It obtains a downstream delegated token for a narrow Sakai integration API, implemented inside tracked `apps/sakai/webapi/`. The Sakai endpoint uses request-local current-user context and ordinary permission-aware services. Azure infrastructure belongs under `deployment/infra/` and uses the established exact-commit deployment and rollback path.
 
 The five V1 operations are own courses, own grades, visible course announcements, authorized course submissions, and announcement creation. Announcement creation is the only write. An unrelated-site announcement leak was observed in Sakai's existing generic WebAPI route, so the MCP route must first verify site visit permission and must not proxy the generic endpoint. Own grades must remain bound to the acting user even when that user can grade others. Submission reads require assignment/site equality and the relevant group or section grade permission.

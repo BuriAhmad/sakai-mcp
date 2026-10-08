@@ -65,6 +65,16 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
     }
 
     @Override
+    @Transactional
+    public Assignment lockAssignment(String id) {
+        // A draft created in an enclosing transaction may still have a deferred insert.
+        geCurrentSession().flush();
+        Assignment assignment = geCurrentSession().get(Assignment.class, id, new LockOptions(LockMode.PESSIMISTIC_WRITE));
+        if (assignment != null) geCurrentSession().refresh(assignment, new LockOptions(LockMode.PESSIMISTIC_WRITE));
+        return assignment;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<Assignment> findAssignmentsBySite(String siteId) {
         return startCriteriaQuery()

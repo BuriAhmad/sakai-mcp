@@ -255,6 +255,31 @@ public class GradingServiceTests extends AbstractTransactionalJUnit4SpringContex
     }
 
     @Test
+    public void gradebookExistenceReadNeverInitializesMissingBackingObject() {
+        assertFalse(gradingService.isGradebookInitialized(siteId));
+        assertFalse(gradingService.isGradebookInitialized(siteId));
+        createGradebook();
+        assertTrue(gradingService.isGradebookInitialized(siteId));
+    }
+
+    @Test
+    public void stagedExternalAssessmentIsPrivateFromFirstPersistenceAndPermissionChecked() {
+        Gradebook gradebook = createGradebook();
+        switchToUser1();
+        assertThrows(SecurityException.class, () -> gradingService.addExternalAssessmentUnreleased(
+                gradebook.getUid(), siteId, "synthetic-external", "Staged assessment", 100D,
+                new Date(), "sakai.assignment.grades", null, "synthetic-reference"));
+        switchToInstructor();
+        gradingService.addExternalAssessmentUnreleased(gradebook.getUid(), siteId, "synthetic-external",
+                "Staged assessment", 100D, new Date(), "sakai.assignment.grades", null, "synthetic-reference");
+        Assignment item = gradingService.getExternalAssignment(gradebook.getUid(), "synthetic-external");
+        assertTrue(item.getExternallyMaintained());
+        assertFalse(item.getReleased());
+        assertFalse(item.getCounted());
+        assertEquals("synthetic-reference", item.getReference());
+    }
+
+    @Test
     public void addAndUpdateExternalAssessment() {
 
         Gradebook gradebook = createGradebook();

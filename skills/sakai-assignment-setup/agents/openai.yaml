@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sakai Assignment Setup"
+  short_description: "Plan and verify Sakai assignments and linked objects"
+  default_prompt: "Use $sakai-assignment-setup to plan and set up an assignment from my brief in the selected Sakai course."

@@ -34,6 +34,9 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
 
     Assignment findAssignment(String id);
 
+    /** Acquire and refresh the assignment row until the enclosing transaction ends. */
+    Assignment lockAssignment(String id);
+
     List<Assignment> findAssignmentsBySite(String siteId);
 
     List<Assignment> findDeletedAssignmentsBySite(String siteId);

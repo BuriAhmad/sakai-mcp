@@ -1,0 +1,13 @@
+# Client constraints
+
+Connect to `https://mcp.smartdigest.app/mcp` using the institution's existing delegated OAuth configuration. Do not accept caller-supplied identities, tokens, destination URLs or administrator credentials. Each tool retains native Sakai permissions.
+
+Expected catalog: the five V1 tools (`list_my_courses`, `get_my_grades`, `get_course_announcements`, `get_course_submissions`, `create_course_announcement`) and opt-in `get_course_assessment_context`, `create_assignment`, `publish_assignment`. Discover actual schemas and annotations; stop dependent writes if required tools or fields are absent. Context is read-only. Both setup writes are non-idempotent; never replay an ambiguous POST. Leave host approval for writes enabled.
+
+Initial slice: delegated author's individual site-wide point-graded assignments, explicitly scheduled RFC3339 instants with IANA timezone, native attachment/text modes, same-course existing resources, an optional new owned external Gradebook item, and an optional owned Calendar deadline. A draft has no Gradebook or Calendar integration. Group Gradebooks, arbitrary existing-item association, uploads, general editing, rubrics, peer/plagiarism setup, standalone item/event creation and scheduled/email announcements are unsupported.
+
+Read metadata completeness and warnings. Unknown course timezone is not a policy: ask the instructor when it matters. Gradebook categories and weights are existing course policy; never create or change them implicitly. Instructions must fit 65,535 UTF-8 bytes after sanitization. Resource availability must span the assignment window; use no resource when access is uncertain.
+
+Gradebook items are staged unreleased/uncounted, then receive approved flags. This does not release submission scores. Calendar may be visible before final posting; there is no atomic transaction across services. Locks coordinate known-assignment promotion, not initial-create uniqueness. Preserve partial IDs and reconcile observed state. Posted recovery can finish approved item flags, but cannot automatically create missing publication links. No automatic deletion or compensating rollback.
+
+The repository's authoritative design and release evidence are maintained at `docs/SAKAI_ASSIGNMENT_SETUP.md` and `docs/evidence/mcp/` in `BuriAhmad/sakai-mcp`. Native UI/Student parity and host-control claims require actual evidence; never infer those from tool discovery, local tests or a successful HTTP status. The workflow requires the instructor's coherent plan approval before any course mutation, followed by host approval when shown.

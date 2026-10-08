@@ -4262,6 +4262,22 @@ public class GradingServiceImpl implements GradingService {
     public void addExternalAssessment(final String gradebookUid, final String siteId, final String externalId, final String externalUrl, final String title, final Double points,
                                            final Date dueDate, final String externalServiceDescription, String externalData, final Boolean ungraded, final Long categoryId, String gradableReference)
             throws ConflictingAssignmentNameException, ConflictingExternalIdException, AssignmentHasIllegalPointsException {
+        addExternalAssessmentInternal(gradebookUid, siteId, externalId, externalUrl, title, points, dueDate,
+                externalServiceDescription, externalData, ungraded, categoryId, gradableReference, true);
+    }
+
+    @Override
+    public void addExternalAssessmentUnreleased(String gradebookUid, String siteId, String externalId,
+            String title, Double points, Date dueDate, String externalServiceDescription, Long categoryId,
+            String gradableReference) {
+        if (!currentUserHasEditPerm(gradebookUid)) throw new SecurityException("Assessment edit permission required");
+        addExternalAssessmentInternal(gradebookUid, siteId, externalId, null, title, points, dueDate,
+                externalServiceDescription, null, false, categoryId, gradableReference, false);
+    }
+
+    private void addExternalAssessmentInternal(String gradebookUid, String siteId, String externalId,
+            String externalUrl, String title, Double points, Date dueDate, String externalServiceDescription,
+            String externalData, Boolean ungraded, Long categoryId, String gradableReference, boolean released) {
         // Ensure that the required strings are not empty
         if (StringUtils.trimToNull(externalServiceDescription) == null ||
                 StringUtils.trimToNull(externalId) == null ||
@@ -4297,7 +4313,7 @@ public class GradingServiceImpl implements GradingService {
         Category persistedCategory = null;
         if (categoryId != null) {
             persistedCategory = getCategory(categoryId);
-            if (persistedCategory.isDropScores() && !persistedCategory.getEqualWeightAssignments()) {
+            if (persistedCategory != null && persistedCategory.isDropScores() && !persistedCategory.getEqualWeightAssignments()) {
                 List<GradebookAssignment> thisCategoryAssignments = getAssignmentsForCategory(categoryId);
                 for (GradebookAssignment thisAssignment : thisCategoryAssignments) {
                     if (!Objects.equals(thisAssignment.getPointsPossible(), points)) {
@@ -4327,7 +4343,8 @@ public class GradingServiceImpl implements GradingService {
             asn.setCategory(persistedCategory);
         }
         // set released to be true to support selective release
-        asn.setReleased(true);
+        asn.setReleased(released);
+        if (!released) asn.setNotCounted(true);
         if (ungraded != null) {
             asn.setUngraded(ungraded);
         } else {
@@ -5335,6 +5352,11 @@ public class GradingServiceImpl implements GradingService {
 
     private static final String GB_GROUP_SITE_PROPERTY = "gradebook_group";
     private static final String GB_GROUP_TOOL_PROPERTY = "gb-group";
+
+    @Override
+    public boolean isGradebookInitialized(String gradebookUid) {
+        return StringUtils.isNotBlank(gradebookUid) && gradingPersistenceManager.getGradebook(gradebookUid).isPresent();
+    }
 
     @Override
     public boolean isGradebookGroupEnabled(String siteId) {

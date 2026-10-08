@@ -928,6 +928,30 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     @Override
     @Transactional
     public Assignment addAssignment(String context) throws PermissionException {
+        return createAssignment(context, false);
+    }
+
+    @Override
+    @Transactional
+    public Assignment addDraftAssignment(String context) throws PermissionException {
+        return createAssignment(context, true);
+    }
+
+    @Override
+    @Transactional
+    public <T> T withAssignmentLock(String assignmentId, java.util.function.Function<Assignment, T> action)
+            throws IdUnusedException, PermissionException {
+        Assignment visible = getAssignment(assignmentId);
+        String reference = AssignmentReferenceReckoner.reckoner().assignment(visible).reckon().getReference();
+        if (!allowUpdateAssignment(reference)) {
+            throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_UPDATE_ASSIGNMENT, null);
+        }
+        Assignment locked = assignmentRepository.lockAssignment(visible.getId());
+        if (locked == null) throw new IdUnusedException(assignmentId);
+        return action.apply(locked);
+    }
+
+    private Assignment createAssignment(String context, boolean draft) throws PermissionException {
         // security check
         if (!allowAddAssignment(context)) {
             throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_ADD_ASSIGNMENT, null);
@@ -937,6 +961,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         assignment.setContext(context);
         assignment.setAuthor(sessionManager.getCurrentSessionUserId());
         assignment.setPosition(0);
+        assignment.setDraft(draft);
         assignmentRepository.newAssignment(assignment);
 
         log.debug("Created new assignment {}", assignment.getId());
@@ -3502,9 +3527,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             // TODO do we need to use time zone
             Instant openTime = assignment.getOpenDate();
             Instant visibleTime = assignment.getVisibleDate();
-            if ((openTime != null && Instant.now().isAfter(openTime))
-                    || (visibleTime != null && Instant.now().isAfter(visibleTime))
-                    && !assignment.getDraft()) {
+            if (!Boolean.TRUE.equals(assignment.getDraft())
+                    && ((openTime != null && Instant.now().isAfter(openTime))
+                    || (visibleTime != null && Instant.now().isAfter(visibleTime)))) {
                 return true;
             }
         } else {

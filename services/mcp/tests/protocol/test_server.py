@@ -198,3 +198,41 @@ def test_streamable_http_accepts_valid_bearer_and_lists_five_tools():
     assert len(listed.json()["result"]["tools"]) == 5
     assert called.status_code == 200
     assert called.json()["result"]["structuredContent"]["courses"][0]["id"] == "course-a"
+
+
+def test_opt_in_catalog_publishes_bounded_assignment_contracts_and_write_hints():
+    config = settings(assignment_setup_enabled=True)
+    server = create_server(config, FakeClient(), EntraTokenVerifier(config, lambda _: None))
+    tools = {tool.name: tool for tool in asyncio.run(server.list_tools())}
+    assert len(tools) == 8
+    create = tools["create_assignment"]
+    assert create.input_schema["properties"]["title"]["maxLength"] == 200
+    assert create.input_schema["properties"]["attachment_resource_refs"]["maxItems"] == 20
+    assert create.output_schema is not None
+    assert create.annotations.read_only_hint is False and create.annotations.idempotent_hint is False
+    publish = tools["publish_assignment"]
+    assert "expected_assignment_revision" in publish.input_schema["required"]
+    assert publish.annotations.idempotent_hint is False
+    context = tools["get_course_assessment_context"]
+    assert context.annotations.read_only_hint is True
+
+
+def test_opt_in_partial_setup_is_structured_and_audited_without_creating_announcement(monkeypatch, caplog):
+    from sakai_mcp.assessment_models import SetupResult
+    from tests.unit.test_assignment_setup import partial, request
+
+    class SetupClient(FakeClient):
+        async def create_assignment(self, _, config):
+            return SetupResult.model_validate(partial())
+
+    authorized(monkeypatch)
+    config = settings(assignment_setup_enabled=True)
+    client = SetupClient()
+    server = create_server(config, client, EntraTokenVerifier(config, lambda _: None))
+    with caplog.at_level("INFO", logger="sakai_mcp.audit"):
+        result = asyncio.run(server.call_tool("create_assignment", request().model_dump()))
+    assert result.structured_content["outcome"] == "partial"
+    assert result.structured_content["assignment_id"] == "assignment-a"
+    assert client.writes == 0
+    assert '"outcome":"PARTIAL_SUCCESS"' in caplog.text
+    assert "Submit a report" not in caplog.text

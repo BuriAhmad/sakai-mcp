@@ -34,6 +34,10 @@ Useful commands:
 
 See [VM access](docs/VM_ACCESS.md) for the security model, [Sakai releases](docs/SAKAI_RELEASES.md) before deployment, [Sakai source](docs/SAKAI_SOURCE.md) for the imported code, and [repository strategy](docs/REPOSITORY_STRATEGY.md) before adding the MCP service.
 
+For programmatic Sakai capabilities and source references, start with the [Sakai integration guide](docs/SAKAI_INTEGRATION_GUIDE.md). It records tested interfaces, limitations and future adapter investigation for MCP tools, automation and dependent agent skills.
+
+The next instructor workflow is implemented locally behind disabled-by-default gates: see [assignment setup](docs/SAKAI_ASSIGNMENT_SETUP.md), [MCP contracts](docs/mcp/assignment-setup-contracts.json), [repository Skill](skills/sakai-assignment-setup/SKILL.md), and [local validation / remaining release gates](docs/evidence/mcp/assignment-setup-local.md). The default V1 catalog remains five tools; no deployment, runtime activation or client Skill installation is implied.
+
 For the budget alert, retained-resource costs, and the exact pause/resume path, see [Pause and resume](docs/PAUSE_AND_RESUME.md). Local edits, commits, pushes, and CI work while Azure compute is paused. Pushes never allocate resources or deploy application code.
 
 ## Layout
@@ -42,4 +46,5 @@ For the budget alert, retained-resource costs, and the exact pause/resume path, 
 - `scripts/` — guarded operational scripts
 - `docs/` — architecture, runbooks, and decisions
 - `services/` — project-owned MCP service
+- `skills/` — repository-owned agent Skill definitions (not installed automatically)
 - `apps/sakai/` — tracked Sakai application source and project changes

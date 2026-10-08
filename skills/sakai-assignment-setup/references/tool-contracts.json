@@ -1,0 +1,1596 @@
+{
+  "design_status": "Opt-in local source implementation, disabled by default; not deployed or runtime accepted. Cross-field rules and release gates: ../SAKAI_ASSIGNMENT_SETUP.md. Python registration resolves definitions through bounded Pydantic models.",
+  "schema_dialect": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "weight_percent": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "equal_weight_items": {
+          "type": "boolean"
+        },
+        "drop_lowest": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "drop_highest": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "keep_highest": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extra_credit": {
+          "type": "boolean"
+        },
+        "drop_keep_enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "weight_percent",
+        "equal_weight_items",
+        "drop_lowest",
+        "drop_highest",
+        "keep_highest",
+        "extra_credit",
+        "drop_keep_enabled"
+      ],
+      "additionalProperties": false
+    },
+    "gradebook_item": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "max_points": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Finite decimal points exactly representable at the native Assignment scale; no rounding."
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "due_on": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "released": {
+          "type": "boolean"
+        },
+        "counted": {
+          "type": "boolean"
+        },
+        "extra_credit": {
+          "type": "boolean"
+        },
+        "externally_maintained": {
+          "type": "boolean"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "external_app": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gradable_reference": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "max_points",
+        "due_on",
+        "category_id",
+        "released",
+        "counted",
+        "extra_credit",
+        "externally_maintained",
+        "external_id",
+        "external_app",
+        "gradable_reference"
+      ],
+      "additionalProperties": false
+    },
+    "calendar_event": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "start_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+        },
+        "end_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "assignment_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner_tool_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "start_at",
+        "end_at",
+        "type",
+        "assignment_id",
+        "owner_tool_id"
+      ],
+      "additionalProperties": false
+    },
+    "resubmission": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": -1,
+          "description": "0 disabled, -1 unlimited, positive count enabled."
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time",
+              "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "count",
+        "until"
+      ],
+      "additionalProperties": false
+    },
+    "gradebook_configuration": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "none"
+              ]
+            }
+          },
+          "required": [
+            "mode"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "new_external"
+              ]
+            },
+            "category_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "release_to_students": {
+              "type": "boolean"
+            },
+            "count_toward_course_grade": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "mode",
+            "category_id",
+            "release_to_students",
+            "count_toward_course_grade"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "assignment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "posted_future",
+            "open",
+            "closed"
+          ]
+        },
+        "draft": {
+          "type": "boolean"
+        },
+        "deleted": {
+          "type": "boolean"
+        },
+        "visible_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time",
+              "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "open_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time",
+              "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "due_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time",
+              "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "close_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time",
+              "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "max_points": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Finite decimal points exactly representable at the native Assignment scale; no rounding."
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "grading_type": {
+          "type": "string",
+          "enum": [
+            "none",
+            "ungraded",
+            "letter",
+            "points",
+            "pass_fail",
+            "check",
+            "unknown"
+          ]
+        },
+        "submission_type": {
+          "type": "string",
+          "enum": [
+            "none",
+            "text_only",
+            "attachments_only",
+            "text_and_attachments",
+            "non_electronic",
+            "single_attachment",
+            "external_tool",
+            "video",
+            "unknown"
+          ]
+        },
+        "resubmission": {
+          "$ref": "#/$defs/resubmission"
+        },
+        "attachment_resource_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "maxItems": 20
+        },
+        "release_grades": {
+          "type": "boolean"
+        },
+        "audience": {
+          "type": "string",
+          "enum": [
+            "site",
+            "groups",
+            "unknown"
+          ]
+        },
+        "group_submission": {
+          "type": "boolean"
+        },
+        "gradebook_link": {
+          "$ref": "#/$defs/gradebook_link"
+        },
+        "calendar_link": {
+          "$ref": "#/$defs/calendar_link"
+        },
+        "native_announcement_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instructions_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "SHA-256 of persisted sanitized instruction HTML in UTF-8; verify against the normalized approved content."
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "revision",
+        "status",
+        "draft",
+        "deleted",
+        "visible_at",
+        "open_at",
+        "due_at",
+        "close_at",
+        "max_points",
+        "grading_type",
+        "submission_type",
+        "resubmission",
+        "attachment_resource_refs",
+        "release_grades",
+        "audience",
+        "group_submission",
+        "gradebook_link",
+        "calendar_link",
+        "native_announcement_id",
+        "instructions_sha256",
+        "timezone"
+      ],
+      "additionalProperties": false
+    },
+    "gradebook_link": {
+      "type": "object",
+      "properties": {
+        "gradebook_item_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "none",
+            "new_external",
+            "existing",
+            "unknown"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_requested",
+            "linked",
+            "missing",
+            "mismatch",
+            "unknown"
+          ]
+        },
+        "released": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "counted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "gradebook_item_id",
+        "external_id",
+        "category_id",
+        "mode",
+        "status",
+        "released",
+        "counted"
+      ],
+      "additionalProperties": false
+    },
+    "calendar_link": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "calendar_reference": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_requested",
+            "linked",
+            "missing",
+            "mismatch",
+            "unknown"
+          ]
+        }
+      },
+      "required": [
+        "event_id",
+        "calendar_reference",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "assessment_context": {
+      "type": "object",
+      "properties": {
+        "course": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "timezone": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "timezone_source": {
+              "type": "string",
+              "enum": [
+                "site_policy",
+                "user_preference",
+                "server_default",
+                "unknown"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "timezone",
+            "timezone_source"
+          ],
+          "additionalProperties": false
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+        },
+        "capabilities": {
+          "type": "object",
+          "properties": {
+            "create_site_assignment": {
+              "type": "boolean"
+            },
+            "revise_assignment": {
+              "type": "boolean"
+            },
+            "edit_gradebook_items": {
+              "type": "boolean"
+            },
+            "read_calendar": {
+              "type": "boolean"
+            },
+            "add_calendar_event": {
+              "type": "boolean"
+            },
+            "create_announcement": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "create_site_assignment",
+            "revise_assignment",
+            "edit_gradebook_items",
+            "read_calendar",
+            "add_calendar_event",
+            "create_announcement"
+          ],
+          "additionalProperties": false
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "sections": {
+          "type": "object",
+          "properties": {
+            "assignments": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "complete",
+                    "permission_scoped",
+                    "unavailable"
+                  ]
+                },
+                "reason": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
+            },
+            "gradebook": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "complete",
+                    "permission_scoped",
+                    "unavailable"
+                  ]
+                },
+                "reason": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
+            },
+            "calendar": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "complete",
+                    "permission_scoped",
+                    "unavailable"
+                  ]
+                },
+                "reason": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "assignments",
+            "gradebook",
+            "calendar"
+          ],
+          "additionalProperties": false
+        },
+        "assignments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assignment"
+          },
+          "maxItems": 500
+        },
+        "gradebook": {
+          "type": "object",
+          "properties": {
+            "available": {
+              "type": "boolean"
+            },
+            "reason": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "group_gradebooks_enabled": {
+              "type": "boolean"
+            },
+            "category_mode": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "categories",
+                    "weighted_categories"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "grade_entry_type": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "points",
+                    "percentage",
+                    "letter",
+                    "unknown"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "display_released_items": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "course_grade_displayed": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/category"
+              },
+              "maxItems": 500
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/gradebook_item"
+              },
+              "maxItems": 500
+            }
+          },
+          "required": [
+            "available",
+            "reason",
+            "group_gradebooks_enabled",
+            "category_mode",
+            "grade_entry_type",
+            "display_released_items",
+            "course_grade_displayed",
+            "categories",
+            "items"
+          ],
+          "additionalProperties": false
+        },
+        "calendar": {
+          "type": "object",
+          "properties": {
+            "scope": {
+              "type": "string",
+              "enum": [
+                "site_main"
+              ]
+            },
+            "window_start": {
+              "type": "string",
+              "format": "date-time",
+              "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+            },
+            "window_end": {
+              "type": "string",
+              "format": "date-time",
+              "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+            },
+            "events": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/calendar_event"
+              },
+              "maxItems": 500
+            }
+          },
+          "required": [
+            "scope",
+            "window_start",
+            "window_end",
+            "events"
+          ],
+          "additionalProperties": false
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        }
+      },
+      "required": [
+        "course",
+        "observed_at",
+        "capabilities",
+        "complete",
+        "sections",
+        "assignments",
+        "gradebook",
+        "calendar",
+        "warnings"
+      ],
+      "additionalProperties": false
+    },
+    "setup_result": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial",
+            "unchanged"
+          ]
+        },
+        "course_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "assignment": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/assignment"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gradebook": {
+          "$ref": "#/$defs/gradebook_link"
+        },
+        "calendar": {
+          "$ref": "#/$defs/calendar_link"
+        },
+        "verified_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time",
+              "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "remaining_steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "verify_assignment",
+              "link_gradebook",
+              "link_calendar",
+              "publish_assignment",
+              "apply_gradebook_flags",
+              "verify_setup"
+            ]
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "assignment_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "PARTIAL_SUCCESS"
+                  ]
+                },
+                "stage": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                "retry_safe": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "code",
+                "stage",
+                "reason",
+                "retry_safe"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "outcome",
+        "course_id",
+        "assignment",
+        "gradebook",
+        "calendar",
+        "verified_at",
+        "remaining_steps",
+        "warnings",
+        "assignment_id",
+        "failure"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "recommended_tools": [
+    {
+      "name": "get_course_assessment_context",
+      "description": "Inspect bounded instructor assessment metadata and permissions before setup or for verification.",
+      "design_status": "implemented locally behind disabled feature gates; runtime acceptance pending",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "window_start": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+          },
+          "window_end": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+          }
+        },
+        "required": [
+          "course_id"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$ref": "#/$defs/assessment_context"
+      }
+    },
+    {
+      "name": "create_assignment",
+      "description": "Create a points-based site-wide individual Assignment; optionally coordinate a new external Gradebook item and owned deadline before publishing.",
+      "design_status": "implemented locally behind disabled feature gates; runtime acceptance pending",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "instructions": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100000
+          },
+          "timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "visible_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "open_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+          },
+          "due_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+          },
+          "close_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+          },
+          "max_points": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Finite decimal points exactly representable at the native Assignment scale; no rounding."
+          },
+          "submission_type": {
+            "type": "string",
+            "enum": [
+              "text_only",
+              "attachments_only",
+              "text_and_attachments",
+              "non_electronic",
+              "single_attachment"
+            ]
+          },
+          "resubmission": {
+            "$ref": "#/$defs/resubmission"
+          },
+          "publication": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "attachment_resource_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "maxItems": 20
+          },
+          "gradebook": {
+            "$ref": "#/$defs/gradebook_configuration"
+          },
+          "calendar_deadline": {
+            "type": "string",
+            "enum": [
+              "none",
+              "course_calendar"
+            ]
+          }
+        },
+        "required": [
+          "course_id",
+          "title",
+          "instructions",
+          "timezone",
+          "visible_at",
+          "open_at",
+          "due_at",
+          "close_at",
+          "max_points",
+          "submission_type",
+          "resubmission",
+          "publication",
+          "attachment_resource_refs",
+          "gradebook",
+          "calendar_deadline"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$ref": "#/$defs/setup_result"
+      }
+    },
+    {
+      "name": "publish_assignment",
+      "description": "Promote or safely resume setup for one known draft; verify identical posted requests without recreating dependent objects.",
+      "design_status": "implemented locally behind disabled feature gates; runtime acceptance pending",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "assignment_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "expected_assignment_revision": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "gradebook": {
+            "$ref": "#/$defs/gradebook_configuration"
+          },
+          "calendar_deadline": {
+            "type": "string",
+            "enum": [
+              "none",
+              "course_calendar"
+            ]
+          }
+        },
+        "required": [
+          "course_id",
+          "assignment_id",
+          "expected_assignment_revision",
+          "gradebook",
+          "calendar_deadline"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$ref": "#/$defs/setup_result"
+      }
+    },
+    {
+      "name": "create_course_announcement",
+      "description": "Reuse existing V1 immediate plain course announcement; no scheduling, attachments or selectable email notification.",
+      "design_status": "existing V1; bounds documented, signature and wire output unchanged",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        },
+        "required": [
+          "course_id",
+          "title",
+          "body"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "announcement": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              "courseId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "postedAt": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "courseId",
+              "title",
+              "postedAt"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "announcement"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "deferred_tools": [
+    {
+      "name": "create_gradebook_item",
+      "description": "Future standalone Gradebook-owned item; does not link an Assignments-tool object or set category weights.",
+      "design_status": "deferred; not required by Skill",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "max_points": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Finite decimal points exactly representable at the native Assignment scale; no rounding."
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "category_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "release_to_students": {
+            "type": "boolean"
+          },
+          "count_toward_course_grade": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "course_id",
+          "title",
+          "max_points",
+          "due_on",
+          "category_id",
+          "release_to_students",
+          "count_toward_course_grade"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "item": {
+            "$ref": "#/$defs/gradebook_item"
+          },
+          "verified_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+          }
+        },
+        "required": [
+          "course_id",
+          "item",
+          "verified_at"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_calendar_event",
+      "description": "Future standalone site-wide finite event; not for a second assignment deadline.",
+      "design_status": "deferred; native allowed type set still to verify",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "start_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+          },
+          "end_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+          },
+          "timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "location": {
+            "type": "string",
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "course_id",
+          "title",
+          "start_at",
+          "end_at",
+          "timezone",
+          "description",
+          "type",
+          "location"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "event": {
+            "$ref": "#/$defs/calendar_event"
+          },
+          "verified_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 timestamp with explicit offset; runtime offset and timezone checks required."
+          }
+        },
+        "required": [
+          "course_id",
+          "event",
+          "verified_at"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

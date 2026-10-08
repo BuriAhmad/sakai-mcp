@@ -32,6 +32,9 @@ param sakaiIssuer string
 param sakaiResourceClientId string
 param sakaiAudience string
 
+@description('Opt-in assignment setup catalog; enable only for an explicitly authorized next-phase release.')
+param assignmentSetupEnabled bool = false
+
 param location string = 'koreacentral'
 
 param tags object = {
@@ -132,6 +135,7 @@ resource app 'Microsoft.App/containerApps@2025-07-01' = {
           }
           env: [
             { name: 'ENVIRONMENT', value: 'development' }
+            { name: 'ASSIGNMENT_SETUP_ENABLED', value: string(assignmentSetupEnabled) }
             { name: 'APP_COMMIT', value: sourceCommit }
             { name: 'APP_LOCK_SHA256', value: lockSha256 }
             { name: 'MCP_PUBLIC_URL', value: mcpPublicUrl }

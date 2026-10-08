@@ -16,10 +16,12 @@ from mcp.server.auth.middleware.auth_context import get_access_token
 
 _request_id: ContextVar[str | None] = ContextVar("sakai_mcp_request_id", default=None)
 _created_ref: ContextVar[str | None] = ContextVar("sakai_mcp_created_ref", default=None)
+_result_outcome: ContextVar[str] = ContextVar("sakai_mcp_result_outcome", default="OK")
 _audit = logging.getLogger("sakai_mcp.audit")
 _OUTCOMES = frozenset({
     "UNAUTHENTICATED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONFLICT",
     "RATE_LIMITED", "DEPENDENCY_UNAVAILABLE", "AMBIGUOUS_WRITE_OUTCOME", "INTERNAL_ERROR",
+    "PARTIAL_SUCCESS", "UNSUPPORTED_CAPABILITY",
 })
 
 
@@ -52,6 +54,12 @@ def record_created(object_id: str) -> None:
     _created_ref.set(_digest(object_id))
 
 
+def record_outcome(outcome: str) -> None:
+    if outcome not in _OUTCOMES:
+        raise ValueError("Unknown audit outcome")
+    _result_outcome.set(outcome)
+
+
 @asynccontextmanager
 async def audit_call(
     tool: str, classification: str, course_id: str | None = None, target_id: str | None = None
@@ -59,6 +67,7 @@ async def audit_call(
     request_id = str(uuid4())
     context_token = _request_id.set(request_id)
     created_token = _created_ref.set(None)
+    result_token = _result_outcome.set("OK")
     access = get_access_token()
     claims = access.claims if access is not None and isinstance(access.claims, dict) else {}
     tenant = claims.get("tid")
@@ -82,11 +91,12 @@ async def audit_call(
             "course_ref": _digest(course_id),
             "target_ref": _digest(target_id),
             "created_ref": _created_ref.get(),
-            "outcome": outcome,
+            "outcome": outcome if outcome != "OK" else _result_outcome.get(),
             "latency_ms": round((monotonic() - start) * 1000),
             "revision": os.getenv("CONTAINER_APP_REVISION"),
             "commit": os.getenv("APP_COMMIT"),
         }
         _audit.info(json.dumps(event, separators=(",", ":")))
         _created_ref.reset(created_token)
+        _result_outcome.reset(result_token)
         _request_id.reset(context_token)

@@ -229,6 +229,47 @@ public class AssignmentServiceTest extends AbstractTransactionalJUnit4SpringCont
     }
 
     @Test
+    public void knownAssignmentRowLockRefreshesAndRequiresRevisePermission() throws Exception {
+        String context = UUID.randomUUID().toString();
+        String realm = AssignmentReferenceReckoner.reckoner().context(context).reckon().getReference();
+        when(securityService.unlock(AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT, realm)).thenReturn(true);
+        when(sessionManager.getCurrentSessionUserId()).thenReturn("synthetic-instructor");
+        Assignment draft = assignmentService.addDraftAssignment(context);
+        String reference = AssignmentReferenceReckoner.reckoner().assignment(draft).reckon().getReference();
+        when(securityService.unlock(AssignmentServiceConstants.SECURE_UPDATE_ASSIGNMENT, realm)).thenReturn(true);
+        when(securityService.unlock(AssignmentServiceConstants.SECURE_UPDATE_ASSIGNMENT, reference)).thenReturn(true);
+        Assert.assertEquals(draft.getId(), assignmentService.withAssignmentLock(draft.getId(), locked -> {
+            Assert.assertTrue(locked.getDraft());
+            return locked.getId();
+        }));
+        Site site = mock(Site.class);
+        when(site.getGroups()).thenReturn(Collections.emptyList());
+        when(siteService.getSite(context)).thenReturn(site);
+        when(securityService.unlock(AssignmentServiceConstants.SECURE_UPDATE_ASSIGNMENT, realm)).thenReturn(false);
+        when(securityService.unlock(AssignmentServiceConstants.SECURE_UPDATE_ASSIGNMENT, reference)).thenReturn(false);
+        Assert.assertThrows(PermissionException.class, () -> assignmentService.withAssignmentLock(draft.getId(), Assignment::getId));
+    }
+
+    @Test
+    public void draftFactoryPersistsPrivateAndStudentByIdCannotReadOpenedDraft() throws Exception {
+        String context = UUID.randomUUID().toString();
+        String realm = AssignmentReferenceReckoner.reckoner().context(context).reckon().getReference();
+        when(securityService.unlock(AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT, realm)).thenReturn(true);
+        when(sessionManager.getCurrentSessionUserId()).thenReturn("synthetic-instructor");
+        Assignment draft = assignmentService.addDraftAssignment(context);
+        Assert.assertTrue(draft.getDraft());
+        // Direct service by-ID must reject even an already-open draft.
+        draft.setOpenDate(Instant.now().minusSeconds(3600));
+        draft.setVisibleDate(Instant.now().minusSeconds(3600));
+        Site site = mock(Site.class);
+        when(site.getGroups()).thenReturn(Collections.emptyList());
+        when(siteService.getSite(context)).thenReturn(site);
+        when(securityService.unlock(AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT, realm)).thenReturn(false);
+        when(sessionManager.getCurrentSessionUserId()).thenReturn("synthetic-student");
+        Assert.assertThrows(PermissionException.class, () -> assignmentService.getAssignment(draft.getId()));
+    }
+
+    @Test
     public void getAssignmentsForContextStudentsCantViewFutureAssignments() {
     	String context = UUID.randomUUID().toString();
     	

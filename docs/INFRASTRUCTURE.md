@@ -105,3 +105,7 @@ The separate MCP image/revision workflow is under `services/mcp/Dockerfile`, `sc
 ## Provisioning blocker
 
 The subscription policy `sys.regionrestriction` denied East US. Central India then denied MySQL provisioning for this subscription, and UAE North had no capacity for the approved low-cost 8 GiB B-series SKUs. The actual successful deployment region is Korea Central. The resource group predates that resolution and therefore retains East US as immutable metadata; all workload resources are co-located in Korea Central.
+
+## Assignment setup feature gate — source only, 8 October 2026
+
+The MCP app Bicep template now has a default-false `assignmentSetupEnabled` parameter, providing `ASSIGNMENT_SETUP_ENABLED` to the Python catalog. Sakai independently requires `mcp.assignment.setup.enabled`, managed by the optional seventh argument of `deployment/configure-mcp-sakai.sh`. This adds no resource or capacity change. Neither gate was enabled or deployed by the local implementation; runtime activation requires a separately authorized release and the [assignment setup acceptance matrix](SAKAI_ASSIGNMENT_SETUP.md).

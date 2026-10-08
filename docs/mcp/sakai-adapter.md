@@ -2,6 +2,10 @@
 
 The Sakai-side V1 adapter lives in tracked `apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/`. Its servlet paths are relative to Sakai's existing `/api` WebAPI context. It is **disabled by default**; enabling it for the development release requires the Phase 7 predeployment gate, and the release is accepted only after the Phase 8 live checks in the [runbook](../MCP_IMPLEMENTATION_RUNBOOK.md).
 
+The [Sakai integration guide](../SAKAI_INTEGRATION_GUIDE.md) preserves broader native interface findings, including canonical EID mapping, GradebookNG mutation candidates and the observed announcement lookback limitation. Consult it before extending this adapter; this document remains the V1 route/authentication reference.
+
+For the next-phase assessment context and Assignment publication coordinator, see [assignment setup research and implementation plan](../SAKAI_ASSIGNMENT_SETUP.md). Its routes are proposals, not part of the V1 route table below.
+
 ## Runtime properties
 
 Set these as Sakai properties through the existing VM configuration procedure. They are non-secret values, but environment-specific values must be verified from the issued downstream token and Entra metadata. Do not paste tokens, private keys, or client secrets into Sakai properties.
@@ -41,3 +45,19 @@ JAVA_HOME=/opt/homebrew/opt/openjdk@17 mvn -f apps/sakai/pom.xml -pl webapi -am 
 ```
 
 The local command and focused results are recorded in [`phase-7-sakai-adapter.md`](../evidence/mcp/phase-7-sakai-adapter.md). The development adapter was deployed through the existing guarded exact-commit release and passed the live delegated and ordinary-login checks in [`phase-8-release.md`](../evidence/mcp/phase-8-release.md). For subsequent changes, use the same [Sakai release procedure](../SAKAI_RELEASES.md) and repeat the focused tests and public acceptance checks. Code rollback does not revert the runtime MCP property block or any announcement created after deployment.
+
+## Opt-in assignment setup endpoints
+
+Local next-phase source adds the following paths inside the same request-local bearer boundary. They independently require `mcp.assignment.setup.enabled=true`; absent/false returns 404. The corresponding Python catalog requires `ASSIGNMENT_SETUP_ENABLED=true`. Neither flag is enabled by this source change.
+
+| Method | Route | Behavior |
+| --- | --- | --- |
+| GET | `/api/mcp/v1/courses/{siteId}/assessment-context` | Bounded instructor metadata with paired optional RFC3339 `window_start`/`window_end`; no grades/submissions or backing-tool initialization. |
+| POST | `/api/mcp/v1/courses/{siteId}/assignments` | Validate before safe native draft creation; coordinate selected new external item/deadline before posting. |
+| POST | `/api/mcp/v1/courses/{siteId}/assignments/{assignmentId}/publish` | Revision-checked, author-owned promotion/recovery under a refreshed database row lock; no arbitrary editing. |
+
+Writes check native add/revise and assessment-edit permission, ownership, category compatibility, finite dates/points and existing resources. A posted identical request is verified unchanged; partial results retain known IDs without delete/recreate or POST replay. Grade scores stay unreleased. Native auto-announcement is never invoked. The Calendar visibility interval and cross-service transaction limits remain explicit.
+
+Use the expanded native-module test command and release checklist in [local evidence](../evidence/mcp/assignment-setup-local.md). These endpoints are not part of an accepted deployed V1 catalog.
+
+For a separately authorized activation, pass the optional seventh `true` argument to the tracked `configure-mcp-sakai.sh` procedure and explicitly select `assignmentSetupEnabled=true` for the MCP app template. Omission of the script argument preserves an existing gate value; a new installation defaults false. No activation command was run during local implementation.
