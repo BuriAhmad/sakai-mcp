@@ -24,7 +24,7 @@ Before the release restart, the normal tracked configuration script enabled `mcp
 
 A separate disposable synthetic course named **Assignment Setup Sandbox - Discrete Mathematics** was created with native Assignments, Gradebook and Calendar backing tools. Existing instructor/student fixtures were added only to this new course. No existing course content was changed. Credentials, sessions, user IDs and created object IDs remain in ignored local test files, not this report.
 
-The primary Codex configuration now includes the canonical Sakai endpoint, the existing pre-registered OAuth client and callback, and `default_tools_approval_mode="writes"`; its previous configuration was backed up. Its interactive login is separate from the existing authenticated test client. Skill installation and fresh native client tool/Skill discovery remain pending.
+The primary Codex configuration now includes the canonical Sakai endpoint, the existing pre-registered OAuth client and callback, and `default_tools_approval_mode="writes"`; its previous configuration was backed up. Its interactive login is separate from the existing authenticated test client. The Skill is installed in both the primary profile and the authenticated test profile. Fresh native client tool/Skill discovery remains pending until the repaired release is enabled.
 
 The requested PDF and test prompt guide are in the ignored `services/mcp/codex-host-test/` folder. The two-page PDF was rendered and visually checked; it has 10 MCQs and a final requirement for `<roll-number-or-ID>.txt`, exactly 10 lines, and one lowercase a/b/c/d option per line. No answer key or course mutation authority is embedded.
 
@@ -44,4 +44,6 @@ Two concurrent known-draft promotions produced one complete result and one revis
 
 The MCP assignment catalog was paused again (`ASSIGNMENT_SETUP_ENABLED=false`) during repair. Existing V1 remained available; no test object was deleted or recreated. The guarded second Sakai release is pending CI and sufficient VM disk space. Before cleanup, free space was 7.7 GiB, below the release's 12 GiB minimum. No current release, rollback backup or data has been removed.
 
-The Skill was installed into the primary Codex profile using Skill Installer with self-contained contract/client constraints. The test profile installation and post-repair native client catalog/Skill discovery are still pending at this checkpoint.
+The Skill was installed into both the primary and test Codex profiles using Skill Installer with self-contained contract/client constraints. Post-repair native client catalog/Skill discovery remains pending at this checkpoint.
+
+The replay repair is pushed as `98cbc53e60e440b5dc075c6fc046d8290c90139e`. Its [repository CI](https://github.com/BuriAhmad/sakai-mcp/actions/runs/37826901841) passed. Its [full Sakai CI](https://github.com/BuriAhmad/sakai-mcp/actions/runs/37826901851) is still running. Cleanup permission is pending for only the generated source/build directories in older releases `20260924T181142Z-e0553fef88a0` and `20260924T190514Z-0bf7f762c563`, approximately 4.1 GiB each; their rollback backups and release records are explicitly excluded.
