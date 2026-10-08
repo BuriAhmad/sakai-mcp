@@ -44,6 +44,14 @@ unfixed_high = sum(
 secrets = sum(len(item.get('Secrets') or []) for item in results)
 print(f'Scan summary: {critical} critical; {fixable_high} fixable high; '
       f'{unfixed_high} high without a published fix; {secrets} secrets.')
+if critical or fixable_high:
+    for finding in vulnerabilities:
+        if finding.get('Severity') == 'CRITICAL' or (
+            finding.get('Severity') == 'HIGH' and finding.get('FixedVersion')
+        ):
+            print('Blocked package:', finding.get('PkgName'),
+                  finding.get('InstalledVersion'), '->', finding.get('FixedVersion'),
+                  finding.get('VulnerabilityID'))
 if critical or fixable_high or secrets:
     sys.exit(1)
 PY
