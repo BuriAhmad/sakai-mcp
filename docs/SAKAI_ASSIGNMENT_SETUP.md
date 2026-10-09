@@ -1,6 +1,6 @@
 # Sakai assignment setup: design and implementation research
 
-Status: **next-phase source implementation added behind disabled-by-default feature gates; not deployed, runtime-accepted or installed as a client Skill**. See [local implementation checkpoint](evidence/mcp/assignment-setup-local.md) for code, validation and outstanding release gates. Researched 8 October 2026 against the working tree at root commit `46fa4012fdc6870ec6a3ce030bae1f2379335d06`, Sakai 25.2 baseline `b5b7800f0fcddf9d0db47276a66065189365d905`. Existing uncommitted integration/auth documentation was read as supplied. No live mutation, deployment, Azure change or runtime-state change was performed. Source findings must be matched to the selected deployed release before integration tests.
+Status: **implemented behind disabled-by-default feature gates; deployed and enabled for development client testing on 9 October 2026**. See [release evidence](evidence/mcp/assignment-setup-release.md) for exact versions, live checks, client Skill installation and remaining acceptance limits. [Local implementation evidence](evidence/mcp/assignment-setup-local.md) records the earlier source checkpoint. The source research below was performed on 8 October 2026 against root commit `46fa4012fdc6870ec6a3ce030bae1f2379335d06`, Sakai 25.2 baseline `b5b7800f0fcddf9d0db47276a66065189365d905`; its original no-live-mutation boundary applies to that research, not the subsequent authorized release.
 
 ## Navigation and ownership
 

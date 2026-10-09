@@ -2,7 +2,7 @@
 
 The project-owned Python MCP service and its tests belong under this directory. Follow [`docs/MCP_IMPLEMENTATION_RUNBOOK.md`](../../docs/MCP_IMPLEMENTATION_RUNBOOK.md) in phase order and keep its gate statuses and `docs/evidence/mcp/` reports accurate.
 
-The next-phase [assignment setup design](../../docs/SAKAI_ASSIGNMENT_SETUP.md) contains next-phase contracts, source research and implementation gates. The user-authorized local implementation is separately gated; it does not widen the default V1 release.
+The next-phase [assignment setup design](../../docs/SAKAI_ASSIGNMENT_SETUP.md) contains next-phase contracts, source research and implementation gates. The user-authorized implementation is separately gated; it does not widen the default V1 release. See [release evidence](../../docs/evidence/mcp/assignment-setup-release.md) for the enabled development deployment and remaining acceptance limits.
 
 Before implementing a Sakai capability, consult [the Sakai integration guide](../../docs/SAKAI_INTEGRATION_GUIDE.md) for native interfaces and limitations; seeding UI automation is not the production MCP adapter contract.
 

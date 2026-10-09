@@ -45,3 +45,7 @@ Configuration-save failure retains the draft ID but may need manual repair: no g
 ## Release preparation
 
 The owner authorized deployment and client installation on 8 October 2026, then explicitly authorized resuming the preserved environment and leaving it running. The first exact-commit CI image scan rejected the earlier pinned base with seven fixable high findings. Release preparation updates both Docker stages to the official Python 3.11.17 slim-trixie image index digest `sha256:0dd364ba7e10242f07755449e3a3d0e35f9efd987952737b90def6709ab0c5ce`, verified from registry metadata on that date. Scanner diagnostics now print only blocked package versions and vulnerability IDs, never secret findings. Actual subsequent scan/deployment results must be recorded separately. The Skill now packages its own contract and client constraints for installation outside the repository.
+
+## Subsequent authorized runtime release
+
+The 9 October development release and client installation are recorded in [release evidence](assignment-setup-release.md). That report supersedes pending runtime/installation statements in this historical local checkpoint while preserving its implementation and advanced-scenario limits.
