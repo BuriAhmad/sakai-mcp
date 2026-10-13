@@ -11,6 +11,7 @@ class Settings(BaseSettings):
 
     environment: str = "development"
     assignment_setup_enabled: bool = False
+    assignment_grading_enabled: bool = False
     mcp_public_url: HttpUrl
     sakai_base_url: HttpUrl
     entra_tenant_id: UUID

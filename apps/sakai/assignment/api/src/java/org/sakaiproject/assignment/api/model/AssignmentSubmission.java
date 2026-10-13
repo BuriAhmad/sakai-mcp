@@ -42,6 +42,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -80,6 +81,11 @@ public class AssignmentSubmission {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
+
+    // All native writers participate in optimistic concurrency, including UI resubmission.
+    @Version
+    @Column(name = "LOCK_VERSION", nullable = false, columnDefinition = "bigint default 0")
+    private long lockVersion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ASSIGNMENT_ID")

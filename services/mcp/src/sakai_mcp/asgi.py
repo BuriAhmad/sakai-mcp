@@ -81,4 +81,7 @@ def create_app(settings: Settings | None = None, credentials: CredentialFiles | 
         max_request_body_size=65_536,
         host=str(settings.mcp_public_url.host),
     )
+    if settings.assignment_grading_enabled:
+        from sakai_mcp.grading_artifacts import artifact_route
+        app.routes.append(artifact_route(client, verifier))
     return add_health_routes(canonicalize_resource_metadata(app, settings))

@@ -1,0 +1,3401 @@
+{
+  "status": "implemented_opt_in_disabled_pending_live_acceptance",
+  "version": "1",
+  "researched_at": "2026-10-09",
+  "design": "../SAKAI_ASSIGNMENT_GRADING.md",
+  "notes": [
+    "Semantic validation, native permissions, hashes and revision checks are additionally required; JSON Schema alone is not authorization.",
+    "Per-file export and trusted interactive OAuth import are implemented locally; live client compatibility and durable deployment acceptance remain pending.",
+    "Successful and partial outputs are defined here; errors use the existing MCP error channel with categorical reasons."
+  ],
+  "tools": [
+    {
+      "name": "get_assignment_grading_context",
+      "description": "Read authoritative assignment configuration and scoped grading capabilities.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "assignment_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          }
+        },
+        "required": [
+          "course_id",
+          "assignment_id"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "const": "1"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "course": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 65535
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "additionalProperties": false
+          },
+          "assignment": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 65535
+              },
+              "instructions": {
+                "type": "string",
+                "maxLength": 65535
+              },
+              "configuration_revision": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "grade_type": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "max_points": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "scale_factor": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "submission_type": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "draft": {
+                "type": "boolean"
+              },
+              "deleted": {
+                "type": "boolean"
+              },
+              "visible_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "open_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "due_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "close_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "group_submission": {
+                "type": "boolean"
+              },
+              "anonymous_grading": {
+                "type": "boolean"
+              },
+              "native_release_grades": {
+                "type": "boolean"
+              },
+              "resubmission_count": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": -1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "resubmission_close_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "definition_reference": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "definition_version": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "attachments": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Attachment"
+                },
+                "maxItems": 20
+              },
+              "integration_features": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "instructions",
+              "configuration_revision",
+              "grade_type",
+              "max_points",
+              "scale_factor",
+              "submission_type",
+              "draft",
+              "deleted",
+              "visible_at",
+              "open_at",
+              "due_at",
+              "close_at",
+              "group_submission",
+              "anonymous_grading",
+              "native_release_grades",
+              "resubmission_count",
+              "resubmission_close_at",
+              "definition_reference",
+              "definition_version",
+              "attachments",
+              "integration_features"
+            ],
+            "additionalProperties": false
+          },
+          "gradebook": {
+            "$ref": "#/$defs/Link"
+          },
+          "permissions": {
+            "$ref": "#/$defs/Permissions"
+          },
+          "submission_summary": {
+            "type": "object",
+            "properties": {
+              "expected_students": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "submitted": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "missing": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "draft": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "graded": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "orphan_records": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "expected_students",
+              "submitted",
+              "missing",
+              "draft",
+              "graded",
+              "orphan_records"
+            ],
+            "additionalProperties": false
+          },
+          "completeness": {
+            "$ref": "#/$defs/Completeness"
+          },
+          "supported": {
+            "type": "object",
+            "properties": {
+              "prepare": {
+                "type": "boolean"
+              },
+              "save": {
+                "type": "boolean"
+              },
+              "release": {
+                "type": "boolean"
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "prepare",
+              "save",
+              "release",
+              "reasons"
+            ],
+            "additionalProperties": false
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1
+            },
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "schema_version",
+          "observed_at",
+          "course",
+          "assignment",
+          "gradebook",
+          "permissions",
+          "submission_summary",
+          "completeness",
+          "supported",
+          "warnings"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "Attachment": {
+            "type": "object",
+            "properties": {
+              "artifact_key": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "original_name": {
+                "type": "string",
+                "maxLength": 65535
+              },
+              "content_type": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 65535
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "size_bytes": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "resource_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "file",
+                  "url",
+                  "inline_content_review"
+                ]
+              },
+              "readable": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "artifact_key",
+              "original_name",
+              "content_type",
+              "size_bytes",
+              "resource_revision",
+              "kind",
+              "readable"
+            ],
+            "additionalProperties": false
+          },
+          "Completeness": {
+            "type": "object",
+            "properties": {
+              "complete": {
+                "type": "boolean"
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "site",
+                  "groups"
+                ]
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "complete",
+              "scope",
+              "reasons"
+            ],
+            "additionalProperties": false
+          },
+          "Link": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "external",
+                  "internal",
+                  "group",
+                  "unknown"
+                ]
+              },
+              "gradebook_uid": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "item_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "external_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "released": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "counted": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "available": {
+                "type": "boolean"
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "mode",
+              "gradebook_uid",
+              "item_id",
+              "external_id",
+              "released",
+              "counted",
+              "available",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "Permissions": {
+            "type": "object",
+            "properties": {
+              "read_metadata": {
+                "type": "boolean"
+              },
+              "read_content": {
+                "type": "boolean"
+              },
+              "save_grades": {
+                "type": "boolean"
+              },
+              "release_grades": {
+                "type": "boolean"
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "site",
+                  "groups",
+                  "none"
+                ]
+              },
+              "scope_complete": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "read_metadata",
+              "read_content",
+              "save_grades",
+              "release_grades",
+              "scope",
+              "scope_complete"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "name": "list_assignment_submissions",
+      "description": "Page eligible students and current submission metadata, including missing rows.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "assignment_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          }
+        },
+        "required": [
+          "course_id",
+          "assignment_id"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/SubmissionEntry"
+            },
+            "maxItems": 100
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "snapshot_revision": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completeness": {
+            "$ref": "#/$defs/Completeness"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1
+            },
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor",
+          "snapshot_revision",
+          "observed_at",
+          "completeness",
+          "warnings"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "Attachment": {
+            "type": "object",
+            "properties": {
+              "artifact_key": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "original_name": {
+                "type": "string",
+                "maxLength": 65535
+              },
+              "content_type": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 65535
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "size_bytes": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "resource_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "file",
+                  "url",
+                  "inline_content_review"
+                ]
+              },
+              "readable": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "artifact_key",
+              "original_name",
+              "content_type",
+              "size_bytes",
+              "resource_revision",
+              "kind",
+              "readable"
+            ],
+            "additionalProperties": false
+          },
+          "Completeness": {
+            "type": "object",
+            "properties": {
+              "complete": {
+                "type": "boolean"
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "site",
+                  "groups"
+                ]
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "complete",
+              "scope",
+              "reasons"
+            ],
+            "additionalProperties": false
+          },
+          "Identity": {
+            "type": "object",
+            "properties": {
+              "sakai_user_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "eid": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "display_name": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 65535
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "sakai_user_id",
+              "eid",
+              "display_name"
+            ],
+            "additionalProperties": false
+          },
+          "NativeFlags": {
+            "type": "object",
+            "properties": {
+              "submitted": {
+                "type": "boolean"
+              },
+              "user_submission": {
+                "type": "boolean"
+              },
+              "graded": {
+                "type": "boolean"
+              },
+              "grade_released": {
+                "type": "boolean"
+              },
+              "returned": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "submitted",
+              "user_submission",
+              "graded",
+              "grade_released",
+              "returned"
+            ],
+            "additionalProperties": false
+          },
+          "Overrides": {
+            "type": "object",
+            "properties": {
+              "remaining_resubmissions": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": -1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "resubmission_close_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "extension_close_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "remaining_resubmissions",
+              "resubmission_close_at",
+              "extension_close_at",
+              "warnings"
+            ],
+            "additionalProperties": false
+          },
+          "SubmissionEntry": {
+            "type": "object",
+            "properties": {
+              "student": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Identity"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "submitters": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Identity"
+                },
+                "maxItems": 100
+              },
+              "submission_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "group_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "missing",
+                  "draft",
+                  "placeholder",
+                  "submitted",
+                  "ungraded_resubmission",
+                  "orphan",
+                  "unknown"
+                ]
+              },
+              "flags": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/NativeFlags"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "submitted_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "returned_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "content_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "grade_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "attempt_count": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "history_completeness": {
+                "type": "string",
+                "enum": [
+                  "unknown",
+                  "current_only"
+                ]
+              },
+              "inline_text_present": {
+                "type": "boolean"
+              },
+              "attachments": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Attachment"
+                },
+                "maxItems": 20
+              },
+              "attachments_complete": {
+                "type": "boolean"
+              },
+              "late_status": {
+                "type": "string",
+                "enum": [
+                  "on_time",
+                  "late",
+                  "unknown"
+                ]
+              },
+              "overrides": {
+                "$ref": "#/$defs/Overrides"
+              },
+              "score": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "student",
+              "submitters",
+              "submission_id",
+              "group_id",
+              "status",
+              "flags",
+              "submitted_at",
+              "returned_at",
+              "content_revision",
+              "grade_revision",
+              "attempt_count",
+              "history_completeness",
+              "inline_text_present",
+              "attachments",
+              "attachments_complete",
+              "late_status",
+              "overrides",
+              "score",
+              "warnings"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "name": "get_assignment_submission",
+      "description": "Read one authorized current submission, bounded inline evidence and existing feedback.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "assignment_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "submission_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          }
+        },
+        "required": [
+          "course_id",
+          "assignment_id",
+          "submission_id"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "submission": {
+            "$ref": "#/$defs/SubmissionEntry"
+          },
+          "inline_text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 65535
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inline_content_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "text/html"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "feedback_comment": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 65535
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "feedback_sha256": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1
+            },
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "submission",
+          "inline_text",
+          "inline_content_type",
+          "feedback_comment",
+          "feedback_sha256",
+          "observed_at",
+          "warnings"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "Attachment": {
+            "type": "object",
+            "properties": {
+              "artifact_key": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "original_name": {
+                "type": "string",
+                "maxLength": 65535
+              },
+              "content_type": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 65535
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "size_bytes": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "resource_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "file",
+                  "url",
+                  "inline_content_review"
+                ]
+              },
+              "readable": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "artifact_key",
+              "original_name",
+              "content_type",
+              "size_bytes",
+              "resource_revision",
+              "kind",
+              "readable"
+            ],
+            "additionalProperties": false
+          },
+          "Identity": {
+            "type": "object",
+            "properties": {
+              "sakai_user_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "eid": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "display_name": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 65535
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "sakai_user_id",
+              "eid",
+              "display_name"
+            ],
+            "additionalProperties": false
+          },
+          "NativeFlags": {
+            "type": "object",
+            "properties": {
+              "submitted": {
+                "type": "boolean"
+              },
+              "user_submission": {
+                "type": "boolean"
+              },
+              "graded": {
+                "type": "boolean"
+              },
+              "grade_released": {
+                "type": "boolean"
+              },
+              "returned": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "submitted",
+              "user_submission",
+              "graded",
+              "grade_released",
+              "returned"
+            ],
+            "additionalProperties": false
+          },
+          "Overrides": {
+            "type": "object",
+            "properties": {
+              "remaining_resubmissions": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": -1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "resubmission_close_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "extension_close_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "remaining_resubmissions",
+              "resubmission_close_at",
+              "extension_close_at",
+              "warnings"
+            ],
+            "additionalProperties": false
+          },
+          "SubmissionEntry": {
+            "type": "object",
+            "properties": {
+              "student": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Identity"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "submitters": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Identity"
+                },
+                "maxItems": 100
+              },
+              "submission_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "group_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "missing",
+                  "draft",
+                  "placeholder",
+                  "submitted",
+                  "ungraded_resubmission",
+                  "orphan",
+                  "unknown"
+                ]
+              },
+              "flags": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/NativeFlags"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "submitted_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "returned_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "content_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "grade_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "attempt_count": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "history_completeness": {
+                "type": "string",
+                "enum": [
+                  "unknown",
+                  "current_only"
+                ]
+              },
+              "inline_text_present": {
+                "type": "boolean"
+              },
+              "attachments": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Attachment"
+                },
+                "maxItems": 20
+              },
+              "attachments_complete": {
+                "type": "boolean"
+              },
+              "late_status": {
+                "type": "string",
+                "enum": [
+                  "on_time",
+                  "late",
+                  "unknown"
+                ]
+              },
+              "overrides": {
+                "$ref": "#/$defs/Overrides"
+              },
+              "score": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "student",
+              "submitters",
+              "submission_id",
+              "group_id",
+              "status",
+              "flags",
+              "submitted_at",
+              "returned_at",
+              "content_revision",
+              "grade_revision",
+              "attempt_count",
+              "history_completeness",
+              "inline_text_present",
+              "attachments",
+              "attachments_complete",
+              "late_status",
+              "overrides",
+              "score",
+              "warnings"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "name": "export_assignment_submissions",
+      "description": "Capture selected current content into bounded temporary private artifacts; no academic mutation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "assignment_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "export_request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expected_assignment_revision": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "submissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/ExportSelection"
+            },
+            "maxItems": 100,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "course_id",
+          "assignment_id",
+          "export_request_id",
+          "expected_assignment_revision",
+          "submissions"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "ExportSelection": {
+            "type": "object",
+            "properties": {
+              "submission_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "expected_content_revision": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              }
+            },
+            "required": [
+              "submission_id",
+              "expected_content_revision"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "export_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "request_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "ready",
+              "partial",
+              "failed"
+            ]
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1
+            },
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "export_id",
+          "request_sha256",
+          "status",
+          "expires_at",
+          "warnings"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      }
+    },
+    {
+      "name": "get_assignment_submission_export",
+      "description": "Read export status and paginated immutable artifact inventory.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "assignment_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "export_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          }
+        },
+        "required": [
+          "course_id",
+          "assignment_id",
+          "export_id"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "$ref": "#/$defs/ExportReceipt",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "Artifact": {
+            "type": "object",
+            "properties": {
+              "artifact_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "archive",
+                  "attachment",
+                  "inline_text",
+                  "manifest"
+                ]
+              },
+              "submission_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "original_name": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 65535
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "relative_path": {
+                "type": "string",
+                "maxLength": 65535
+              },
+              "content_type": {
+                "type": "string",
+                "maxLength": 65535
+              },
+              "size_bytes": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "download_path": {
+                "type": "string",
+                "pattern": "^/grading-artifacts/",
+                "maxLength": 2048
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "artifact_id",
+              "kind",
+              "submission_id",
+              "original_name",
+              "relative_path",
+              "content_type",
+              "size_bytes",
+              "sha256",
+              "download_path",
+              "expires_at"
+            ],
+            "additionalProperties": false
+          },
+          "Completeness": {
+            "type": "object",
+            "properties": {
+              "complete": {
+                "type": "boolean"
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "site",
+                  "groups"
+                ]
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "complete",
+              "scope",
+              "reasons"
+            ],
+            "additionalProperties": false
+          },
+          "ExportReceipt": {
+            "type": "object",
+            "properties": {
+              "export_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "request_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "ready",
+                  "partial",
+                  "failed",
+                  "expired"
+                ]
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "completeness": {
+                "$ref": "#/$defs/Completeness"
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ExportRow"
+                },
+                "maxItems": 100
+              },
+              "artifacts": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Artifact"
+                },
+                "maxItems": 100
+              },
+              "archive": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Artifact"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "next_cursor": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "export_id",
+              "request_sha256",
+              "status",
+              "observed_at",
+              "expires_at",
+              "completeness",
+              "rows",
+              "artifacts",
+              "archive",
+              "next_cursor",
+              "warnings"
+            ],
+            "additionalProperties": false
+          },
+          "ExportRow": {
+            "type": "object",
+            "properties": {
+              "submission_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "sakai_user_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 100
+              },
+              "content_revision": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "captured_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ready",
+                  "incomplete",
+                  "source_changed",
+                  "failed"
+                ]
+              },
+              "artifact_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 21
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "submission_id",
+              "sakai_user_ids",
+              "content_revision",
+              "captured_at",
+              "status",
+              "artifact_ids",
+              "reasons"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "name": "save_assignment_grades",
+      "description": "Validate or save exactly approved point grades and feedback without releasing; explicit TA approval required for commit.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "assignment_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "operation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "validate",
+              "commit"
+            ]
+          },
+          "expected_assignment_revision": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "payload_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "grades": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/SaveRow"
+            },
+            "maxItems": 100,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "course_id",
+          "assignment_id",
+          "operation_id",
+          "mode",
+          "expected_assignment_revision",
+          "payload_sha256",
+          "grades"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "FeedbackPatch": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "preserve",
+                  "replace",
+                  "clear"
+                ]
+              },
+              "text": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 65535
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "action",
+              "text"
+            ],
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "action": {
+                      "const": "replace"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "maxLength": 65535
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "text": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "SaveRow": {
+            "type": "object",
+            "properties": {
+              "submission_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "sakai_user_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "expected_content_revision": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "expected_grade_revision": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "score": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                "maxLength": 32
+              },
+              "feedback": {
+                "$ref": "#/$defs/FeedbackPatch"
+              }
+            },
+            "required": [
+              "submission_id",
+              "sakai_user_id",
+              "expected_content_revision",
+              "expected_grade_revision",
+              "score",
+              "feedback"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "outputSchema": {
+        "$ref": "#/$defs/OperationReceipt",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "OperationReceipt": {
+            "type": "object",
+            "properties": {
+              "operation_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "save",
+                  "release"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "validate",
+                  "commit"
+                ]
+              },
+              "payload_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "outcome": {
+                "type": "string",
+                "enum": [
+                  "validated",
+                  "completed",
+                  "partial",
+                  "rejected",
+                  "unknown"
+                ]
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/RowReceipt"
+                },
+                "maxItems": 100
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "operation_id",
+              "kind",
+              "mode",
+              "payload_sha256",
+              "outcome",
+              "observed_at",
+              "rows",
+              "warnings"
+            ],
+            "additionalProperties": false
+          },
+          "RowReceipt": {
+            "type": "object",
+            "properties": {
+              "submission_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "sakai_user_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "stage": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "validated",
+                  "saved",
+                  "assignment_released",
+                  "gradebook_synced",
+                  "verified",
+                  "conflict",
+                  "failed",
+                  "unknown"
+                ]
+              },
+              "content_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "grade_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "assignment_score": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "grade_released": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "returned": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "gradebook_score": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "retry_action": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read_operation",
+                  "refresh_and_review",
+                  "resume_pending_after_reconciliation",
+                  "human_reconciliation"
+                ]
+              }
+            },
+            "required": [
+              "submission_id",
+              "sakai_user_id",
+              "stage",
+              "content_revision",
+              "grade_revision",
+              "assignment_score",
+              "grade_released",
+              "returned",
+              "gradebook_score",
+              "reason",
+              "retry_action"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "name": "release_assignment_grades",
+      "description": "Validate or return selected saved grades and synchronize their verified external Gradebook projection; separate release approval required.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "assignment_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "operation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "validate",
+              "commit"
+            ]
+          },
+          "expected_assignment_revision": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "payload_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "grades": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/ReleaseRow"
+            },
+            "maxItems": 100,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "course_id",
+          "assignment_id",
+          "operation_id",
+          "mode",
+          "expected_assignment_revision",
+          "payload_sha256",
+          "grades"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "ReleaseRow": {
+            "type": "object",
+            "properties": {
+              "submission_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "sakai_user_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "expected_content_revision": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "expected_grade_revision": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "expected_score": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                "maxLength": 32
+              },
+              "expected_feedback_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "submission_id",
+              "sakai_user_id",
+              "expected_content_revision",
+              "expected_grade_revision",
+              "expected_score",
+              "expected_feedback_sha256"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "outputSchema": {
+        "$ref": "#/$defs/OperationReceipt",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "OperationReceipt": {
+            "type": "object",
+            "properties": {
+              "operation_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "save",
+                  "release"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "validate",
+                  "commit"
+                ]
+              },
+              "payload_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "outcome": {
+                "type": "string",
+                "enum": [
+                  "validated",
+                  "completed",
+                  "partial",
+                  "rejected",
+                  "unknown"
+                ]
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/RowReceipt"
+                },
+                "maxItems": 100
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "operation_id",
+              "kind",
+              "mode",
+              "payload_sha256",
+              "outcome",
+              "observed_at",
+              "rows",
+              "warnings"
+            ],
+            "additionalProperties": false
+          },
+          "RowReceipt": {
+            "type": "object",
+            "properties": {
+              "submission_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "sakai_user_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "stage": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "validated",
+                  "saved",
+                  "assignment_released",
+                  "gradebook_synced",
+                  "verified",
+                  "conflict",
+                  "failed",
+                  "unknown"
+                ]
+              },
+              "content_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "grade_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "assignment_score": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "grade_released": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "returned": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "gradebook_score": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "retry_action": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read_operation",
+                  "refresh_and_review",
+                  "resume_pending_after_reconciliation",
+                  "human_reconciliation"
+                ]
+              }
+            },
+            "required": [
+              "submission_id",
+              "sakai_user_id",
+              "stage",
+              "content_revision",
+              "grade_revision",
+              "assignment_score",
+              "grade_released",
+              "returned",
+              "gradebook_score",
+              "reason",
+              "retry_action"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "name": "get_assignment_grades",
+      "description": "Independently read exact Assignment and linked Gradebook values for selected targets.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "assignment_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/Target"
+            },
+            "maxItems": 100,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "course_id",
+          "assignment_id",
+          "rows"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "Target": {
+            "type": "object",
+            "properties": {
+              "submission_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "sakai_user_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              }
+            },
+            "required": [
+              "submission_id",
+              "sakai_user_id"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "assignment_revision": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "gradebook": {
+            "$ref": "#/$defs/Link"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/GradeRow"
+            },
+            "maxItems": 100
+          },
+          "completeness": {
+            "$ref": "#/$defs/Completeness"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1
+            },
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "observed_at",
+          "assignment_revision",
+          "gradebook",
+          "rows",
+          "completeness",
+          "warnings"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "Completeness": {
+            "type": "object",
+            "properties": {
+              "complete": {
+                "type": "boolean"
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "site",
+                  "groups"
+                ]
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "complete",
+              "scope",
+              "reasons"
+            ],
+            "additionalProperties": false
+          },
+          "GradeRow": {
+            "type": "object",
+            "properties": {
+              "submission_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "sakai_user_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "content_revision": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "grade_revision": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "score": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "feedback_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "flags": {
+                "$ref": "#/$defs/NativeFlags"
+              },
+              "returned_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "gradebook_score": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "gradebook_comment_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "gradebook_state": {
+                "type": "string",
+                "enum": [
+                  "not_linked",
+                  "available",
+                  "unavailable"
+                ]
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "submission_id",
+              "sakai_user_id",
+              "content_revision",
+              "grade_revision",
+              "score",
+              "feedback_sha256",
+              "flags",
+              "returned_at",
+              "gradebook_score",
+              "gradebook_comment_sha256",
+              "gradebook_state",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "Link": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "external",
+                  "internal",
+                  "group",
+                  "unknown"
+                ]
+              },
+              "gradebook_uid": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "item_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "external_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "released": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "counted": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "available": {
+                "type": "boolean"
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "mode",
+              "gradebook_uid",
+              "item_id",
+              "external_id",
+              "released",
+              "counted",
+              "available",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "NativeFlags": {
+            "type": "object",
+            "properties": {
+              "submitted": {
+                "type": "boolean"
+              },
+              "user_submission": {
+                "type": "boolean"
+              },
+              "graded": {
+                "type": "boolean"
+              },
+              "grade_released": {
+                "type": "boolean"
+              },
+              "returned": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "submitted",
+              "user_submission",
+              "graded",
+              "grade_released",
+              "returned"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "name": "get_assignment_grading_operation",
+      "description": "Read and reconcile a known principal-bound save or release receipt without committing pending work.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "assignment_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "operation_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "course_id",
+          "assignment_id",
+          "operation_id"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "$ref": "#/$defs/OperationReceipt",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "OperationReceipt": {
+            "type": "object",
+            "properties": {
+              "operation_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "save",
+                  "release"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "validate",
+                  "commit"
+                ]
+              },
+              "payload_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "outcome": {
+                "type": "string",
+                "enum": [
+                  "validated",
+                  "completed",
+                  "partial",
+                  "rejected",
+                  "unknown"
+                ]
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/RowReceipt"
+                },
+                "maxItems": 100
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1
+                },
+                "maxItems": 30
+              }
+            },
+            "required": [
+              "operation_id",
+              "kind",
+              "mode",
+              "payload_sha256",
+              "outcome",
+              "observed_at",
+              "rows",
+              "warnings"
+            ],
+            "additionalProperties": false
+          },
+          "RowReceipt": {
+            "type": "object",
+            "properties": {
+              "submission_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "sakai_user_id": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "stage": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "validated",
+                  "saved",
+                  "assignment_released",
+                  "gradebook_synced",
+                  "verified",
+                  "conflict",
+                  "failed",
+                  "unknown"
+                ]
+              },
+              "content_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "grade_revision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "assignment_score": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "grade_released": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "returned": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "gradebook_score": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                    "maxLength": 32
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "retry_action": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "read_operation",
+                  "refresh_and_review",
+                  "resume_pending_after_reconciliation",
+                  "human_reconciliation"
+                ]
+              }
+            },
+            "required": [
+              "submission_id",
+              "sakai_user_id",
+              "stage",
+              "content_revision",
+              "grade_revision",
+              "assignment_score",
+              "grade_released",
+              "returned",
+              "gradebook_score",
+              "reason",
+              "retry_action"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ],
+  "implemented_at": "2026-10-13"
+}

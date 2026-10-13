@@ -480,6 +480,10 @@ public interface AssignmentService extends EntityProducer {
      *                   the Assignment who's submissions you would like.
      * @return List over all the submissions for an Assignment.
      */
+    /** Grading-only transactional callback; callers must also validate site and submitter scope. */
+    <T> T withGradingSubmissionLock(String submissionId, java.util.function.Function<AssignmentSubmission, T> action)
+            throws IdUnusedException, PermissionException;
+
     public Set<AssignmentSubmission> getSubmissions(Assignment assignment);
 
     /**

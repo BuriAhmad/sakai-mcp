@@ -219,4 +219,8 @@ def create_server(settings: Settings, client: SakaiClient, verifier: TokenVerifi
         server.add_tool(create_assignment, description="Create a points-based site assignment and coordinate approved linked objects. Never replay an ambiguous create.", annotations=WRITE_HINTS)
         server.add_tool(publish_assignment, description="Promote or resume one known assignment using its observed revision. Creates only missing owned links.", annotations=WRITE_HINTS)
 
+    if settings.assignment_grading_enabled:
+        from sakai_mcp.grading_tools import register_grading_tools
+        register_grading_tools(server, client)
+
     return server

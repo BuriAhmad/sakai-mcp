@@ -10,6 +10,8 @@ The reference baseline is the tracked Sakai 25.2 tree under `apps/sakai/`, inclu
 
 ### Related documentation
 
+- [Assignment grading design](SAKAI_ASSIGNMENT_GRADING.md): submission/current-history research, opt-in native/MCP contracts, trusted export workspace and TA Skill. Local implementation is disabled and undeployed; see [evidence/prerequisites](evidence/mcp/assignment-grading-local.md).
+
 - [Assignment setup design](SAKAI_ASSIGNMENT_SETUP.md): next-phase tool contracts, native Assignment/Gradebook/Calendar relationships, implementation plan, opt-in local source and repository Skill. No new runtime capabilities are enabled; see the linked local checkpoint for validation and remaining gates.
 
 - [Repository strategy](REPOSITORY_STRATEGY.md) and [Sakai source](SAKAI_SOURCE.md): ownership and source/deployment boundaries.

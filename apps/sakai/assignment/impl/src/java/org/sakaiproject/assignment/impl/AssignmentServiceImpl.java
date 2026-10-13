@@ -1713,6 +1713,24 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
     @Override
     @Transactional
+    public <T> T withGradingSubmissionLock(String id, java.util.function.Function<AssignmentSubmission, T> action)
+            throws IdUnusedException, PermissionException {
+        AssignmentSubmission visible = getSubmission(id);
+        String reference = AssignmentReferenceReckoner.reckoner().assignment(visible.getAssignment()).reckon().getReference();
+        if (!allowGradeSubmission(reference))
+            throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_GRADE_ASSIGNMENT_SUBMISSION, reference);
+        Assignment lockedAssignment = assignmentRepository.lockAssignment(visible.getAssignment().getId());
+        if (lockedAssignment == null) throw new IdUnusedException(id);
+        AssignmentSubmission locked = assignmentRepository.lockSubmission(id);
+        if (locked == null) throw new IdUnusedException(id);
+        locked.setAssignment(lockedAssignment);
+        if (!allowGradeSubmission(AssignmentReferenceReckoner.reckoner().assignment(locked.getAssignment()).reckon().getReference()))
+            throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_GRADE_ASSIGNMENT_SUBMISSION, reference);
+        return action.apply(locked);
+    }
+
+    @Override
+    @Transactional
     public void updateSubmission(AssignmentSubmission submission) throws PermissionException {
         Assert.notNull(submission, "Submission cannot be null");
         Assert.notNull(submission.getId(), "Submission doesn't appear to have been persisted yet");

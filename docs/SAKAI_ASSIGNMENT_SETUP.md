@@ -4,6 +4,8 @@ Status: **implemented behind disabled-by-default feature gates; deployed and ena
 
 ## Navigation and ownership
 
+The companion [assignment grading design](SAKAI_ASSIGNMENT_GRADING.md) defines the future TA consumer of assignment configuration, submission contracts and rubric sources. It proposes optional versioned Assignment Definitions without assuming the setup workflow already persists answer keys or a complete grading contract. Grading now has a disabled local implementation and [evidence/prerequisites](evidence/mcp/assignment-grading-local.md), with separate save/return approval boundaries.
+
 Start with the [integration guide](SAKAI_INTEGRATION_GUIDE.md). [MCP architecture](mcp/architecture.md), [adapter/authentication](mcp/sakai-adapter.md), and [implementation runbook](MCP_IMPLEMENTATION_RUNBOOK.md), especially §§1.9–1.10 and Phases 24–25, remain authoritative for the existing five-tool V1 release. This design does not widen that catalog or mark any gate passed.
 
 - [Proposed JSON contracts](mcp/assignment-setup-contracts.json): complete input/output schemas for recommended capabilities and separately deferred general tools. These contract artifacts now guide the opt-in implementation; Python registration uses bounded Pydantic models. They do not establish an enabled deployed catalog. Cross-field rules below supplement JSON Schema.

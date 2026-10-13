@@ -4,6 +4,8 @@ This directory is the tracked Sakai 25.2 source in the `sakai-mcp` repository. T
 
 For opt-in Assignment/Gradebook/Calendar coordination, consult the [assignment setup implementation research](../../docs/SAKAI_ASSIGNMENT_SETUP.md) before changing native services or adapter endpoints.
 
+For opt-in TA grading, read the [grading design](../../docs/SAKAI_ASSIGNMENT_GRADING.md) and [local implementation evidence](../../docs/evidence/mcp/assignment-grading-local.md). The new submission version column requires a reviewed migration before native deployment, even with grading flags disabled.
+
 Consult [the Sakai integration guide](../../docs/SAKAI_INTEGRATION_GUIDE.md) before adding or changing integration endpoints; it maps discovered domain capabilities to native providers, services and tool implementations.
 
 - Keep project changes focused and document why they differ from upstream.

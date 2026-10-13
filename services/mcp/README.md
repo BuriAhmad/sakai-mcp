@@ -14,6 +14,16 @@ Do not place upstream Sakai source here. The implementation plan, architecture c
 
 ## Opt-in assignment setup source
 
+The subsequent TA workflow has an [opt-in local implementation](../../docs/SAKAI_ASSIGNMENT_GRADING.md) and [contracts](../../docs/mcp/assignment-grading-contracts.json). Its nine tools are independently gated and remain disabled and undeployed; see the prerequisites below.
+
 The user-authorized assignment workflow is implemented behind `ASSIGNMENT_SETUP_ENABLED=false` by default. Enabling it adds exactly `get_course_assessment_context`, `create_assignment` and `publish_assignment` to the existing five-tool catalog. The corresponding Sakai property `mcp.assignment.setup.enabled` also defaults to false. Authentication, fixed-origin transport and existing announcement arguments are unchanged. New POSTs are single-attempt; validated partial results retain known IDs and audit as `PARTIAL_SUCCESS`.
 
 See [the plan](../../docs/SAKAI_ASSIGNMENT_SETUP.md), [contracts](../../docs/mcp/assignment-setup-contracts.json), [local validation and remaining gates](../../docs/evidence/mcp/assignment-setup-local.md), and [repository Skill](../../skills/sakai-assignment-setup/SKILL.md). The separately authorized development release is deployed with the gates enabled, exposing eight tools. The Skill is installed in the primary and test clients; live synthetic checks and fresh native client discovery passed. See [release evidence](../../docs/evidence/mcp/assignment-setup-release.md) for exact versions and remaining acceptance limits.
+
+### Opt-in assignment grading (local implementation)
+
+`ASSIGNMENT_GRADING_ENABLED=false` keeps the nine grading tools and authenticated artifact route absent. Enabling it exposes grading context, complete paged submissions, submission detail, checksummed export/status, save, release-and-return, selected grade readback and operation reconciliation. The Sakai property `mcp.assignment.grading.enabled` is also disabled by default. Neither flag is enabled by this implementation.
+
+Native deployment requires `ASN_SUBMISSION.LOCK_VERSION` and an owner-only durable canonical directory configured with `mcp.assignment.grading.storage`. Review [local evidence and deployment prerequisites](../../docs/evidence/mcp/assignment-grading-local.md) before deploying any native changes. Writes initially support current submitted individual, site-wide point assignments with no Gradebook link or one owned external link. Unknown/partial operations require human reconciliation; commits are never automatically retried.
+
+The repository [grading Skill](../../skills/sakai-assignment-grading/SKILL.md) freezes the procedure before bulk evaluation and obtains separate approval for official save and return. From an installed package, `python -m sakai_mcp.grading_workspace import-export ...` materializes a private run using interactive OAuth; `python -m sakai_mcp.grading_workspace mcq ...` generates deterministic proposals without academic writes. See the [workspace procedure](../../skills/sakai-assignment-grading/references/workspace.md).

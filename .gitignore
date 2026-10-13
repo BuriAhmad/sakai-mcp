@@ -5,5 +5,9 @@ deployment/ssh-config
 deployment/artifacts/
 *.log
 
+# Private grading evidence belongs outside Git; fallback workspace guards
+grading-workspace/
+.sakai-grading/
+
 # OS/editor files
 .DS_Store

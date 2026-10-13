@@ -55,6 +55,9 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
 
     AssignmentSubmission findSubmission(String submissionId);
 
+    /** Refresh under a database write lock; enclosing transaction owns the lock. */
+    AssignmentSubmission lockSubmission(String submissionId);
+
     void updateSubmission(AssignmentSubmission submission);
 
     boolean existsSubmission(String submissionId);

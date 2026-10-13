@@ -1,5 +1,7 @@
 # Sakai WebAPI MCP adapter
 
+For the implemented opt-in TA grading adapter, see [assignment grading design](../SAKAI_ASSIGNMENT_GRADING.md) and [local evidence](../evidence/mcp/assignment-grading-local.md). Its routes reuse delegated identity and remain independently disabled. Default V1 routes and assignment-setup gates are preserved.
+
 The Sakai-side V1 adapter lives in tracked `apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/`. Its servlet paths are relative to Sakai's existing `/api` WebAPI context. It is **disabled by default**; enabling it for the development release requires the Phase 7 predeployment gate, and the release is accepted only after the Phase 8 live checks in the [runbook](../MCP_IMPLEMENTATION_RUNBOOK.md).
 
 The [Sakai integration guide](../SAKAI_INTEGRATION_GUIDE.md) preserves broader native interface findings, including canonical EID mapping, GradebookNG mutation candidates and the observed announcement lookback limitation. Consult it before extending this adapter; this document remains the V1 route/authentication reference.

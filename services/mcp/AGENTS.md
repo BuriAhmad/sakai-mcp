@@ -6,6 +6,8 @@ The next-phase [assignment setup design](../../docs/SAKAI_ASSIGNMENT_SETUP.md) c
 
 Before implementing a Sakai capability, consult [the Sakai integration guide](../../docs/SAKAI_INTEGRATION_GUIDE.md) for native interfaces and limitations; seeding UI automation is not the production MCP adapter contract.
 
+The [assignment grading design](../../docs/SAKAI_ASSIGNMENT_GRADING.md), [contracts](../../docs/mcp/assignment-grading-contracts.json) and [local evidence](../../docs/evidence/mcp/assignment-grading-local.md) cover the implemented opt-in TA workflow. Preserve the default catalog and independent gates. `ASSIGNMENT_GRADING_ENABLED` and the matching Sakai property remain false by default. Deployment requires the submission version column, private durable storage and separate live acceptance. Do not automatically retry uncertain grading mutations.
+
 - Expose only the five V1 tools by default. `create_course_announcement` is the only V1 write. The three assignment setup tools require explicit `ASSIGNMENT_SETUP_ENABLED`; keep it false for V1 and preserve its regression tests. Enabling the matching Sakai property or deploying remains a separate runtime action.
 - Derive the Sakai acting user from validated delegated identity. Never accept a tool-supplied user ID, token, or destination URL as authority.
 - Keep credentials, tokens, test-user identifiers, and sensitive Sakai content out of Git, logs, and evidence. Use synthetic sandbox data for tests.

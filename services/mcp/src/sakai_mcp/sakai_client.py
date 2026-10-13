@@ -109,6 +109,70 @@ class SakaiClient:
             raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME)
         return announcement
 
+    async def grading_request(self, name: str, principal: AccessToken, request):
+        from sakai_mcp.grading_models import CONTRACTS
+        if not self.settings.assignment_grading_enabled or name not in CONTRACTS:
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+        payload = request.model_dump()
+        course = payload.pop("course_id")
+        assignment = payload.pop("assignment_id")
+        root = f"/api/mcp/v1/courses/{_segment(course)}/assignments/{_segment(assignment)}"
+        suffixes = {
+            "get_assignment_grading_context": ("GET", "/grading-context"),
+            "list_assignment_submissions": ("GET", "/grading-submissions"),
+            "get_assignment_submission": ("GET", "/grading-submissions/" + _segment(payload.get("submission_id", "unused"))),
+            "export_assignment_submissions": ("POST", "/grading-exports"),
+            "get_assignment_submission_export": ("GET", "/grading-exports/" + _segment(payload.get("export_id", "unused"))),
+            "save_assignment_grades": ("POST", "/grading-save"),
+            "release_assignment_grades": ("POST", "/grading-release"),
+            "get_assignment_grades": ("POST", "/grading-grades/query"),
+            "get_assignment_grading_operation": ("GET", "/grading-operations/" + _segment(payload.get("operation_id", "unused"))),
+        }
+        method, suffix = suffixes[name]
+        if method == "POST" and len(json.dumps(payload, ensure_ascii=False).encode()) > 60_000:
+            raise SakaiError(ErrorCode.VALIDATION_ERROR)
+        if method == "GET":
+            query = {k: v for k, v in payload.items() if k in {"cursor", "limit"} and v is not None}
+            if query:
+                suffix += "?" + urlencode(query)
+        try:
+            value = await self._request(method, root + suffix, principal, payload if method == "POST" else None, unsupported=True)
+        except SakaiError as error:
+            if name == "get_assignment_grades" and error.code == ErrorCode.AMBIGUOUS_WRITE_OUTCOME:
+                raise SakaiError(ErrorCode.DEPENDENCY_UNAVAILABLE) from None
+            raise
+        try:
+            return CONTRACTS[name][1].model_validate(value)
+        except ValidationError:
+            read = name not in {"save_assignment_grades", "release_assignment_grades", "export_assignment_submissions"}
+            raise SakaiError(ErrorCode.INTERNAL_ERROR if read else ErrorCode.AMBIGUOUS_WRITE_OUTCOME) from None
+
+    async def grading_artifact(self, principal: AccessToken, course: str, assignment: str, export: str, artifact: str):
+        """Authenticated bounded byte stream; caller closes upstream on disconnect."""
+        if not self.settings.assignment_grading_enabled:
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+        path = f"/api/mcp/v1/courses/{_segment(course)}/assignments/{_segment(assignment)}/grading-exports/{_segment(export)}/artifacts/{_segment(artifact)}"
+        response = None
+        try:
+            downstream = await self.obo.acquire(principal)
+            request = self._http.build_request("GET", self._base + path, headers={"Authorization": f"Bearer {downstream.token}"})
+            response = await self._http.send(request, stream=True)
+            self._raise_for_status(response.status_code, "GET", unsupported=True)
+            length = response.headers.get("content-length", "")
+            sha = response.headers.get("x-content-sha256", "")
+            if not length.isdecimal() or int(length) > 10 * 1024 * 1024 or len(sha) != 64 or any(c not in "0123456789abcdef" for c in sha):
+                await response.aclose()
+                raise SakaiError(ErrorCode.INTERNAL_ERROR)
+            return response
+        except SakaiError:
+            if response is not None:
+                await response.aclose()
+            raise
+        except (httpx.HTTPError, OBOError, ExchangeUnavailable):
+            if response is not None:
+                await response.aclose()
+            raise SakaiError(ErrorCode.DEPENDENCY_UNAVAILABLE) from None
+
     def _require_assignment_setup(self) -> None:
         if not self.settings.assignment_setup_enabled:
             raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
@@ -244,6 +308,7 @@ class SakaiClient:
             403: ErrorCode.FORBIDDEN,
             404: ErrorCode.NOT_FOUND,
             409: ErrorCode.CONFLICT,
+            410: ErrorCode.NOT_FOUND,
             422: ErrorCode.VALIDATION_ERROR,
             501: ErrorCode.UNSUPPORTED_CAPABILITY,
             429: ErrorCode.RATE_LIMITED,

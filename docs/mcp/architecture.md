@@ -1,5 +1,7 @@
 # Sakai MCP architecture
 
+The [assignment grading design](../SAKAI_ASSIGNMENT_GRADING.md) and [contracts](assignment-grading-contracts.json) define nine implemented opt-in tools for the TA workflow. They remain disabled by default and preserve the five V1 and independent setup catalogs. [Local evidence](../evidence/mcp/assignment-grading-local.md) records persistent Sakai storage, trusted OAuth downloads, native concurrency, approved save/return and deployment prerequisites; live acceptance remains pending.
+
 The implementation plan and phase gates are in [`../MCP_IMPLEMENTATION_RUNBOOK.md`](../MCP_IMPLEMENTATION_RUNBOOK.md). The Sakai 25.2 endpoint choices and their source evidence are in [`../evidence/mcp/phase-3-sakai-api-reconnaissance.md`](../evidence/mcp/phase-3-sakai-api-reconnaissance.md).
 
 For capabilities beyond the current V1 routes, consult the [Sakai integration guide](../SAKAI_INTEGRATION_GUIDE.md): it maps SOAP, EntityBroker, tool APIs and internal services, separates tested paths from unverified candidates, and records provisioning-only UI workarounds.

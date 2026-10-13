@@ -35,6 +35,9 @@ param sakaiAudience string
 @description('Opt-in assignment setup catalog; enable only for an explicitly authorized next-phase release.')
 param assignmentSetupEnabled bool = false
 
+@description('Opt-in assignment grading catalog; enable only after the native schema, storage and live checks are ready.')
+param assignmentGradingEnabled bool = false
+
 param location string = 'koreacentral'
 
 param tags object = {
@@ -136,6 +139,7 @@ resource app 'Microsoft.App/containerApps@2025-07-01' = {
           env: [
             { name: 'ENVIRONMENT', value: 'development' }
             { name: 'ASSIGNMENT_SETUP_ENABLED', value: string(assignmentSetupEnabled) }
+            { name: 'ASSIGNMENT_GRADING_ENABLED', value: string(assignmentGradingEnabled) }
             { name: 'APP_COMMIT', value: sourceCommit }
             { name: 'APP_LOCK_SHA256', value: lockSha256 }
             { name: 'MCP_PUBLIC_URL', value: mcpPublicUrl }

@@ -155,6 +155,15 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 
     @Override
     @Transactional
+    public AssignmentSubmission lockSubmission(String id) {
+        geCurrentSession().flush();
+        AssignmentSubmission submission = geCurrentSession().get(AssignmentSubmission.class, id, new LockOptions(LockMode.PESSIMISTIC_WRITE));
+        if (submission != null) geCurrentSession().refresh(submission, new LockOptions(LockMode.PESSIMISTIC_WRITE));
+        return submission;
+    }
+
+    @Override
+    @Transactional
     public void updateSubmission(AssignmentSubmission submission) {
         if (existsSubmission(submission.getId())) {
             submission.setDateModified(Instant.now());
