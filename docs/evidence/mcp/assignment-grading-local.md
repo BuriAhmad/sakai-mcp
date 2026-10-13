@@ -1,6 +1,6 @@
 # Assignment grading: local implementation evidence
 
-Date: 13 October 2026. Scope: user-authorized implementation following the [9 October research/design](../../SAKAI_ASSIGNMENT_GRADING.md). **Disabled by default, undeployed, no live grading acceptance.** No Azure/runtime configuration or academic record was changed. The pre-existing phase-25 and phase-31 evidence edits are unrelated and preserved.
+Date: 13 October 2026. Scope: user-authorized implementation following the [9 October research/design](../../SAKAI_ASSIGNMENT_GRADING.md). **Historical local checkpoint: disabled by default, undeployed, no live grading acceptance at that point.** No Azure/runtime configuration or academic record was changed during this checkpoint. The later user-authorized deployment is recorded in [release evidence](assignment-grading-release.md). The pre-existing phase-25 and phase-31 evidence edits are unrelated and preserved.
 
 ## Implemented behavior
 
