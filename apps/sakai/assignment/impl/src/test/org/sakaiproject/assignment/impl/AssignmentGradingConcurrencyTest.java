@@ -33,4 +33,20 @@ public class AssignmentGradingConcurrencyTest {
             var row=session.get(AssignmentSubmission.class,sid);assertEquals("40",row.getGrade());assertNull(row.getSubmittedText());
         }
     }
+
+    @Test public void gradingCollectionsRemainReadableAfterTransactionalLoad() {
+        String aid=UUID.randomUUID().toString(), sid=UUID.randomUUID().toString();
+        try(var session=factory.openSession()) {
+            var tx=session.beginTransaction();Assignment a=new Assignment();a.setId(aid);a.setContext("synthetic-course");a.setTitle("Synthetic quiz");a.setAuthor("synthetic-instructor");a.setDateCreated(java.time.Instant.now());session.save(a);
+            AssignmentSubmission submission=new AssignmentSubmission();submission.setId(sid);submission.setAssignment(a);submission.getAttachments().add("/attachment/synthetic.txt");session.save(submission);sid=submission.getId();tx.commit();
+        }
+        AssignmentSubmission detached;
+        try(var session=factory.openSession()) {
+            var tx=session.beginTransaction();detached=session.get(AssignmentSubmission.class,sid);
+            assertEquals(1,detached.getAttachments().size());
+            detached.getProperties().size();detached.getFeedbackAttachments().size();detached.getSubmitters().size();
+            tx.commit();
+        }
+        assertTrue(detached.getAttachments().contains("/attachment/synthetic.txt"));
+    }
 }

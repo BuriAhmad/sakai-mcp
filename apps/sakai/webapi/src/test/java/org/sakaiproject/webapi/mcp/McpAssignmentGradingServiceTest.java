@@ -44,10 +44,10 @@ public class McpAssignmentGradingServiceTest {
         when(security.unlock(eq(AssignmentServiceConstants.SECURE_GRADE_ASSIGNMENT_SUBMISSION),anyString())).thenReturn(true);
         when(assignments.allowGradeSubmission(anyString())).thenReturn(true);
         a=new Assignment();a.setId("assignment-a");a.setContext("course-a");a.setTitle("Quiz");a.setInstructions("Five MCQs");a.setTypeOfGrade(Assignment.GradeType.SCORE_GRADE_TYPE);a.setScaleFactor(10);a.setMaxGradePoint(50);a.setDueDate(Instant.parse("2026-10-08T00:00:00Z"));a.setTypeOfSubmission(Assignment.SubmissionType.SINGLE_ATTACHMENT_SUBMISSION);
-        when(assignments.getAssignment("assignment-a")).thenReturn(a);
+        when(assignments.getAssignmentWithGradingEvidence("assignment-a")).thenReturn(a);
         s=new AssignmentSubmission();s.setId("submission-a");s.setAssignment(a);s.setSubmitted(true);s.setUserSubmission(true);s.setDateSubmitted(Instant.parse("2026-10-07T00:00:00Z"));s.setDateModified(s.getDateSubmitted());
         AssignmentSubmissionSubmitter submitter=new AssignmentSubmissionSubmitter();submitter.setSubmitter("student-a");submitter.setSubmission(s);s.setSubmitters(Set.of(submitter));
-        when(assignments.getSubmissions(a)).thenReturn(Set.of(s));when(assignments.getSubmission("submission-a")).thenReturn(s);
+        when(assignments.getSubmissions(a)).thenReturn(Set.of(s));when(assignments.getSubmissionWithGradingEvidence("submission-a")).thenReturn(s);
         student=mock(User.class);when(student.getId()).thenReturn("student-a");when(student.getEid()).thenReturn("synthetic-a");when(student.getDisplayName()).thenReturn("Synthetic A");
         User other=mock(User.class);when(other.getId()).thenReturn("student-b");when(other.getEid()).thenReturn("synthetic-b");when(other.getDisplayName()).thenReturn("Synthetic B");
         when(assignments.allowAddSubmissionUsers(anyString())).thenReturn(List.of(student,other));UserDirectoryService users=mock(UserDirectoryService.class);when(users.getUser("student-a")).thenReturn(student);when(users.getUser("student-b")).thenReturn(other);

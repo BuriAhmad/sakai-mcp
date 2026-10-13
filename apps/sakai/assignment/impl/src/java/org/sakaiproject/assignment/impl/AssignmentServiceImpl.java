@@ -1726,7 +1726,34 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         locked.setAssignment(lockedAssignment);
         if (!allowGradeSubmission(AssignmentReferenceReckoner.reckoner().assignment(locked.getAssignment()).reckon().getReference()))
             throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_GRADE_ASSIGNMENT_SUBMISSION, reference);
+        initializeGradingSubmissionEvidence(locked);
         return action.apply(locked);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Assignment getAssignmentWithGradingEvidence(String id) throws IdUnusedException, PermissionException {
+        Assignment assignment = getAssignment(id);
+        assignment.getProperties().size();
+        assignment.getAttachments().size();
+        assignment.getSubmissions().size();
+        assignment.getSubmissions().forEach(this::initializeGradingSubmissionEvidence);
+        return assignment;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AssignmentSubmission getSubmissionWithGradingEvidence(String id) throws PermissionException {
+        AssignmentSubmission submission = getSubmission(id);
+        if (submission != null) initializeGradingSubmissionEvidence(submission);
+        return submission;
+    }
+
+    private void initializeGradingSubmissionEvidence(AssignmentSubmission submission) {
+        submission.getSubmitters().size();
+        submission.getAttachments().size();
+        submission.getFeedbackAttachments().size();
+        submission.getProperties().size();
     }
 
     @Override

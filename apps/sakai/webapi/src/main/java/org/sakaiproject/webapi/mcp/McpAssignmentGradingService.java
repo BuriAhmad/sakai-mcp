@@ -70,7 +70,7 @@ public class McpAssignmentGradingService {
         try {
             Site course = sites.getSiteVisit(site);
             if (!"course".equals(course.getType())) throw failure(HttpStatus.NOT_FOUND);
-            Assignment a=assignments.getAssignment(id);
+            Assignment a=assignments.getAssignmentWithGradingEvidence(id);
             if (!site.equals(a.getContext()) || Boolean.TRUE.equals(a.getDeleted()) || Boolean.TRUE.equals(a.getDraft())) throw failure(HttpStatus.NOT_FOUND);
             if (!assignments.allowGradeSubmission(assignmentRef(a))) throw failure(HttpStatus.FORBIDDEN);
             return a;
@@ -92,12 +92,12 @@ public class McpAssignmentGradingService {
     }
     AssignmentSubmission submission(Assignment a, String id) {
         try {
-            AssignmentSubmission s=assignments.getSubmission(id);
+            AssignmentSubmission s=assignments.getSubmissionWithGradingEvidence(id);
+            if (s == null) throw failure(HttpStatus.NOT_FOUND);
             if (!a.getId().equals(s.getAssignment().getId())) throw failure(HttpStatus.NOT_FOUND);
             if (!allowed(a,s)) throw failure(HttpStatus.FORBIDDEN);
             return s;
         } catch (PermissionException e) { throw failure(HttpStatus.FORBIDDEN); }
-        catch (IdUnusedException e) { throw failure(HttpStatus.NOT_FOUND); }
     }
     List<String> unsupported(Assignment a) {
         List<String> reasons=new ArrayList<>();

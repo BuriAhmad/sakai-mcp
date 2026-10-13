@@ -484,6 +484,12 @@ public interface AssignmentService extends EntityProducer {
     <T> T withGradingSubmissionLock(String submissionId, java.util.function.Function<AssignmentSubmission, T> action)
             throws IdUnusedException, PermissionException;
 
+    /** Return permission-checked Assignment data with grading collections initialized. */
+    Assignment getAssignmentWithGradingEvidence(String assignmentId) throws IdUnusedException, PermissionException;
+
+    /** Return permission-checked Submission data with grading collections initialized. */
+    AssignmentSubmission getSubmissionWithGradingEvidence(String submissionId) throws PermissionException;
+
     public Set<AssignmentSubmission> getSubmissions(Assignment assignment);
 
     /**
