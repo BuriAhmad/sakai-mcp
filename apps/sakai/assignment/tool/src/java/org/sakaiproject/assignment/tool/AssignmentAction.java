@@ -1629,10 +1629,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
         try {
             secAdv = pushSecurityAdvisor(session, "assignment.grade.security.advisor", false);
-            rv = assignmentService.getSubmission(submissionId);
-        } catch (IdUnusedException e) {
-            log.warn(this + ":" + callingFunctionName + " " + e.getMessage() + " " + submissionId);
-            addAlert(state, rb.getFormattedMessage("cannotfin_submission", submissionId));
+            rv = assignmentService.getSubmissionWithGradingEvidence(submissionId);
         } catch (PermissionException e) {
             log.warn(this + ":" + callingFunctionName + " " + e.getMessage() + " " + submissionId);
             addAlert(state, rb.getFormattedMessage("youarenot_viewSubmission", submissionId));

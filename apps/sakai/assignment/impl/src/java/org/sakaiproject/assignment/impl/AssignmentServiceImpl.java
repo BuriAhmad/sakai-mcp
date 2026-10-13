@@ -1745,7 +1745,11 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     @Transactional(readOnly = true)
     public AssignmentSubmission getSubmissionWithGradingEvidence(String id) throws PermissionException {
         AssignmentSubmission submission = getSubmission(id);
-        if (submission != null) initializeGradingSubmissionEvidence(submission);
+        if (submission != null) {
+            submission.getAssignment().getAttachments().size();
+            submission.getAssignment().getProperties().size();
+            initializeGradingSubmissionEvidence(submission);
+        }
         return submission;
     }
 
