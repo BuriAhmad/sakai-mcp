@@ -147,6 +147,30 @@ public class McpAssignmentSetupServiceTest {
         when(assignments.getAssignmentsForContext("course-a")).thenReturn(java.util.Collections.nCopies(501, saved));
         assertEquals(HttpStatus.BAD_REQUEST, assertThrows(ResponseStatusException.class, () -> metadata.context("course-a", null, null)).getStatus());
     }
+    @Test public void ordinaryCalendarEventsHaveNullOwnerReferencesAndOwnedEventsKeepThem() throws Exception {
+        var calendar = mock(org.sakaiproject.calendar.api.Calendar.class);
+        when(metadata.calendars.getCalendar(null)).thenReturn(calendar);
+        when(calendar.allowGetEvents()).thenReturn(true);
+        var ordinary = mock(org.sakaiproject.calendar.api.CalendarEvent.class, RETURNS_DEEP_STUBS);
+        var owned = mock(org.sakaiproject.calendar.api.CalendarEvent.class, RETURNS_DEEP_STUBS);
+        for (var event : List.of(ordinary, owned)) {
+            when(event.getId()).thenReturn("event-a"); when(event.getDisplayName()).thenReturn("Deadline");
+            when(event.getType()).thenReturn("Deadline");
+            when(event.getRange().firstTime().getTime()).thenReturn(1000L);
+            when(event.getRange().lastTime().getTime()).thenReturn(2000L);
+        }
+        when(ordinary.getField(anyString())).thenReturn(""); // Native unset-field behavior, not Mockito's null.
+        when(owned.getField(org.sakaiproject.calendar.api.CalendarConstants.NEW_ASSIGNMENT_DUEDATE_CALENDAR_ASSIGNMENT_ID)).thenReturn("assignment-a");
+        when(owned.getField(org.sakaiproject.calendar.api.CalendarConstants.EVENT_OWNED_BY_TOOL_ID)).thenReturn("sakai.assignment.grades");
+        when(calendar.getEvents(any(), isNull(), anyInt())).thenReturn(List.of(ordinary, owned));
+        Map<?,?> contextCalendar = (Map<?,?>) metadata.context("course-a", null, null).get("calendar");
+        List<?> events = (List<?>) contextCalendar.get("events");
+        assertEquals(2, events.size());
+        assertNull(((Map<?,?>) events.get(0)).get("assignment_id"));
+        assertNull(((Map<?,?>) events.get(0)).get("owner_tool_id"));
+        assertEquals("assignment-a", ((Map<?,?>) events.get(1)).get("assignment_id"));
+        assertEquals("sakai.assignment.grades", ((Map<?,?>) events.get(1)).get("owner_tool_id"));
+    }
     @Test public void existingUnrelatedGradebookItemIsNeverAdopted() throws Exception {
         service.create("course-a", request("draft", "none", BigDecimal.TEN));
         var item = new org.sakaiproject.grading.api.Assignment(); item.setId(21L); item.setName("Assignment 3"); items.add(item);

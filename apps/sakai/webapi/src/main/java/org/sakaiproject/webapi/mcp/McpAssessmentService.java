@@ -104,6 +104,10 @@ public class McpAssessmentService {
     public static ResponseStatusException failure(HttpStatus status) { return new ResponseStatusException(status); }
     public static String stamp(Instant t) { return t == null ? null : t.toString(); }
     public static String id(Object id) { return id == null ? null : id.toString(); }
+    private static String optionalCalendarField(CalendarEvent event, String name) {
+        String value = event.getField(name);
+        return value == null || value.isEmpty() ? null : value;
+    }
     public static Map<String, Object> obj(Object... pairs) {
         Map<String, Object> result = new LinkedHashMap<>();
         for (int i = 0; i < pairs.length; i += 2) result.put((String) pairs[i], pairs[i + 1]);
@@ -246,8 +250,8 @@ public class McpAssessmentService {
                 for (CalendarEvent e : bounded(calendar.getEvents(times.newTimeRange(first, last), null, LIMIT + 1))) {
                     events.add(obj("id", e.getId(), "title", e.getDisplayName(), "start_at", stamp(Instant.ofEpochMilli(e.getRange().firstTime().getTime())),
                             "end_at", stamp(Instant.ofEpochMilli(e.getRange().lastTime().getTime())), "type", e.getType(),
-                            "assignment_id", e.getField(CalendarConstants.NEW_ASSIGNMENT_DUEDATE_CALENDAR_ASSIGNMENT_ID),
-                            "owner_tool_id", e.getField(CalendarConstants.EVENT_OWNED_BY_TOOL_ID)));
+                            "assignment_id", optionalCalendarField(e, CalendarConstants.NEW_ASSIGNMENT_DUEDATE_CALENDAR_ASSIGNMENT_ID),
+                            "owner_tool_id", optionalCalendarField(e, CalendarConstants.EVENT_OWNED_BY_TOOL_ID)));
                 }
             } catch (PermissionException e) { canRead = false; events.clear(); }
         }

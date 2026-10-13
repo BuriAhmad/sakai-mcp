@@ -54,4 +54,6 @@ The ignored test folder contains `services/mcp/codex-host-test/DM-MCQ-Assignment
 
 ## Remaining acceptance limits
 
+The 13 October CS 210 read failure exposed an ordinary Calendar event nullability mismatch. A targeted source fix and regressions are recorded in [the Calendar reference fix report](assessment-calendar-nullability-fix.md); it has not yet been deployed and does not change the measured 9 October release results.
+
 The [local checkpoint](assignment-setup-local.md) and [design](../../SAKAI_ASSIGNMENT_SETUP.md) retain these implementation limits: no atomic cross-service commit, no exactly-once initial create, no automatic retry of ambiguous writes, no local PDF upload, no scheduled/email announcements, no unrelated existing-item association, and unknown course timezone provenance. Standalone Gradebook/Calendar tools remain deferred. Weighted/drop/custom-scale/resource/group cases, actual Student resource-read parity, live fault injection and new-tool model-selected approval/cancel/persistence controls need separate evidence. Existing V1 Phase 25/31 host-control gaps are not closed by this release. Use native course permissions and the approved Skill plan for client writes.

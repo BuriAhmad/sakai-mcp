@@ -76,6 +76,13 @@ class GradebookItem(Contract):
 
 
 class CalendarEvent(Contract):
+    @field_validator("assignment_id", "owner_tool_id", mode="before")
+    @classmethod
+    def absent_native_field(cls, value: object) -> object:
+        # Sakai getField returns "" for unset extra fields on ordinary events.
+        # Keep the public contract nullable without relaxing real reference validation.
+        return None if value == "" else value
+
     id: Annotated[str, Field(min_length=1, max_length=255)]
     title: Annotated[str, Field(min_length=1, max_length=255)]
     start_at: str
