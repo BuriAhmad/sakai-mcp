@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.sakaiproject.assignment.api.*;
 import org.sakaiproject.assignment.api.model.*;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.authz.api.Member;
 import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.content.api.*;
 import org.sakaiproject.entity.api.ResourceProperties;
@@ -179,11 +180,19 @@ public class McpAssignmentGradingService {
     List<Map<String,Object>> roster(Assignment a) {
         identityRead(a);
         Set<String> scope=scope(a);
-        List<String> eligible=assignments.allowAddSubmissionUsers(assignmentRef(a)).stream().map(User::getId).filter(id -> scope==null||scope.contains(id)).sorted().toList();
-        if (eligible.size()>5000 || assignments.getSubmissions(a).size()>5000) throw failure(HttpStatus.BAD_REQUEST);
-        Set<String> active;
-        try { active=sites.getSiteVisit(a.getContext()).getUsers(); }
+        Site course;
+        try { course=sites.getSiteVisit(a.getContext()); }
         catch (Exception e) { throw failure(HttpStatus.FORBIDDEN); }
+        List<String> eligible=assignments.allowAddSubmissionUsers(assignmentRef(a)).stream().map(User::getId)
+            .filter(id -> scope==null||scope.contains(id))
+            .filter(id -> {
+                Member member=course.getMember(id);
+                return member!=null && member.isActive() && member.getRole()!=null
+                    && member.getRole().isAllowed(AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT_SUBMISSION)
+                    && !member.getRole().isAllowed(AssignmentServiceConstants.SECURE_GRADE_ASSIGNMENT_SUBMISSION);
+            }).sorted().toList();
+        if (eligible.size()>5000 || assignments.getSubmissions(a).size()>5000) throw failure(HttpStatus.BAD_REQUEST);
+        Set<String> active=course.getUsers();
         eligible=eligible.stream().filter(active::contains).toList();
         Map<String,AssignmentSubmission> byUser=new HashMap<>();
         List<AssignmentSubmission> orphan=new ArrayList<>();

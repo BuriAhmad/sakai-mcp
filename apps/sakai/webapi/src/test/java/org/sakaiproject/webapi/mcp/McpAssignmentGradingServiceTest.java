@@ -18,6 +18,8 @@ import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.authz.api.Role;
+import org.sakaiproject.authz.api.Member;
 import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.content.api.*;
 import org.sakaiproject.entity.api.ResourceProperties;
@@ -34,11 +36,16 @@ public class McpAssignmentGradingServiceTest {
     @Rule public TemporaryFolder temporary=new TemporaryFolder();
     AssignmentService assignments; ServerConfigurationService config; SecurityService security;
     McpAssignmentGradingService service; McpAssessmentService metadata; GradingService grading; GradingAuthz authz;
-    Assignment a; AssignmentSubmission s; User student; Site site; Session session; ContentHostingService content;
+    Assignment a; AssignmentSubmission s; User student; User other; Site site; Session session; ContentHostingService content;
     @Before public void setup() throws Exception {
         assignments=mock(AssignmentService.class); config=mock(ServerConfigurationService.class); security=mock(SecurityService.class);
         SessionManager sessions=mock(SessionManager.class);session=mock(Session.class);when(sessions.getCurrentSession()).thenReturn(session);when(session.getUserId()).thenReturn("ta");
         SiteService sites=mock(SiteService.class);site=mock(Site.class);when(site.getType()).thenReturn("course");when(site.getTitle()).thenReturn("Synthetic course");when(site.getUsers()).thenReturn(Set.of("student-a","student-b"));when(sites.getSiteVisit("course-a")).thenReturn(site);
+        Role studentRole=mock(Role.class);when(studentRole.isAllowed(AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT_SUBMISSION)).thenReturn(true);
+        Member firstMember=mock(Member.class),secondMember=mock(Member.class);
+        when(firstMember.isActive()).thenReturn(true);when(secondMember.isActive()).thenReturn(true);
+        when(firstMember.getRole()).thenReturn(studentRole);when(secondMember.getRole()).thenReturn(studentRole);
+        when(site.getMember("student-a")).thenReturn(firstMember);when(site.getMember("student-b")).thenReturn(secondMember);
         when(config.getBoolean("mcp.assignment.grading.enabled",false)).thenReturn(true);
         Path root=temporary.newFolder("private").toPath();Files.setPosixFilePermissions(root,PosixFilePermissions.fromString("rwx------"));when(config.getString("mcp.assignment.grading.storage","")).thenReturn(root.toRealPath().toString());
         when(security.unlock(eq(AssignmentServiceConstants.SECURE_GRADE_ASSIGNMENT_SUBMISSION),anyString())).thenReturn(true);
@@ -49,7 +56,7 @@ public class McpAssignmentGradingServiceTest {
         AssignmentSubmissionSubmitter submitter=new AssignmentSubmissionSubmitter();submitter.setSubmitter("student-a");submitter.setSubmission(s);s.setSubmitters(Set.of(submitter));
         when(assignments.getSubmissions(a)).thenReturn(Set.of(s));when(assignments.getSubmissionWithGradingEvidence("submission-a")).thenReturn(s);
         student=mock(User.class);when(student.getId()).thenReturn("student-a");when(student.getEid()).thenReturn("synthetic-a");when(student.getDisplayName()).thenReturn("Synthetic A");
-        User other=mock(User.class);when(other.getId()).thenReturn("student-b");when(other.getEid()).thenReturn("synthetic-b");when(other.getDisplayName()).thenReturn("Synthetic B");
+        other=mock(User.class);when(other.getId()).thenReturn("student-b");when(other.getEid()).thenReturn("synthetic-b");when(other.getDisplayName()).thenReturn("Synthetic B");
         when(assignments.allowAddSubmissionUsers(anyString())).thenReturn(List.of(student,other));UserDirectoryService users=mock(UserDirectoryService.class);when(users.getUser("student-a")).thenReturn(student);when(users.getUser("student-b")).thenReturn(other);
         grading=mock(GradingService.class);authz=mock(GradingAuthz.class);content=mock(ContentHostingService.class);
         metadata=mock(McpAssessmentService.class);when(metadata.revision(any())).thenReturn("config");
@@ -72,6 +79,19 @@ public class McpAssignmentGradingServiceTest {
         var second=service.list("course-a","assignment-a",(String)first.get("next_cursor"),1);
         var row=((List<Map<String,Object>>)second.get("items")).get(0);assertEquals("missing",row.get("status"));assertNull(row.get("submission_id"));assertNull(row.get("attempt_count"));
         verify(grading,never()).getAssignments(anyString(),anyString(),any());
+    }
+    @Test public void rosterExcludesGradeCapableCourseMembers() {
+        User instructor=mock(User.class);when(instructor.getId()).thenReturn("instructor");
+        when(assignments.allowAddSubmissionUsers(anyString())).thenReturn(List.of(student,other,instructor));
+        when(site.getUsers()).thenReturn(Set.of("student-a","student-b","instructor"));
+        Role instructorRole=mock(Role.class);
+        when(instructorRole.isAllowed(AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT_SUBMISSION)).thenReturn(true);
+        when(instructorRole.isAllowed(AssignmentServiceConstants.SECURE_GRADE_ASSIGNMENT_SUBMISSION)).thenReturn(true);
+        Member instructorMember=mock(Member.class);when(instructorMember.isActive()).thenReturn(true);when(instructorMember.getRole()).thenReturn(instructorRole);
+        when(site.getMember("instructor")).thenReturn(instructorMember);
+        var rows=(List<Map<String,Object>>)service.list("course-a","assignment-a",null,50).get("items");
+        assertEquals(2,rows.size());
+        assertEquals(1,rows.stream().filter(row -> "missing".equals(row.get("status"))).count());
     }
     @Test public void cursorIsBoundToActorAndCurrentMetadata() {
         String cursor=(String)service.list("course-a","assignment-a",null,1).get("next_cursor");session.setUserId("other");when(session.getUserId()).thenReturn("other");
