@@ -5,11 +5,13 @@ from typing import Annotated, Any, Literal
 from mcp.server.auth.middleware.auth_context import get_access_token
 from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
-from mcp.types import ToolAnnotations
+from mcp.types import CallToolResult, ToolAnnotations
 from pydantic import Field, ValidationError
 
 from sakai_mcp import grading_models as gm
+from sakai_mcp import grading_resource_models as rm
 from sakai_mcp.audit import audit_call, record_outcome
+from sakai_mcp.grading_resources import tool_result
 from sakai_mcp.sakai_client import ErrorCode, SakaiClient, SakaiError
 
 
@@ -47,12 +49,15 @@ def register_grading_tools(server: MCPServer, client: SakaiClient) -> None:
     async def get_assignment_grading_context(
         course_id: Annotated[str, Field(max_length=128, min_length=1)],
         assignment_id: Annotated[str, Field(max_length=128, min_length=1)],
-    ) -> gm.GetAssignmentGradingContextResult:
-        return gm.GetAssignmentGradingContextResult.model_validate(
+    ) -> Annotated[CallToolResult, rm.ContextResult]:
+        return tool_result(
+            "get_assignment_grading_context",
             await invoke(
                 "get_assignment_grading_context",
                 {"course_id": course_id, "assignment_id": assignment_id},
-            )
+            ),
+            course_id,
+            assignment_id,
         )
 
     server.add_tool(
@@ -71,8 +76,9 @@ def register_grading_tools(server: MCPServer, client: SakaiClient) -> None:
         assignment_id: Annotated[str, Field(max_length=128, min_length=1)],
         cursor: Annotated[str, Field(max_length=2048)] | None = None,
         limit: Annotated[int, Field(ge=1, le=100)] = 50,
-    ) -> gm.ListAssignmentSubmissionsResult:
-        return gm.ListAssignmentSubmissionsResult.model_validate(
+    ) -> Annotated[CallToolResult, rm.SubmissionListResult]:
+        return tool_result(
+            "list_assignment_submissions",
             await invoke(
                 "list_assignment_submissions",
                 {
@@ -81,7 +87,9 @@ def register_grading_tools(server: MCPServer, client: SakaiClient) -> None:
                     "cursor": cursor,
                     "limit": limit,
                 },
-            )
+            ),
+            course_id,
+            assignment_id,
         )
 
     server.add_tool(
@@ -99,8 +107,9 @@ def register_grading_tools(server: MCPServer, client: SakaiClient) -> None:
         course_id: Annotated[str, Field(max_length=128, min_length=1)],
         assignment_id: Annotated[str, Field(max_length=128, min_length=1)],
         submission_id: Annotated[str, Field(max_length=128, min_length=1)],
-    ) -> gm.GetAssignmentSubmissionResult:
-        return gm.GetAssignmentSubmissionResult.model_validate(
+    ) -> Annotated[CallToolResult, rm.SubmissionResult]:
+        return tool_result(
+            "get_assignment_submission",
             await invoke(
                 "get_assignment_submission",
                 {
@@ -108,7 +117,9 @@ def register_grading_tools(server: MCPServer, client: SakaiClient) -> None:
                     "assignment_id": assignment_id,
                     "submission_id": submission_id,
                 },
-            )
+            ),
+            course_id,
+            assignment_id,
         )
 
     server.add_tool(
@@ -168,8 +179,9 @@ def register_grading_tools(server: MCPServer, client: SakaiClient) -> None:
         export_id: Annotated[str, Field(max_length=128, min_length=1)],
         cursor: Annotated[str, Field(max_length=2048)] | None = None,
         limit: Annotated[int, Field(ge=1, le=100)] = 50,
-    ) -> gm.GetAssignmentSubmissionExportResult:
-        return gm.GetAssignmentSubmissionExportResult.model_validate(
+    ) -> Annotated[CallToolResult, rm.ExportResult]:
+        return tool_result(
+            "get_assignment_submission_export",
             await invoke(
                 "get_assignment_submission_export",
                 {
@@ -179,7 +191,9 @@ def register_grading_tools(server: MCPServer, client: SakaiClient) -> None:
                     "cursor": cursor,
                     "limit": limit,
                 },
-            )
+            ),
+            course_id,
+            assignment_id,
         )
 
     server.add_tool(
@@ -331,3 +345,7 @@ def register_grading_tools(server: MCPServer, client: SakaiClient) -> None:
             open_world_hint=False,
         ),
     )
+
+    from sakai_mcp.grading_proposal_tools import register_proposal_tools
+
+    register_proposal_tools(server, client)

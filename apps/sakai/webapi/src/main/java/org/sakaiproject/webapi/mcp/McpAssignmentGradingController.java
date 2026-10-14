@@ -20,6 +20,22 @@ public class McpAssignmentGradingController {
     public Map<String,Object> list(@PathVariable String site,@PathVariable String assignment,@RequestParam(required=false) String cursor,@RequestParam(required=false) Integer limit) { return service.list(site,assignment,cursor,limit); }
     @GetMapping("/grading-submissions/{submission}")
     public Map<String,Object> detail(@PathVariable String site,@PathVariable String assignment,@PathVariable String submission) { return service.detail(site,assignment,submission); }
+    @GetMapping("/grading-submissions/{submission}/files/{file}")
+    public ResponseEntity<byte[]> submissionFile(@PathVariable String site,@PathVariable String assignment,@PathVariable String submission,@PathVariable String file,@RequestParam String revision) {
+        return fileResponse(service.submissionFile(site,assignment,submission,file,revision));
+    }
+    @GetMapping("/grading-files/{file}")
+    public ResponseEntity<byte[]> assignmentFile(@PathVariable String site,@PathVariable String assignment,@PathVariable String file,@RequestParam String revision) {
+        return fileResponse(service.assignmentFile(site,assignment,file,revision));
+    }
+    private ResponseEntity<byte[]> fileResponse(McpAssignmentGradingService.FileContents file) {
+        return ResponseEntity.ok().header("Cache-Control","private, no-store").header("Content-Type",file.contentType())
+            .header("X-Content-SHA256",file.sha256()).contentLength(file.bytes().length).body(file.bytes());
+    }
+    @PostMapping("/grading-proposals")
+    public Map<String,Object> createProposal(@PathVariable String site,@PathVariable String assignment,@RequestBody Map<String,Object> body) { return service.createProposal(site,assignment,body); }
+    @GetMapping("/grading-proposals/{proposal}")
+    public Map<String,Object> proposal(@PathVariable String site,@PathVariable String assignment,@PathVariable String proposal) { return service.proposal(site,assignment,proposal); }
     @PostMapping("/grading-exports")
     public Map<String,Object> export(@PathVariable String site,@PathVariable String assignment,@RequestBody Map<String,Object> body) { return service.export(site,assignment,body); }
     @GetMapping("/grading-exports/{export}")

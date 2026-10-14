@@ -1,21 +1,18 @@
 import asyncio
 import hashlib
 import json
-from pathlib import Path
 
 import httpx
 import pytest
 from pydantic import ValidationError
-from starlette.applications import Starlette
 
 from sakai_mcp.auth import EntraTokenVerifier
-from sakai_mcp.grading_artifacts import artifact_route
+from sakai_mcp.grading_evaluator import evaluate_mcq, payload_hash, report_csv
 from sakai_mcp.grading_models import (
     CONTRACTS,
     FeedbackPatch,
     SaveAssignmentGradesRequest,
 )
-from sakai_mcp.grading_workspace import grade_mcq, payload_hash, private_workspace
 from sakai_mcp.sakai_client import ErrorCode, SakaiClient, SakaiError
 from sakai_mcp.server import create_server
 from tests.helpers import settings
@@ -25,7 +22,7 @@ from tests.unit.test_sakai_client import FakeOBO, principal
 
 @pytest.mark.parametrize(
     "setup,grading,count",
-    [(False, False, 5), (True, False, 8), (False, True, 14), (True, True, 17)],
+    [(False, False, 5), (True, False, 8), (False, True, 19), (True, True, 22)],
 )
 def test_independent_catalog_gates(setup, grading, count):
     config = settings(
@@ -192,12 +189,7 @@ def test_grading_tool_invocation_validates_and_forwards(monkeypatch):
     assert result.is_error is not True
 
 
-def make_workspace(tmp_path: Path, data: bytes, name="roll.txt"):
-    root = tmp_path / "run"
-    root.mkdir(mode=0o700)
-    raw = root / "submissions" / "raw" / "submission-a"
-    raw.mkdir(parents=True)
-    (raw / "artifact").write_bytes(data)
+def make_evidence(data: bytes, name="roll.txt"):
     manifest = {
         "course_id": "course-a",
         "assignment_id": "assignment-a",
@@ -214,15 +206,16 @@ def make_workspace(tmp_path: Path, data: bytes, name="roll.txt"):
             {
                 "artifact_id": "artifact",
                 "original_name": name,
-                "raw_path": "submissions/raw/submission-a/artifact",
+                "submission_id": "submission-a",
+                "size_bytes": len(data),
                 "sha256": hashlib.sha256(data).hexdigest(),
             }
         ],
     }
-    (root / "manifest.json").write_text(json.dumps(manifest))
     config = {
         "course_id": "course-a",
         "assignment_id": "assignment-a",
+        "assignment_revision": "config",
         "submission_contract": {
             "file_count": 1,
             "encoding": "utf-8",
@@ -245,10 +238,24 @@ def make_workspace(tmp_path: Path, data: bytes, name="roll.txt"):
             "negative_marking": False,
         },
         "policies": {"late_penalty": None},
+        "identity": {"filename_mismatch": "review_required"},
     }
-    path = root / "grading-config.json"
-    path.write_text(json.dumps(config))
-    return root, path
+    context = {
+        "assignment": {"configuration_revision": "config", "max_points": "5"},
+        "completeness": {"complete": True},
+        "supported": {"prepare": True},
+    }
+    roster = [
+        {
+            "submission_id": "submission-a",
+            "content_revision": "content",
+            "grade_revision": "grade",
+            "late_status": "on_time",
+            "submitters": [{"sakai_user_id": "student-a"}],
+            "status": "submitted",
+        }
+    ]
+    return config, context, roster, manifest, {"artifact": data}
 
 
 @pytest.mark.parametrize(
@@ -262,71 +269,30 @@ def make_workspace(tmp_path: Path, data: bytes, name="roll.txt"):
         (b"A\nC\nX\nD\nA\n", None),
         (b"", None),
         (b"%PDF-1.7 fake", None),
+        (b"\n" * 500_000, None),
     ],
 )
-def test_deterministic_known_cases_preserve_raw(tmp_path, data, score):
-    root, config = make_workspace(tmp_path, data)
-    result = grade_mcq(root, config)
+def test_deterministic_known_cases_preserve_raw(data, score):
+    config, context, roster, manifest, files = make_evidence(data)
+    result = evaluate_mcq(config, context, roster, manifest, files)
     assert result[0]["score"] == score
     assert result[0]["review_status"] == (
         "proposed" if score is not None else "review_required"
     )
-    assert (root / "submissions/raw/submission-a/artifact").read_bytes() == data
-    assert (root / "results/review-required.csv").exists()
+    assert files["artifact"] == data
+    assert "submission_id" in report_csv(result)
 
 
-def test_integrity_failure_and_git_workspace_are_rejected(tmp_path):
-    root, config = make_workspace(tmp_path, b"A\nC\nB\nD\nA\n")
-    (root / "submissions/raw/submission-a/artifact").write_bytes(b"changed")
+def test_integrity_failure_and_changed_identity_are_rejected():
+    config, context, roster, manifest, files = make_evidence(b"A\nC\nB\nD\nA\n")
+    files["artifact"] = b"changed"
     with pytest.raises(ValueError, match="integrity"):
-        grade_mcq(root, config)
-    repo = tmp_path / "repo"
-    repo.mkdir()
-    (repo / ".git").mkdir()
-    with pytest.raises(ValueError, match="Git"):
-        private_workspace(repo / "grading")
-
-
-def test_artifact_gateway_requires_token_and_supports_authorized_ranges():
-    data = b"abcde"
-    sha = hashlib.sha256(data).hexdigest()
-
-    class Verifier:
-        async def verify_token(self, token):
-            return principal() if token == "trusted" else None
-
-    class Client:
-        async def grading_artifact(self, *args):
-            return httpx.Response(
-                200,
-                content=data,
-                headers={"content-length": "5", "x-content-sha256": sha},
-            )
-
-    app = Starlette(routes=[artifact_route(Client(), Verifier())])
-
-    async def run():
-        async with httpx.AsyncClient(
-            transport=httpx.ASGITransport(app=app), base_url="https://mcp.example.test"
-        ) as http:
-            url = "/grading-artifacts/course-a/assignment-a/export/artifact"
-            assert (await http.get(url)).status_code == 401
-            response = await http.get(
-                url, headers={"authorization": "Bearer trusted", "range": "bytes=1-3"}
-            )
-            assert (
-                response.status_code == 206
-                and response.content == b"bcd"
-                and response.headers["content-range"] == "bytes 1-3/5"
-            )
-            assert (
-                await http.get(
-                    url,
-                    headers={"authorization": "Bearer trusted", "range": "bytes=100-"},
-                )
-            ).status_code == 416
-
-    asyncio.run(run())
+        evaluate_mcq(config, context, roster, manifest, files)
+    roster[0]["submitters"] = [{"sakai_user_id": "wrong"}]
+    result = evaluate_mcq(config, context, roster, manifest, files)
+    assert (
+        result[0]["score"] is None and "source_identity_changed" in result[0]["issues"]
+    )
 
 
 def test_oversized_feedback_is_rejected_before_network():
@@ -349,14 +315,6 @@ def test_oversized_feedback_is_rejected_before_network():
         )
     assert error.value.code == ErrorCode.VALIDATION_ERROR
     assert not calls
-
-
-def test_workspace_rejects_symlinked_evidence(tmp_path):
-    root = tmp_path.resolve() / "private"
-    root.mkdir(mode=0o700)
-    (root / "raw").symlink_to(tmp_path.resolve(), target_is_directory=True)
-    with pytest.raises(ValueError, match="symlinks"):
-        private_workspace(root)
 
 
 def test_read_query_failure_is_not_an_ambiguous_write():

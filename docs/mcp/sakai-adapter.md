@@ -1,5 +1,18 @@
 # Sakai WebAPI MCP adapter
 
+The [MCP-only grading migration](../SAKAI_GRADING_MCP_RESOURCES.md) replaces the local importer with SDK resources and server proposal/report tools. Native resource/proposal endpoints preserve delegated permissions and existing grading gates; see its release requirements before deployment.
+
+The migration adds the following internal delegated Sakai endpoints. MCP hosts use tools/resources on `/mcp`; only the Python Sakai adapter calls these paths with the separate downstream token.
+
+| Method | Native path | Purpose |
+| --- | --- | --- |
+| GET | `/api/mcp/v1/courses/{site}/grading-assignments` | Paginated published assignments the actor can grade |
+| GET | `/api/mcp/v1/courses/{site}/assignments/{assignment}/grading-submissions/{submission}/files/{file}?revision=...` | Current attachment or native inline HTML, scoped and revision checked |
+| GET | `/api/mcp/v1/courses/{site}/assignments/{assignment}/grading-files/{file}?revision=...` | Assignment attachment with its own content revision |
+| POST | `/api/mcp/v1/courses/{site}/assignments/{assignment}/grading-proposals` | Immutable private proposal record; no academic mutation |
+| GET | `/api/mcp/v1/courses/{site}/assignments/{assignment}/grading-proposals/{proposal}` | Principal-bound proposal read; reauthorizes source export and expiry |
+
+These routes require `mcp.assignment.grading.enabled`, existing native permission checks and the private store. Original grading/export/write REST DTOs remain backward compatible. The old public Python `/grading-artifacts` route is removed; its native export byte endpoint remains an internal adapter implementation detail.
 For the implemented opt-in TA grading adapter, see [assignment grading design](../SAKAI_ASSIGNMENT_GRADING.md) and [local evidence](../evidence/mcp/assignment-grading-local.md). Its routes reuse delegated identity and remain independently disabled. Default V1 routes and assignment-setup gates are preserved.
 
 The Sakai-side V1 adapter lives in tracked `apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/`. Its servlet paths are relative to Sakai's existing `/api` WebAPI context. It is **disabled by default**; enabling it for the development release requires the Phase 7 predeployment gate, and the release is accepted only after the Phase 8 live checks in the [runbook](../MCP_IMPLEMENTATION_RUNBOOK.md).

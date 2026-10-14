@@ -1,6 +1,7 @@
 """Bounded HTTP adapter for the five narrow Sakai MCP integration routes."""
 
 import asyncio
+import hashlib
 import json
 import random
 from enum import StrEnum
@@ -75,6 +76,7 @@ class SakaiClient:
             trust_env=False,
         )
         self._owns_http = http is None
+        self._grading_reads = asyncio.Semaphore(2)
 
     async def aclose(self) -> None:
         if self._owns_http:
@@ -147,20 +149,27 @@ class SakaiClient:
             read = name not in {"save_assignment_grades", "release_assignment_grades", "export_assignment_submissions"}
             raise SakaiError(ErrorCode.INTERNAL_ERROR if read else ErrorCode.AMBIGUOUS_WRITE_OUTCOME) from None
 
-    async def grading_artifact(self, principal: AccessToken, course: str, assignment: str, export: str, artifact: str):
-        """Authenticated bounded byte stream; caller closes upstream on disconnect."""
-        if not self.settings.assignment_grading_enabled:
-            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
-        path = f"/api/mcp/v1/courses/{_segment(course)}/assignments/{_segment(assignment)}/grading-exports/{_segment(export)}/artifacts/{_segment(artifact)}"
+    async def _grading_stream(
+        self, principal: AccessToken, path: str
+    ) -> httpx.Response:
         response = None
         try:
             downstream = await self.obo.acquire(principal)
-            request = self._http.build_request("GET", self._base + path, headers={"Authorization": f"Bearer {downstream.token}"})
+            request = self._http.build_request(
+                "GET",
+                self._base + path,
+                headers={"Authorization": f"Bearer {downstream.token}"},
+            )
             response = await self._http.send(request, stream=True)
             self._raise_for_status(response.status_code, "GET", unsupported=True)
             length = response.headers.get("content-length", "")
             sha = response.headers.get("x-content-sha256", "")
-            if not length.isdecimal() or int(length) > 10 * 1024 * 1024 or len(sha) != 64 or any(c not in "0123456789abcdef" for c in sha):
+            if (
+                not length.isdecimal()
+                or int(length) > 10 * 1024 * 1024
+                or len(sha) != 64
+                or any(c not in "0123456789abcdef" for c in sha)
+            ):
                 await response.aclose()
                 raise SakaiError(ErrorCode.INTERNAL_ERROR)
             return response
@@ -172,6 +181,135 @@ class SakaiClient:
             if response is not None:
                 await response.aclose()
             raise SakaiError(ErrorCode.DEPENDENCY_UNAVAILABLE) from None
+
+    async def _grading_bytes(
+        self, principal: AccessToken, path: str
+    ) -> tuple[bytes, str, str]:
+        async with self._grading_reads:
+            return await self._read_grading_bytes(principal, path)
+
+    async def _read_grading_bytes(self, principal: AccessToken, path: str) -> tuple[bytes, str, str]:
+        response = await self._grading_stream(principal, path)
+        try:
+            data = bytearray()
+            async with asyncio.timeout(self.settings.http_read_timeout + 5):
+                async for chunk in response.aiter_bytes():
+                    data.extend(chunk)
+                    if len(data) > 10 * 1024 * 1024:
+                        raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+            sha = hashlib.sha256(data).hexdigest()
+            if (
+                len(data) != int(response.headers["content-length"])
+                or sha != response.headers["x-content-sha256"]
+            ):
+                raise SakaiError(ErrorCode.CONFLICT)
+            return (
+                bytes(data),
+                response.headers.get("content-type", "application/octet-stream"),
+                sha,
+            )
+        except (httpx.HTTPError, TimeoutError):
+            raise SakaiError(ErrorCode.DEPENDENCY_UNAVAILABLE) from None
+        finally:
+            await response.aclose()
+
+    def grading_root(self, course: str, assignment: str) -> str:
+        if not self.settings.assignment_grading_enabled:
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+        return (
+            f"/api/mcp/v1/courses/{_segment(course)}/assignments/{_segment(assignment)}"
+        )
+
+    async def read_grading_file(
+        self,
+        principal: AccessToken,
+        course: str,
+        assignment: str,
+        submission: str | None,
+        file: str,
+        revision: str,
+    ) -> tuple[bytes, str, str]:
+        root = self.grading_root(course, assignment)
+        suffix = (
+            f"/grading-submissions/{_segment(submission)}/files/{_segment(file)}"
+            if submission
+            else f"/grading-files/{_segment(file)}"
+        )
+        return await self._grading_bytes(
+            principal, root + suffix + "?" + urlencode({"revision": revision})
+        )
+
+    async def read_grading_artifact(
+        self,
+        principal: AccessToken,
+        course: str,
+        assignment: str,
+        export: str,
+        artifact: str,
+    ) -> tuple[bytes, str, str]:
+        path = (
+            self.grading_root(course, assignment)
+            + f"/grading-exports/{_segment(export)}/artifacts/{_segment(artifact)}"
+        )
+        return await self._grading_bytes(principal, path)
+
+    async def grading_assignments(
+        self, principal: AccessToken, course: str, cursor: str | None, limit: int
+    ):
+        from sakai_mcp.grading_resource_models import AssignmentListResult
+
+        if not self.settings.assignment_grading_enabled:
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+        path = (
+            f"/api/mcp/v1/courses/{_segment(course)}/grading-assignments?"
+            + urlencode(
+                {
+                    k: v
+                    for k, v in {"cursor": cursor, "limit": limit}.items()
+                    if v is not None
+                }
+            )
+        )
+        value = await self._request("GET", path, principal, unsupported=True)
+        try:
+            return AssignmentListResult.model_validate(value)
+        except ValidationError:
+            raise SakaiError(ErrorCode.INTERNAL_ERROR) from None
+
+    async def grading_proposal(
+        self,
+        principal: AccessToken,
+        course: str,
+        assignment: str,
+        proposal: str,
+        payload: dict[str, Any] | None = None,
+        export: str | None = None,
+    ):
+        from sakai_mcp.grading_resource_models import ProposalRecord
+
+        path = self.grading_root(course, assignment) + "/grading-proposals"
+        if payload is None:
+            value = await self._request(
+                "GET", path + "/" + _segment(proposal), principal, unsupported=True
+            )
+        else:
+            body = {"proposal_id": proposal, "export_id": export, "payload": payload}
+            if len(json.dumps(body, ensure_ascii=False).encode()) > 900_000:
+                raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+            value = await self._request("POST", path, principal, body, unsupported=True)
+        try:
+            result = ProposalRecord.model_validate(value)
+            if result.proposal_id != proposal or (
+                export is not None and result.export_id != export
+            ):
+                raise ValueError("Wrong receipt")
+            return result
+        except (ValidationError, ValueError):
+            raise SakaiError(
+                ErrorCode.INTERNAL_ERROR
+                if payload is None
+                else ErrorCode.AMBIGUOUS_WRITE_OUTCOME
+            ) from None
 
     def _require_assignment_setup(self) -> None:
         if not self.settings.assignment_setup_enabled:

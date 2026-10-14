@@ -272,6 +272,109 @@ public class McpAssignmentGradingService {
         return obj("submission",entry(a,submitters(s).size()==1?submitters(s).get(0):null,s,false),"inline_text",s.getSubmittedText(),"inline_content_type",s.getSubmittedText()==null?null:"text/html",
             "feedback_comment",s.getFeedbackComment(),"feedback_sha256",s.getFeedbackComment()==null?null:digest(s.getFeedbackComment()),"observed_at",stamp(Instant.now()),"warnings",List.of());
     }
+    public Map<String,Object> listAssignments(String site,String cursor,Integer limit) {
+        if (!config.getBoolean("mcp.assignment.grading.enabled",false)) throw failure(HttpStatus.NOT_FOUND);
+        actor();
+        try { if (!"course".equals(sites.getSiteVisit(site).getType())) throw failure(HttpStatus.NOT_FOUND); }
+        catch (PermissionException e) { throw failure(HttpStatus.FORBIDDEN); }
+        catch (IdUnusedException e) { throw failure(HttpStatus.NOT_FOUND); }
+        var available=assignments.getAssignmentsForContext(site);
+        if (available.size()>5000) throw failure(HttpStatus.BAD_REQUEST);
+        List<Map<String,Object>> items=available.stream()
+            .filter(a -> site.equals(a.getContext()) && !Boolean.TRUE.equals(a.getDraft()) && !Boolean.TRUE.equals(a.getDeleted())
+                && assignments.allowGradeSubmission(assignmentRef(a)))
+            .sorted(Comparator.comparing(Assignment::getId))
+            .map(a -> {
+                // Hydrate grading evidence before hashing lazy groups/attachments/properties.
+                Assignment hydrated=assignment(site,a.getId());
+                return obj("assignment_id",hydrated.getId(),"title",hydrated.getTitle(),"configuration_revision",metadata.revision(hydrated));
+            })
+            .toList();
+        String revision=hash(obj("actor",actor(),"site",site,"items",items));
+        int size=limit==null?50:limit, offset=0;
+        if(size<1||size>100) throw failure(HttpStatus.BAD_REQUEST);
+        if(cursor!=null) {
+            String[] parts=cursor.split(":");
+            if(parts.length!=2||!revision.equals(parts[0])) throw failure(HttpStatus.CONFLICT);
+            try { offset=Integer.parseInt(parts[1]); } catch(NumberFormatException e) { throw failure(HttpStatus.BAD_REQUEST); }
+        }
+        if(offset<0||offset>items.size()) throw failure(HttpStatus.BAD_REQUEST);
+        int end=Math.min(items.size(),offset+size);
+        return obj("items",items.subList(offset,end),"next_cursor",end<items.size()?revision+":"+end:null,"snapshot_revision",revision);
+    }
+    public record FileContents(byte[] bytes,String contentType,String sha256) {}
+    FileContents readAttachment(Collection<String> references,String key) {
+        if(!key.matches("[a-f0-9]{64}")) throw failure(HttpStatus.BAD_REQUEST);
+        String reference=references.stream().filter(r -> digest(r).equals(key)).findFirst().orElseThrow(() -> failure(HttpStatus.NOT_FOUND));
+        try {
+            ContentResource r=resource(reference);
+            if(ResourceProperties.TYPE_URL.equals(r.getContentType()) || "true".equals(r.getProperties().getProperty(AssignmentConstants.PROP_INLINE_SUBMISSION)))
+                throw failure(HttpStatus.NOT_IMPLEMENTED);
+            String before=r.getContentSha256();
+            if(before==null||!before.matches("[a-fA-F0-9]{64}")||r.getContentLength()>FILE_LIMIT) throw failure(HttpStatus.NOT_IMPLEMENTED);
+            byte[] bytes;
+            try(InputStream input=r.streamContent()) { bytes=input.readNBytes((int)FILE_LIMIT+1); }
+            String sha=HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes));
+            if(bytes.length>FILE_LIMIT || bytes.length!=r.getContentLength() || !sha.equalsIgnoreCase(before)
+                    || !before.equalsIgnoreCase(resource(reference).getContentSha256())) throw failure(HttpStatus.CONFLICT);
+            return new FileContents(bytes,r.getContentType()==null?"application/octet-stream":r.getContentType(),sha);
+        } catch(PermissionException e) { throw failure(HttpStatus.FORBIDDEN); }
+        catch(IdUnusedException e) { throw failure(HttpStatus.NOT_FOUND); }
+        catch(IOException|TypeException|ServerOverloadException|java.security.NoSuchAlgorithmException e) { throw failure(HttpStatus.SERVICE_UNAVAILABLE); }
+    }
+    public FileContents submissionFile(String site,String id,String sid,String file,String revision) {
+        Assignment a=assignment(site,id); identityRead(a); AssignmentSubmission s=submission(a,sid);
+        if(revision==null||!revision.equals(contentRevision(s))) throw failure(HttpStatus.CONFLICT);
+        FileContents result;
+        if("inline".equals(file)) {
+            if(s.getSubmittedText()==null) throw failure(HttpStatus.NOT_FOUND);
+            byte[] bytes=s.getSubmittedText().getBytes(StandardCharsets.UTF_8);
+            if(bytes.length>65535) throw failure(HttpStatus.NOT_IMPLEMENTED);
+            result=new FileContents(bytes,"text/html",digest(s.getSubmittedText()));
+        } else result=readAttachment(s.getAttachments(),file);
+        if(!revision.equals(contentRevision(submission(a,sid)))) throw failure(HttpStatus.CONFLICT);
+        return result;
+    }
+    public FileContents assignmentFile(String site,String id,String file,String revision) {
+        Assignment a=assignment(site,id); identityRead(a);
+        // Assignment attachment bytes have their own revision, independently of configuration.
+        var descriptor=assignmentAttachments(a).stream().filter(r -> file.equals(r.get("artifact_key"))).findFirst().orElseThrow(() -> failure(HttpStatus.NOT_FOUND));
+        if(revision==null||!revision.equalsIgnoreCase(Objects.toString(descriptor.get("resource_revision"),""))) throw failure(HttpStatus.CONFLICT);
+        FileContents result=readAttachment(a.getAttachments(),file);
+        if(!revision.equalsIgnoreCase(result.sha256()) || assignment(site,id).getAttachments().stream().noneMatch(r -> digest(r).equals(file))) throw failure(HttpStatus.CONFLICT);
+        return result;
+    }
+    public Map<String,Object> createProposal(String site,String id,Map<String,Object> request) {
+        fields(request,"proposal_id","export_id","payload");
+        Assignment a=assignment(site,id); identityRead(a);
+        String pid=McpGradingStore.uuid(string(request,"proposal_id")), eid=McpGradingStore.uuid(string(request,"export_id"));
+        var export=exportStatus(site,id,eid,null,1);
+        if(!(request.get("payload") instanceof Map<?,?> payload) || payload.isEmpty()) throw failure(HttpStatus.BAD_REQUEST);
+        String requestHash=hash(request), key=store.key(actor(),site,id,pid,"proposal");
+        return store.locked(key,directory -> {
+            try {
+                var old=store.read(directory);
+                if(old!=null) {
+                    store.requireUnexpired(directory,old);
+                    if(!requestHash.equals(old.get("request_sha256"))) throw failure(HttpStatus.CONFLICT);
+                    return old;
+                }
+                var record=obj("proposal_id",pid,"export_id",eid,"request_sha256",requestHash,"expires_at",export.get("expires_at"),"payload",payload);
+                store.write(directory,record); return record;
+            } catch(IOException e) { throw failure(HttpStatus.SERVICE_UNAVAILABLE); }
+        });
+    }
+    public Map<String,Object> proposal(String site,String id,String pid) {
+        Assignment a=assignment(site,id); identityRead(a);
+        var record=store.locked(store.key(actor(),site,id,pid,"proposal"),directory -> {
+            try {
+                var found=store.read(directory); if(found==null) throw failure(HttpStatus.NOT_FOUND);
+                store.requireUnexpired(directory,found); return found;
+            } catch(IOException e) { throw failure(HttpStatus.SERVICE_UNAVAILABLE); }
+        });
+        exportStatus(site,id,string(record,"export_id"),null,1); // Reauthorize every source submission and export lifetime.
+        return record;
+    }
     static String string(Map<String,Object> value,String key) {
         Object v=value.get(key); if(!(v instanceof String s)||s.isBlank()||s.length()>2048) throw failure(HttpStatus.BAD_REQUEST); return s;
     }

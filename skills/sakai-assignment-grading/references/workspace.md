@@ -1,25 +1,15 @@
-# Workspace and deterministic MCQ use
+# Server grading, resources and reports
 
-Use an owner-only directory outside Git, one directory per grading run. Preserve `grading-plan.md`, private `grading-config.json`, assignment/key/rubric sources, immutable raw files, manifest, normalized working copies, scripts/version hashes, results, TA decisions and write receipts. A checksum failure stops affected processing; use a new run for changed evidence/configuration.
+All Sakai-facing functionality uses the host's existing authenticated MCP connection. No separate login, importer, Python command, token cache access or physical local workspace is required.
 
-From an installed project MCP package, the trusted importer is:
+Read list_assignments and grading context, resolve authoritative IDs, and freeze the academic plan before bulk retrieval. Listing/detail tools return metadata and ResourceLinks for attachments and native inline HTML. Read links using resources/read. A tools-only host may invoke read_assignment_grading_resource, which returns SDK EmbeddedResource through the same connection. Resources are server identities; receiving a resource does not imply it is saved to a host filesystem.
 
-```sh
-python -m sakai_mcp.grading_workspace import-export PRIVATE_RUN PRIVATE_LOGIN_CONFIG COURSE_ID ASSIGNMENT_ID EXPORT_ID
-```
+Capture explicit submission IDs/content revisions using export_assignment_submissions and inspect get_assignment_submission_export. Captured file resources preserve byte hashes, sizes, submission/user mappings and expiry. Incomplete capture is review-required. Files are individually linked; archives are not extracted and URL attachment targets are not fetched.
 
-The login config contains nonsecret `tenant_id`, registered institutional public `client_id` and `mcp_origin=https://mcp.smartdigest.app`. The CLI opens the institution's interactive OAuth login and keeps tokens in memory. No bearer token argument, environment variable or console output is used. Register the public client's loopback callback/grants through the institution's existing authorized identity process; this Skill cannot supply a missing grant.
+Call prepare_assignment_mcq_grades(course_id, assignment_id, export_id, proposal_id, config). Config must follow the published strict schema: assignment_revision; one UTF-8 TXT file; answer_count/alphabet/filename rule; expected_filenames keyed by authoritative Sakai user ID; explicit identity.filename_mismatch; normalization booleans; deterministic_mcq key/per_correct/per_incorrect/max_points/negative_marking; policies.late_penalty=null. Unsupported policies require another reviewed server implementation. Never infer institutional roll numbers from Sakai EIDs. Changing rules/evidence requires a new proposal ID. Reconcile an uncertain prepare result through get_assignment_grading_proposal before new work.
 
-The importer also saves authoritative `context.json` and complete scoped `roster.json`; changed academic evidence requires a new run. The manifest preserves original name/MIME/size/hash and Sakai submitter mappings. Artifact paths are generated IDs, not original filenames; no archive extraction or untrusted code runs. The importer verifies every selected artifact, supports per-file retry and never overwrites differing raw bytes. Keep missing/unselected roster rows in the review queue.
+Review get_assignment_grading_proposal pages and the proposals JSON, marks CSV and review-required CSV resources. Missing, unselected, malformed, changed and unresolved rows have null scores. The fixed evaluator records per-line evidence and config/manifest/evaluator hashes. No official grades are written by preparation. No student code executes.
 
-For the strict MCQ path:
+Call prepare_assignment_grade_payload for an exact save or release subset. It computes the canonical payload hash and performs native validation, returning commit_arguments. Present those exact rows, scores, feedback and revisions for TA approval before the separate save or release tool. Release-and-return requires its own approval. Changed payloads invalidate approval; uncertain official outcomes require get_assignment_grading_operation plus authoritative readback, never blind retries.
 
-```sh
-python -m sakai_mcp.grading_workspace mcq PRIVATE_RUN PRIVATE_CONFIG
-```
-
-Configuration follows the design's JSON example: course/assignment identity; `submission_contract` with one file, UTF-8, answer count/alphabet and filename rule; normalization case/whitespace rules; `grading.method=deterministic_mcq`, complete key, per-correct/per-incorrect/max, no negative marking; explicit policies. Provide authoritative `expected_filenames` keyed by Sakai user ID when a filename convention must be checked; never assume Sakai EID equals institutional roll number. `identity.filename_mismatch=recoverable` must be an explicit plan decision. No policy/key is invented by the utility.
-
-Outputs are canonical typed `results/proposals.json`, review `marks.csv` and `review-required.csv`. No grades are written. The utility records config/manifest/script hashes and line-level comparison evidence. Wrong count/format/alphabet, BOM, unreadable text, conflicting files and incomplete capture are review-required with null score. Late penalties outside the supported explicit procedure require another reviewed deterministic implementation. Semantic criteria are handled separately with fixed rubric versions and human review.
-
-For write payload hashing use `sakai_mcp.grading_workspace.payload_hash(kind, course, assignment, configuration_revision, grades)`. Hash covers canonical UTF-8 JSON, sorted keys and submission/user rows, exact decimal strings, revisions and feedback patches; excludes mode, operation ID and the hash itself. Use a new UUID for each newly approved payload; reuse the known ID only to reconcile its same payload. Refresh grade revisions after save before planning return.
+Resources and proposals expire with the source export (24 hours). Retain decisions/receipts in the host's authorized workflow; do not assume indefinite server evidence retention or a universal host filesystem capability. Respect institutional AI-use and privacy policy when a host puts resources into model context.

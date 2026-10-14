@@ -22,6 +22,7 @@ from sakai_mcp.assessment_models import (
 )
 from sakai_mcp.audit import audit_call, record_created, record_outcome
 from sakai_mcp.config import Settings
+from sakai_mcp.resource_server import SakaiResourceServer
 from sakai_mcp.sakai_client import ErrorCode, SakaiClient, SakaiError
 
 READ_HINTS = ToolAnnotations(
@@ -93,9 +94,9 @@ def _submission(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def create_server(settings: Settings, client: SakaiClient, verifier: TokenVerifier) -> MCPServer:
-    server = MCPServer(
+    server = SakaiResourceServer(
         name="Sakai MCP",
-        version="0.1.0",
+        version="0.2.0",
         token_verifier=verifier,
         auth=AuthSettings(
             issuer_url=AnyHttpUrl(str(settings.mcp_issuer)),
@@ -104,6 +105,9 @@ def create_server(settings: Settings, client: SakaiClient, verifier: TokenVerifi
             validate_token_resource=False,  # The v2 GUID aud and HTTPS resource URI are verified separately.
         ),
     )
+
+    server.grading_client = client
+    server.grading_enabled = settings.assignment_grading_enabled
 
     @server.tool(description="List courses the signed-in Sakai user can visit.", annotations=READ_HINTS)
     async def list_my_courses() -> dict[str, Any]:

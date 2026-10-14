@@ -149,6 +149,52 @@ public class McpAssignmentGradingServiceTest {
         assertFalse((Boolean)((Map<?,?>)context.get("supported")).get("save"));
     }
 
+    @Test public void resourceReadsPreserveBytesAndRejectStaleRevisionAndForeignFile() throws Exception {
+        byte[] bytes="A\r\nC\r\n".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        String sha=HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes));
+        s.setAttachments(Set.of("reference")); when(assignments.removeReferencePrefix("reference")).thenReturn("resource");
+        ContentResource r=mock(ContentResource.class);ResourceProperties properties=mock(ResourceProperties.class);
+        when(content.getResource("resource")).thenReturn(r);when(r.getProperties()).thenReturn(properties);
+        when(r.getContentType()).thenReturn("text/plain");when(r.getContentSha256()).thenReturn(sha);when(r.getContentLength()).thenReturn((long)bytes.length);
+        when(r.streamContent()).thenAnswer(i -> new ByteArrayInputStream(bytes));
+        String revision=service.contentRevision(s);
+        var result=service.submissionFile("course-a","assignment-a","submission-a",digest("reference"),revision);
+        assertArrayEquals(bytes,result.bytes());assertEquals("text/plain",result.contentType());assertEquals(sha,result.sha256());
+        assertEquals(HttpStatus.CONFLICT,assertThrows(ResponseStatusException.class,() -> service.submissionFile("course-a","assignment-a","submission-a",digest("reference"),"stale")).getStatus());
+        assertEquals(HttpStatus.NOT_FOUND,assertThrows(ResponseStatusException.class,() -> service.submissionFile("course-a","assignment-a","submission-a",digest("other"),revision)).getStatus());
+        when(assignments.allowGradeSubmission(anyString())).thenReturn(false);
+        assertEquals(HttpStatus.FORBIDDEN,assertThrows(ResponseStatusException.class,() -> service.submissionFile("course-a","assignment-a","submission-a",digest("reference"),revision)).getStatus());
+    }
+    @Test public void assignmentResourcesUseContentRevisionAndNeverFetchUrl() throws Exception {
+        a.setAttachments(Set.of("reference"));when(assignments.removeReferencePrefix("reference")).thenReturn("resource");
+        ContentResource r=mock(ContentResource.class);ResourceProperties properties=mock(ResourceProperties.class);
+        when(content.getResource("resource")).thenReturn(r);when(r.getProperties()).thenReturn(properties);
+        when(r.getContentType()).thenReturn(ResourceProperties.TYPE_URL);when(r.getContentSha256()).thenReturn("a".repeat(64));
+        assertEquals(HttpStatus.NOT_IMPLEMENTED,assertThrows(ResponseStatusException.class,() -> service.assignmentFile("course-a","assignment-a",digest("reference"),"a".repeat(64))).getStatus());
+        verify(r,never()).streamContent();
+    }
+    @Test public void proposalsAreDurablePrincipalBoundAndNeverWriteGrades() throws Exception {
+        s.setSubmittedText("A\nC\nB\nD\nA\n");
+        String eid=(String)service.export("course-a","assignment-a",obj("export_request_id",UUID.randomUUID().toString(),"expected_assignment_revision","config", "submissions",List.of(obj("submission_id",s.getId(),"expected_content_revision",service.contentRevision(s))))).get("export_id");
+        String pid=UUID.randomUUID().toString(); var request=obj("proposal_id",pid,"export_id",eid,"payload",obj("rows",List.of(obj("score","5"))));
+        var first=service.createProposal("course-a","assignment-a",request);
+        assertEquals(first,service.proposal("course-a","assignment-a",pid));assertEquals(first,service.createProposal("course-a","assignment-a",request));
+        request.put("payload",obj("rows",List.of(obj("score","4"))));
+        assertEquals(HttpStatus.CONFLICT,assertThrows(ResponseStatusException.class,() -> service.createProposal("course-a","assignment-a",request)).getStatus());
+        when(session.getUserId()).thenReturn("other");assertEquals(HttpStatus.NOT_FOUND,assertThrows(ResponseStatusException.class,() -> service.proposal("course-a","assignment-a",pid)).getStatus());
+        verify(assignments,never()).updateSubmission(any());verify(grading,never()).updateExternalAssessmentScore(anyString(),anyString(),anyString(),anyString(),anyString());
+    }
+    @Test public void gradingAssignmentDiscoveryDoesNotRequireSetupPermissions() throws Exception {
+        when(assignments.getAssignmentsForContext("course-a")).thenReturn(List.of(a));
+        var result=service.listAssignments("course-a",null,50);
+        assertEquals(1,((List<?>)result.get("items")).size());
+        verify(assignments).getAssignmentWithGradingEvidence("assignment-a");
+        when(assignments.allowGradeSubmission(anyString())).thenReturn(false);
+        assertEquals(0,((List<?>)service.listAssignments("course-a",null,50).get("items")).size());
+        when(config.getBoolean("mcp.assignment.grading.enabled",false)).thenReturn(false);
+        assertEquals(HttpStatus.NOT_FOUND,assertThrows(ResponseStatusException.class,() -> service.listAssignments("course-a",null,50)).getStatus());
+    }
+
     org.sakaiproject.grading.api.Assignment external() {
         var item=new org.sakaiproject.grading.api.Assignment();item.setId(7L);item.setPoints(5.0);item.setExternallyMaintained(true);item.setExternalId(assignmentRef(a));item.setReleased(false);item.setCounted(true);
         when(grading.isGradebookInitialized("course-a")).thenReturn(true);when(grading.getAssignments(anyString(),anyString(),any())).thenReturn(List.of(item));
