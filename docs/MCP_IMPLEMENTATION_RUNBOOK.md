@@ -1,5 +1,9 @@
 # Sakai MCP — End-to-End Implementation Cookbook / Codex Runbook
 
+**Architecture correction — 17 October 2026:** the user requires MCP to use existing Sakai APIs, with a Sakai extension permitted only for delegated authentication/session integration. Earlier instructions in this runbook to create `/api/mcp/v1/*` business controllers or modify native business services/schema are superseded. They remain here as implementation history, not authorization or the target design. Follow [the root integration boundary](../AGENTS.md#mcp-integration-boundary) and [the corrected architecture direction](mcp/architecture.md). Research and report existing-API limitations rather than adding native functionality. No runtime migration or rollback is performed by this correction.
+
+**Local source update — 15 October 2026:** the [restructuring evidence](evidence/mcp/restructuring-local.md) and [service map](../services/mcp/README.md) describe the new internal layout. This preserves catalogs and wire contracts and does not change any runtime/client acceptance gate.
+
 **Status:** repository-aligned implementation runbook
 **Revision purpose:** align the MCP implementation plan with the current `sakai-mcp` monorepo, existing Sakai/Azure deployment capabilities, and the fixed V1 tool/security scope
 **Sakai baseline:** Sakai 25.2 source tracked directly at `apps/sakai/`, imported from upstream commit `b5b7800f0fcddf9d0db47276a66065189365d905`

@@ -5,44 +5,12 @@ import pytest
 from mcp.server.auth.provider import AccessToken
 from mcp.server.mcpserver.exceptions import ToolError
 
-import sakai_mcp.server as server_module
-from sakai_mcp.asgi import canonicalize_resource_metadata
-from sakai_mcp.auth import EntraTokenVerifier
-from sakai_mcp.sakai_client import ErrorCode, SakaiError
-from sakai_mcp.server import create_server
-from tests.helpers import settings
-
-
-class FakeClient:
-    writes = 0
-    deny_privileged = False
-
-    async def list_my_courses(self, _):
-        return [{"id": "course-a", "title": "Field Methods"}]
-
-    async def get_my_grades(self, _, course_id):
-        assert course_id == "course-a"
-        return [{"itemId": 10, "title": "Lab 1", "score": "18", "pointsPossible": 20.0}]
-
-    async def get_course_announcements(self, _, course_id):
-        assert course_id == "course-a"
-        return [
-            {"id": "one", "title": "Orientation", "body": "Welcome", "postedAt": 1_780_000_000_000},
-            {"id": "two", "title": "Week 2", "body": "Read chapter 2", "postedAt": 1_780_000_100_000},
-        ]
-
-    async def get_course_submissions(self, _, course_id, assignment_id):
-        if self.deny_privileged:
-            raise SakaiError(ErrorCode.FORBIDDEN)
-        assert course_id == "course-a" and assignment_id == "assignment-a"
-        return [{"id": "submission-a", "submitterIds": ["student-a"], "submittedAt": 1_780_000_000.5}]
-
-    async def create_course_announcement(self, _, course_id, title, body):
-        if self.deny_privileged:
-            raise SakaiError(ErrorCode.FORBIDDEN)
-        self.writes += 1
-        assert course_id == "course-a" and title == "Lab update" and body == "Bring notebooks."
-        return {"id": "new", "courseId": course_id, "title": title, "postedAt": 1_780_000_000_000}
+import sakai_mcp.mcp.context as server_module
+from sakai_mcp.mcp.http import canonicalize_resource_metadata
+from sakai_mcp.mcp.server import create_server
+from sakai_mcp.security.auth import EntraTokenVerifier
+from tests.fixtures.authentication import settings
+from tests.fixtures.sakai import FakeClient
 
 
 def make_server(client):
@@ -77,16 +45,33 @@ def test_read_tools_and_pagination(monkeypatch):
     authorized(monkeypatch)
     server = make_server(FakeClient())
     courses = asyncio.run(server.call_tool("list_my_courses", {}))
-    assert courses.structured_content == {"courses": [{"id": "course-a", "title": "Field Methods"}]}
+    assert courses.structured_content == {
+        "courses": [{"id": "course-a", "title": "Field Methods"}]
+    }
     grades = asyncio.run(server.call_tool("get_my_grades", {"course_id": "course-a"}))
     assert grades.structured_content["grades"][0]["score"] == "18"
-    first = asyncio.run(server.call_tool("get_course_announcements", {"course_id": "course-a", "limit": 1}))
+    first = asyncio.run(
+        server.call_tool(
+            "get_course_announcements", {"course_id": "course-a", "limit": 1}
+        )
+    )
     assert first.structured_content["next_cursor"] == "1"
     assert first.structured_content["items"][0]["posted_at"].endswith("Z")
-    second = asyncio.run(server.call_tool("get_course_announcements", {"course_id": "course-a", "cursor": "1"}))
+    second = asyncio.run(
+        server.call_tool(
+            "get_course_announcements", {"course_id": "course-a", "cursor": "1"}
+        )
+    )
     assert second.structured_content["next_cursor"] is None
-    submissions = asyncio.run(server.call_tool("get_course_submissions", {"course_id": "course-a", "assignment_id": "assignment-a"}))
-    assert submissions.structured_content["items"][0]["submitted_at"].endswith(".500000Z")
+    submissions = asyncio.run(
+        server.call_tool(
+            "get_course_submissions",
+            {"course_id": "course-a", "assignment_id": "assignment-a"},
+        )
+    )
+    assert submissions.structured_content["items"][0]["submitted_at"].endswith(
+        ".500000Z"
+    )
 
 
 def test_missing_principal_and_manual_student_privileged_calls_fail(monkeypatch):
@@ -99,9 +84,23 @@ def test_missing_principal_and_manual_student_privileged_calls_fail(monkeypatch)
     client.deny_privileged = True
     server = make_server(client)
     with pytest.raises(ToolError, match="FORBIDDEN"):
-        asyncio.run(server.call_tool("get_course_submissions", {"course_id": "course-a", "assignment_id": "assignment-a"}))
+        asyncio.run(
+            server.call_tool(
+                "get_course_submissions",
+                {"course_id": "course-a", "assignment_id": "assignment-a"},
+            )
+        )
     with pytest.raises(ToolError, match="FORBIDDEN"):
-        asyncio.run(server.call_tool("create_course_announcement", {"course_id": "course-a", "title": "Lab update", "body": "Bring notebooks."}))
+        asyncio.run(
+            server.call_tool(
+                "create_course_announcement",
+                {
+                    "course_id": "course-a",
+                    "title": "Lab update",
+                    "body": "Bring notebooks.",
+                },
+            )
+        )
     assert client.writes == 0
 
 
@@ -109,33 +108,51 @@ def test_invalid_pagination_is_rejected(monkeypatch):
     authorized(monkeypatch)
     server = make_server(FakeClient())
     with pytest.raises(ToolError, match="VALIDATION_ERROR"):
-        asyncio.run(server.call_tool("get_course_announcements", {"course_id": "course-a", "cursor": "-1"}))
+        asyncio.run(
+            server.call_tool(
+                "get_course_announcements", {"course_id": "course-a", "cursor": "-1"}
+            )
+        )
 
 
 def test_streamable_http_rejects_missing_bearer():
     server = make_server(FakeClient())
-    app = server.streamable_http_app(stateless_http=True, json_response=True, host="mcp.example.test")
+    app = server.streamable_http_app(
+        stateless_http=True, json_response=True, host="mcp.example.test"
+    )
 
     async def run():
-        async with httpx.AsyncClient(transport=httpx.ASGITransport(app), base_url="https://mcp.example.test") as client:
-            return await client.post("/mcp", json={"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}})
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app), base_url="https://mcp.example.test"
+        ) as client:
+            return await client.post(
+                "/mcp",
+                json={"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}},
+            )
 
     response = asyncio.run(run())
     assert response.status_code == 401
     assert "Bearer" in response.headers["www-authenticate"]
-    assert "https://mcp.example.test/.well-known/oauth-protected-resource/mcp" in response.headers[
-        "www-authenticate"
-    ]
+    assert (
+        "https://mcp.example.test/.well-known/oauth-protected-resource/mcp"
+        in response.headers["www-authenticate"]
+    )
 
 
 def test_protected_resource_metadata_uses_exact_canonical_uri():
     config = settings()
-    server = create_server(config, FakeClient(), EntraTokenVerifier(config, lambda _: None))
-    app = server.streamable_http_app(stateless_http=True, json_response=True, host="mcp.example.test")
+    server = create_server(
+        config, FakeClient(), EntraTokenVerifier(config, lambda _: None)
+    )
+    app = server.streamable_http_app(
+        stateless_http=True, json_response=True, host="mcp.example.test"
+    )
     canonicalize_resource_metadata(app, config)
 
     async def run():
-        async with httpx.AsyncClient(transport=httpx.ASGITransport(app), base_url="https://mcp.example.test") as client:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app), base_url="https://mcp.example.test"
+        ) as client:
             return await client.get("/.well-known/oauth-protected-resource/mcp")
 
     response = asyncio.run(run())
@@ -161,55 +178,80 @@ def test_streamable_http_accepts_valid_bearer_and_lists_five_tools():
             )
 
     server = create_server(settings(), FakeClient(), FakeVerifier())
-    app = server.streamable_http_app(stateless_http=True, json_response=True, host="mcp.example.test")
+    app = server.streamable_http_app(
+        stateless_http=True, json_response=True, host="mcp.example.test"
+    )
 
     async def run():
         async with (
             app.router.lifespan_context(app),
-            httpx.AsyncClient(transport=httpx.ASGITransport(app), base_url="https://mcp.example.test") as client,
+            httpx.AsyncClient(
+                transport=httpx.ASGITransport(app), base_url="https://mcp.example.test"
+            ) as client,
         ):
-                headers = {
-                    "Authorization": "Bearer valid",
-                    "Accept": "application/json, text/event-stream",
-                    "MCP-Protocol-Version": "2025-06-18",
-                }
-                initialize = await client.post(
-                    "/mcp",
-                    headers=headers,
-                    json={"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
-                        "protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "test", "version": "1"}
-                    }},
-                )
-                listed = await client.post(
-                    "/mcp", headers=headers,
-                    json={"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}},
-                )
-                called = await client.post(
-                    "/mcp", headers=headers,
-                    json={"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {
-                        "name": "list_my_courses", "arguments": {}
-                    }},
-                )
-                return initialize, listed, called
+            headers = {
+                "Authorization": "Bearer valid",
+                "Accept": "application/json, text/event-stream",
+                "MCP-Protocol-Version": "2025-06-18",
+            }
+            initialize = await client.post(
+                "/mcp",
+                headers=headers,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "initialize",
+                    "params": {
+                        "protocolVersion": "2025-06-18",
+                        "capabilities": {},
+                        "clientInfo": {"name": "test", "version": "1"},
+                    },
+                },
+            )
+            listed = await client.post(
+                "/mcp",
+                headers=headers,
+                json={"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}},
+            )
+            called = await client.post(
+                "/mcp",
+                headers=headers,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": 3,
+                    "method": "tools/call",
+                    "params": {"name": "list_my_courses", "arguments": {}},
+                },
+            )
+            return initialize, listed, called
 
     initialize, listed, called = asyncio.run(run())
     assert initialize.status_code == 200
     assert listed.status_code == 200
     assert len(listed.json()["result"]["tools"]) == 5
     assert called.status_code == 200
-    assert called.json()["result"]["structuredContent"]["courses"][0]["id"] == "course-a"
+    assert (
+        called.json()["result"]["structuredContent"]["courses"][0]["id"] == "course-a"
+    )
 
 
 def test_opt_in_catalog_publishes_bounded_assignment_contracts_and_write_hints():
     config = settings(assignment_setup_enabled=True)
-    server = create_server(config, FakeClient(), EntraTokenVerifier(config, lambda _: None))
+    server = create_server(
+        config, FakeClient(), EntraTokenVerifier(config, lambda _: None)
+    )
     tools = {tool.name: tool for tool in asyncio.run(server.list_tools())}
     assert len(tools) == 8
     create = tools["create_assignment"]
     assert create.input_schema["properties"]["title"]["maxLength"] == 200
-    assert create.input_schema["properties"]["attachment_resource_refs"]["maxItems"] == 20
+    assert (
+        create.input_schema["properties"]["attachment_resource_refs"]["maxItems"] == 20
+    )
     assert create.output_schema is not None
-    assert create.annotations.read_only_hint is False and create.annotations.idempotent_hint is False
+    assert (
+        create.annotations.read_only_hint is False
+        and create.annotations.idempotent_hint is False
+    )
     publish = tools["publish_assignment"]
     assert "expected_assignment_revision" in publish.input_schema["required"]
     assert publish.annotations.idempotent_hint is False
@@ -217,9 +259,11 @@ def test_opt_in_catalog_publishes_bounded_assignment_contracts_and_write_hints()
     assert context.annotations.read_only_hint is True
 
 
-def test_opt_in_partial_setup_is_structured_and_audited_without_creating_announcement(monkeypatch, caplog):
-    from sakai_mcp.assessment_models import SetupResult
-    from tests.unit.test_assignment_setup import partial, request
+def test_opt_in_partial_setup_is_structured_and_audited_without_creating_announcement(
+    monkeypatch, caplog
+):
+    from sakai_mcp.contracts.assignment_setup import SetupResult
+    from tests.fixtures.assignment_setup import partial, request
 
     class SetupClient(FakeClient):
         async def create_assignment(self, _, config):
@@ -230,7 +274,9 @@ def test_opt_in_partial_setup_is_structured_and_audited_without_creating_announc
     client = SetupClient()
     server = create_server(config, client, EntraTokenVerifier(config, lambda _: None))
     with caplog.at_level("INFO", logger="sakai_mcp.audit"):
-        result = asyncio.run(server.call_tool("create_assignment", request().model_dump()))
+        result = asyncio.run(
+            server.call_tool("create_assignment", request().model_dump())
+        )
     assert result.structured_content["outcome"] == "partial"
     assert result.structured_content["assignment_id"] == "assignment-a"
     assert client.writes == 0

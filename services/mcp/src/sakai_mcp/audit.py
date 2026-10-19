@@ -18,11 +18,21 @@ _request_id: ContextVar[str | None] = ContextVar("sakai_mcp_request_id", default
 _created_ref: ContextVar[str | None] = ContextVar("sakai_mcp_created_ref", default=None)
 _result_outcome: ContextVar[str] = ContextVar("sakai_mcp_result_outcome", default="OK")
 _audit = logging.getLogger("sakai_mcp.audit")
-_OUTCOMES = frozenset({
-    "UNAUTHENTICATED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONFLICT",
-    "RATE_LIMITED", "DEPENDENCY_UNAVAILABLE", "AMBIGUOUS_WRITE_OUTCOME", "INTERNAL_ERROR",
-    "PARTIAL_SUCCESS", "UNSUPPORTED_CAPABILITY",
-})
+_OUTCOMES = frozenset(
+    {
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_ERROR",
+        "CONFLICT",
+        "RATE_LIMITED",
+        "DEPENDENCY_UNAVAILABLE",
+        "AMBIGUOUS_WRITE_OUTCOME",
+        "INTERNAL_ERROR",
+        "PARTIAL_SUCCESS",
+        "UNSUPPORTED_CAPABILITY",
+    }
+)
 
 
 def configure_logging(level: str) -> None:
@@ -62,17 +72,26 @@ def record_outcome(outcome: str) -> None:
 
 @asynccontextmanager
 async def audit_call(
-    tool: str, classification: str, course_id: str | None = None, target_id: str | None = None
+    tool: str,
+    classification: str,
+    course_id: str | None = None,
+    target_id: str | None = None,
 ) -> AsyncIterator[None]:
     request_id = str(uuid4())
     context_token = _request_id.set(request_id)
     created_token = _created_ref.set(None)
     result_token = _result_outcome.set("OK")
     access = get_access_token()
-    claims = access.claims if access is not None and isinstance(access.claims, dict) else {}
+    claims = (
+        access.claims if access is not None and isinstance(access.claims, dict) else {}
+    )
     tenant = claims.get("tid")
     object_id = claims.get("oid")
-    actor = _digest(f"{tenant}:{object_id}") if isinstance(tenant, str) and isinstance(object_id, str) else None
+    actor = (
+        _digest(f"{tenant}:{object_id}")
+        if isinstance(tenant, str) and isinstance(object_id, str)
+        else None
+    )
     start = monotonic()
     outcome = "OK"
     try:

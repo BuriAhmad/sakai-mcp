@@ -1,5 +1,7 @@
 # Sakai WebAPI MCP adapter
 
+**Source organization — 15 October 2026:** native components are grouped by responsibility beneath the same MCP namespace. See [the native source map](../../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md) and [local verification](../evidence/mcp/restructuring-local.md). Routes, delegated identity, storage contracts and feature properties remain compatible.
+
 The [MCP-only grading migration](../SAKAI_GRADING_MCP_RESOURCES.md) replaces the local importer with SDK resources and server proposal/report tools. Native resource/proposal endpoints preserve delegated permissions and existing grading gates; see its release requirements before deployment.
 
 The migration adds the following internal delegated Sakai endpoints. MCP hosts use tools/resources on `/mcp`; only the Python Sakai adapter calls these paths with the separate downstream token.

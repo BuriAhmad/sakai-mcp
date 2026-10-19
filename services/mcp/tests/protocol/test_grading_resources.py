@@ -12,16 +12,16 @@ from mcp.client.streamable_http import streamable_http_client
 from mcp.shared.exceptions import MCPError
 from mcp.types import BlobResourceContents, ResourceLink, TextResourceContents
 
-from sakai_mcp import grading_models as gm
-from sakai_mcp import grading_resource_models as rm
-from sakai_mcp.grading_evaluator import digest, payload_hash
-from sakai_mcp.grading_resources import parse_uri
-from sakai_mcp.sakai_client import ErrorCode, SakaiClient, SakaiError
-from sakai_mcp.server import create_server
-from tests import grading_fixtures as f
-from tests.helpers import settings
-from tests.protocol.test_server import FakeClient
-from tests.unit.test_sakai_client import FakeOBO, principal
+from sakai_mcp.contracts import grading_native as gm
+from sakai_mcp.contracts import grading_proposals as proposals
+from sakai_mcp.errors import ErrorCode, SakaiError
+from sakai_mcp.grading.serialization import digest, payload_hash
+from sakai_mcp.mcp.server import create_server
+from sakai_mcp.sakai.client import SakaiClient
+from sakai_mcp.workflows.resources import parse_uri
+from tests.fixtures import grading_data as f
+from tests.fixtures.authentication import settings
+from tests.fixtures.sakai import FakeClient, FakeOBO, principal
 
 
 class GradingClient(FakeClient):
@@ -32,7 +32,7 @@ class GradingClient(FakeClient):
         self.revoked = False
         self.validated = []
 
-    async def grading_request(self, name, token, request):
+    async def _response(self, name, token, request):
         if self.revoked:
             raise SakaiError(ErrorCode.FORBIDDEN)
         if name in {"save_assignment_grades", "release_assignment_grades"}:
@@ -71,6 +71,24 @@ class GradingClient(FakeClient):
             "get_assignment_submission_export": f.manifest(self.data, self.mime),
         }[name]
 
+    async def get_assignment_grading_context(self, token, request):
+        return await self._response("get_assignment_grading_context", token, request)
+
+    async def list_assignment_submissions(self, token, request):
+        return await self._response("list_assignment_submissions", token, request)
+
+    async def get_assignment_submission(self, token, request):
+        return await self._response("get_assignment_submission", token, request)
+
+    async def get_assignment_submission_export(self, token, request):
+        return await self._response("get_assignment_submission_export", token, request)
+
+    async def save_assignment_grades(self, token, request):
+        return await self._response("save_assignment_grades", token, request)
+
+    async def release_assignment_grades(self, token, request):
+        return await self._response("release_assignment_grades", token, request)
+
     async def read_grading_artifact(self, *args):
         if self.revoked:
             raise SakaiError(ErrorCode.FORBIDDEN)
@@ -86,19 +104,29 @@ class GradingClient(FakeClient):
             raise SakaiError(ErrorCode.CONFLICT)
         return self.data, self.mime, digest(self.data)
 
-    async def grading_proposal(
+    async def get_proposal(self, token, course, assignment, proposal):
+        return await self._proposal_record(token, course, assignment, proposal)
+
+    async def create_proposal(
+        self, token, course, assignment, proposal, payload, export
+    ):
+        return await self._proposal_record(
+            token, course, assignment, proposal, payload.model_dump(), export
+        )
+
+    async def _proposal_record(
         self, token, course, assignment, proposal, payload=None, export=None
     ):
         if self.revoked:
             raise SakaiError(ErrorCode.FORBIDDEN)
         if payload is not None:
             self.private_writes += 1
-            self.record = rm.ProposalRecord(
+            self.record = proposals.ProposalRecord(
                 proposal_id=proposal,
                 export_id=export,
                 request_sha256="b" * 64,
                 expires_at="2026-10-15T00:00:00Z",
-                payload=rm.ProposalPayload.model_validate(payload),
+                payload=proposals.ProposalPayload.model_validate(payload),
             )
         if self.record is None:
             raise SakaiError(ErrorCode.NOT_FOUND)
@@ -304,7 +332,7 @@ def test_byte_adapter_verifies_stream_and_closes_it():
     )
     with pytest.raises(SakaiError) as error:
         asyncio.run(
-            client.read_grading_file(
+            client.grading.read_grading_file(
                 principal(), f.COURSE, f.ASSIGNMENT, f.SUBMISSION, "a" * 64, "content"
             )
         )

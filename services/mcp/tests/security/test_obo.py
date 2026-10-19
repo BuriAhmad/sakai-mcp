@@ -5,14 +5,14 @@ import jwt
 import pytest
 from jwt import PyJWKClientConnectionError
 
-from sakai_mcp.auth import EntraTokenVerifier
-from sakai_mcp.obo import (
+from sakai_mcp.security.auth import EntraTokenVerifier
+from sakai_mcp.security.obo import (
     ExchangeUnavailable,
     InvalidDownstreamToken,
     InvalidUpstreamToken,
     OBOProvider,
 )
-from tests.helpers import KEY, TENANT, settings, token
+from tests.fixtures.authentication import KEY, TENANT, settings, token
 
 
 def downstream(object_id: str, eid: object, **changes):
@@ -34,7 +34,12 @@ def downstream(object_id: str, eid: object, **changes):
 def provider(exchange):
     config = settings()
     inbound = EntraTokenVerifier(config, lambda _: KEY.public_key())
-    return OBOProvider(config, inbound, exchange=exchange, downstream_signing_key=lambda _: KEY.public_key())
+    return OBOProvider(
+        config,
+        inbound,
+        exchange=exchange,
+        downstream_signing_key=lambda _: KEY.public_key(),
+    )
 
 
 def access(object_id: str):
@@ -81,9 +86,11 @@ def test_wrong_upstream_audience_cannot_reach_exchange():
 
 def test_missing_consent_fails_without_exposing_response():
     with pytest.raises(ExchangeUnavailable, match="did not issue") as error:
-        asyncio.run(provider(lambda *_: {"error": "sensitive token endpoint detail"}).acquire(
-            access("00000000-0000-0000-0000-000000000001")
-        ))
+        asyncio.run(
+            provider(lambda *_: {"error": "sensitive token endpoint detail"}).acquire(
+                access("00000000-0000-0000-0000-000000000001")
+            )
+        )
     assert "sensitive" not in str(error.value)
 
 
@@ -99,7 +106,8 @@ def test_downstream_jwks_outage_is_dependency_failure_and_recovers():
     config = settings()
     inbound = EntraTokenVerifier(config, lambda _: KEY.public_key())
     obo = OBOProvider(
-        config, inbound,
+        config,
+        inbound,
         exchange=lambda *_: {"access_token": downstream(a, ["synthetic-1"])},
         downstream_signing_key=signing_key,
     )

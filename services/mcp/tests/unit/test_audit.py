@@ -39,12 +39,26 @@ def test_audit_logs_safe_fields_without_identity_or_content(monkeypatch, capsys)
 
     asyncio.run(run())
     output = capsys.readouterr().out
-    assert all(secret not in output for secret in (secret_token, raw_user, raw_course, raw_body, "private-created-id"))
+    assert all(
+        secret not in output
+        for secret in (
+            secret_token,
+            raw_user,
+            raw_course,
+            raw_body,
+            "private-created-id",
+        )
+    )
     event = json.loads(output.strip().splitlines()[-1])
     assert event["tool"] == "create_course_announcement"
     assert event["classification"] == "write"
     assert event["outcome"] == "OK"
-    assert event["actor_ref"] and event["course_ref"] and event["created_ref"] and event["request_id"]
+    assert (
+        event["actor_ref"]
+        and event["course_ref"]
+        and event["created_ref"]
+        and event["request_id"]
+    )
     assert logging.getLogger("httpx").level == logging.WARNING
 
 

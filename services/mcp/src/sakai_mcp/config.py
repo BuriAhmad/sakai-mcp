@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from pydantic import Field, HttpUrl, field_validator
+from pydantic import Field, HttpUrl, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -36,11 +36,20 @@ class Settings(BaseSettings):
         """OAuth identity for the fixed Streamable HTTP endpoint."""
         return f"{str(self.mcp_public_url).rstrip('/')}/mcp"
 
-    @field_validator("mcp_public_url", "sakai_base_url", "mcp_issuer", "sakai_issuer", "mcp_jwks_uri")
+    @field_validator(
+        "mcp_public_url", "sakai_base_url", "mcp_issuer", "sakai_issuer", "mcp_jwks_uri"
+    )
     @classmethod
     def require_https(cls, value: HttpUrl) -> HttpUrl:
-        if value.scheme != "https" or value.username or value.password or value.fragment:
-            raise ValueError("Service URLs must be HTTPS without credentials or fragments")
+        if (
+            value.scheme != "https"
+            or value.username
+            or value.password
+            or value.fragment
+        ):
+            raise ValueError(
+                "Service URLs must be HTTPS without credentials or fragments"
+            )
         return value
 
     @field_validator("sakai_base_url")
@@ -59,7 +68,7 @@ class Settings(BaseSettings):
 
     @field_validator("mcp_audience")
     @classmethod
-    def require_v2_mcp_audience(cls, value: str, info) -> str:
+    def require_v2_mcp_audience(cls, value: str, info: ValidationInfo) -> str:
         client_id = info.data.get("mcp_resource_client_id")
         if client_id is None or value != str(client_id) or value != value.strip():
             raise ValueError("MCP v2 token audience must match the MCP app client ID")
@@ -69,7 +78,9 @@ class Settings(BaseSettings):
     @classmethod
     def require_sakai_resource_audience(cls, value: str) -> str:
         if not value.startswith("api://") or not value[6:] or value != value.strip():
-            raise ValueError("Sakai audience must be a nonempty api:// resource identifier")
+            raise ValueError(
+                "Sakai audience must be a nonempty api:// resource identifier"
+            )
         return value
 
     @field_validator("mcp_required_scope", "sakai_downstream_scope")

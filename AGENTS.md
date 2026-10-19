@@ -6,10 +6,18 @@ This repository owns the Sakai development environment's Azure infrastructure, o
 
 - `deployment/` — Bicep and VM/application deployment; follow `deployment/AGENTS.md`.
 - `scripts/` and `./sakai` — local operations and the human-facing CLI.
-- `services/mcp/` — project-owned Python MCP service, tests, and container source; follow its README and scoped `AGENTS.md`.
+- `services/mcp/` — project-owned Python MCP service, tests, and container source; follow its README and scoped `AGENTS.md`. All public tool definitions are in `src/sakai_mcp/mcp/tools.py`; the README maps the implementation layers.
 - `docs/` — architecture, access instructions, runbooks, and deployment history.
 - `skills/` — repository-owned agent Skill definitions; the [assignment setup Skill](skills/sakai-assignment-setup/SKILL.md) has a separately authorized opt-in development release; see [release evidence](docs/evidence/mcp/assignment-setup-release.md).
 - `apps/sakai/` — tracked Sakai application source and project changes.
+
+## MCP integration boundary
+
+The user's required architecture, clarified on 17 October 2026, is that MCP performs Sakai operations through **existing Sakai APIs**. Put response parsing, normalization, pagination and workflow coordination in the external MCP service. Do not add Sakai business endpoints or change Sakai business services, models, schema, existing API behavior or ordinary login to make an MCP capability possible.
+
+The sole exception is the authentication/session integration extension: its purpose is to establish the delegated user's authenticated Sakai context for calls to existing APIs. This exception does not authorize course, announcement, assignment, grading, export or proposal endpoints inside Sakai. Extension packaging and registration must respect this boundary; do not broaden authentication indiscriminately across endpoints.
+
+Existing custom `/api/mcp/v1/*` business endpoints and related native changes reflect the previous implementation and are not the target architecture. Older plans and release evidence documenting them do not override this requirement or independently establish user authorization. See [the architecture direction](docs/mcp/architecture.md). Research existing interfaces and report unsupported capabilities or security/transaction limitations rather than introducing native functionality to fill a gap. Migration/removal needs a concrete dependency and compatibility plan; this clarification alone does not authorize destructive rollback or runtime changes.
 
 ## Sources of truth
 

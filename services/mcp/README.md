@@ -1,29 +1,113 @@
-# MCP service
+# Sakai MCP service
 
-This directory contains the project-owned MCP service package under `src/sakai_mcp/`. Its implementation and tests are being added in runbook order. Follow the scoped [`AGENTS.md`](AGENTS.md) for security and layout rules.
+This package exposes a delegated Sakai MCP interface using the pinned MCP Python SDK. All public tool definitions live in [`src/sakai_mcp/mcp/tools.py`](src/sakai_mcp/mcp/tools.py). Tool handlers delegate to named Sakai operations or coordinated workflows; they do not implement HTTP transport or grading algorithms.
 
-Dependencies are pinned in [`pyproject.toml`](pyproject.toml) and [`uv.lock`](uv.lock). For local development, run `uv sync --locked` here. The selected SDK is MCP Python 2.2.0. `config.py` validates non-secret HTTPS URLs, Entra audiences and scopes, and request limits. `auth.py` verifies inbound delegated tokens; `obo.py` performs certificate-backed MSAL OBO and independently validates the Sakai API token; `sakai_client.py` uses fixed-origin Sakai routes. `server.py` exposes five tools by default through authenticated, stateless Streamable HTTP at `/mcp`. The catalog is static; Sakai checks site permissions on every call, including manual invocations of instructor tools. Run `uv run --no-sync pytest -q` for the local test suite. The service passed deployed protocol, identity, authorization, and multi-replica checks in Phases 20–27; see [the runbook](../../docs/MCP_IMPLEMENTATION_RUNBOOK.md) and its evidence links. The native Inspector manual matrix is complete as reported. Codex CLI native OAuth, model-selected write approval, successful announcement creation/readback, and cancellation have been observed. Phase 25 remains open for state reconciliation and the remaining host-control evidence; see [the client report](../../docs/evidence/mcp/phase-25-client-compatibility.md).
+## Source map
 
-Set `MCP_PUBLIC_URL=https://mcp.smartdigest.app`; the service derives the Entra Application ID URI and protected-resource identity as `https://mcp.smartdigest.app/mcp`. Clients connect to that `/mcp` endpoint. The MCP registration issues v2 tokens, whose `MCP_AUDIENCE` is the MCP app's client ID GUID; the URL-to-app mapping is enforced by Entra's `resource` request and `identifierUris`. Keep `MCP_ISSUER` at the tenant's v2 issuer. Sakai remains a distinct v1 resource: keep `SAKAI_ISSUER` at the tenant's `sts.windows.net` issuer and `SAKAI_AUDIENCE` at its separate `api://...` identifier. Set `SAKAI_BASE_URL`, `ENTRA_TENANT_ID`, `MCP_RESOURCE_CLIENT_ID`, `MCP_JWKS_URI`, and `SAKAI_RESOURCE_CLIENT_ID` from verified environment metadata. Set `OBO_PRIVATE_KEY_FILE` and `OBO_CERTIFICATE_FILE` to runtime-mounted files outside Git. Defaults include delegated scopes `mcp.access` and `sakai.mcp.access`; `config.py` lists bounded timeout/page-size options. With these settings present, start locally from this directory using `uv run --no-sync uvicorn sakai_mcp.asgi:create_app --factory --host 127.0.0.1 --port 8000`. The development Container App uses external HTTPS ingress and Key Vault referenced credential files.
+```text
+src/sakai_mcp/
+  asgi.py                  Stable Uvicorn entrypoint
+  bootstrap.py             Runtime construction and HTTP client lifecycle
+  config.py                Validated configuration
+  audit.py                 Request correlation, redaction, outcomes
+  errors.py                Safe service error codes
+  security/
+    auth.py                Inbound delegated token validation
+    obo.py                 Certificate-backed on-behalf-of token exchange
+  mcp/
+    tools.py               Every tool signature, description, annotation and gate
+    server.py              SDK server construction
+    resources.py           Resource templates and SDK resource reads
+    context.py             Authenticated invocation and safe tool errors
+    presenters.py          Public result, link and content formatting
+    http.py                Local health and canonical OAuth discovery routes
+  contracts/               Setup, native grading, public grading, proposal models
+  sakai/
+    client.py              Own the shared transport and operation groups
+    transport.py           Fixed-origin JSON/binary HTTP, limits and retries
+    paths.py               Validate and encode path identifiers
+    courses.py             Course discovery and own released grades
+    announcements.py       Announcement reads and single-attempt creation
+    assignments.py         Setup, publication and legacy submission metadata
+    grading.py             Typed grading, export, file and proposal operations
+  workflows/
+    grading.py             Proposal preparation, reconciliation and payloads
+    resources.py           Authorized evidence resolution and manifest paging
+  grading/
+    evaluator.py           Pure deterministic MCQ engine
+    serialization.py       Canonical JSON and payload hashes
+    reports.py             Deterministic reports
+```
 
-The process exposes unauthenticated `GET /live` and `GET /ready`, each returning HTTP 200 after local app construction. They never call Entra or Sakai. The authenticated `/mcp` route and protected-resource metadata are separate. Tool audit output contains generated request IDs and hashed identity/course/object references with stable outcomes and latency; it excludes tokens, content, and raw LMS IDs. Container Apps sends stdout to the planned Azure log sink. Tests under `tests/unit/`, `tests/integration/`, `tests/protocol/`, and `tests/security/` run in the existing repository CI without live credentials.
+`auth.py`, `obo.py`, configuration, audit, and setup validation retain independent boundaries. OBO means **on-behalf-of**: the transport obtains a distinct Sakai-audience token for the verified caller. No tool chooses the acting identity.
 
-The `Dockerfile` installs production dependencies from `uv.lock` into a non-editable environment, strips build tooling from the final pinned Python 3.11 image, and runs as UID/GID 10001 on port 8000. `.dockerignore` excludes local environments and credential files. From the repository root, `scripts/build-mcp-image.sh services/mcp sakai-mcp:local FULL_COMMIT_SHA` builds and performs pinned Trivy source/dependency, secret, and image scans. The CI image job runs this path on every push and PR; the manual MCP workflow can build an exact commit on `main` without deploying. See [the MCP release guide](../../docs/MCP_RELEASES.md) for its `check-only`/`bootstrap`/`deploy` modes, digest identity, Azure prerequisites, and rollback.
+| Change | Start here |
+| --- | --- |
+| Inspect or change the public tool interface | `mcp/tools.py` |
+| Change a native route/request/result validation | The corresponding `sakai/` operation module |
+| Change timeouts, retries, HTTP bounds, stream integrity | `sakai/transport.py` |
+| Change a multi-step grading procedure | `workflows/grading.py` |
+| Change resource access or complete export aggregation | `workflows/resources.py` |
+| Change public resource links, MIME/content results | `mcp/presenters.py` |
+| Change request/response constraints | `contracts/` |
+| Change grading rules or output | `grading/`; review evaluator provenance first |
+| Change identity verification or token exchange | `security/auth.py` or `security/obo.py` |
 
-Do not place upstream Sakai source here. The implementation plan, architecture constraints, phase gates, and acceptance criteria are in [`docs/MCP_IMPLEMENTATION_RUNBOOK.md`](../../docs/MCP_IMPLEMENTATION_RUNBOOK.md). Consult and update that runbook as implementation decisions are verified or the plan changes.
+A course read follows `tools.py -> client.courses -> transport -> native Sakai`. A grading proposal follows `tools.py -> GradingWorkflow -> client.grading + evaluator -> presenter`. Straight-through operations do not need an extra service layer. Skills are consumers of this interface and are not imported by the runtime.
 
-## Opt-in assignment setup source
+## Local development and verification
 
-The TA workflow has an [opt-in implementation](../../docs/SAKAI_ASSIGNMENT_GRADING.md) and [contracts](../../docs/mcp/assignment-grading-contracts.json). The earlier nine-tool version is enabled on the existing public development endpoint; the new fourteen-tool/resource source awaits release; see [release evidence](../../docs/evidence/mcp/assignment-grading-release.md). They remain disabled by default in new environments.
+Dependencies remain pinned in `pyproject.toml` and `uv.lock`.
 
-The user-authorized assignment workflow is implemented behind `ASSIGNMENT_SETUP_ENABLED=false` by default. Enabling it adds exactly `get_course_assessment_context`, `create_assignment` and `publish_assignment` to the existing five-tool catalog. The corresponding Sakai property `mcp.assignment.setup.enabled` also defaults to false. Authentication, fixed-origin transport and existing announcement arguments are unchanged. New POSTs are single-attempt; validated partial results retain known IDs and audit as `PARTIAL_SUCCESS`.
+```sh
+cd services/mcp
+uv sync --locked
+../../scripts/check-mcp.sh
+```
 
-See [the plan](../../docs/SAKAI_ASSIGNMENT_SETUP.md), [contracts](../../docs/mcp/assignment-setup-contracts.json), [local validation and remaining gates](../../docs/evidence/mcp/assignment-setup-local.md), and [repository Skill](../../skills/sakai-assignment-setup/SKILL.md). The separately authorized development release is deployed with the gates enabled, exposing eight tools. The Skill is installed in the primary and test clients; live synthetic checks and fresh native client discovery passed. See [release evidence](../../docs/evidence/mcp/assignment-setup-release.md) for exact versions and remaining acceptance limits.
+The shared check command runs lint/import ordering, formatting, typed function definitions, architecture boundaries, and tests. CI invokes this same command. No live credentials are required. Tests are organized under `unit/`, `protocol/`, `integration/`, and `security/`; reusable synthetic builders belong in `tests/fixtures/`.
 
-### Opt-in assignment grading (local implementation)
+`tests/contracts/` contains the public schemas, gate catalogs, and deterministic grading output captured before restructuring. Protocol tests compare actual SDK discovery against those fixtures. An intentional public change needs a reviewed contract update; do not regenerate snapshots simply to silence a failure.
 
-`ASSIGNMENT_GRADING_ENABLED=false` keeps grading tools and resource templates absent. Enabling it adds fourteen tools and five resource templates, exposing grading context, complete paged submissions, submission detail, checksummed export/status, save, release-and-return, selected grade readback and operation reconciliation. The Sakai property `mcp.assignment.grading.enabled` is also disabled by default. Both flags are enabled on the existing public development endpoint only.
+The exact source of `evaluate_mcq` contributes to stored grading provenance. Its module is deliberately excluded from automatic formatting; tests verify its pre-refactor fingerprint and grading/report bytes. Any later engine change requires a separate provenance/version decision.
 
-Native deployment requires `ASN_SUBMISSION.LOCK_VERSION` and an owner-only durable canonical directory configured with `mcp.assignment.grading.storage`. Review [local evidence and deployment prerequisites](../../docs/evidence/mcp/assignment-grading-local.md) before deploying any native changes. Writes initially support current submitted individual, site-wide point assignments with no Gradebook link or one owned external link. Unknown/partial operations require human reconciliation; commits are never automatically retried.
+The native integration remains in `apps/sakai/webapi/` with packages for security, courses, announcements, assessment, shared contracts, and grading. See [the native source map](../../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md). Its permission/session/lock rules remain authoritative.
 
-The repository [grading Skill](../../skills/sakai-assignment-grading/SKILL.md) freezes the procedure before evaluation and obtains separate approval for official save and return. Service 0.2.0 replaces the importer with SDK resources and server MCQ/proposal/report/payload tools; no external script, second login or host filesystem is required. See [the resource architecture](../../docs/SAKAI_GRADING_MCP_RESOURCES.md) and [migration evidence](../../docs/evidence/mcp/assignment-grading-resources-local.md).
+## Catalog and feature gates
+
+| Setup flag | Grading flag | Tool count | Resource templates |
+| --- | --- | --- | --- |
+| false | false | 5 | 0 |
+| true | false | 8 | 0 |
+| false | true | 19 | 5 |
+| true | true | 22 | 5 |
+
+The default tools are `list_my_courses`, `get_my_grades`, `get_course_announcements`, `get_course_submissions`, and `create_course_announcement`. Announcement creation is the only default write.
+
+`ASSIGNMENT_SETUP_ENABLED=false` independently gates `get_course_assessment_context`, `create_assignment`, and `publish_assignment`. The matching native property is `mcp.assignment.setup.enabled`.
+
+`ASSIGNMENT_GRADING_ENABLED=false` independently gates the fourteen grading tools and five resource templates. The matching native property is `mcp.assignment.grading.enabled`. Proposal/export preparation can write private durable records; official grade save and return remain separate approved operations. Ambiguous and partial mutations are reconciled rather than automatically replayed.
+
+Native grading also requires `ASN_SUBMISSION.LOCK_VERSION` and canonical owner-only storage configured through `mcp.assignment.grading.storage`. The refactor preserves existing records, paths, expiry, locking and wire formats; it introduces no schema migration or feature activation.
+
+These counts describe local source. Dated release evidence and fresh discovery determine what a deployed endpoint actually exposes.
+
+## Runtime and configuration
+
+Keep `MCP_PUBLIC_URL` at the verified HTTPS origin; clients connect to `/mcp`, whose canonical OAuth resource URI is the origin plus `/mcp`. MCP tokens use the separate v2 application-client-ID audience. Sakai tokens use their distinct issuer, audience, and delegated scope. See [configuration](src/sakai_mcp/config.py) and the [native adapter/authentication reference](../../docs/mcp/sakai-adapter.md).
+
+Provide `OBO_PRIVATE_KEY_FILE` and `OBO_CERTIFICATE_FILE` as mounted runtime files outside Git, alongside the verified Entra/Sakai metadata required by `Settings`. Starting the server reads those files during app construction, never during module import.
+
+```sh
+uv run --no-sync uvicorn sakai_mcp.asgi:create_app --factory --host 127.0.0.1 --port 8000
+```
+
+`GET /live` and `GET /ready` are unauthenticated local checks and never call Entra or Sakai. `/mcp` is authenticated stateless Streamable HTTP. The app preserves the SDK lifespan and closes service-owned HTTP clients at shutdown; injected clients remain their caller's responsibility. Audit logs contain safe outcomes, generated correlation IDs and hashed references, not tokens, student content or raw LMS identifiers.
+
+## Build, release, and evidence
+
+The Dockerfile uses the locked non-editable installation, pinned Python base, and non-root UID/GID 10001. `scripts/build-mcp-image.sh` builds an exact-commit image and performs the existing source/dependency, secret, and image scans. Dependency versions were not changed by the restructuring.
+
+Deployment, feature activation and runtime starts require separate authorization under [the scoped guide](AGENTS.md). Local edits and CI do not deploy or start paused resources. Follow [MCP releases](../../docs/MCP_RELEASES.md), [Sakai releases](../../docs/SAKAI_RELEASES.md), and the [native-first grading release procedure](../../docs/GRADING_MCP_RESOURCE_RELEASE.md). Existing release and rollback command paths are preserved.
+
+See [architecture](../../docs/mcp/architecture.md), [the implementation runbook](../../docs/MCP_IMPLEMENTATION_RUNBOOK.md), [the restructuring plan](../../docs/mcp/restructuring-plan.md), and [local restructuring evidence](../../docs/evidence/mcp/restructuring-local.md). Workflow constraints remain in [assignment setup](../../docs/SAKAI_ASSIGNMENT_SETUP.md), [assignment grading](../../docs/SAKAI_ASSIGNMENT_GRADING.md), and [grading resources](../../docs/SAKAI_GRADING_MCP_RESOURCES.md). Client acceptance and historical release evidence retain their own dates and limitations.

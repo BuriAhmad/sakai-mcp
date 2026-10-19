@@ -1,5 +1,6 @@
 # Assignment grading: local implementation evidence
 
+Superseded architecture: this report records the historical importer implementation. The [MCP-only migration](../../SAKAI_GRADING_MCP_RESOURCES.md) removes that client and records new checks in [resource migration evidence](assignment-grading-resources-local.md).
 Date: 13 October 2026. Scope: user-authorized implementation following the [9 October research/design](../../SAKAI_ASSIGNMENT_GRADING.md). **Historical local checkpoint: disabled by default, undeployed, no live grading acceptance at that point.** No Azure/runtime configuration or academic record was changed during this checkpoint. The later user-authorized deployment is recorded in [release evidence](assignment-grading-release.md). The pre-existing phase-25 and phase-31 evidence edits are unrelated and preserved.
 
 ## Implemented behavior

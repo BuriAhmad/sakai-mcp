@@ -1,5 +1,15 @@
 # MCP service working rules
 
+## Source ownership
+
+- All public tool definitions and registration gates belong in `src/sakai_mcp/mcp/tools.py`; resources and SDK presentation belong in `mcp/`.
+- Keep authentication and OBO separate under `security/`. Put typed wire contracts in `contracts/`, native operations/transport in `sakai/`, coordination in `workflows/`, and pure computation in `grading/`. Skills must not be imported by runtime code.
+- Run `../../scripts/check-mcp.sh` after `uv sync --locked`. CI invokes the same checks, including architecture and pre-refactor schema/hash comparisons. Do not regenerate baseline fixtures to hide an accidental compatibility change.
+- The evaluator's exact function source is recorded in grading provenance. Preserve its fingerprint during structural changes; its formatter exclusion is intentional.
+- See [the README](README.md) for change entrypoints, test layout, package builds and lifecycle ownership.
+
+## Existing workflow and release requirements
+
 The [MCP-only grading migration](../../docs/SAKAI_GRADING_MCP_RESOURCES.md) replaces the local importer with SDK resources and server proposal/report tools. Native resource/proposal endpoints preserve delegated permissions and existing grading gates; use the [two-stage grading release procedure](../../docs/GRADING_MCP_RESOURCE_RELEASE.md) before deployment.
 The project-owned Python MCP service and its tests belong under this directory. Follow [`docs/MCP_IMPLEMENTATION_RUNBOOK.md`](../../docs/MCP_IMPLEMENTATION_RUNBOOK.md) in phase order and keep its gate statuses and `docs/evidence/mcp/` reports accurate.
 

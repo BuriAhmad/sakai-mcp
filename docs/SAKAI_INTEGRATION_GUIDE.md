@@ -1,5 +1,6 @@
 # Sakai integration guide
 
+The [MCP-only grading migration](SAKAI_GRADING_MCP_RESOURCES.md) replaces the local importer with SDK resources and server proposal/report tools. Native resource/proposal endpoints preserve delegated permissions and existing grading gates; see its release requirements before deployment.
 ## Purpose
 
 This is a durable engineering reference for **programmatically interacting with this repository's Sakai installation**. Consult it before implementing or modifying MCP tools, Sakai adapter code, custom Sakai-side endpoints, provisioning or automation scripts, and agent skills that depend on those capabilities.
@@ -54,6 +55,8 @@ Permission-aware Sakai Java services and persistence
 
 The current production-shaped V1 path is the Python MCP service → delegated `/api/mcp/v1/*` endpoints → Sakai services. The seeding process separately used authenticated SOAP, EntityBroker, tool APIs and HTTP automation of native tool forms. **Wicket/UI automation is a provisioning workaround, not the preferred MCP adapter contract.**
 
+For test-data imports, use the [test-data seeding Skill](../skills/sakai-test-data-seeding/SKILL.md) for run planning, reconciliation and user-facing acceptance, plus its assignment/submissions recipe and incident lessons. This guide remains the source for domain interface facts; extend both where a verified import teaches a reusable procedure.
+
 Keep these responsibilities distinct:
 
 - **Agent skill:** guidance about when and how an agent uses capabilities, their constraints and workflow.
@@ -91,8 +94,8 @@ A skill cannot supply a missing backend capability. A future `create_grade_item(
 - [AbstractWebService.java](../apps/sakai/webservices/cxf/src/java/org/sakaiproject/webservices/AbstractWebService.java): `establishSession` and service context.
 - [HostFilter.java](../apps/sakai/webservices/cxf/src/java/org/sakaiproject/rest/HostFilter.java): webservice host restrictions.
 - [BaseUserDirectoryService.java](../apps/sakai/kernel/kernel-impl/src/main/java/org/sakaiproject/user/impl/BaseUserDirectoryService.java): `cleanEid` lowercases, trims and strips specified characters.
-- [McpBearerFilter.java](../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpBearerFilter.java): verified external evidence, exact EID comparison and request isolation.
-- [Python Sakai client](../services/mcp/src/sakai_mcp/sakai_client.py): fixed-origin V1 transport; [OBO provider](../services/mcp/src/sakai_mcp/obo.py): delegated token exchange.
+- [McpBearerFilter.java](../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpBearerFilter.java): verified external evidence, exact EID comparison and request isolation.
+- [Python Sakai client](../services/mcp/src/sakai_mcp/sakai/transport.py): fixed-origin V1 transport; [OBO provider](../services/mcp/src/sakai_mcp/security/obo.py): delegated token exchange.
 
 **Future MCP implication:** retain the delegated boundary. Evaluate native transports behind a safely authenticated Sakai-side adapter; do not assume the V1 token will authenticate legacy SOAP or `/direct/` calls.
 
@@ -199,7 +202,7 @@ Singleton categories were a dataset-specific way to express individual weights. 
 | Source | Why it matters |
 | --- | --- |
 | [GradesController.java](../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/controllers/GradesController.java) | Native reports, category/item reads, single-score POST and grader/Student branches. |
-| [McpGradesController.java](../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpGradesController.java) | Existing delegated own-grade contract and release/permission handling. |
+| [McpGradesController.java](../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpGradesController.java) | Existing delegated own-grade contract and release/permission handling. |
 | [GradingService.java](../apps/sakai/gradebookng/api/src/main/java/org/sakaiproject/grading/api/GradingService.java) | `addAssignment`, `updateAssignment`, `saveGradesAndComments`, `setAssignmentScoreString`, category definitions and `updateGradebookSettings`; internal service, not a remote API. |
 | [GradingServiceImpl.java](../apps/sakai/gradebookng/impl/src/main/java/org/sakaiproject/grading/impl/GradingServiceImpl.java) | Actual permission checks, externally maintained item behavior and grade persistence/events. |
 | [GradebookNgBusinessService.java](../apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/business/GradebookNgBusinessService.java) | Tool-level item operations and `saveGradesAndCommentsForImport`. |
@@ -249,7 +252,7 @@ Do not drive Wicket per-grade calls in the production MCP service. A domain endp
 
 **Confirmed seeding path:** instructor-authenticated native form `/portal/tool/{placementId}?sakai_action=doNewannouncement`, preserving `reviseForm`, posted subject/body, site audience, explicit release-date parts and notification setting. This preserved historical dates without using the V1 plain-post write. `GET /direct/announcement/site/{siteId}.json?d=3650&n=100` read back both source announcements in each course.
 
-**Existing production path:** V1 `GET`/`POST /api/mcp/v1/courses/{siteId}/announcements` uses the delegated user. [McpCourseController.java](../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpCourseController.java) visit-gates reads; [McpAnnouncementWriteController.java](../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAnnouncementWriteController.java) implements the existing bounded posted-announcement write. The five synthetic accounts exercised V1 reads, not a new write acceptance run.
+**Existing production path:** V1 `GET`/`POST /api/mcp/v1/courses/{siteId}/announcements` uses the delegated user. [McpCourseController.java](../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpCourseController.java) visit-gates reads; [McpAnnouncementWriteController.java](../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteController.java) implements the existing bounded posted-announcement write. The five synthetic accounts exercised V1 reads, not a new write acceptance run.
 
 **Failures/limitations preserved:**
 

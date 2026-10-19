@@ -24,4 +24,6 @@ The VM was deallocated by its existing 19:00 Asia/Karachi auto-shutdown before t
 
 ## Acceptance limits
 
+Historical baseline below is as of 13 October. The [preserved 14 October CLI run](assignment-grading-run-2026-10-14.md) subsequently records end-to-end grading, approved saves, approved returns and direct readback for 73 rows. Its exact private transcript retains the ambiguous return receipts and reconciliation steps; it does not close every acceptance gate.
+
 Live instructor reads and page rendering are verified. The TA's own delegated OAuth path, live export/materialization, and official save and return remain unverified end to end. The write path has local tests, but actual scores and returns require a separately approved exact grading proposal. No scores were saved or returned, and this release is not completed academic marking.

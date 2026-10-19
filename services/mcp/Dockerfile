@@ -16,7 +16,7 @@ LABEL org.opencontainers.image.source="https://github.com/BuriAhmad/sakai-mcp" \
       org.opencontainers.image.title="Sakai MCP" \
       org.opencontainers.image.description="Delegated Sakai MCP service" \
       org.opencontainers.image.licenses="ECL-2.0" \
-      org.opencontainers.image.version="0.1.0" \
+      org.opencontainers.image.version="0.2.0" \
       org.opencontainers.image.uv-lock-sha256="${LOCK_SHA256}"
 RUN /usr/local/bin/python -m pip uninstall -y pip setuptools wheel && \
     groupadd --system --gid 10001 mcp && \

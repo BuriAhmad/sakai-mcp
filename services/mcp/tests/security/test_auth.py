@@ -6,8 +6,8 @@ import pytest
 from cryptography.hazmat.primitives.asymmetric import rsa
 from pydantic import ValidationError
 
-from sakai_mcp.auth import EntraTokenVerifier
-from tests.helpers import KEY, RESOURCE, TENANT, settings, token
+from sakai_mcp.security.auth import EntraTokenVerifier
+from tests.fixtures.authentication import KEY, RESOURCE, TENANT, settings, token
 
 
 def verifier():
@@ -19,7 +19,10 @@ def test_valid_delegated_token_has_verified_principal_without_invented_eid():
     assert result is not None
     assert result.subject == f"{TENANT}:00000000-0000-0000-0000-000000000001"
     assert result.scopes == ["mcp.access"]
-    assert result.claims == {"tid": str(TENANT), "oid": "00000000-0000-0000-0000-000000000001"}
+    assert result.claims == {
+        "tid": str(TENANT),
+        "oid": "00000000-0000-0000-0000-000000000001",
+    }
 
 
 def test_missing_and_malformed_tokens_fail_closed():
@@ -30,7 +33,11 @@ def test_missing_and_malformed_tokens_fail_closed():
 def test_signature_and_claim_negatives():
     now = datetime.now(UTC)
     wrong_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    bad_signature = jwt.encode(jwt.decode(token(), options={"verify_signature": False}), wrong_key, algorithm="RS256")
+    bad_signature = jwt.encode(
+        jwt.decode(token(), options={"verify_signature": False}),
+        wrong_key,
+        algorithm="RS256",
+    )
     candidates = [
         bad_signature,
         token(exp=now - timedelta(minutes=2)),
@@ -49,7 +56,10 @@ def test_signature_and_claim_negatives():
 
 
 def test_wrong_algorithm_and_key_source_fail_closed():
-    assert verifier().verify(jwt.encode({"aud": RESOURCE}, "a" * 32, algorithm="HS256")) is None
+    assert (
+        verifier().verify(jwt.encode({"aud": RESOURCE}, "a" * 32, algorithm="HS256"))
+        is None
+    )
 
     def unavailable(_: str):
         raise OSError("JWKS unavailable")

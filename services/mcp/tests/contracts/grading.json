@@ -1,0 +1,55 @@
+{
+  "canonical_sha256": "beae4f1acf845f0b74631fae1d68c1aa5bd0003c8e8aaf7bbb49e78dba68ad7e",
+  "csv": "submission_id,sakai_user_id,score,max_score,review_status,issues\r\nsubmission-a,student-a,5,5,proposed,\r\n",
+  "engine_sha256": "fd2f6abfe2f26bdb946541771d09dc98f6d5720d15fcdb02f75fc2e70b87f3c8",
+  "rows": [
+    {
+      "config_sha256": "fa5a33e068967bfe0c073289bda22271a4083d65c1c95c4c6a347675efd467a9",
+      "content_revision": "content",
+      "criteria": [
+        {
+          "answer": "A",
+          "correct": true,
+          "line": 1,
+          "points": "1"
+        },
+        {
+          "answer": "C",
+          "correct": true,
+          "line": 2,
+          "points": "1"
+        },
+        {
+          "answer": "B",
+          "correct": true,
+          "line": 3,
+          "points": "1"
+        },
+        {
+          "answer": "D",
+          "correct": true,
+          "line": 4,
+          "points": "1"
+        },
+        {
+          "answer": "A",
+          "correct": true,
+          "line": 5,
+          "points": "1"
+        }
+      ],
+      "engine_sha256": "fd2f6abfe2f26bdb946541771d09dc98f6d5720d15fcdb02f75fc2e70b87f3c8",
+      "engine_version": "sakai-mcq-2",
+      "grade_revision": "grade",
+      "issues": [],
+      "late_status": "on_time",
+      "manifest_sha256": "75cededfe37d054d9448d95218ee299f87085366be0e15c47c263386e713a01b",
+      "max_score": "5",
+      "method": "deterministic_mcq",
+      "review_status": "proposed",
+      "sakai_user_id": "student-a",
+      "score": "5",
+      "submission_id": "submission-a"
+    }
+  ]
+}
