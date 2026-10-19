@@ -99,7 +99,28 @@ def validate_progress():
     need(seen == expected, f"Intentional change list differs: {seen ^ expected}")
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     branch = subprocess.check_output(["git", "branch", "--show-current"], cwd=ROOT, text=True).strip()
-    need(head == start["head"], "Review new commits against the implementation start")
+    if head != start["head"]:
+        organization = load("git-organization.json")
+        checkpoint = organization["migration_source_commit"]
+        need(organization["baseline_commit"] == start["head"], "Organization base differs")
+        need(organization["migration_branch"] == branch, "Organization branch differs")
+        for name, digest in organization["immutable_manifests"].items():
+            need(sha(HERE / name) == digest, f"Immutable manifest changed: {name}")
+        for ancestor, descendant in ((start["head"], checkpoint), (checkpoint, head)):
+            need(subprocess.run(["git", "merge-base", "--is-ancestor", ancestor, descendant],
+                                cwd=ROOT, capture_output=True).returncode == 0,
+                 "Reviewed checkpoint ancestry differs")
+        # Pin the saved source tree. Later metadata commits do not silently approve
+        # further implementation changes or alter the original start manifest.
+        allowed = set(organization["post_checkpoint_metadata_paths"])
+        changes = subprocess.check_output(
+            ["git", "diff", "--name-only", checkpoint, head], cwd=ROOT, text=True)
+        need(set(changes.splitlines()) <= allowed,
+             "Review post-checkpoint source changes in a new preservation record")
+        changes = subprocess.check_output(
+            ["git", "diff", "--name-only", checkpoint], cwd=ROOT, text=True)
+        need(set(changes.splitlines()) <= allowed,
+             "Working source differs from reviewed migration checkpoint")
     need(branch == progress["branch"], "Not on the reviewed migration branch")
     need(not subprocess.check_output(["git", "diff", "--cached", "--name-only"], cwd=ROOT), "Review staged changes")
     private = Path(start["private_checkpoint"])

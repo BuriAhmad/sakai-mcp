@@ -1,3 +1,12 @@
+Git organization (19 October): the migration source is now committed on
+`codex/replace-custom-sakai-api`; `codex/sakai-custom-native-api` has its own
+worktree at the original `208d69ac` baseline. See [worktree usage and verification](git-worktrees.md)
+and [the separate organization record](git-organization.json). Original baseline,
+implementation-start and private checkpoints remain unchanged. Statements below
+about an uncommitted tree or fixed HEAD describe their dated checkpoints;
+`--verify-progress` now verifies the saved migration source and permits only the
+explicit organization metadata paths after that commit.
+
 Current local status (19 October): eight default tools use existing HTTP: T01/T02/T03/T04/T05/T10/T11/T19. Nine old native routes are retired locally; fourteen active routes and fourteen tools remain. All five resource families still need completion; R01 has inline reads only. Completeness, role and field limits remain explicit. See [five-tool evidence](five-tool-cutover-2026-10-19.md) and `progress.json`; dated checkpoints below remain historical.
 
 
