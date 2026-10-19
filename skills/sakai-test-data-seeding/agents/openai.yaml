@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sakai Test Data Seeding"
+  short_description: "Seed Sakai fixtures and preserve verified recipes"
+  default_prompt: "Use $sakai-test-data-seeding to import this test dataset into Sakai and verify the resulting user workflows."

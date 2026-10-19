@@ -2,8 +2,8 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# shellcheck source=scripts/lib/azure.sh
-source "$ROOT_DIR/scripts/lib/azure.sh"
+# shellcheck source=scripts/lib/ssh.sh
+source "$ROOT_DIR/scripts/lib/ssh.sh"
 
 usage() {
   echo "Usage: ./sakai deploy COMMIT [--check-only]" >&2

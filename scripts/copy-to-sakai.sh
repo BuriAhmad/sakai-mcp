@@ -4,7 +4,7 @@ set -Eeuo pipefail
 [[ $# -eq 2 ]] || { echo "Usage: $0 LOCAL_FILE REMOTE_PATH" >&2; exit 2; }
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=scripts/lib/azure.sh
+# shellcheck source=scripts/lib/ssh.sh
 source "$SCRIPT_DIR/lib/azure.sh"
 
 sakai_require_command scp

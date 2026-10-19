@@ -2,8 +2,8 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# shellcheck source=scripts/lib/azure.sh
-source "$ROOT_DIR/scripts/lib/azure.sh"
+# shellcheck source=scripts/lib/ssh.sh
+source "$ROOT_DIR/scripts/lib/ssh.sh"
 
 [[ $# -eq 1 && "$1" =~ ^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}$ ]] || {
   echo 'Usage: ./sakai rollback RELEASE_ID' >&2

@@ -33,10 +33,9 @@ command_name="${1:-help}"
 
 case "$command_name" in
   login)
-    command -v az >/dev/null 2>&1 || { echo "Error: Azure CLI is not installed." >&2; exit 1; }
-    az login
-    az account set --subscription '55a5701c-411e-45f1-9829-9c80f526d9eb'
-    az account show --query '{subscription:name,id:id,user:user.name}' --output table
+    # shellcheck source=scripts/lib/azure.sh
+    source "$ROOT_DIR/scripts/lib/azure.sh"
+    sakai_login
     ;;
   shell) exec "$ROOT_DIR/scripts/ssh-sakai.sh" "$@" ;;
   copy) exec "$ROOT_DIR/scripts/copy-to-sakai.sh" "$@" ;;

@@ -9,5 +9,8 @@ deployment/artifacts/
 grading-workspace/
 .sakai-grading/
 
+# Exact CLI runs contain private grading data and uploaded content
+/docs/evidence/mcp/private-runs/
+
 # OS/editor files
 .DS_Store
