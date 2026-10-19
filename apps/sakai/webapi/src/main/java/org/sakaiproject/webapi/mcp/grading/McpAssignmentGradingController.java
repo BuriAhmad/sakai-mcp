@@ -42,33 +42,6 @@ public class McpAssignmentGradingController {
         return queries.context(site, assignment);
     }
 
-    @GetMapping("/grading-submissions")
-    public Map<String, Object> list(
-            @PathVariable String site,
-            @PathVariable String assignment,
-            @RequestParam(required = false) String cursor,
-            @RequestParam(required = false) Integer limit) {
-        return queries.list(site, assignment, cursor, limit);
-    }
-
-    @GetMapping("/grading-submissions/{submission}")
-    public Map<String, Object> detail(
-            @PathVariable String site,
-            @PathVariable String assignment,
-            @PathVariable String submission) {
-        return queries.detail(site, assignment, submission);
-    }
-
-    @GetMapping("/grading-submissions/{submission}/files/{file}")
-    public ResponseEntity<byte[]> submissionFile(
-            @PathVariable String site,
-            @PathVariable String assignment,
-            @PathVariable String submission,
-            @PathVariable String file,
-            @RequestParam String revision) {
-        return fileResponse(files.submissionFile(site, assignment, submission, file, revision));
-    }
-
     @GetMapping("/grading-files/{file}")
     public ResponseEntity<byte[]> assignmentFile(
             @PathVariable String site,

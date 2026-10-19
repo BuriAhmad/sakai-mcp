@@ -21,6 +21,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 import org.sakaiproject.util.RequestFilter;
+import org.sakaiproject.mcpauth.DelegatedCredentialGuard;
+import org.sakaiproject.mcpauth.DelegatedSessionFilter;
 import org.sakaiproject.util.SakaiContextLoaderListener;
 import org.sakaiproject.util.ToolListener;
 import org.springframework.web.WebApplicationInitializer;
@@ -39,11 +41,18 @@ public class WebAppConfiguration implements WebApplicationInitializer {
         servletContext.addListener(new ToolListener());
         servletContext.addListener(new SakaiContextLoaderListener(rootContext));
 
+        // Select isolated delegated session before RequestFilter captures it.
+        servletContext.addFilter("sakai.delegated.credentials", DelegatedCredentialGuard.class)
+                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+
         servletContext.addFilter("sakai.request", RequestFilter.class)
                 .addMappingForUrlPatterns(
                         EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE),
                         true,
                         "/*");
+
+        servletContext.addFilter("sakai.delegated.session", DelegatedSessionFilter.class)
+                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 
         // RequestFilter establishes Sakai's outer request context first. The MCP
         // adapter then replaces it with a short-lived, token-bound user context.

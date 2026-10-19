@@ -17,23 +17,21 @@ from sakai_mcp.contracts.assignment_setup_validation import (
     validate_window,
 )
 from sakai_mcp.errors import ErrorCode, SakaiError
-from sakai_mcp.sakai.courses import list_result
 from sakai_mcp.sakai.paths import segment
 from sakai_mcp.sakai.transport import SakaiTransport
+from sakai_mcp.workflows.submissions import SubmissionReads
 
 
 class AssignmentOperations:
-    def __init__(self, transport: SakaiTransport) -> None:
+    def __init__(self, transport: SakaiTransport, submissions: SubmissionReads) -> None:
         self.transport = transport
         self.settings = transport.settings
+        self.submissions = submissions
 
     async def get_course_submissions(
         self, principal: AccessToken, course_id: str, assignment_id: str
     ) -> list[dict[str, Any]]:
-        path = f"/api/mcp/v1/courses/{segment(course_id)}/assignments/{segment(assignment_id)}/submissions"
-        return list_result(
-            await self.transport.request("GET", path, principal), "submissions"
-        )
+        return await self.submissions.metadata(principal, course_id, assignment_id)
 
     def _require_assignment_setup(self) -> None:
         if not self.settings.assignment_setup_enabled:

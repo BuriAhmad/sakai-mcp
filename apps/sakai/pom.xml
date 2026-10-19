@@ -41,6 +41,7 @@
             </activation>
             <modules>
                 <module>master</module>
+                <module>mcp-auth</module>
                 <module>admin-tools</module>
                 <module>admin-su</module>
                 <module>access</module>

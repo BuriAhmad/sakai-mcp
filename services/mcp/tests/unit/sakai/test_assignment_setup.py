@@ -157,14 +157,14 @@ def test_context_query_is_encoded_and_does_not_initialize_tools():
     assert len(calls) == 1
 
 
-def test_new_capability_denial_does_not_change_v1_ambiguous_5xx_policy():
+def test_setup_denial_and_unconfigured_announcement_store_send_no_unjournaled_write():
     with pytest.raises(SakaiError, match="UNSUPPORTED_CAPABILITY"):
         asyncio.run(
             adapter(lambda _: httpx.Response(501)).assignments.create_assignment(
                 principal(), request()
             )
         )
-    with pytest.raises(SakaiError, match="AMBIGUOUS_WRITE_OUTCOME"):
+    with pytest.raises(SakaiError, match="DEPENDENCY_UNAVAILABLE"):
         asyncio.run(
             adapter(
                 lambda _: httpx.Response(501)

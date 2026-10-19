@@ -1,0 +1,3892 @@
+{
+  "format_version": 1,
+  "scope": "Line locations and kinds only; no native payloads, student content or credentials copied. Existing source references, not runtime reachability proof.",
+  "repository_scan": "Git tracked and nonignored untracked text source (including hidden CI paths); migration evidence itself excluded.",
+  "patterns": {
+    "legacy-route": "/(?:api/)?mcp/v1",
+    "native-business-class": "Mcp(?:Assignment|Grading|GradeMutation|Assessment|Submissions|Grades|Course|Announcement)",
+    "native-business-config-or-store": "mcp\\.assignment|sakai-grading|LOCK_VERSION",
+    "domain-extension": "addDraftAssignment|withAssignmentLock|withGradingSubmissionLock|getAssignmentWithGradingEvidence|getSubmissionWithGradingEvidence|addExternalAssessmentUnreleased|isGradebookInitialized",
+    "auth-integration": "McpBearerFilter|McpJwtVerifier|mcp\\.integration"
+  },
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "classification": "release-build-configuration-or-operations",
+      "sha256": "18bc596bcb35f89ce737b4c2f74bbe710af8e710ca64751730a27bb41faf9514",
+      "references": [
+        {
+          "line": 20,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/assignment/api/src/java/org/sakaiproject/assignment/api/AssignmentService.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "4b457e4c6f30062b57dd74983d8529b68a31ddaede00f15eb246601792b8eaca",
+      "references": [
+        {
+          "line": 302,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 307,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 484,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 488,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 491,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/assignment/api/src/java/org/sakaiproject/assignment/api/model/AssignmentSubmission.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "874d00a334fd280acd9715c8f9ea3acdb0217d1d633b90c15848903375d941d1",
+      "references": [
+        {
+          "line": 87,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/assignment/impl/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "b3734c12a4596902e946e6fcd4b52976ffa07f18b03bd2a0fe76ba1bc0b03db3",
+      "references": [
+        {
+          "line": 45,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/assignment/impl/src/java/org/sakaiproject/assignment/impl/AssignmentServiceImpl.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "0546a25a0144c097ca56c25b07ac15eabe5865b5b89594e099c0742548f6021b",
+      "references": [
+        {
+          "line": 936,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 942,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 1716,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 1735,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 1746,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/assignment/impl/src/test/org/sakaiproject/assignment/impl/AssignmentServiceTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "4038d3b65fd6b081b3bd993546eecb2967108ca99bc974c10ff728f9019578d9",
+      "references": [
+        {
+          "line": 237,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 241,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 250,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 259,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/assignment/tool/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "3d52eade1da1077198312d3c658ace426cd9810cc0757036a0ae47d26751cbc2",
+      "references": [
+        {
+          "line": 53,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentAction.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "e221ea1bc508869f34f8aeeacdca55605d708efc16e1b980743b5163118514f2",
+      "references": [
+        {
+          "line": 1632,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/content-review/impl/turnitin/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "50b075baaf6fb4d6969e057cf4ce108560db2c70c0833b4616e21d33011ac2dc",
+      "references": [
+        {
+          "line": 93,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/conversations/api/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "6d11cbbaec66e0f9ff8cfde472b96140f14beb50b885d46a3818cbf1a321d57f",
+      "references": [
+        {
+          "line": 46,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/conversations/impl/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "6af9dec3d9551e6e7683f3b899ce5b7257a0f086e2472a5171b9f784488bedb0",
+      "references": [
+        {
+          "line": 46,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/docker/tomcat/conf/catalina.properties",
+      "classification": "native-source-and-wiring",
+      "sha256": "ad23c46dc3dd683fd1f09860c29c09de16efedb6eaf0508bc6205c7ef673a783",
+      "references": [
+        {
+          "line": 600,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/gradebookng/api/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "b8d25d9e2fbef6b714f23b7a49e0835cea5d981ca10747bc0e26c19f3e29f998",
+      "references": [
+        {
+          "line": 6,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/gradebookng/api/src/main/java/org/sakaiproject/grading/api/GradingService.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "b538be1e5a2ec1ac59004c59982b96c8437228e56c7a41543de68ae8df3ca314",
+      "references": [
+        {
+          "line": 753,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 1000,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/gradebookng/impl/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "f19e63a74cc8532b01e0a2e00aab6a114f3708f322df061d020d2ca7fde49d63",
+      "references": [
+        {
+          "line": 6,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 19,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/gradebookng/impl/src/main/java/org/sakaiproject/grading/impl/GradingServiceImpl.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "b166912c5a598aba97134321a8a77027ce75d18490fb206bcacb26f77d388474",
+      "references": [
+        {
+          "line": 4270,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 5357,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/gradebookng/impl/src/test/java/org/sakaiproject/grading/impl/test/GradingServiceTests.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "f0dfe5008e8215d72eb02edd83fbc5824268f392378bb154b950d3f40e0c32bf",
+      "references": [
+        {
+          "line": 259,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 260,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 262,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 269,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 273,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/gradebookng/tool/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "c54ca0571deef4cde5ea0b1a70e5e795b3a845259b138372be618501471e3b97",
+      "references": [
+        {
+          "line": 59,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/lessonbuilder/tool/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "7f98bc1b7f75afa39966f5af3d24cc1d50a3e999a368fa333bf8622bcf47c74a",
+      "references": [
+        {
+          "line": 60,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/lti/lti-blis/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "192105697007fb8d4f68ae7a496f2b711e8c26203fcc99955c09bcc616151e28",
+      "references": [
+        {
+          "line": 43,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/lti/lti-common/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "46638309c071329b56bddfb7abdb51f506cc3a47e534bdbed7d7930adffaab31",
+      "references": [
+        {
+          "line": 51,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/lti/lti-portlet/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "5c691c05b948f480532a21c5eef4dccc148c1ee01ad4f0762e774f2843930126",
+      "references": [
+        {
+          "line": 66,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/lti/lti-tool/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "dff19a6563df89f0b8055b976c064c9ab534505f7b22dc7797f3d2b9157613be",
+      "references": [
+        {
+          "line": 60,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/master/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "cdfadb19e7eb13671cbf9257b0e0b16a92a22db964a4484d83fa2439cc8b00e7",
+      "references": [
+        {
+          "line": 1908,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/msgcntr/messageforums-app/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "baba1d6eae33899483d33d474492c8e1ef4ef91b4c462f88929a909a14e8a2e1",
+      "references": [
+        {
+          "line": 91,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/msgcntr/messageforums-component-impl/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "2c183ea8134581a7c55c67d81c8878220d2e7fb6b76869eda699ac908d7060c5",
+      "references": [
+        {
+          "line": 63,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/plus/api/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "8e61bfcbb6d0dfa571befe735885533d1b277316576991aa59240f7203fd8925",
+      "references": [
+        {
+          "line": 46,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/plus/impl/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "d2f693e3d0b863f02900aaa0f9b51aad356466e172d5b0e07ca47e4e957f3362",
+      "references": [
+        {
+          "line": 136,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/plus/provider/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "1c0ccceafb2c295453668bb29ce40aeb93f830b357a586c759c3d71fd66495b2",
+      "references": [
+        {
+          "line": 77,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/rubrics/impl/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "994c0906d3e3da11b85ec5ffb2bda0f56cf701fda59d051706c65de7f47eb7da",
+      "references": [
+        {
+          "line": 121,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/samigo/samigo-app/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "187a9f38fcb8d96ebc9d7760a6cd53e0aae48b6f7eccfc1763d6660f2eac2fba",
+      "references": [
+        {
+          "line": 46,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/samigo/samigo-services/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "c62b703a07ea961aae2f1d7ae6ff7a180b1f6f62b60844994d9a2b0b74233876",
+      "references": [
+        {
+          "line": 35,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/scormplayer/scorm-impl/service/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "be0460cd5257eac6875cf72aa6b2d903b1a8e93425c3fbd7ac62dfbae7c0355b",
+      "references": [
+        {
+          "line": 49,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/scormplayer/scorm-tool/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "7cf668582c8e83c5665537156343544b7ee4fb76b19ddb469cae1f4a2bf6c638",
+      "references": [
+        {
+          "line": 53,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/site-manage/datemanager/impl/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "7ffd35e2a2ec04d24be4863420f7bb2d0b37619ec09e942cc5636b5d00f4178f",
+      "references": [
+        {
+          "line": 47,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/site-manage/site-manage-impl/impl/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "03e9a1ffaaa5e62071269b43fa9b28b5ba70e767c78c6d6882554f58048214bc",
+      "references": [
+        {
+          "line": 39,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/site-manage/site-manage-tool/tool/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "7a2850a93036a5c37d86a9c3b8cfced493ffa40bdba2957f5d5b8789412cef6e",
+      "references": [
+        {
+          "line": 47,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "70a4e0283df996d82aa39312c9f11b3fc4a789bf4a14ac68af31632cb66d8c8a",
+      "references": [
+        {
+          "line": 137,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/WebAppConfiguration.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "f355cd5011f642bf5ef2db615281e7e780270813ccb66f005ccdbaccb3a071bb",
+      "references": [
+        {
+          "line": 51,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md",
+      "classification": "native-source-and-wiring",
+      "sha256": "d2da9d0ddcc5a7f2d3968f4b63b8efcb52e9e850a97923ffd2cf69e9231382b7",
+      "references": [
+        {
+          "line": 3,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 16,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 17,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 19,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 20,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 21,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 22,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 23,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 24,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 25,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 29,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 38,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteController.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "18f1532dc3eff7345862ef808005c68e76955e1e9c2d24f9f453e0125306367e",
+      "references": [
+        {
+          "line": 32,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 33,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 42,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentContextController.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "57aba4ce9c15149d8ecc80b46c84c34f31123734c884ea507709da675a539760",
+      "references": [
+        {
+          "line": 13,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 14,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 15,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 17,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentService.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "f0eff2e56c36216dcd090c724b96f8ac75e4badb94dddcf9a2336899a183c2bb",
+      "references": [
+        {
+          "line": 46,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 47,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 60,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 88,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 196,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 464,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupService.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "b9cc6363c484601889a5b6ae3f6ceaa685e3273f98fd14c4f3618f8481b5dbd7",
+      "references": [
+        {
+          "line": 4,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 42,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 43,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 44,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 84,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 85,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 254,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 317,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 386,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 466,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteController.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "30603c6a3c75d05a56d5a7bdbcab2d2ef777c38f62fb822849f6d881dbb3f532",
+      "references": [
+        {
+          "line": 19,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 20,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 21,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 29,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 88,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 99,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpCourseController.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "3a681149c20266eb0c0abe1f2456c23ab21c3479970776705ecd016e91a51176",
+      "references": [
+        {
+          "line": 30,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 31,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 38,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpGradesController.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "1bdb61aac8edb81fed4da9900f6b12ab2e9990f42945b117f16bd6ef53908071",
+      "references": [
+        {
+          "line": 35,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 36,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 44,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpSubmissionsController.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "8f748f65cfcee765bb0f91381d883b9e82e21bd33912318b8031d48aa20a846a",
+      "references": [
+        {
+          "line": 39,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 40,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 48,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpAssignmentGradingController.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "fd23aa1168f7c1453924c96203ce3b32a4c30479b35e0fe1423df909cce90fa9",
+      "references": [
+        {
+          "line": 19,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 20,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 21,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 22,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 23,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 24,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 25,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 27,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 28,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 29,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 30,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 31,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 32,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 81,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradeMutationService.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "10ff7d0bc0411ede007e5cb7489c21198f18816b48f04b370cdb4cd15840c259",
+      "references": [
+        {
+          "line": 9,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 10,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 11,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 12,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 13,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 14,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 41,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 44,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 46,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 47,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 51,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 54,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 56,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 57,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 118,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 264,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 311,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradebookProjection.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "e1f69c3f004537c227b5934373b4ef5ed3609df9514d1faeea2dfb75f7c922f5",
+      "references": [
+        {
+          "line": 7,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 32,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 33,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 40,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 41,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 51,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingAssignmentsController.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "fd042f938d34149b5676ba8fb2b922630714e0c36ee7332c51cf3aa44e997fb6",
+      "references": [
+        {
+          "line": 13,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 14,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 15,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 17,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingAuthorization.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "cdc9c319092ca38ccc76bf77bb05bcf28fe3f21052f8769acbff8d5db420b8ca",
+      "references": [
+        {
+          "line": 33,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 42,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 66,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 72,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 114,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingEvidence.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "8cb41f5663c452764188cc9c1b32222f2af5b90bacfc4d1028fc43e021eb5726",
+      "references": [
+        {
+          "line": 8,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 9,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 10,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 11,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 12,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 28,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 39,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 43,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 44,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 46,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 50,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 51,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingExportService.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "46d5c5dbfdd16bec97fcdf8f75b31608c1819380ca04fdedbbe274eee0139ed7",
+      "references": [
+        {
+          "line": 8,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 9,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 10,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 11,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 12,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 47,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 49,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 50,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 51,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 55,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 57,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 58,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 59,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 71,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 412,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingFileService.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "ab980630714563c03d0ecd417bc57164460f12aa56e1d61fa86812f8f74a9559",
+      "references": [
+        {
+          "line": 31,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 33,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 34,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 37,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 39,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 40,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingJson.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "c6be718733bade9d9fbeb8c19182e7e9b55f8165a446ab1be214a5f87c7facbb",
+      "references": [
+        {
+          "line": 20,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 23,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 89,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingProposalService.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "e2ab328a96a9e4c88e8908385a49084422d29db628dcdca8c278fbb097c8b59a",
+      "references": [
+        {
+          "line": 7,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 8,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 9,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 20,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 21,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 22,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 23,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 25,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 26,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 27,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 28,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 38,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 39,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingQueryService.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "7117ab89bf7f0f0fadff1bb335dc8dd53776e6c7c7b41532ef12044328a18d4c",
+      "references": [
+        {
+          "line": 10,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 11,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 12,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 13,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 14,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 15,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 16,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 31,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 47,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 50,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 53,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 54,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 55,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 58,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 61,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 64,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 65,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 66,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 383,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingStore.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "2304cf5b7f8ff9931530d1c8b84970a4af9ac5c8091b36b248102099ac4a7cbb",
+      "references": [
+        {
+          "line": 26,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 30,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 44,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpBearerFilter.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "cab96b504f8ba2fe2db3bc37a857bbb452061f1e21b38f06faf180235475136f",
+      "references": [
+        {
+          "line": 30,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 32,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 38,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 41,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 52,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 57,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 68,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 83,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 86,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 89,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 124,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 145,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 146,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 153,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 154,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 155,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 156,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 157,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 158,
+          "kinds": [
+            "auth-integration"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpJwtVerifier.java",
+      "classification": "native-source-and-wiring",
+      "sha256": "c1f17fa87144aafe330819d3ffc5f83c7d633108f60db48a445afc37018b3d3a",
+      "references": [
+        {
+          "line": 26,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 36,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 42,
+          "kinds": [
+            "auth-integration"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteControllerTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "822d635e66295048cddb1014183475431c77863d3580fd78268a701a33cb938c",
+      "references": [
+        {
+          "line": 33,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 38,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 59,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 73,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 89,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 107,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupServiceTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "b36c5ffad4e341d855e1fb7b3f17f084794867176442c17a77025431db56bdce",
+      "references": [
+        {
+          "line": 36,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 41,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 42,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 61,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 68,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 85,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 98,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 104,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 106,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 115,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 116,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 119,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 121,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 131,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 140,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 165,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 195,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 207,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 210,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 228,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 247,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 252,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 256,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 257,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 271,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 342,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 351,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 356,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 360,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 361,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 388,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 397,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 412,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 417,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 430,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 441,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 445,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 456,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 467,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 479,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 482,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 495,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 520,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 531,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 535,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 546,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 555,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 561,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 619,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 625,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 637,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 644,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 670,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 675,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteControllerTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "2e99e50446c08443e25a4458f1c55267b478e9229733fd66a51c19863b7dc168",
+      "references": [
+        {
+          "line": 13,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 14,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 15,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 16,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpCourseControllerTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "54b03c5926f81ae96dcf3bb64047eb05e8b69ed579890cc9de084251c66c5874",
+      "references": [
+        {
+          "line": 26,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 30,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 40,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 68,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpGradesControllerTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "ed905842de0b51d1f5b0ffa12dbf4c31924b19669274675f1d2dac78f701b1d9",
+      "references": [
+        {
+          "line": 27,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 61,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 62,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 63,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpSubmissionsControllerTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "9cdf243ae99be4118398ee62a024285f0eef5897daf14b2703e4f2d2f85d5e2d",
+      "references": [
+        {
+          "line": 32,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 36,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 50,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 95,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingServicesTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "baf83811222852c7af415ac7ade810a0c0b8dfcea14cee81af5e4cf46c61e786",
+      "references": [
+        {
+          "line": 7,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 28,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 39,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 44,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 45,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 47,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 48,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 49,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 50,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 51,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 52,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 53,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 89,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 92,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 109,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 122,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 138,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 144,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 146,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 148,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 152,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 154,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 164,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 165,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 167,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 170,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 184,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 309,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 310,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 461,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 611,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 615,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 632,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 706,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingWiringTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "d60e64c97c664baef8eb8259bec4988db1e794bdd6ad89e797ab7cc2f34bc8af",
+      "references": [
+        {
+          "line": 20,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 28,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 56,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 59,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 60,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 64,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 81,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/security/McpBearerFilterTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "470f6b29150cd334e67106b59562520becfb5c8600745bac074281a36c97a7f7",
+      "references": [
+        {
+          "line": 57,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 65,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 78,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 94,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 95,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 104,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 131,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 175,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 200,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 286,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/security/McpJwtVerifierTest.java",
+      "classification": "test-contract-or-fixture",
+      "sha256": "df26a6fb109efda449b697ab54336445162fec0a36ee2424fcec247d3da2975b",
+      "references": [
+        {
+          "line": 38,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 46,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 57,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 91,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 97,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 127,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 138,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 139,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 147,
+          "kinds": [
+            "auth-integration"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webcomponents/tool/src/main/frontend/packages/sakai-grader/package.json",
+      "classification": "native-source-and-wiring",
+      "sha256": "31640e7727f66150aac1addc8e3417a580553f4ff7f0b91fbe5b5dd7e5c0e2cf",
+      "references": [
+        {
+          "line": 37,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/sakai/webservices/cxf/pom.xml",
+      "classification": "native-source-and-wiring",
+      "sha256": "f0bd38114ade90ebdc6f6651eda002cc634ddee7d15522ec01d409a14a71bb08",
+      "references": [
+        {
+          "line": 114,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "deployment/AGENTS.md",
+      "classification": "release-build-configuration-or-operations",
+      "sha256": "d78cce58a2679b959376c1f80e10da37004262844ef155ba4d2cf3256e5b7fe9",
+      "references": [
+        {
+          "line": 10,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 11,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "deployment/README.md",
+      "classification": "release-build-configuration-or-operations",
+      "sha256": "261ab6ebae971f879d435e0eb9deb6b70d13d4e2b751b5e1bee7b108ca94ff20",
+      "references": [
+        {
+          "line": 14,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 16,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 18,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "deployment/configure-assignment-grading-sakai.sh",
+      "classification": "release-build-configuration-or-operations",
+      "sha256": "c7f88a93c3656a3c7a66c3641737fcd847456556e10ebaafc08d005b7373d3bb",
+      "references": [
+        {
+          "line": 6,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 43,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 44,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "deployment/configure-mcp-sakai.sh",
+      "classification": "release-build-configuration-or-operations",
+      "sha256": "474a7ce7e6b1027e8e38bc26d3fdff17d9d616df4bd76471b6a0fd98aeac9435",
+      "references": [
+        {
+          "line": 56,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 57,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 58,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 59,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 60,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 61,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 62,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/GRADING_MCP_RESOURCE_RELEASE.md",
+      "classification": "guidance-or-design-review-for-cutover",
+      "sha256": "04bb0a4b342133080c3062a71ca041ee558c49ed725f3868228a2291422479f3",
+      "references": [
+        {
+          "line": 14,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 30,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 31,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/INFRASTRUCTURE.md",
+      "classification": "guidance-or-design-review-for-cutover",
+      "sha256": "6c3784c6206036e18cccf5b5b260940ed27f41f139bc1a48a3fb14d53de593a1",
+      "references": [
+        {
+          "line": 95,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 111,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/MCP_IMPLEMENTATION_RUNBOOK.md",
+      "classification": "guidance-or-design-review-for-cutover",
+      "sha256": "7e65e9fbf26c160406b23b38124d9536b78acf88c4d6eaf169f835df1cf02379",
+      "references": [
+        {
+          "line": 3,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 71,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 605,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 715,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 750,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 1177,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 1253,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 1271,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 1272,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 1273,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 1274,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 1275,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 2012,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/SAKAI_ASSIGNMENT_GRADING.md",
+      "classification": "guidance-or-design-review-for-cutover",
+      "sha256": "8fcacfbde04af31c79133e4f66dba8248e08daa2d0578b910c57df8a27d94b5e",
+      "references": [
+        {
+          "line": 14,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 37,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 39,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 58,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 65,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 66,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 146,
+          "kinds": [
+            "native-business-config-or-store",
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 170,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/SAKAI_ASSIGNMENT_SETUP.md",
+      "classification": "guidance-or-design-review-for-cutover",
+      "sha256": "74dfb3ffec2e7551b3c9d9e6b7e904b1b12988fff034386e5eeb524a8ad8994c",
+      "references": [
+        {
+          "line": 48,
+          "kinds": [
+            "legacy-route",
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 121,
+          "kinds": [
+            "legacy-route",
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 163,
+          "kinds": [
+            "legacy-route",
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 175,
+          "kinds": [
+            "legacy-route",
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 197,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 211,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 277,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 279,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 285,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/SAKAI_INTEGRATION_GUIDE.md",
+      "classification": "guidance-or-design-review-for-cutover",
+      "sha256": "5908830b7adc0dc07139916f46c136db2b168617809a7bb9b3beacb3ab4fb01e",
+      "references": [
+        {
+          "line": 51,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 56,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 97,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 163,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 205,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 255,
+          "kinds": [
+            "legacy-route",
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 260,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-grading-local.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "7d2012ea7cbf79b4ef11cf5b419931e416f5b0042d4992c4e3650579ffb1ada7",
+      "references": [
+        {
+          "line": 8,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 23,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 32,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 45,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 48,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 53,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-grading-release.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "5735c3a82ee3365967802449f99a466aab6ec1576cff3aa4b7d87c06c9e808d3",
+      "references": [
+        {
+          "line": 7,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 11,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-grading-run-2026-10-14.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "ebf5c829984f9f01637c9206da958c21cdfa8f212df1baf0bd62fe117e4c2fa7",
+      "references": [
+        {
+          "line": 26,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-setup-local.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "1105f5d9e16dd7f18e564978eaa694bf0994a353d6aaf3ef1838ade94c2dc332",
+      "references": [
+        {
+          "line": 10,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 11,
+          "kinds": [
+            "domain-extension"
+          ]
+        },
+        {
+          "line": 12,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-setup-release.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "28a86262d1818884c8acdaf96caec449a84ee5151fbe01dd1577a445b280d6d0",
+      "references": [
+        {
+          "line": 16,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/phase-1-sakai-source.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "510981fa56e13dbfc6e5c4f2d43dedb82b93a88b830d62efb52c68fa5ca77502",
+      "references": [
+        {
+          "line": 18,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/phase-16-inventory.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "5383a112f8aebb5bbc3775786463a9127931e0feb28422d5b417857032883032",
+      "references": [
+        {
+          "line": 10,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/phase-21-identity.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "333340a0ce7845c05d9afd84f26286a5cf16adab609a64140917700fd9a76277",
+      "references": [
+        {
+          "line": 7,
+          "kinds": [
+            "auth-integration"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/phase-22-authorization.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "75c26929fc634bd7d683f41bcf9e571b61c3bcc5ef1e559c68f59b45512ad32e",
+      "references": [
+        {
+          "line": 7,
+          "kinds": [
+            "native-business-class"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/phase-27-concurrency-isolation.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "eadbdc008d915dd7dc6abd3b0364e2251c354953eedd7b589a5bf7b653fc83f2",
+      "references": [
+        {
+          "line": 9,
+          "kinds": [
+            "auth-integration"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/phase-3-sakai-api-reconnaissance.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "a339c4784210eddc9dfd7f98b0319bad60bafc81abb12b908eed4fde4463a0cc",
+      "references": [
+        {
+          "line": 3,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 7,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 8,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 9,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 10,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 11,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/mcp/phase-7-sakai-adapter.md",
+      "classification": "historical-evidence-do-not-rewrite-as-live",
+      "sha256": "1a5e8f716622635cc51b7db37c21dac0ac5e8ba25d5e85668c627ceafc440afe",
+      "references": [
+        {
+          "line": 5,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/mcp/architecture.md",
+      "classification": "guidance-or-design-review-for-cutover",
+      "sha256": "18ea90aab469ffc31db45208edfe915d28de674b8e56af508ef6ad05c7caf6e3",
+      "references": [
+        {
+          "line": 7,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 9,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/mcp/restructuring-plan.md",
+      "classification": "guidance-or-design-review-for-cutover",
+      "sha256": "5c5e5444ecb3e09a77d25eb2d77218f4f54f77e781c913bdb897a3938c604fa7",
+      "references": [
+        {
+          "line": 66,
+          "kinds": [
+            "native-business-class"
+          ]
+        },
+        {
+          "line": 82,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 254,
+          "kinds": [
+            "domain-extension"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "docs/mcp/sakai-adapter.md",
+      "classification": "guidance-or-design-review-for-cutover",
+      "sha256": "a629420a850fd68ed728a5335cf21e943624e1eda19f878fa36dcbce4dad4f40",
+      "references": [
+        {
+          "line": 11,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 12,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 13,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 14,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 15,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 17,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 34,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 35,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 36,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 37,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 38,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 39,
+          "kinds": [
+            "auth-integration"
+          ]
+        },
+        {
+          "line": 41,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 47,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 48,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 49,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 50,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 51,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 68,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 72,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 73,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 74,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/mcp/README.md",
+      "classification": "release-build-configuration-or-operations",
+      "sha256": "cc2139045c6b419628484e3da5bfff71088f0d3d92509688f251174458f7cc4a",
+      "references": [
+        {
+          "line": 87,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 89,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 91,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/announcements.py",
+      "classification": "python-runtime",
+      "sha256": "549b60b6c89aeb89aad33eb8f996d2a667da32bcb705242d08243739d9bd1bba",
+      "references": [
+        {
+          "line": 21,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 36,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/assignments.py",
+      "classification": "python-runtime",
+      "sha256": "c427abd983c2c3bdfe31e4c202694db6df70babaadff1f84a99dbdc6b4a2cb20",
+      "references": [
+        {
+          "line": 33,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 54,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 76,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 90,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/courses.py",
+      "classification": "python-runtime",
+      "sha256": "2c6dcc1fb355d61e83bb8bf3c12585ff679197ef5c07d5019308e249df5e1c8d",
+      "references": [
+        {
+          "line": 26,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 33,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/grading.py",
+      "classification": "python-runtime",
+      "sha256": "020d2000cc8617c24d5ce79482d5bcc789740f1d52443113b3559e8501e378b5",
+      "references": [
+        {
+          "line": 198,
+          "kinds": [
+            "legacy-route"
+          ]
+        },
+        {
+          "line": 240,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/mcp/tests/integration/test_pipeline.py",
+      "classification": "test-contract-or-fixture",
+      "sha256": "9873b231c43e96d3041d427fa915350ca91b1d70f3661363e01577045085a44a",
+      "references": [
+        {
+          "line": 59,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_assignment_setup.py",
+      "classification": "test-contract-or-fixture",
+      "sha256": "5e96a87a809c1af3e64a319e99124e23fb1c8a0aefc5a50bdd4fdd87645215d3",
+      "references": [
+        {
+          "line": 107,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_proposals.py",
+      "classification": "test-contract-or-fixture",
+      "sha256": "f9e7d95f976f221e87ceedb91b5b5d28013cc79cc5d5af80c5ab9d75d480df5e",
+      "references": [
+        {
+          "line": 27,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_transport.py",
+      "classification": "test-contract-or-fixture",
+      "sha256": "fd8cf3d8e1c6f15f36a1fdadbf6ed89c958960124ba4ea4fc61b7a6e8826ff55",
+      "references": [
+        {
+          "line": 20,
+          "kinds": [
+            "legacy-route"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "skills/sakai-assignment-grading/references/client-constraints.md",
+      "classification": "repository-skill-consumer",
+      "sha256": "2fe9c71d0cbf2f628733ea57e01d19f10c04dda351f8f9a19c2ae265d94dc552",
+      "references": [
+        {
+          "line": 3,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 7,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ]
+    }
+  ],
+  "ignored_consumers": {
+    "source_candidates_screened": 116,
+    "matching_files": 7,
+    "private_inventory": "/Users/burhanahmadkhan/Downloads/Sakai-Migration-Baseline-2026-10-17/ignored-consumers.json",
+    "inventory_sha256": "30fd537288225f32d30123bba435f853c43235b1c5dc037a93873b6372a73781",
+    "kinds": {
+      "legacy-route": 18,
+      "native-business-config-or-store": 4
+    },
+    "state": "Untracked historical/private consumers require separate review before endpoint retirement. No ignored scripts executed or modified; no raw dumps/uploads read."
+  },
+  "installed_skill_consumers": [
+    {
+      "skill": "sakai-assignment-grading",
+      "relative_path": "references/client-constraints.md",
+      "sha256": "2fe9c71d0cbf2f628733ea57e01d19f10c04dda351f8f9a19c2ae265d94dc552",
+      "references": [
+        {
+          "line": 3,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        },
+        {
+          "line": 7,
+          "kinds": [
+            "native-business-config-or-store"
+          ]
+        }
+      ],
+      "action": "Separate installed copy; preserve now and review/update at client cutover. Not modified by this phase."
+    }
+  ],
+  "external_unknowns": [
+    "Installed native source/configuration/JARs, SQL column/store metadata and actual consumers are not reachable while paused; use read-only live inventory later.",
+    "Remote MCP clients or manually copied scripts outside repository/three known installed skills cannot be enumerated from this source checkout."
+  ]
+}

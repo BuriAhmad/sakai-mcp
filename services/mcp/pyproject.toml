@@ -17,6 +17,9 @@ dependencies = [
   "requests==2.34.2",
   "starlette==1.7.0",
   "uvicorn==0.54.0",
+  "azure-storage-blob==12.30.2",
+  "azure-identity==1.26.0",
+  "aiohttp==3.14.5",
 ]
 
 [dependency-groups]
@@ -35,6 +38,7 @@ include = [
   "/src/sakai_mcp/**/*.py",
   "/tests/**/*.py",
   "/tests/contracts/*.json",
+  "/tests/fixtures/**/*.json",
   "/pyproject.toml",
   "/README.md",
   "/uv.lock",

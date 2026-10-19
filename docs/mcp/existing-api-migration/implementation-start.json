@@ -1,0 +1,1620 @@
+{
+  "head": "208d69ac624910a29a7529934ddcc18bbac853e8",
+  "branch": "main",
+  "index_empty": true,
+  "files": [
+    {
+      "path": ".github/copilot-instructions.md",
+      "present": true,
+      "sha256": "9f411af8c117db495379c58ca48f52395784d7f83f70a0596ee3a67b0ee1f2b7",
+      "mode": "0o644",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "present": true,
+      "sha256": "930ec09c0971a50326d6371ea762cdca8f25d9c156f4af8b5197817d0e02e6f3",
+      "mode": "0o644",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": ".gitignore",
+      "present": true,
+      "sha256": "3f30d18efea9ff50b407e69919a81f87021cf4ac909a40b4137ac5057bcb4ac8",
+      "mode": "0o644",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": ".vscode/settings.json",
+      "present": true,
+      "sha256": "b9cf8d7b2680bfa9b990d09d2d58bdb1abdfeccdb6d922fad16be706f99e8e01",
+      "mode": "0o644",
+      "classification": "local-editor-configuration-preserve-excluded",
+      "archived": false
+    },
+    {
+      "path": "AGENTS.md",
+      "present": true,
+      "sha256": "18bc596bcb35f89ce737b4c2f74bbe710af8e710ca64751730a27bb41faf9514",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/AGENTS.md",
+      "present": true,
+      "sha256": "86bed7587ad06ab42512092670d4c2c5d6ad36ce59ac2d0341a58f154180924b",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAnnouncementWriteController.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssessmentContextController.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssessmentService.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssignmentGradingController.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssignmentGradingService.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssignmentSetupService.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssignmentWriteController.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpBearerFilter.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpCourseController.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpGradesController.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpGradingAssignmentsController.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpGradingStore.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpJwtVerifier.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpSubmissionsController.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md",
+      "present": true,
+      "sha256": "d2da9d0ddcc5a7f2d3968f4b63b8efcb52e9e850a97923ffd2cf69e9231382b7",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteController.java",
+      "present": true,
+      "sha256": "18f1532dc3eff7345862ef808005c68e76955e1e9c2d24f9f453e0125306367e",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentContextController.java",
+      "present": true,
+      "sha256": "57aba4ce9c15149d8ecc80b46c84c34f31123734c884ea507709da675a539760",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentService.java",
+      "present": true,
+      "sha256": "f0eff2e56c36216dcd090c724b96f8ac75e4badb94dddcf9a2336899a183c2bb",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupService.java",
+      "present": true,
+      "sha256": "b9cc6363c484601889a5b6ae3f6ceaa685e3273f98fd14c4f3618f8481b5dbd7",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteController.java",
+      "present": true,
+      "sha256": "30603c6a3c75d05a56d5a7bdbcab2d2ef777c38f62fb822849f6d881dbb3f532",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/contracts/McpContractSupport.java",
+      "present": true,
+      "sha256": "4210063e4134a1ce6205e96156bb8798ad5cad02c73810ba9dfc2a686c8f2e5c",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpCourseController.java",
+      "present": true,
+      "sha256": "3a681149c20266eb0c0abe1f2456c23ab21c3479970776705ecd016e91a51176",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpGradesController.java",
+      "present": true,
+      "sha256": "1bdb61aac8edb81fed4da9900f6b12ab2e9990f42945b117f16bd6ef53908071",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpSubmissionsController.java",
+      "present": true,
+      "sha256": "8f748f65cfcee765bb0f91381d883b9e82e21bd33912318b8031d48aa20a846a",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpAssignmentGradingController.java",
+      "present": true,
+      "sha256": "fd23aa1168f7c1453924c96203ce3b32a4c30479b35e0fe1423df909cce90fa9",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradeMutationService.java",
+      "present": true,
+      "sha256": "10ff7d0bc0411ede007e5cb7489c21198f18816b48f04b370cdb4cd15840c259",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradebookProjection.java",
+      "present": true,
+      "sha256": "e1f69c3f004537c227b5934373b4ef5ed3609df9514d1faeea2dfb75f7c922f5",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingAssignmentsController.java",
+      "present": true,
+      "sha256": "fd042f938d34149b5676ba8fb2b922630714e0c36ee7332c51cf3aa44e997fb6",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingAuthorization.java",
+      "present": true,
+      "sha256": "cdc9c319092ca38ccc76bf77bb05bcf28fe3f21052f8769acbff8d5db420b8ca",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingEvidence.java",
+      "present": true,
+      "sha256": "8cb41f5663c452764188cc9c1b32222f2af5b90bacfc4d1028fc43e021eb5726",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingExportService.java",
+      "present": true,
+      "sha256": "46d5c5dbfdd16bec97fcdf8f75b31608c1819380ca04fdedbbe274eee0139ed7",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingFileService.java",
+      "present": true,
+      "sha256": "ab980630714563c03d0ecd417bc57164460f12aa56e1d61fa86812f8f74a9559",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingJson.java",
+      "present": true,
+      "sha256": "c6be718733bade9d9fbeb8c19182e7e9b55f8165a446ab1be214a5f87c7facbb",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingProposalService.java",
+      "present": true,
+      "sha256": "e2ab328a96a9e4c88e8908385a49084422d29db628dcdca8c278fbb097c8b59a",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingQueryService.java",
+      "present": true,
+      "sha256": "7117ab89bf7f0f0fadff1bb335dc8dd53776e6c7c7b41532ef12044328a18d4c",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingStore.java",
+      "present": true,
+      "sha256": "2304cf5b7f8ff9931530d1c8b84970a4af9ac5c8091b36b248102099ac4a7cbb",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpBearerFilter.java",
+      "present": true,
+      "sha256": "cab96b504f8ba2fe2db3bc37a857bbb452061f1e21b38f06faf180235475136f",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpJwtVerifier.java",
+      "present": true,
+      "sha256": "c1f17fa87144aafe330819d3ffc5f83c7d633108f60db48a445afc37018b3d3a",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpAnnouncementWriteControllerTest.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpAssignmentGradingServiceTest.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpAssignmentSetupServiceTest.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpAssignmentWriteControllerTest.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpBearerFilterTest.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpCourseControllerTest.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpGradesControllerTest.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpJwtVerifierTest.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpSubmissionsControllerTest.java",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": false
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteControllerTest.java",
+      "present": true,
+      "sha256": "822d635e66295048cddb1014183475431c77863d3580fd78268a701a33cb938c",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupServiceTest.java",
+      "present": true,
+      "sha256": "b36c5ffad4e341d855e1fb7b3f17f084794867176442c17a77025431db56bdce",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteControllerTest.java",
+      "present": true,
+      "sha256": "2e99e50446c08443e25a4458f1c55267b478e9229733fd66a51c19863b7dc168",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpCourseControllerTest.java",
+      "present": true,
+      "sha256": "54b03c5926f81ae96dcf3bb64047eb05e8b69ed579890cc9de084251c66c5874",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpGradesControllerTest.java",
+      "present": true,
+      "sha256": "ed905842de0b51d1f5b0ffa12dbf4c31924b19669274675f1d2dac78f701b1d9",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpSubmissionsControllerTest.java",
+      "present": true,
+      "sha256": "9cdf243ae99be4118398ee62a024285f0eef5897daf14b2703e4f2d2f85d5e2d",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingServicesTest.java",
+      "present": true,
+      "sha256": "baf83811222852c7af415ac7ade810a0c0b8dfcea14cee81af5e4cf46c61e786",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingWiringTest.java",
+      "present": true,
+      "sha256": "d60e64c97c664baef8eb8259bec4988db1e794bdd6ad89e797ab7cc2f34bc8af",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/security/McpBearerFilterTest.java",
+      "present": true,
+      "sha256": "470f6b29150cd334e67106b59562520becfb5c8600745bac074281a36c97a7f7",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/security/McpJwtVerifierTest.java",
+      "present": true,
+      "sha256": "df26a6fb109efda449b697ab54336445162fec0a36ee2424fcec247d3da2975b",
+      "mode": "0o644",
+      "classification": "preexisting-native-restructuring-preserve-not-retired",
+      "archived": true
+    },
+    {
+      "path": "docs/MCP_IMPLEMENTATION_RUNBOOK.md",
+      "present": true,
+      "sha256": "7e65e9fbf26c160406b23b38124d9536b78acf88c4d6eaf169f835df1cf02379",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/SAKAI_ASSIGNMENT_GRADING.md",
+      "present": true,
+      "sha256": "8fcacfbde04af31c79133e4f66dba8248e08daa2d0578b910c57df8a27d94b5e",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/SAKAI_ASSIGNMENT_SETUP.md",
+      "present": true,
+      "sha256": "74dfb3ffec2e7551b3c9d9e6b7e904b1b12988fff034386e5eeb524a8ad8994c",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/SAKAI_INTEGRATION_GUIDE.md",
+      "present": true,
+      "sha256": "5908830b7adc0dc07139916f46c136db2b168617809a7bb9b3beacb3ab4fb01e",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-grading-local.md",
+      "present": true,
+      "sha256": "7d2012ea7cbf79b4ef11cf5b419931e416f5b0042d4992c4e3650579ffb1ada7",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-grading-release.md",
+      "present": true,
+      "sha256": "5735c3a82ee3365967802449f99a466aab6ec1576cff3aa4b7d87c06c9e808d3",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-grading-run-2026-10-14.md",
+      "present": true,
+      "sha256": "ebf5c829984f9f01637c9206da958c21cdfa8f212df1baf0bd62fe117e4c2fa7",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/evidence/mcp/phase-25-client-compatibility.md",
+      "present": true,
+      "sha256": "869869f31917aeed95d471aaf7a0ba2adfd5539517935aee4455427c849c9ad9",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/evidence/mcp/phase-31-final-acceptance.md",
+      "present": true,
+      "sha256": "4df317890da73e115d1fdc57669ee36d46405261216af202431fcec7c27cf69b",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/evidence/mcp/restructuring-local.md",
+      "present": true,
+      "sha256": "6b6d540f5eec2944d81d8ae29c7d1bcbd682d867568b28016a1d152958692ce3",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/architecture.md",
+      "present": true,
+      "sha256": "18ea90aab469ffc31db45208edfe915d28de674b8e56af508ef6ad05c7caf6e3",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/README.md",
+      "present": true,
+      "sha256": "27212b9a1aa7748d19b6909f5d967f1116b3d7384005f999f974577fa6d19ad0",
+      "mode": "0o644",
+      "classification": "later-migration-plan-and-research",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/baseline.json",
+      "present": true,
+      "sha256": "7b2454c7246db197407bb710eaae3303f1d82bd893856fc207cbdc08a9b9bfb8",
+      "mode": "0o644",
+      "classification": "later-migration-plan-and-research",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/browser-flows.json",
+      "present": true,
+      "sha256": "21e9f9a175b4f03ae48b24c171b4db0aa6828b0f09134f55135da3928e43cd84",
+      "mode": "0o644",
+      "classification": "later-migration-plan-and-research",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/browser-http-research.md",
+      "present": true,
+      "sha256": "ed97d7e46622f25f567479e6a4a50f9e46b895edbcc3503d4b91cc07aa511757",
+      "mode": "0o644",
+      "classification": "later-migration-plan-and-research",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/check_scope.py",
+      "present": true,
+      "sha256": "648990a34378cb6a7f5af1c671c1b2e925ce8bf829a32223caffeb3afae83b42",
+      "mode": "0o644",
+      "classification": "later-migration-plan-and-research",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/coverage.json",
+      "present": true,
+      "sha256": "85af8d70839ace7d6d9e555ef3e518339e68a9cc002882199c22e1dc60fa1ac6",
+      "mode": "0o644",
+      "classification": "later-migration-plan-and-research",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/implementation-plan.md",
+      "present": true,
+      "sha256": "417f812e45da1cda33383ed25c7beab8b23880cf95c899d119b2d947a6350e79",
+      "mode": "0o644",
+      "classification": "later-migration-plan-and-research",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/native-change-ledger.json",
+      "present": true,
+      "sha256": "ffd2d4a06e1c20464d3a19926ccecd155568db7a538b83fb7e7d4b1ac0494799",
+      "mode": "0o644",
+      "classification": "later-migration-plan-and-research",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/route-references.json",
+      "present": true,
+      "sha256": "326c8bd2e36110bfd881fe8bd125297bf03e401b49c33e41cd31e77bcefd00b0",
+      "mode": "0o644",
+      "classification": "later-migration-plan-and-research",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/restructuring-plan.md",
+      "present": true,
+      "sha256": "5c5e5444ecb3e09a77d25eb2d77218f4f54f77e781c913bdb897a3938c604fa7",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "docs/mcp/sakai-adapter.md",
+      "present": true,
+      "sha256": "a629420a850fd68ed728a5335cf21e943624e1eda19f878fa36dcbce4dad4f40",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "sakai",
+      "present": true,
+      "sha256": "5ebc134139d17d3e11785a95b6210b5bfa3f45efb2752804b7ab6dbc66ba08f6",
+      "mode": "0o755",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "scripts/README.md",
+      "present": true,
+      "sha256": "d7d66c0e1b7684371f188cf8687e86cc4143ecdb7a1e71f899208fc75dce41c6",
+      "mode": "0o644",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "scripts/check-mcp.sh",
+      "present": true,
+      "sha256": "c220831a092526ae913869fa47623468e93e8684bbaaa937bd06cf785d431f26",
+      "mode": "0o755",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "scripts/copy-to-sakai.sh",
+      "present": true,
+      "sha256": "423b5dfec347d61c33b26edec7eeeff1b16c6f64be00e37059608adc364c7166",
+      "mode": "0o755",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "scripts/deploy-sakai-release.sh",
+      "present": true,
+      "sha256": "3f3b35af29782c9014c30136d1badbff6da8b5d4911cd243333ff57dd01e44d7",
+      "mode": "0o755",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "scripts/lib/azure.sh",
+      "present": true,
+      "sha256": "5f79c97ade7885477eebd455e67f40773b0282afc8a881462ed51952b3b013e7",
+      "mode": "0o644",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "scripts/lib/config.sh",
+      "present": true,
+      "sha256": "062c35b82cce11927b5e7255f390bc330feb13690113f235ca230b2aa5d38035",
+      "mode": "0o644",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "scripts/lib/ssh.sh",
+      "present": true,
+      "sha256": "3ccf6aa36ca5c9664fff7c22be4a5f62612bb621915ffe898448f1feed3a7081",
+      "mode": "0o644",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "scripts/open-ssh-access.sh",
+      "present": true,
+      "sha256": "4dd3fa86fa7f006b2138921fa31044b8c4517af9d31ae1a961458af23299cb6e",
+      "mode": "0o755",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "scripts/rollback-sakai-release.sh",
+      "present": true,
+      "sha256": "d48be4a13b9b6d4735f129975c9fdfe188de63b16c7d48ad2584cc12f0612aef",
+      "mode": "0o755",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "scripts/ssh-sakai.sh",
+      "present": true,
+      "sha256": "4b147f76b59df5d97c222833203b256aee4c5f8c9471b10600ab51fceb83889b",
+      "mode": "0o755",
+      "classification": "unrelated-operations-ci-editor-support-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/AGENTS.md",
+      "present": true,
+      "sha256": "08acb0d35f84eeaf746ea3282bf06ea02bef6120f53ac0961225b16128adb154",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/Dockerfile",
+      "present": true,
+      "sha256": "5c94e9a3dd783b61b090513a34d43f2718db27e84bf090aa5b479d0f099f54de",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/README.md",
+      "present": true,
+      "sha256": "cc2139045c6b419628484e3da5bfff71088f0d3d92509688f251174458f7cc4a",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/pyproject.toml",
+      "present": true,
+      "sha256": "794f121192e55df83ead3bb4333c223eb28f83b399e29d5144fc8b018cd71052",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/.vscode/mcp.json",
+      "present": true,
+      "sha256": "de299fb2d2f0014253a846b3b202b372b41407ec8d0861531d58489522af5029",
+      "mode": "0o644",
+      "classification": "local-editor-configuration-preserve-excluded",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/.vscode/mcp.json.vexp-bak",
+      "present": true,
+      "sha256": "2ada30b7bd7626e1400832314075e6b0df77f30b1a5c595fcb82d783a3118472",
+      "mode": "0o644",
+      "classification": "local-editor-configuration-preserve-excluded",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/.vscode/settings.json",
+      "present": true,
+      "sha256": "b9cf8d7b2680bfa9b990d09d2d58bdb1abdfeccdb6d922fad16be706f99e8e01",
+      "mode": "0o644",
+      "classification": "local-editor-configuration-preserve-excluded",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/asgi.py",
+      "present": true,
+      "sha256": "d3b6fbd08d0ab97c16efcee7b7ee184202a7650ca6dd384016c5c2662f035aa9",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/assessment_models.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/assessment_validation.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/audit.py",
+      "present": true,
+      "sha256": "68c6233d918847d103aa32b2f07336df44321ec0dc0ca54fd3d41a0407bccd43",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/auth.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/bootstrap.py",
+      "present": true,
+      "sha256": "9f37b68aeeb22f1dc28249145d6f1143247174bea4efe23a2b390ca60a58b6de",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/config.py",
+      "present": true,
+      "sha256": "25f59293a305facf00b48898bb08fec81121499e0b5a982929a4a6fffcdf3875",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/__init__.py",
+      "present": true,
+      "sha256": "a57ff045070e63a240c6334f4aed4b56feb16b5366cfbc45028199a21bad3c58",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/assignment_setup.py",
+      "present": true,
+      "sha256": "b57c46cba3570d7df8f2595ce16284a7d7d824dbfcdf225189e5ec5f8ea14475",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/assignment_setup_validation.py",
+      "present": true,
+      "sha256": "6df7779205195f877081cf981ca6139638e307076242cc1f7a1630b54412c2bd",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/existing_api.py",
+      "present": true,
+      "sha256": "b799acbf5e9d8fd0e03aba192a866b090e4d31bdf6af114d3b981517d75c2338",
+      "mode": "0o644",
+      "classification": "interrupted-unwired-scaffold",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/grading_native.py",
+      "present": true,
+      "sha256": "dbe5410462e50af6f87dce348541a58fa0fdb0ae1e995a66b7920ce864add74a",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/grading_proposals.py",
+      "present": true,
+      "sha256": "0e00664e4886be3440570822652dc1e86b44638d04f893420b9a97bb48128a34",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/grading_public.py",
+      "present": true,
+      "sha256": "9185e91385c284e2d8143fb9f8f0d9be72e5b15418fcc167eb19cb8860ff91f5",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/errors.py",
+      "present": true,
+      "sha256": "7165a0d27ac6619ea389e51d828aa0e6c8063195388675af599c9d42f96677eb",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading/__init__.py",
+      "present": true,
+      "sha256": "9aa69b5340b22bd1ce7c687bbbf040e5fe80b1451cba900622bd356e0ba49876",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading/evaluator.py",
+      "present": true,
+      "sha256": "f5178096999a5b8f5160c1c4f9d29725d81d91b8d8b7d81c0255027ce83fca4d",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading/reports.py",
+      "present": true,
+      "sha256": "e8dcd42415df578d4067bd0cc5ad1d9b097eadb84442b16e405fb7e719641651",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading/serialization.py",
+      "present": true,
+      "sha256": "55c0d93bf4df4a2c28005498f6b7f53015e79abaf46786abe6dce8f2a449bef1",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading_evaluator.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading_models.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading_proposal_tools.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading_resource_models.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading_resources.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading_tools.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/__init__.py",
+      "present": true,
+      "sha256": "460e94735780c7cbc7d772d94c9ee8d0b61011a7d3ae00a59b7ac68afe5af452",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/context.py",
+      "present": true,
+      "sha256": "c97e33842f39ddaf736c0f40e5582d2dcbd1712b076030ee0cbb53ae22566829",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/http.py",
+      "present": true,
+      "sha256": "08454b253855f9ef529ccde406f7a773eb7935ee3f56e8fd8a0fa6b2551d385d",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/presenters.py",
+      "present": true,
+      "sha256": "d15a3378c0231e04896c0dfb07569f1241d4985923d5726c501ab2b9d6c39d0c",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/resources.py",
+      "present": true,
+      "sha256": "df6de25a056e11a1f65a0e8eca5d6f52c26fbf8f67a1fc863e6a7fc6b71498d1",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/server.py",
+      "present": true,
+      "sha256": "92f91b6b0ec521762f3610f69608bc6d515f53b4851e9a46633357cba2f03415",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/tools.py",
+      "present": true,
+      "sha256": "6348ad44e35d79ebe7a7e86cf79e59145bdb413cff3609eb4a163f8209914710",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/obo.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/resource_server.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/__init__.py",
+      "present": true,
+      "sha256": "48fd05210322534a48b0da30544354441f5d6c39e252288ab001f86cca4e608f",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/announcements.py",
+      "present": true,
+      "sha256": "549b60b6c89aeb89aad33eb8f996d2a667da32bcb705242d08243739d9bd1bba",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/assignments.py",
+      "present": true,
+      "sha256": "c427abd983c2c3bdfe31e4c202694db6df70babaadff1f84a99dbdc6b4a2cb20",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/client.py",
+      "present": true,
+      "sha256": "4196c0decc677fe7f96c66f6bc348b3ba6e3955af42120acfe69a9102b8b2eae",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/courses.py",
+      "present": true,
+      "sha256": "2c6dcc1fb355d61e83bb8bf3c12585ff679197ef5c07d5019308e249df5e1c8d",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/cxf.py",
+      "present": true,
+      "sha256": "0f4a994b8f426e6f3016449fa6e4906dba0fc44c4c9db5edb3bd588e1754d59f",
+      "mode": "0o644",
+      "classification": "interrupted-unwired-scaffold",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/existing_transport.py",
+      "present": true,
+      "sha256": "fa6984ce1d667089af4fcc3041f42e9a7f3f4746c231ee0af34283f561f39fab",
+      "mode": "0o644",
+      "classification": "interrupted-unwired-scaffold",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/grading.py",
+      "present": true,
+      "sha256": "020d2000cc8617c24d5ce79482d5bcc789740f1d52443113b3559e8501e378b5",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/operations.py",
+      "present": true,
+      "sha256": "3bd05bd48ee457e9c55da11f1832a91dc06a73eb27a25866d32f5758c8727157",
+      "mode": "0o644",
+      "classification": "interrupted-unwired-scaffold",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/paths.py",
+      "present": true,
+      "sha256": "61ca9658cb27185eea9b8d70c58f753fd8d28d52692424101e892de9ce07e1e8",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/transport.py",
+      "present": true,
+      "sha256": "a55c15fd5149408d445dd582c42b9bdc86c37649887fc63de3237d993b714cc5",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai_client.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/security/__init__.py",
+      "present": true,
+      "sha256": "12f6087d6ba5c83b3401d1824f99a1a842b47bc61e3ca3a16dc8758fa9bbc586",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/security/auth.py",
+      "present": true,
+      "sha256": "19fc72baf099a98d5b4aafc6531de7c754befdc415e4a5b36fcaceeef81854e9",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/security/obo.py",
+      "present": true,
+      "sha256": "5139c7fa4aeaeb986fadb8bda82f3b910e72508850fee1e615f0309d4c7d6c23",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/server.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/__init__.py",
+      "present": true,
+      "sha256": "d488cd1d39176bf2506a874b49459e5408a1db6a23d3e67d198e23cbc57a5df6",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/grading.py",
+      "present": true,
+      "sha256": "9051251f8f951f5b5ecc8758dd8dafbe371262c71611f7d7ddd556765a011a44",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/resources.py",
+      "present": true,
+      "sha256": "03e5b5965f8f8e5af83f758205ade51452e3e060da57945917e110fdda3ae470",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/contracts/README.md",
+      "present": true,
+      "sha256": "29f4bf7dfb46216c786d16c23f9b781dc1007e2ee304f04cee782fb368cb0a8b",
+      "mode": "0o644",
+      "classification": "frozen-public-compatibility-baseline",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/contracts/catalog.json",
+      "present": true,
+      "sha256": "99431348e6884723ad2839477e29f5c0ede11a553443e986cf48418cdafc1cbe",
+      "mode": "0o644",
+      "classification": "frozen-public-compatibility-baseline",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/contracts/grading.json",
+      "present": true,
+      "sha256": "17e401d8e273f7e77920145a3ece9e5f5f1ce4b3e959b64df7ac934f25e14e2f",
+      "mode": "0o644",
+      "classification": "frozen-public-compatibility-baseline",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/fixtures/__init__.py",
+      "present": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/fixtures/assignment_setup.py",
+      "present": true,
+      "sha256": "8cafa24f9ca2ad300c35159c34a44a2367e12b16e3f6d06c20103ea424794fc4",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/fixtures/authentication.py",
+      "present": true,
+      "sha256": "e534a6a7ce8717f7cd994cfdae37e15472f20dfaa3a8c018ca181fbe977fc593",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/fixtures/grading_data.py",
+      "present": true,
+      "sha256": "1810c66d8f0820e0f5bc1064bcf4e60ac916e47f5defce227accd7724214d510",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/fixtures/grading_requests.py",
+      "present": true,
+      "sha256": "e32b75379f8db323d3c41a7a3e687eeda1427c2e2fe0cd05fac5f8f47dddad93",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/fixtures/sakai.py",
+      "present": true,
+      "sha256": "49da6b677a18f90c131478cf778b813aeabf0251312cfc796291f9f83cf91869",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/grading_fixtures.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/tests/helpers.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/tests/integration/test_pipeline.py",
+      "present": true,
+      "sha256": "9873b231c43e96d3041d427fa915350ca91b1d70f3661363e01577045085a44a",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/integration/test_untrusted_content.py",
+      "present": true,
+      "sha256": "1f21710110d1a3b52361d3ad8fc9460d8a8c8567a0861c145db95a40910f6f96",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/protocol/test_contract_compatibility.py",
+      "present": true,
+      "sha256": "b91d1aba12d402068820f2c54ea78c666664ed5a3a13d4bbcff1d323ba129240",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/protocol/test_grading_resources.py",
+      "present": true,
+      "sha256": "7c61afac11f1377157cab1f34c6a42a6dd4c104de88370aab3a00e48bbccd287",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/protocol/test_grading_tools.py",
+      "present": true,
+      "sha256": "66ceb1e1c20dddd15bb12d0c141befc5bf4f022c53ef21ca791d6679dfeca496",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/protocol/test_server.py",
+      "present": true,
+      "sha256": "9c4855a34d4dc623fca4a9361c501f2a0e355cda5ca44189900808811544c123",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/security/test_auth.py",
+      "present": true,
+      "sha256": "1cb34aa968a04a2370bccecb30956b2d3d77caeb1ca611cf549398bde77ac5a6",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/security/test_obo.py",
+      "present": true,
+      "sha256": "03f6bab9af458b4aecf337121263e21cb78e3314f18d349532f563ee400af6db",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/__init__.py",
+      "present": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/test_assessment_calendar.py",
+      "present": true,
+      "sha256": "9ae6bb85cbc0f35d77d65fff34a2602070e6dc72e26e39a44c3b43286da45836",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/test_assignment_setup.py",
+      "present": true,
+      "sha256": "7d535f31604c078c969ef8cbe706ae492b9471338c01ac67cb527c17863e26f4",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/test_grading.py",
+      "present": true,
+      "sha256": "ca4dfc3a3e20807060ec88b51c6eee78bdb83122051556c67ee434b3200fa00e",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/grading/__init__.py",
+      "present": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/grading/test_evaluator.py",
+      "present": true,
+      "sha256": "a25fc50e89c0953df50e0519687def898eb57e0d8f2a64976916b9c735cfab5f",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/__init__.py",
+      "present": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_assignment_setup.py",
+      "present": true,
+      "sha256": "5e96a87a809c1af3e64a319e99124e23fb1c8a0aefc5a50bdd4fdd87645215d3",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_grading.py",
+      "present": true,
+      "sha256": "4e5d99bb2c9ad3480279fe150ec915b5631270e10564ca90f61fbac859f178d8",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_lifecycle.py",
+      "present": true,
+      "sha256": "6da89c7db996bf6ff111ce3fcbd1f668640dae1600107705b0f7be4bfb4da22e",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_proposals.py",
+      "present": true,
+      "sha256": "f9e7d95f976f221e87ceedb91b5b5d28013cc79cc5d5af80c5ab9d75d480df5e",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_transport.py",
+      "present": true,
+      "sha256": "fd8cf3d8e1c6f15f36a1fdadbf6ed89c958960124ba4ea4fc61b7a6e8826ff55",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/test_architecture.py",
+      "present": true,
+      "sha256": "724a7c5e4e4d0e84ed7386f17ab2e8d79c0abb7d5022b0d5c4dd36d1b81c52a9",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/test_assessment_calendar.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/tests/unit/test_assignment_grading.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/tests/unit/test_assignment_setup.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/tests/unit/test_audit.py",
+      "present": true,
+      "sha256": "ddf65f2fa49d5372cb274696940db8910a83d5cdf6ac68248c1b33dd92e74202",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/test_health.py",
+      "present": true,
+      "sha256": "07a02e21f4ef750733b79c83a3eb550594eff51572a4abc6828f1203396721fd",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/test_sakai_client.py",
+      "present": false,
+      "sha256": null,
+      "mode": null,
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": false
+    },
+    {
+      "path": "services/mcp/tests/unit/workflows/__init__.py",
+      "present": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "services/mcp/tests/unit/workflows/test_resources.py",
+      "present": true,
+      "sha256": "ac263755b94052796c947e9f004b697aa660ed1bb371fc761ed3a2c13c11b777",
+      "mode": "0o644",
+      "classification": "preexisting-python-restructuring-preserve",
+      "archived": true
+    },
+    {
+      "path": "skills/sakai-test-data-seeding/SKILL.md",
+      "present": true,
+      "sha256": "45b708e3d645d4233db663135d7a441cd39fc033591e1e77405e4354c5a1771a",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "skills/sakai-test-data-seeding/agents/openai.yaml",
+      "present": true,
+      "sha256": "b799d87975517b8db5cfd325db2cfe43f7d57e6870481e3dbb8e1d49423bf076",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "skills/sakai-test-data-seeding/references/assignment-submissions.md",
+      "present": true,
+      "sha256": "564533f27824fd9d98df49d86879c62d26f7696b0e09150761a01ceda3475e9a",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "skills/sakai-test-data-seeding/references/general.md",
+      "present": true,
+      "sha256": "7e9dc32d0fddd572897ac7954ca344b328e6cf2918c59e51a2af7e18348762a4",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    },
+    {
+      "path": "skills/sakai-test-data-seeding/references/lessons.md",
+      "present": true,
+      "sha256": "a6575daa257eeb1028861d634a2df87aab06b46681a6092a7ef484eafa9d859e",
+      "mode": "0o644",
+      "classification": "preexisting-guidance-evidence-skills-preserve",
+      "archived": true
+    }
+  ],
+  "archive_sha256": "44ea5137b2436f71bbd21413bc48afd4e235d99be071b0e8eb27766bbbd8ddee",
+  "scope": "Reviewed starting checkpoint on 18 October 2026; immutable preimplementation bytes. Branch creation does not save or isolate these files.",
+  "migration_branch": "codex/sakai-existing-http-migration",
+  "private_checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Migration-Start-2026-10-18",
+  "manifest_sha256": "7cbb423aa5949656d8a0ea44443ac74d66949e7aaeb60a596b39d0f5e6f18ca6"
+}

@@ -1,0 +1,129 @@
+{
+  "current_user": {
+    "id": "synthetic-user-a",
+    "eid": "synthetic-eid",
+    "email": "discard@example.test"
+  },
+  "site": {
+    "id": "course-a",
+    "type": "course",
+    "published": true,
+    "softlyDeleted": false,
+    "title": "Field Methods",
+    "pubView": false
+  },
+  "user_permissions": [
+    "site.visit",
+    "annc.read"
+  ],
+  "sites": {
+    "terms": [
+      {
+        "id": "term-a",
+        "name": "Term"
+      }
+    ],
+    "sites": [
+      {
+        "siteId": "project-a",
+        "title": "Project",
+        "project": true
+      },
+      {
+        "siteId": "course-b",
+        "title": "Zoology",
+        "course": true,
+        "tools": [
+          {
+            "id": "sakai.assignment.grades",
+            "url": "https://sakai.example.test/portal/site/course-b/tool/placement-b"
+          }
+        ]
+      },
+      {
+        "siteId": "course-a",
+        "title": "Field Methods",
+        "course": true,
+        "pinned": false
+      },
+      {
+        "siteId": "workspace-a",
+        "title": "Workspace"
+      }
+    ]
+  },
+  "student_grades": {
+    "grades": [
+      {
+        "id": 7,
+        "name": "Lab",
+        "siteId": "course-a",
+        "score": "0",
+        "notGradedYet": false,
+        "canGrade": false,
+        "ungraded": 0
+      }
+    ]
+  },
+  "grader_grades": {
+    "grades": [
+      {
+        "id": 7,
+        "name": "Lab",
+        "siteId": "course-a",
+        "score": "8.5",
+        "notGradedYet": false,
+        "canGrade": true,
+        "ungraded": 2
+      }
+    ]
+  },
+  "submission_metadata": {
+    "id": "submission-a",
+    "hydrated": false,
+    "submitted": true
+  },
+  "submission_detail": {
+    "id": "submission-a",
+    "hydrated": true,
+    "visible": true,
+    "dateSubmittedEpochSeconds": 1791000000,
+    "submitted": true,
+    "grade": "8.5",
+    "submittedText": "<p>synthetic</p>",
+    "submittedAttachments": [
+      {
+        "ref": "/content/attachment/course-a/answers.txt",
+        "contentLength": "20 B",
+        "type": "text/plain"
+      }
+    ]
+  },
+  "announcement_collection": {
+    "entityPrefix": "announcement",
+    "announcement_collection": [
+      {
+        "siteId": "course-a",
+        "channel": "main",
+        "announcementId": "message-a",
+        "createdOn": 1791000000000
+      }
+    ]
+  },
+  "assignment_discovery": {
+    "id": "assignment-a",
+    "context": "course-a",
+    "title": "Literal & <title>",
+    "draft": false,
+    "gradeScale": "SCORE_GRADE_TYPE",
+    "submissionType": "TEXT_ONLY_ASSIGNMENT_SUBMISSION",
+    "openTimeString": "2026-10-01T00:00:00Z",
+    "dueTimeString": "2026-10-20T00:00:00Z",
+    "closeTimeString": "2026-10-21T00:00:00Z",
+    "submissions": [
+      {
+        "submittedText": "PRIVATE"
+      }
+    ]
+  }
+}

@@ -1,11 +1,14 @@
 # MCP service working rules
 
+The [canonical existing-HTTP migration plan](../../docs/mcp/existing-api-migration/implementation-plan.md) governs current migration work. Historical native business/lock/storage descriptions below document transition dependencies, not authorization to extend or retain them indefinitely. Only delegated authentication/session integration may be added in Sakai; replacement, focused retirement and data preservation follow the plan.
+
 ## Source ownership
 
 - All public tool definitions and registration gates belong in `src/sakai_mcp/mcp/tools.py`; resources and SDK presentation belong in `mcp/`.
 - Keep authentication and OBO separate under `security/`. Put typed wire contracts in `contracts/`, native operations/transport in `sakai/`, coordination in `workflows/`, and pure computation in `grading/`. Skills must not be imported by runtime code.
 - Run `../../scripts/check-mcp.sh` after `uv sync --locked`. CI invokes the same checks, including architecture and pre-refactor schema/hash comparisons. Do not regenerate baseline fixtures to hide an accidental compatibility change.
 - The evaluator's exact function source is recorded in grading provenance. Preserve its fingerprint during structural changes; its formatter exclusion is intentional.
+- Document discovered or changed tool limits in the [limitations reference](../../docs/mcp/existing-api-migration/tool-limitations.md), including scope, completeness, precision, concurrency, failure behavior and acceptance evidence. Keep unresolved limits distinct from local replacement and deployed acceptance.
 - See [the README](README.md) for change entrypoints, test layout, package builds and lifecycle ownership.
 
 ## Existing workflow and release requirements

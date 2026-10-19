@@ -3,24 +3,11 @@
 from dataclasses import dataclass
 from xml.etree import ElementTree as ET
 
+from sakai_mcp.contracts.native_xml import xml
 from sakai_mcp.errors import ErrorCode, SakaiError
 
 SOAP11 = "http://schemas.xmlsoap.org/soap/envelope/"
 SERVICE = "http://webservices.sakaiproject.org/"
-
-
-def xml(data: bytes) -> ET.Element:
-    if len(data) > 1_000_000:
-        raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
-    try:
-        # Reject alternate encodings and declarations before parsing; ElementTree
-        # may otherwise expand internal entities. No DTD/entity input is needed.
-        text = data.decode("utf-8-sig")
-        if "<!DOCTYPE" in text.upper() or "<!ENTITY" in text.upper():
-            raise ValueError
-        return ET.fromstring(text)
-    except (ValueError, UnicodeError, ET.ParseError, RecursionError):
-        raise SakaiError(ErrorCode.INTERNAL_ERROR) from None
 
 
 def assignment_list_envelope(site: str) -> bytes:
@@ -41,6 +28,12 @@ def rpc_return(data: bytes, operation: str = "getAssignmentsForContext") -> str:
         raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
     root = xml(data)
     if root.tag != f"{{{SOAP11}}}Envelope":
+        raise SakaiError(ErrorCode.INTERNAL_ERROR)
+    if any(
+        child.tag not in {f"{{{SOAP11}}}Header", f"{{{SOAP11}}}Body"} for child in root
+    ):
+        raise SakaiError(ErrorCode.INTERNAL_ERROR)
+    if len(root.findall(f"{{{SOAP11}}}Header")) > 1:
         raise SakaiError(ErrorCode.INTERNAL_ERROR)
     bodies = root.findall(f"{{{SOAP11}}}Body")
     if len(bodies) != 1 or len(bodies[0]) != 1:
@@ -81,8 +74,12 @@ def lean_assignments(data: bytes) -> tuple[LeanAssignment, ...]:
             child.tag != "assignment"
             or len(child)
             or not attrs.get("id")
+            or len(attrs["id"]) > 255
+            or any(ord(c) < 32 or ord(c) == 127 for c in attrs["id"])
             or "title" not in attrs
+            or not attrs.get("gradeType", "").isascii()
             or not attrs.get("gradeType", "").isdecimal()
+            or len(attrs["gradeType"]) > 3
         ):
             raise SakaiError(ErrorCode.INTERNAL_ERROR)
         result.append(

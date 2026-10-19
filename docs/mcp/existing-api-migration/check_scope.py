@@ -1,0 +1,243 @@
+"""Read-only validation of the migration inventory, not architecture/live acceptance."""
+
+import argparse
+import ast
+import hashlib
+import json
+import re
+import subprocess
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+
+
+def load(name):
+    return json.loads((HERE / name).read_text())
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def need(condition, message):
+    if not condition:
+        raise ValueError(message)
+
+
+def function_exists(path, name):
+    tree = ast.parse(path.read_text())
+    parts = name.split(".")
+    nodes = tree.body
+    for part in parts:
+        node = next((n for n in nodes if getattr(n, "name", None) == part), None)
+        if node is None:
+            return False
+        nodes = getattr(node, "body", [])
+    return True
+
+
+def current_routes():
+    """Extract this inventory's simple Spring mappings; reject unhandled syntax."""
+    routes = set()
+    base = ROOT / "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp"
+    for path in base.rglob("*Controller.java"):
+        text = path.read_text()
+        prefix = re.search(r'@RequestMapping\("([^"]+)"\)', text)
+        need(prefix is not None, f"Review controller mapping syntax: {path}")
+        mappings = list(
+            re.finditer(r'@(Get|Post|Put|Patch|Delete)Mapping(?:\("([^"]*)"\))?', text)
+        )
+        need(
+            len(re.findall(r"@\w+Mapping", text)) == len(mappings) + 1,
+            f"Review unhandled method mapping: {path}",
+        )
+        for mapping in mappings:
+            # Bare mappings must be immediately followed by another annotation or public.
+            tail = text[mapping.end() :].lstrip()
+            need(
+                tail.startswith(("@", "public")),
+                f"Review method mapping arguments: {path}",
+            )
+            full = "/api" + prefix.group(1) + (mapping.group(2) or "")
+            full = full.replace("{siteId}", "{site}").replace(
+                "{assignmentId}", "{assignment}"
+            )
+            route = (mapping.group(1).upper(), full)
+            need(route not in routes, f"Duplicate route: {route}")
+            routes.add(route)
+    return routes
+
+
+def validate_progress():
+    """Compare against the reviewed implementation start without rewriting Phase 0."""
+    start, progress = load("implementation-start.json"), load("progress.json")
+    expected = set(progress["intentional_preexisting_paths"])
+    seen = set()
+    retired = {r["path"]: r for r in progress.get("retired_preexisting_paths", [])}
+    routes = load("coverage.json")["legacy_routes"]
+    need(len(retired) == len(progress.get("retired_preexisting_paths", [])), "Duplicate retirement")
+    for path, record in retired.items():
+        relevant = [r for r in routes if r["source"] == path]
+        need(relevant and all(r["state"] == "retired-local" for r in relevant),
+             f"Retirement has an active/unmapped route: {path}")
+        need(sha(Path(record["checkpoint"])) == record["sha256"], f"Retired source checkpoint changed: {path}")
+        need(not (ROOT / path).exists(), f"Retired path exists: {path}")
+    for item in start["files"]:
+        path = ROOT / item["path"]
+        if item["path"] in retired:
+            need(item["present"], "Retirement was not an original source")
+            seen.add(item["path"])
+            continue
+        need(path.is_file() == item["present"], f"Unexpected presence change: {item['path']}")
+        if item["present"]:
+            changed = sha(path) != item["sha256"]
+            need(not changed or item["path"] in expected, f"Unreviewed byte change: {item['path']}")
+            need(oct(path.stat().st_mode & 0o777) == item["mode"], f"Mode changed: {item['path']}")
+            if changed:
+                seen.add(item["path"])
+    need(seen == expected, f"Intentional change list differs: {seen ^ expected}")
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    branch = subprocess.check_output(["git", "branch", "--show-current"], cwd=ROOT, text=True).strip()
+    need(head == start["head"], "Review new commits against the implementation start")
+    need(branch == progress["branch"], "Not on the reviewed migration branch")
+    need(not subprocess.check_output(["git", "diff", "--cached", "--name-only"], cwd=ROOT), "Review staged changes")
+    private = Path(start["private_checkpoint"])
+    need(sha(private / "manifest.json") == start["manifest_sha256"], "Starting manifest changed")
+    need(sha(private / "working-tree.tar.gz") == start["archive_sha256"], "Starting archive changed")
+    print(f"Implementation preservation verified: {len(start['files'])} starting paths, "
+          f"{len(expected)} reviewed changes including {len(retired)} checkpointed source retirements; remaining presence/modes unchanged, index empty.")
+
+
+def validate(verify_working_tree=False, verify_progress=False):
+    coverage, baseline = load("coverage.json"), load("baseline.json")
+    catalog_path = ROOT / "services/mcp/tests/contracts/catalog.json"
+    catalog = json.loads(catalog_path.read_text())
+    for record in baseline["contracts"]:
+        need(sha(ROOT / record["path"]) == record["sha256"], "Frozen contract changed")
+    need(
+        coverage["plan_sha256"] == baseline["plan"]["current_sha256"],
+        "Plan provenance mismatch",
+    )
+    for key, expected in (("00", 5), ("10", 8), ("01", 19), ("11", 22)):
+        need(coverage["catalogs"][key] == catalog[key], f"Catalog differs: {key}")
+        need(len(catalog[key]["tools"]) == expected, f"Tool count differs: {key}")
+        need(
+            len(catalog[key]["templates"]) == (5 if key[1] == "1" else 0),
+            f"Resource count differs: {key}",
+        )
+    need(
+        sha(HERE / "implementation-plan.md") == coverage["canonical_plan"]["sha256"],
+        "Current canonical plan hash differs; review and refresh derived provenance",
+    )
+    need(
+        load("browser-flows.json")["plan"]["sha256"] == coverage["canonical_plan"]["sha256"],
+        "Browser flow plan provenance differs",
+    )
+    tools = coverage["tools"]
+    need(len(tools) == 22, "Tool coverage must have 22 distinct entries")
+    need(
+        {t["name"] for t in tools} == set(catalog["11"]["tools"]),
+        "Tool inventory mismatch",
+    )
+    resources = coverage["resources"]
+    need(len(resources) == 5, "Resource coverage must have five distinct entries")
+    need(
+        {t["uriTemplate"] for t in resources}
+        == {t["uriTemplate"] for t in catalog["11"]["templates"]},
+        "Resource inventory mismatch",
+    )
+    decisions = {d["id"] for d in coverage["decisions"]}
+    need(decisions == {f"D{i}" for i in range(1, 9)}, "Decision inventory mismatch")
+    routes = coverage["legacy_routes"]
+    ids = {r["id"] for r in routes}
+    need(len(ids) == len(routes) == 23, "Legacy route inventory mismatch")
+    need(
+        sum("/grading/" in r["source"] for r in routes) == 15,
+        "Grading route inventory mismatch",
+    )
+    need(
+        current_routes() == {(r["method"], r["path"]) for r in routes
+                             if r["state"] != "retired-local"},
+        "Native routes changed: review coverage and compatibility before retirement",
+    )
+    consumed = set()
+    for item in tools + resources:
+        need(bool(item["owner_module"]), f"Missing owner: {item}")
+        implementation = ROOT / item.get("implementation", item["owner_module"])
+        need(
+            function_exists(implementation, item["function"]),
+            f"Missing function: {item['function']}",
+        )
+        need(set(item["legacy_route_ids"]) <= ids, "Unknown route dependency")
+        need(set(item["product_decisions"]) <= decisions, "Unknown decision")
+        need(bool(item["research_cards"]), "Missing source-research coverage")
+        need(bool(item["integration_gates"]), "Missing integration gate")
+        historical = set(item.get("historical_legacy_route_ids", []))
+        need(historical <= ids, "Unknown historical route dependency")
+        retired = {r["id"] for r in routes if r["state"] == "retired-local"}
+        need(not set(item["legacy_route_ids"]) & retired, "Active caller of retired route")
+        need(historical <= retired, "Historical dependency is still active")
+        consumed.update(item["legacy_route_ids"])
+        consumed.update(historical)
+    need(consumed == ids, f"Unmapped native routes: {ids - consumed}")
+    for item in tools:
+        tree = ast.parse((ROOT / item["registration"]).read_text())
+        need(
+            any(
+                isinstance(n, ast.AsyncFunctionDef) and n.name == item["name"]
+                for n in ast.walk(tree)
+            ),
+            f"Missing public registration: {item['name']}",
+        )
+        need(bool(item["migration_matrix_row"]), "Missing migration matrix row")
+    ledger = load("native-change-ledger.json")
+    for item in ledger["files"]:
+        need(item["group"] in ledger["groups"], f"Unclassified native path: {item}")
+        need(
+            (ROOT / item["path"]).is_file() == item["present_in_working_tree"],
+            f"Native path changed: {item['path']}",
+        )
+    for path in ledger["storage_configuration_paths"]:
+        need((ROOT / path).is_file(), f"Missing preservation dependency: {path}")
+    if verify_progress:
+        validate_progress()
+    if verify_working_tree:
+        current_head = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+        ).strip()
+        need(current_head == baseline["head"], "HEAD differs from Phase 0 checkpoint")
+        for item in baseline["working_tree"]["files"]:
+            path = ROOT / item["path"]
+            need(path.is_file() == item["present"], f"Presence changed: {item['path']}")
+            if item["present"]:
+                need(sha(path) == item["sha256"], f"Bytes changed: {item['path']}")
+        archive = Path(baseline["checkpoint"]["location"])
+        need(sha(archive) == baseline["checkpoint"]["sha256"], "Checkpoint changed")
+    print(
+        f"Scope verified: 22 tools, 5 resources, {len(current_routes())} active native routes "
+        f"({len(routes)} historical, 15 grading), "
+        "4 catalogs, 8 decisions. No runtime or migration-completion claim."
+    )
+    if verify_working_tree:
+        print(
+            "All 188 preexisting changed/untracked paths and checkpoint are unchanged."
+        )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--verify-working-tree",
+        action="store_true",
+        help="Phase 0 only: prove all preexisting dirty files and private archive unchanged",
+    )
+    parser.add_argument(
+        "--verify-progress", action="store_true",
+        help="Compare implementation-start bytes with reviewed intentional changes; keep original baseline immutable",
+    )
+    arguments = parser.parse_args()
+    try:
+        validate(arguments.verify_working_tree, arguments.verify_progress)
+    except (OSError, ValueError, KeyError, SyntaxError) as error:
+        parser.exit(1, f"Scope validation failed: {error}\n")

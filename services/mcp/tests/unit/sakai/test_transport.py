@@ -5,6 +5,7 @@ import pytest
 
 from sakai_mcp.errors import ErrorCode, SakaiError
 from sakai_mcp.sakai.client import SakaiClient
+from sakai_mcp.sakai.paths import segment
 from tests.fixtures.authentication import settings
 from tests.fixtures.sakai import FakeOBO, principal
 
@@ -14,18 +15,36 @@ def client(handler):
     return SakaiClient(settings(), FakeOBO(), httpx.AsyncClient(transport=transport))
 
 
+async def legacy_read(adapter, course="course-a"):
+    # Exercise the shared transport on an independently retained route.
+    value = await adapter.transport.request(
+        "GET", f"/api/mcp/v1/courses/{segment(course)}/assessment-context", principal()
+    )
+    return value["grades"]
+
+
+async def legacy_write(adapter):
+    value = await adapter.transport.request(
+        "POST",
+        "/api/mcp/v1/courses/course-a/assignments",
+        principal(),
+        {"title": "Synthetic"},
+    )
+    return value["announcement"]
+
+
 def test_read_uses_fixed_host_delegated_token_and_correlation_id():
     def handler(request):
         assert request.url.host == "sakai.example.test"
-        assert request.url.path == "/api/mcp/v1/courses"
+        assert request.url.path == "/api/mcp/v1/courses/course-a/assessment-context"
         assert request.headers["authorization"] == "Bearer synthetic-token"
         assert request.headers["x-correlation-id"]
         return httpx.Response(
-            200, json={"courses": [{"id": "course-a", "title": "Field Methods"}]}
+            200, json={"grades": [{"id": "grade-a", "title": "Field Methods"}]}
         )
 
-    rows = asyncio.run(client(handler).courses.list_my_courses(principal()))
-    assert rows == [{"id": "course-a", "title": "Field Methods"}]
+    rows = asyncio.run(legacy_read(client(handler)))
+    assert rows == [{"id": "grade-a", "title": "Field Methods"}]
 
 
 @pytest.mark.parametrize(
@@ -40,11 +59,7 @@ def test_read_uses_fixed_host_delegated_token_and_correlation_id():
 )
 def test_status_mapping(status, code):
     with pytest.raises(SakaiError) as error:
-        asyncio.run(
-            client(lambda _: httpx.Response(status)).courses.get_my_grades(
-                principal(), "course-a"
-            )
-        )
+        asyncio.run(legacy_read(client(lambda _: httpx.Response(status))))
     assert error.value.code == code
 
 
@@ -54,16 +69,9 @@ def test_transient_read_is_retried_with_bounded_attempts():
     def handler(_):
         nonlocal attempts
         attempts += 1
-        return httpx.Response(503 if attempts < 3 else 200, json={"announcements": []})
+        return httpx.Response(503 if attempts < 3 else 200, json={"grades": []})
 
-    assert (
-        asyncio.run(
-            client(handler).announcements.get_course_announcements(
-                principal(), "course-a"
-            )
-        )
-        == []
-    )
+    assert asyncio.run(legacy_read(client(handler))) == []
     assert attempts == 3
 
 
@@ -75,16 +83,12 @@ def test_create_succeeds_once_and_does_not_accept_destination_from_arguments():
         calls += 1
         assert request.url.host == "sakai.example.test"
         assert request.method == "POST"
-        assert request.url.path.endswith("/courses/course-a/announcements")
+        assert request.url.path.endswith("/courses/course-a/assignments")
         return httpx.Response(
             201, json={"announcement": {"id": "new-1", "courseId": "course-a"}}
         )
 
-    result = asyncio.run(
-        client(handler).announcements.create_course_announcement(
-            principal(), "course-a", "Lab update", "Bring notebooks."
-        )
-    )
+    result = asyncio.run(legacy_write(client(handler)))
     assert result["id"] == "new-1"
     assert calls == 1
 
@@ -103,11 +107,7 @@ def test_ambiguous_create_is_never_retried(failure):
         return httpx.Response(201, text="invalid JSON")
 
     with pytest.raises(SakaiError) as error:
-        asyncio.run(
-            client(handler).announcements.create_course_announcement(
-                principal(), "course-a", "Lab update", "Bring notebooks."
-            )
-        )
+        asyncio.run(legacy_write(client(handler)))
     assert error.value.code == ErrorCode.AMBIGUOUS_WRITE_OUTCOME
     assert calls == 1
 
@@ -121,11 +121,7 @@ def test_preconnect_create_failure_is_dependency_unavailable_without_retry():
         raise httpx.ConnectTimeout("synthetic timeout", request=request)
 
     with pytest.raises(SakaiError) as error:
-        asyncio.run(
-            client(handler).announcements.create_course_announcement(
-                principal(), "course-a", "Lab update", "Bring notebooks."
-            )
-        )
+        asyncio.run(legacy_write(client(handler)))
     assert error.value.code == ErrorCode.DEPENDENCY_UNAVAILABLE
     assert calls == 1
 
@@ -138,41 +134,41 @@ def test_committed_create_with_lost_response_is_reconciled_by_read_without_repla
         nonlocal post_calls
         if request.method == "POST":
             post_calls += 1
-            announcements.append({"id": "created-once", "title": "Synthetic check"})
+            announcements.append(
+                {
+                    "announcementId": "created-once",
+                    "siteId": "course-a",
+                    "channel": "main",
+                    "title": "Synthetic check",
+                    "body": "Synthetic body",
+                    "createdOn": 1790000000123,
+                }
+            )
             raise httpx.ReadTimeout(
                 "synthetic response lost after commit", request=request
             )
         assert request.method == "GET"
-        return httpx.Response(200, json={"announcements": announcements})
+        assert request.url.path == "/api/mcp/v1/courses/course-a/assessment-context"
+        return httpx.Response(200, json={"grades": announcements})
 
     adapter = client(handler)
     with pytest.raises(SakaiError) as error:
-        asyncio.run(
-            adapter.announcements.create_course_announcement(
-                principal(), "course-a", "Synthetic check", "Synthetic body"
-            )
-        )
+        asyncio.run(legacy_write(adapter))
     assert error.value.code == ErrorCode.AMBIGUOUS_WRITE_OUTCOME
-    visible = asyncio.run(
-        adapter.announcements.get_course_announcements(principal(), "course-a")
-    )
-    assert [row["id"] for row in visible] == ["created-once"]
+    visible = asyncio.run(legacy_read(adapter))
+    assert [row["announcementId"] for row in visible] == ["created-once"]
     assert post_calls == 1
 
 
 def test_invalid_course_id_and_oversize_response_are_rejected():
     with pytest.raises(SakaiError) as error:
         asyncio.run(
-            client(
-                lambda _: httpx.Response(200, json={"grades": []})
-            ).courses.get_my_grades(principal(), "")
+            legacy_read(client(lambda _: httpx.Response(200, json={"grades": []})), "")
         )
     assert error.value.code == ErrorCode.VALIDATION_ERROR
     with pytest.raises(SakaiError) as error:
         asyncio.run(
-            client(
-                lambda _: httpx.Response(200, content=b"x" * 1_000_001)
-            ).courses.list_my_courses(principal())
+            legacy_read(client(lambda _: httpx.Response(200, content=b"x" * 1_000_001)))
         )
     assert error.value.code == ErrorCode.INTERNAL_ERROR
 
@@ -188,7 +184,7 @@ def test_read_failures_are_bounded_and_recover_after_dependency_restoration(fail
         nonlocal attempts
         attempts += 1
         if healthy:
-            return httpx.Response(200, json={"courses": [{"id": "course-a"}]})
+            return httpx.Response(200, json={"grades": [{"id": "grade-a"}]})
         if failure == "connect":
             raise httpx.ConnectTimeout("private Sakai detail", request=request)
         if failure == "read":
@@ -201,7 +197,7 @@ def test_read_failures_are_bounded_and_recover_after_dependency_restoration(fail
 
     adapter = client(handler)
     with pytest.raises(SakaiError) as error:
-        asyncio.run(adapter.courses.list_my_courses(principal()))
+        asyncio.run(legacy_read(adapter))
     expected = {
         "connect": ErrorCode.DEPENDENCY_UNAVAILABLE,
         "read": ErrorCode.DEPENDENCY_UNAVAILABLE,
@@ -213,9 +209,7 @@ def test_read_failures_are_bounded_and_recover_after_dependency_restoration(fail
     assert "private" not in str(error.value)
     assert attempts == (3 if failure in ("connect", "read") else 1)
     healthy = True
-    assert asyncio.run(adapter.courses.list_my_courses(principal())) == [
-        {"id": "course-a"}
-    ]
+    assert asyncio.run(legacy_read(adapter)) == [{"id": "grade-a"}]
     assert attempts == (4 if failure in ("connect", "read") else 2)
 
 
@@ -226,5 +220,5 @@ def test_declared_oversize_body_is_rejected_before_stream_consumption():
         )
 
     with pytest.raises(SakaiError) as error:
-        asyncio.run(client(handler).courses.list_my_courses(principal()))
+        asyncio.run(legacy_read(client(handler)))
     assert error.value.code == ErrorCode.INTERNAL_ERROR

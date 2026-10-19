@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /** Exercise actual component scanning, constructor qualifiers, and the preserved grading routes. */
 public class McpGradingWiringTest {
     @Test
-    public void gradingComponentsWireAndKeepAllNativeRoutes() {
+    public void gradingComponentsWireWithRetiredReadsAbsent() {
         try (var context = new AnnotationConfigApplicationContext()) {
             context.registerBean(
                     "org.sakaiproject.tool.api.SessionManager",
@@ -65,9 +65,6 @@ public class McpGradingWiringTest {
             var expected =
                     Set.of(
                             "GET " + root + "/grading-context",
-                            "GET " + root + "/grading-submissions",
-                            "GET " + root + "/grading-submissions/{submission}",
-                            "GET " + root + "/grading-submissions/{submission}/files/{file}",
                             "GET " + root + "/grading-files/{file}",
                             "POST " + root + "/grading-proposals",
                             "GET " + root + "/grading-proposals/{proposal}",
@@ -77,8 +74,7 @@ public class McpGradingWiringTest {
                             "POST " + root + "/grading-save",
                             "POST " + root + "/grading-release",
                             "POST " + root + "/grading-grades/query",
-                            "GET " + root + "/grading-operations/{operation}",
-                            "GET /mcp/v1/courses/{site}/grading-assignments");
+                            "GET " + root + "/grading-operations/{operation}");
             var actual =
                     mapping.getHandlerMethods().keySet().stream()
                             .flatMap(

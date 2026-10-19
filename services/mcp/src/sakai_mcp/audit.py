@@ -39,6 +39,8 @@ def configure_logging(level: str) -> None:
     # HTTPX's standard INFO message includes the full Sakai path and object IDs.
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
+    # Blob SDK HTTP diagnostics can include private object paths.
+    logging.getLogger("azure").setLevel(logging.WARNING)
     # The SDK's INFO tool-error log may include raw schema-validation inputs.
     logging.getLogger("mcp.server.mcpserver.server").setLevel(logging.WARNING)
     for existing in list(_audit.handlers):

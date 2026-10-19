@@ -1,0 +1,720 @@
+{
+  "format_version": 1,
+  "comparison": "Root import e092fa04 versus HEAD plus current tracked changes and nonignored untracked native files",
+  "scope": "Includes source, tests, guidance, build and unrelated changes. Current purpose/replacement/risks are grouped; each path is explicitly assigned. No automatic rollback/delete/DDL.",
+  "groups": {
+    "auth-integration": {
+      "classification": "authentication-integration-to-retain-or-redesign",
+      "action": "Extract only JWT/account/request/session lifecycle into the approved shared extension. Preserve old auth during additive compatibility period.",
+      "replacement": "Plan section 7, Phase 2 context-specific guard/binder; no new endpoints",
+      "dependencies": [
+        "D5",
+        "D8"
+      ],
+      "risk": "Servlet boundary/filter order and shared-library conflicts; ordinary login or identity leak",
+      "validation": [
+        "JWT/disabled-account tests",
+        "Actual existing-handler context and cleanup",
+        "Concurrent users",
+        "Ordinary cookie/OAuth/Basic/login regression"
+      ]
+    },
+    "business-customization": {
+      "classification": "native-customization-to-retire",
+      "action": "Move parsing, coordination and durable records into Python; retire only after no consumers and records are preserved.",
+      "replacement": "coverage.json tools/resources and A0-A14 cards",
+      "dependencies": [
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D6",
+        "D8"
+      ],
+      "risk": "Early deletion breaks legacy clients, proposals, links and uncertain operations",
+      "validation": [
+        "All four public catalogs",
+        "Existing-API trace for migrated operations",
+        "Legacy artifact/owner/expiry preservation",
+        "No equivalent replacement controller"
+      ]
+    },
+    "assignment-domain": {
+      "classification": "native-customization-to-retire-with-separate-security-ui-review",
+      "action": "Retire MCP draft/lock/hydration/version additions after consumer cutover. Review draft visibility and ordinary UI hydration separately; retain database column/data until separately authorized cleanup.",
+      "replacement": "Existing A4/A5/A7/A8 with explicit D2-D4 limits; no fabricated CAS or full schema coverage",
+      "dependencies": [
+        "D2",
+        "D3",
+        "D4",
+        "D7",
+        "D8"
+      ],
+      "risk": "All ordinary submission writers affected by @Version removal; orphan/attachment loading or draft authorization regression",
+      "validation": [
+        "Assignment ordinary student/instructor/TA flows",
+        "Concurrent UI/submission tests",
+        "Draft and attachment visibility",
+        "Retained academic data and rollback-compatible schema"
+      ]
+    },
+    "gradebook-domain": {
+      "classification": "native-customization-to-retire-with-independent-defect-review",
+      "action": "Retire MCP helpers for uninitialized reads/unreleased external items after setup resolution. Evaluate adjacent null-category fix independently.",
+      "replacement": "Existing A2/A8/A10 limitations surfaced by Python",
+      "dependencies": [
+        "D2",
+        "D3",
+        "D4",
+        "D7"
+      ],
+      "risk": "Existing APIs may initialize Gradebook or release/count items differently; null-category regression",
+      "validation": [
+        "Gradebook ordinary reads and grading",
+        "No setup/publication semantic parity claim",
+        "Independent upstream defect decision"
+      ]
+    },
+    "build-registration": {
+      "classification": "authentication-integration-wiring-to-redesign-and-business-wiring-to-retire",
+      "action": "Replace namespace-specific auth mapping/dependencies with selected context registrations after auth tests. Keep Nimbus patch pending independent review.",
+      "replacement": "Phase 2 shared authentication-only packaging and exact WAR/JAR inventory",
+      "dependencies": [
+        "D5",
+        "D8"
+      ],
+      "risk": "Dependency downgrade/classloader/filter-order and ordinary consumer regressions",
+      "validation": [
+        "Maven focused/relevant reactor checks",
+        "No domain dependencies in auth JAR",
+        "No new servlet/controllers",
+        "Filter registration and old-login tests"
+      ]
+    },
+    "unrelated-course-layout": {
+      "classification": "historical-or-unrelated-customization-requiring-separate-treatment",
+      "action": "Preserve course layout/roster defaults and migration jobs. Exclude from MCP retirement.",
+      "replacement": "None in this migration",
+      "dependencies": [],
+      "risk": "Wholesale revert changes course UI/permissions and independent provisioning",
+      "validation": [
+        "Diff confirms these hunks untouched"
+      ]
+    },
+    "guidance": {
+      "classification": "guidance-to-update-with-actual-migration-state",
+      "action": "Keep corrected integration boundary and source guides accurate; historical releases retain dated context.",
+      "replacement": "Migration evidence and final architecture guides",
+      "dependencies": [],
+      "risk": "Historical architecture mistaken for target or deployed state",
+      "validation": [
+        "Links and source paths valid",
+        "No unsupported completion/live claim"
+      ]
+    },
+    "existing-handler-tests": {
+      "classification": "tests-of-unchanged-existing-interfaces",
+      "action": "Retain source/codec permission and relationship characterization; no business handler added or modified.",
+      "replacement": "B0/T03 existing-HTTP evidence",
+      "dependencies": [
+        "D5",
+        "D8"
+      ],
+      "risk": "Synthetic service tests do not establish deployed role or rendered UI parity",
+      "validation": [
+        "Actual existing provider methods",
+        "No academic mutation",
+        "Delegated live acceptance remains separate"
+      ]
+    }
+  },
+  "files": [
+    {
+      "path": "apps/sakai/AGENTS.md",
+      "group": "guidance",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "86bed7587ad06ab42512092670d4c2c5d6ad36ce59ac2d0341a58f154180924b"
+    },
+    {
+      "path": "apps/sakai/assignment/api/src/java/org/sakaiproject/assignment/api/AssignmentService.java",
+      "group": "assignment-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "4b457e4c6f30062b57dd74983d8529b68a31ddaede00f15eb246601792b8eaca"
+    },
+    {
+      "path": "apps/sakai/assignment/api/src/java/org/sakaiproject/assignment/api/model/AssignmentSubmission.java",
+      "group": "assignment-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "874d00a334fd280acd9715c8f9ea3acdb0217d1d633b90c15848903375d941d1"
+    },
+    {
+      "path": "apps/sakai/assignment/api/src/java/org/sakaiproject/assignment/api/persistence/AssignmentRepository.java",
+      "group": "assignment-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "10f1e351c82127bf8b5209f0505842570c726897758bc90727e26903397f42d4"
+    },
+    {
+      "path": "apps/sakai/assignment/impl/src/java/org/sakaiproject/assignment/impl/AssignmentServiceImpl.java",
+      "group": "assignment-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "0546a25a0144c097ca56c25b07ac15eabe5865b5b89594e099c0742548f6021b"
+    },
+    {
+      "path": "apps/sakai/assignment/impl/src/java/org/sakaiproject/assignment/impl/persistence/AssignmentRepositoryImpl.java",
+      "group": "assignment-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "f440ab0694f617c56bdc13fa493898f136383ea01f014959ae96f19cc58235d6"
+    },
+    {
+      "path": "apps/sakai/assignment/impl/src/test/org/sakaiproject/assignment/impl/AssignmentGradingConcurrencyTest.java",
+      "group": "assignment-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "ebe0e817ff692cda1772e966d3145dae6f0d7cb1628f8d7ad8cc6cff43e04874"
+    },
+    {
+      "path": "apps/sakai/assignment/impl/src/test/org/sakaiproject/assignment/impl/AssignmentServiceTest.java",
+      "group": "assignment-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "4038d3b65fd6b081b3bd993546eecb2967108ca99bc974c10ff728f9019578d9"
+    },
+    {
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentAction.java",
+      "group": "assignment-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "e221ea1bc508869f34f8aeeacdca55605d708efc16e1b980743b5163118514f2"
+    },
+    {
+      "path": "apps/sakai/gradebookng/api/src/main/java/org/sakaiproject/grading/api/GradingService.java",
+      "group": "gradebook-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "b538be1e5a2ec1ac59004c59982b96c8437228e56c7a41543de68ae8df3ca314"
+    },
+    {
+      "path": "apps/sakai/gradebookng/impl/src/main/java/org/sakaiproject/grading/impl/GradingServiceImpl.java",
+      "group": "gradebook-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "b166912c5a598aba97134321a8a77027ce75d18490fb206bcacb26f77d388474"
+    },
+    {
+      "path": "apps/sakai/gradebookng/impl/src/test/java/org/sakaiproject/grading/impl/test/GradingServiceTests.java",
+      "group": "gradebook-domain",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "f0dfe5008e8215d72eb02edd83fbc5824268f392378bb154b950d3f40e0c32bf"
+    },
+    {
+      "path": "apps/sakai/kernel/component-manager/src/main/bundle/org/sakaiproject/config/kernel.properties",
+      "group": "unrelated-course-layout",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "8c0dd06d6d293f4150b433d5ce6caadaf585e3a36ac409ec46c0911d304c629e"
+    },
+    {
+      "path": "apps/sakai/kernel/component-manager/src/main/bundle/org/sakaiproject/config/toolOrder.xml",
+      "group": "unrelated-course-layout",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "4c6162a3eccc5386004c54136d2d403ab50a40e8729a65d7238378f97d9b05fe"
+    },
+    {
+      "path": "apps/sakai/master/pom.xml",
+      "group": "build-registration",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "cdfadb19e7eb13671cbf9257b0e0b16a92a22db964a4484d83fa2439cc8b00e7"
+    },
+    {
+      "path": "apps/sakai/site-manage/site-manage-impl/impl/src/java/org/sakaiproject/sitemanage/impl/job/SeedSitesAndUsersJob.java",
+      "group": "unrelated-course-layout",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "86c78eecc485db3d67a917cad75c54c355979f54f34c3ccc3c538ca00582bac2"
+    },
+    {
+      "path": "apps/sakai/site-manage/site-manage-impl/impl/src/java/org/sakaiproject/sitemanage/impl/job/StandardCourseLayout.java",
+      "group": "unrelated-course-layout",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "f7399ff71174f577d8543553592952a7d3580d474a19fd3f26a17ed3697d3a3e"
+    },
+    {
+      "path": "apps/sakai/site-manage/site-manage-impl/impl/src/java/org/sakaiproject/sitemanage/impl/job/StandardCourseLayoutMigrationJob.java",
+      "group": "unrelated-course-layout",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "0dfe2a94608553e6a2c61692385fbed30023a0ec5ee7a9001d509f2130919b96"
+    },
+    {
+      "path": "apps/sakai/site-manage/site-manage-impl/impl/src/java/org/sakaiproject/sitemanage/impl/job/StandardCourseRosterPermissions.java",
+      "group": "unrelated-course-layout",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "3d87d24062a3676503afe9c8a1b81a7f856e10d64b57545e910502b16f884a12"
+    },
+    {
+      "path": "apps/sakai/site-manage/site-manage-impl/impl/src/test/java/org/sakaiproject/sitemanage/impl/job/StandardCourseSetupTest.java",
+      "group": "unrelated-course-layout",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "cae8a0f7427e29bd2b49c8a0a020f7a09d2d2c750f89311aba4440cff8814df8"
+    },
+    {
+      "path": "apps/sakai/site-manage/site-manage-impl/impl/src/webapp/WEB-INF/components.xml",
+      "group": "unrelated-course-layout",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "71c39ffe8d87ad99c9c38e76b267ff351c6387f86caa9f7ebc04bab3ef017ded"
+    },
+    {
+      "path": "apps/sakai/webapi/pom.xml",
+      "group": "build-registration",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "70a4e0283df996d82aa39312c9f11b3fc4a789bf4a14ac68af31632cb66d8c8a"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/WebAppConfiguration.java",
+      "group": "build-registration",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "f355cd5011f642bf5ef2db615281e7e780270813ccb66f005ccdbaccb3a071bb"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md",
+      "group": "guidance",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "d2da9d0ddcc5a7f2d3968f4b63b8efcb52e9e850a97923ffd2cf69e9231382b7"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteController.java",
+      "group": "business-customization",
+      "present_in_working_tree": false,
+      "state": "focused retirement after five-tool default facade cutover; shared live-dependent routes retained where present; no deployment",
+      "sha256": "18f1532dc3eff7345862ef808005c68e76955e1e9c2d24f9f453e0125306367e",
+      "local_evidence": "docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentContextController.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "57aba4ce9c15149d8ecc80b46c84c34f31123734c884ea507709da675a539760"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentService.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "f0eff2e56c36216dcd090c724b96f8ac75e4badb94dddcf9a2336899a183c2bb"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupService.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "b9cc6363c484601889a5b6ae3f6ceaa685e3273f98fd14c4f3618f8481b5dbd7"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteController.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "30603c6a3c75d05a56d5a7bdbcab2d2ef777c38f62fb822849f6d881dbb3f532"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/contracts/McpContractSupport.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "4210063e4134a1ce6205e96156bb8798ad5cad02c73810ba9dfc2a686c8f2e5c"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpCourseController.java",
+      "group": "business-customization",
+      "present_in_working_tree": false,
+      "state": "retired-local after default Python caller replacement; checkpoint preserved; live compatibility pending",
+      "sha256": "3a681149c20266eb0c0abe1f2456c23ab21c3479970776705ecd016e91a51176",
+      "evidence": "read-cohort-cutover-2026-10-19.md"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpGradesController.java",
+      "group": "business-customization",
+      "present_in_working_tree": false,
+      "state": "focused retirement after five-tool default facade cutover; shared live-dependent routes retained where present; no deployment",
+      "sha256": "1bdb61aac8edb81fed4da9900f6b12ab2e9990f42945b117f16bd6ef53908071",
+      "local_evidence": "docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpSubmissionsController.java",
+      "group": "business-customization",
+      "present_in_working_tree": false,
+      "state": "focused retirement after five-tool default facade cutover; shared live-dependent routes retained where present; no deployment",
+      "sha256": "8f748f65cfcee765bb0f91381d883b9e82e21bd33912318b8031d48aa20a846a",
+      "local_evidence": "docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpAssignmentGradingController.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "focused retirement after five-tool default facade cutover; shared live-dependent routes retained where present; no deployment",
+      "sha256": "fd23aa1168f7c1453924c96203ce3b32a4c30479b35e0fe1423df909cce90fa9",
+      "local_evidence": "docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradeMutationService.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "10ff7d0bc0411ede007e5cb7489c21198f18816b48f04b370cdb4cd15840c259"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradebookProjection.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "e1f69c3f004537c227b5934373b4ef5ed3609df9514d1faeea2dfb75f7c922f5"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingAssignmentsController.java",
+      "group": "business-customization",
+      "present_in_working_tree": false,
+      "state": "retired-local after default Python caller replacement; checkpoint preserved; live compatibility pending",
+      "sha256": "fd042f938d34149b5676ba8fb2b922630714e0c36ee7332c51cf3aa44e997fb6",
+      "evidence": "read-cohort-cutover-2026-10-19.md"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingAuthorization.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "cdc9c319092ca38ccc76bf77bb05bcf28fe3f21052f8769acbff8d5db420b8ca"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingEvidence.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "8cb41f5663c452764188cc9c1b32222f2af5b90bacfc4d1028fc43e021eb5726"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingExportService.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "46d5c5dbfdd16bec97fcdf8f75b31608c1819380ca04fdedbbe274eee0139ed7"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingFileService.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "retired sole list/detail/submission-file methods; retained shared context/roster/grade/file/export helpers; no storage deletion",
+      "sha256": "ab980630714563c03d0ecd417bc57164460f12aa56e1d61fa86812f8f74a9559"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingJson.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "c6be718733bade9d9fbeb8c19182e7e9b55f8165a446ab1be214a5f87c7facbb"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingProposalService.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "e2ab328a96a9e4c88e8908385a49084422d29db628dcdca8c278fbb097c8b59a"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingQueryService.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "retired sole list/detail/submission-file methods; retained shared context/roster/grade/file/export helpers; no storage deletion",
+      "sha256": "7117ab89bf7f0f0fadff1bb335dc8dd53776e6c7c7b41532ef12044328a18d4c",
+      "local_change": "Removed only listAssignments; other query callers and shared collaborators retained."
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingStore.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "2304cf5b7f8ff9931530d1c8b84970a4af9ac5c8091b36b248102099ac4a7cbb"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpBearerFilter.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "cab96b504f8ba2fe2db3bc37a857bbb452061f1e21b38f06faf180235475136f"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpJwtVerifier.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "c1f17fa87144aafe330819d3ffc5f83c7d633108f60db48a445afc37018b3d3a"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteControllerTest.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "822d635e66295048cddb1014183475431c77863d3580fd78268a701a33cb938c"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupServiceTest.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "b36c5ffad4e341d855e1fb7b3f17f084794867176442c17a77025431db56bdce"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteControllerTest.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "2e99e50446c08443e25a4458f1c55267b478e9229733fd66a51c19863b7dc168"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpCourseControllerTest.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "54b03c5926f81ae96dcf3bb64047eb05e8b69ed579890cc9de084251c66c5874"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpGradesControllerTest.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "ed905842de0b51d1f5b0ffa12dbf4c31924b19669274675f1d2dac78f701b1d9"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpSubmissionsControllerTest.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "9cdf243ae99be4118398ee62a024285f0eef5897daf14b2703e4f2d2f85d5e2d"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingServicesTest.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "baf83811222852c7af415ac7ade810a0c0b8dfcea14cee81af5e4cf46c61e786"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingWiringTest.java",
+      "group": "business-customization",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "d60e64c97c664baef8eb8259bec4988db1e794bdd6ad89e797ab7cc2f34bc8af"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/security/McpBearerFilterTest.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "470f6b29150cd334e67106b59562520becfb5c8600745bac074281a36c97a7f7"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/security/McpJwtVerifierTest.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "state": "preexisting; untouched by Phase 0",
+      "sha256": "df26a6fb109efda449b697ab54336445162fec0a36ee2424fcec247d3da2975b"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/AGENTS.md",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/README.md",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/pom.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedConversations.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedCredentialGuard.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedJwtVerifier.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedResponse.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedRoutes.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedSessionFilter.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedChainTest.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedJwtVerifierTest.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/PortalContainerTest.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/mcpauth/ExistingSitesChainTest.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/announcement/announcement-tool/tool/pom.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/announcement/announcement-tool/tool/src/webapp/WEB-INF/web.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/assignment/tool/pom.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/assignment/tool/src/webapp/WEB-INF/web.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/content/content-tool/tool/pom.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/content/content-tool/tool/src/webapp/WEB-INF/web.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/entitybroker/tool/pom.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/entitybroker/tool/src/webapp/WEB-INF/web.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/gradebookng/tool/pom.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/gradebookng/tool/src/webapp/WEB-INF/web.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/pom.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/portal/portal-charon/charon/pom.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/portal/portal-charon/charon/src/webapp/WEB-INF/web.xml",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+    },
+    {
+      "path": "apps/sakai/announcement/announcement-tool/tool/src/test/org/sakaiproject/announcement/entityprovider/ExistingAnnouncementActionTest.java",
+      "group": "existing-handler-tests",
+      "present_in_working_tree": true,
+      "implementation_evidence": "read-discovery-2026-10-18.md; auth protection or existing-provider characterization only"
+    },
+    {
+      "path": "apps/sakai/entitybroker/core-providers/src/test/org/sakaiproject/entitybroker/providers/ExistingPagesActionTest.java",
+      "group": "existing-handler-tests",
+      "present_in_working_tree": true,
+      "implementation_evidence": "read-discovery-2026-10-18.md; auth protection or existing-provider characterization only"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedResponseTest.java",
+      "group": "auth-integration",
+      "present_in_working_tree": true,
+      "implementation_evidence": "read-discovery-2026-10-18.md; auth protection or existing-provider characterization only"
+    }
+  ],
+  "storage_configuration_paths": [
+    "deployment/configure-assignment-grading-sakai.sh",
+    "deployment/cleanup-assignment-grading-exports.py",
+    "deployment/sakai-grading-cleanup.service",
+    "deployment/sakai-grading-cleanup.timer"
+  ],
+  "storage_note": "Paths verified in checkout. Native private store and SQL version column state remain unverified live; preserve before retirement."
+}

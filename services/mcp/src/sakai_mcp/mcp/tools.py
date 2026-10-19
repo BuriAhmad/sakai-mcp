@@ -81,7 +81,13 @@ def register_tools(server: MCPServer, settings: Settings, client: SakaiClient) -
         async with audit_call("get_my_grades", "read", course_id):
             try:
                 grades = await client.courses.get_my_grades(principal(), course_id)
-                return {"grades": grades}
+                return {
+                    "grades": grades,
+                    "coverage": {
+                        "score_representation": "native-own-view",
+                        "display_precision_may_apply": True,
+                    },
+                }
             except SakaiError as error:
                 raise ToolError(error.code.value) from None
 
@@ -93,16 +99,27 @@ def register_tools(server: MCPServer, settings: Settings, client: SakaiClient) -
     ) -> dict[str, Any]:
         async with audit_call("get_course_announcements", "read", course_id):
             try:
+                token = principal()
+                if not token.subject:
+                    raise SakaiError(ErrorCode.UNAUTHENTICATED)
                 announcements = await client.announcements.get_course_announcements(
-                    principal(), course_id
+                    token, course_id
                 )
-                return paginate_rows(
+                result = paginate_rows(
                     [present_announcement(row) for row in announcements],
                     cursor,
                     limit,
                     settings,
                     50,
+                    scope=(token.subject, course_id),
                 )
+                result["coverage"] = {
+                    "kind": "existing-provider-observation",
+                    "complete": False,
+                    "lookback_days": 3650,
+                    "reason": "Native merged-channel selection and skipped rows cannot certify completeness.",
+                }
+                return result
             except SakaiError as error:
                 raise ToolError(error.code.value) from None
 
@@ -120,16 +137,25 @@ def register_tools(server: MCPServer, settings: Settings, client: SakaiClient) -
             "get_course_submissions", "read", course_id, assignment_id
         ):
             try:
+                token = principal()
+                if not token.subject:
+                    raise SakaiError(ErrorCode.UNAUTHENTICATED)
                 submissions = await client.assignments.get_course_submissions(
-                    principal(), course_id, assignment_id
+                    token, course_id, assignment_id
                 )
-                return paginate_rows(
+                result = paginate_rows(
                     [present_submission(row) for row in submissions],
                     cursor,
                     limit,
                     settings,
                     100,
+                    scope=(token.subject, course_id, assignment_id),
                 )
+                result["coverage"] = {
+                    "complete": False,
+                    "reason": "Native serializers may omit submissions and inactive submitters; timestamps expose whole seconds.",
+                }
+                return result
             except SakaiError as error:
                 raise ToolError(error.code.value) from None
 

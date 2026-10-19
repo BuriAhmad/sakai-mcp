@@ -4,6 +4,7 @@ Extra native fields are discarded. Missing/null/false remain distinct through
 model_fields_set. None of these observations establishes native authorization.
 """
 
+import re
 from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
@@ -26,6 +27,24 @@ Id = Annotated[StrictStr, Field(min_length=1, max_length=255)]
 
 class WireModel(BaseModel):
     model_config = ConfigDict(extra="ignore", frozen=True)
+
+
+class CurrentUser(WireModel):
+    id: Id = Field(repr=False)
+    eid: Id = Field(repr=False)
+
+
+class SiteDetail(WireModel):
+    # EntitySite masks its ID as empty for nonmembers; EntityBroker's separate
+    # entityId metadata still identifies the requested site in that case.
+    id: Annotated[StrictStr, Field(max_length=255)]
+    entityId: Id | None = None
+    pubView: StrictBool | None = None
+    type: StrictStr
+    published: StrictBool
+    # EntitySite masks deleted state for some roles. False is not always proof
+    # that a site is not deleted; adoption needs membership/role fixtures.
+    softlyDeleted: StrictBool | None = None
 
 
 class Site(WireModel):
@@ -152,7 +171,10 @@ def course_fields(value: Any) -> list[dict[str, str]]:
             for s in observed.sites
             if s.course is True
         ),
-        key=lambda row: (row["title"], row["id"]),
+        key=lambda row: (
+            row["title"].encode("utf-16-be", errors="surrogatepass"),
+            row["id"].encode("utf-16-be", errors="surrogatepass"),
+        ),
     )
 
 
@@ -192,7 +214,7 @@ def instant(value: Any, encoding: InstantEncoding) -> datetime | None:
                 UTC,
             )
         if not isinstance(value, str):
-            raise ValueError
+            raise TypeError
         if encoding == InstantEncoding.JAVA_UTC:
             # Unknown/ambiguous server timezone abbreviations require a measured contract.
             if not value.endswith((" UTC", " GMT")):
@@ -200,11 +222,16 @@ def instant(value: Any, encoding: InstantEncoding) -> datetime | None:
             return datetime.strptime(value[:-4], "%Y-%m-%d %H:%M:%S").replace(
                 tzinfo=UTC
             )
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if not re.fullmatch(
+            r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})",
+            value,
+        ):
+            raise ValueError
+        parsed = datetime.fromisoformat(value)
         if parsed.tzinfo is None:
             raise ValueError
         return parsed.astimezone(UTC)
-    except (ValueError, OverflowError, InvalidOperation, OSError):
+    except (TypeError, ValueError, OverflowError, InvalidOperation, OSError):
         raise SakaiError(ErrorCode.INTERNAL_ERROR) from None
 
 
@@ -212,7 +239,11 @@ def decimal_score(value: Any) -> Decimal | None:
     if value is None or value == "":
         return None
     try:
-        if not isinstance(value, str) or len(value) > 128 or value != value.strip():
+        if (
+            not isinstance(value, str)
+            or len(value) > 128
+            or not re.fullmatch(r"[+-]?[0-9]+(?:\.[0-9]+)?", value)
+        ):
             raise ValueError
         parsed = Decimal(value)
         if not parsed.is_finite():
@@ -233,3 +264,22 @@ def display_score(raw: str, scale: int) -> Decimal:
     ):
         raise SakaiError(ErrorCode.INTERNAL_ERROR)
     return value / Decimal(scale)
+
+
+def user_permissions(value: Any) -> frozenset[str]:
+    """Source handleUserPerms returns a Set<String>; freeze only its array shape."""
+    if (
+        not isinstance(value, list)
+        or len(value) > 5000
+        or any(
+            not isinstance(v, str)
+            or not v
+            or len(v) > 255
+            or any(ord(c) <= 32 or ord(c) == 127 for c in v)
+            for v in value
+        )
+    ):
+        raise SakaiError(ErrorCode.INTERNAL_ERROR)
+    if len(set(value)) != len(value):
+        raise SakaiError(ErrorCode.CONFLICT)
+    return frozenset(value)

@@ -203,12 +203,10 @@ public class McpGradingServicesTest {
     }
 
     @Test
-    public void rosterIncludesMissingAndPaginatedSourceIsComplete() {
-        var first = queries.list("course-a", "assignment-a", null, 1);
-        assertNotNull(first.get("next_cursor"));
-        var second = queries.list("course-a", "assignment-a", (String) first.get("next_cursor"), 1);
-        var row = ((List<Map<String, Object>>) second.get("items")).get(0);
-        assertEquals("missing", row.get("status"));
+    public void retainedContextRosterIncludesMissing() {
+        var rows = queries.roster(a);
+        assertEquals(2, rows.size());
+        var row = rows.stream().filter(r -> "missing".equals(r.get("status"))).findFirst().orElseThrow();
         assertNull(row.get("submission_id"));
         assertNull(row.get("attempt_count"));
         verify(grading, never()).getAssignments(anyString(), anyString(), any());
@@ -231,25 +229,9 @@ public class McpGradingServicesTest {
         when(instructorMember.isActive()).thenReturn(true);
         when(instructorMember.getRole()).thenReturn(instructorRole);
         when(site.getMember("instructor")).thenReturn(instructorMember);
-        var rows =
-                (List<Map<String, Object>>)
-                        queries.list("course-a", "assignment-a", null, 50).get("items");
+        var rows = queries.roster(a);
         assertEquals(2, rows.size());
         assertEquals(1, rows.stream().filter(row -> "missing".equals(row.get("status"))).count());
-    }
-
-    @Test
-    public void cursorIsBoundToActorAndCurrentMetadata() {
-        String cursor =
-                (String) queries.list("course-a", "assignment-a", null, 1).get("next_cursor");
-        session.setUserId("other");
-        when(session.getUserId()).thenReturn("other");
-        assertEquals(
-                HttpStatus.CONFLICT,
-                assertThrows(
-                                ResponseStatusException.class,
-                                () -> queries.list("course-a", "assignment-a", cursor, 1))
-                        .getStatus());
     }
 
     @Test
@@ -259,7 +241,7 @@ public class McpGradingServicesTest {
         assertFalse((Boolean) ((Map<?, ?>) context.get("supported")).get("prepare"));
         assertThrows(
                 ResponseStatusException.class,
-                () -> queries.list("course-a", "assignment-a", null, 50));
+                () -> queries.roster(a));
         verify(assignments, never()).getSubmissions(any());
     }
 
@@ -273,7 +255,7 @@ public class McpGradingServicesTest {
                 HttpStatus.FORBIDDEN,
                 assertThrows(
                                 ResponseStatusException.class,
-                                () -> queries.detail("course-a", "assignment-a", "submission-a"))
+                                () -> authorization.submission(a, "submission-a"))
                         .getStatus());
     }
 
@@ -464,7 +446,7 @@ public class McpGradingServicesTest {
     }
 
     @Test
-    public void resourceReadsPreserveBytesAndRejectStaleRevisionAndForeignFile() throws Exception {
+    public void retainedAttachmentReaderPreservesBytesAndRejectsChangedHashAndForeignFile() throws Exception {
         byte[] bytes = "A\r\nC\r\n".getBytes(java.nio.charset.StandardCharsets.UTF_8);
         String sha =
                 HexFormat.of()
@@ -480,50 +462,17 @@ public class McpGradingServicesTest {
         when(r.getContentSha256()).thenReturn(sha);
         when(r.getContentLength()).thenReturn((long) bytes.length);
         when(r.streamContent()).thenAnswer(i -> new ByteArrayInputStream(bytes));
-        String revision = evidence.contentRevision(s);
-        var result =
-                files.submissionFile(
-                        "course-a", "assignment-a", "submission-a", digest("reference"), revision);
+        var result = files.readAttachment(s.getAttachments(), digest("reference"));
         assertArrayEquals(bytes, result.bytes());
         assertEquals("text/plain", result.contentType());
         assertEquals(sha, result.sha256());
-        assertEquals(
-                HttpStatus.CONFLICT,
-                assertThrows(
-                                ResponseStatusException.class,
-                                () ->
-                                        files.submissionFile(
-                                                "course-a",
-                                                "assignment-a",
-                                                "submission-a",
-                                                digest("reference"),
-                                                "stale"))
-                        .getStatus());
-        assertEquals(
-                HttpStatus.NOT_FOUND,
-                assertThrows(
-                                ResponseStatusException.class,
-                                () ->
-                                        files.submissionFile(
-                                                "course-a",
-                                                "assignment-a",
-                                                "submission-a",
-                                                digest("other"),
-                                                revision))
-                        .getStatus());
-        when(assignments.allowGradeSubmission(anyString())).thenReturn(false);
-        assertEquals(
-                HttpStatus.FORBIDDEN,
-                assertThrows(
-                                ResponseStatusException.class,
-                                () ->
-                                        files.submissionFile(
-                                                "course-a",
-                                                "assignment-a",
-                                                "submission-a",
-                                                digest("reference"),
-                                                revision))
-                        .getStatus());
+        assertEquals(HttpStatus.NOT_FOUND,
+                assertThrows(ResponseStatusException.class,
+                        () -> files.readAttachment(s.getAttachments(), digest("other"))).getStatus());
+        when(r.getContentSha256()).thenReturn("0".repeat(64));
+        assertEquals(HttpStatus.CONFLICT,
+                assertThrows(ResponseStatusException.class,
+                        () -> files.readAttachment(s.getAttachments(), digest("reference"))).getStatus());
     }
 
     @Test
@@ -601,24 +550,6 @@ public class McpGradingServicesTest {
         verify(grading, never())
                 .updateExternalAssessmentScore(
                         anyString(), anyString(), anyString(), anyString(), anyString());
-    }
-
-    @Test
-    public void gradingAssignmentDiscoveryDoesNotRequireSetupPermissions() throws Exception {
-        when(assignments.getAssignmentsForContext("course-a")).thenReturn(List.of(a));
-        var result = queries.listAssignments("course-a", null, 50);
-        assertEquals(1, ((List<?>) result.get("items")).size());
-        verify(assignments).getAssignmentWithGradingEvidence("assignment-a");
-        when(assignments.allowGradeSubmission(anyString())).thenReturn(false);
-        assertEquals(
-                0, ((List<?>) queries.listAssignments("course-a", null, 50).get("items")).size());
-        when(config.getBoolean("mcp.assignment.grading.enabled", false)).thenReturn(false);
-        assertEquals(
-                HttpStatus.NOT_FOUND,
-                assertThrows(
-                                ResponseStatusException.class,
-                                () -> queries.listAssignments("course-a", null, 50))
-                        .getStatus());
     }
 
     org.sakaiproject.grading.api.Assignment external() {
@@ -812,10 +743,7 @@ public class McpGradingServicesTest {
         var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
         var output = new LinkedHashMap<String, Object>();
         output.put("get_assignment_grading_context", queries.context("course-a", "assignment-a"));
-        output.put(
-                "list_assignment_submissions", queries.list("course-a", "assignment-a", null, 100));
-        output.put(
-                "get_assignment_submission", queries.detail("course-a", "assignment-a", s.getId()));
+        // Retired list/detail emitters removed; frozen original fixtures remain unchanged.
         s.setSubmittedText("A");
         var exp =
                 exports.export(

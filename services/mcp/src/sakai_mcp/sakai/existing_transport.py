@@ -1,6 +1,6 @@
-"""Isolated existing-interface transport; not wired into the public client yet.
+"""Bounded existing-interface transport used by the default course-list facade.
 
-Native auth/context and domain authorization must be established before cutover.
+Native auth/context and domain authorization require separate live acceptance.
 No password login, cookie/session reuse, redirects or caller-selected URLs.
 """
 
@@ -25,6 +25,19 @@ class ContentBytes:
     data: bytes
     mime_type: str
     sha256: str
+
+
+@dataclass(frozen=True, repr=False)
+class TokenIdentity:
+    tenant_id: str
+    object_id: str
+    sakai_eid: str
+
+
+@dataclass(frozen=True, repr=False)
+class JsonObservation:
+    value: Any
+    identity: TokenIdentity
 
 
 class ExistingApiTransport:
@@ -62,15 +75,28 @@ class ExistingApiTransport:
         parameters: dict[str, str] | None = None,
         query: dict[str, str] | None = None,
     ) -> Any:
+        return (
+            await self.observe_json(op, principal, parameters=parameters, query=query)
+        ).value
+
+    async def observe_json(
+        self,
+        op: Operation,
+        principal: AccessToken,
+        *,
+        parameters: dict[str, str] | None = None,
+        query: dict[str, str] | None = None,
+    ) -> JsonObservation:
         if op.encoding != Encoding.JSON:
             raise SakaiError(ErrorCode.VALIDATION_ERROR)
-        data, _ = await self._read(op, principal, parameters, query)
+        data, _, identity = await self._read(op, principal, parameters, query)
         try:
-            # Reject nonstandard numeric constants and duplicate object keys rather
-            # than letting different parsers disagree on identity/scope fields.
-            return json.loads(
-                data, parse_constant=_invalid_constant, object_pairs_hook=_unique_keys
+            value = json.loads(
+                data.decode("utf-8-sig"),
+                parse_constant=_invalid_constant,
+                object_pairs_hook=_unique_keys,
             )
+            return JsonObservation(value, identity)
         except (ValueError, UnicodeDecodeError, RecursionError):
             raise SakaiError(ErrorCode.INTERNAL_ERROR) from None
 
@@ -79,7 +105,7 @@ class ExistingApiTransport:
         from sakai_mcp.sakai.operations import CONTENT
 
         async with self._streams:
-            data, headers = await self._read(
+            data, headers, _ = await self._read(
                 CONTENT, principal, {"resource": reference}, None
             )
         return ContentBytes(
@@ -94,10 +120,10 @@ class ExistingApiTransport:
         principal: AccessToken,
         parameters: dict[str, str] | None,
         query: dict[str, str] | None,
-    ) -> tuple[bytes, httpx.Headers]:
+    ) -> tuple[bytes, httpx.Headers, TokenIdentity]:
         if OPERATIONS.get(op.name) is not op:
             raise SakaiError(ErrorCode.VALIDATION_ERROR)
-        if op.blocked_reason or op.effect != Effect.READ:
+        if op.blocked_reason or op.effect == Effect.WRITE:
             raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
         path = op.path(parameters, query)
         try:
@@ -136,6 +162,17 @@ class ExistingApiTransport:
                     ).lower()
                     if encoding != "identity":
                         raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+                    media_type = (
+                        response.headers.get("content-type", "")
+                        .split(";", 1)[0]
+                        .strip()
+                        .lower()
+                    )
+                    if (
+                        op.encoding == Encoding.JSON
+                        and media_type != "application/json"
+                    ):
+                        raise SakaiError(ErrorCode.INTERNAL_ERROR)
                     length = response.headers.get("content-length")
                     if length is not None and (
                         not length.isascii() or not length.isdecimal()
@@ -151,12 +188,20 @@ class ExistingApiTransport:
                     if length is not None and len(chunks) != int(length):
                         raise SakaiError(ErrorCode.CONFLICT)
                     # Return no cookies, session headers, URLs or arbitrary raw headers.
-                    return bytes(chunks), httpx.Headers(
-                        {
-                            "content-type": response.headers.get(
-                                "content-type", "application/octet-stream"
-                            )
-                        }
+                    return (
+                        bytes(chunks),
+                        httpx.Headers(
+                            {
+                                "content-type": response.headers.get(
+                                    "content-type", "application/octet-stream"
+                                )
+                            }
+                        ),
+                        TokenIdentity(
+                            delegated.tenant_id,
+                            delegated.object_id,
+                            delegated.sakai_eid,
+                        ),
                     )
             except SakaiError as error:
                 if (
@@ -164,6 +209,8 @@ class ExistingApiTransport:
                     or attempt + 1 == op.attempts
                 ):
                     raise
+            except httpx.DecodingError:
+                raise SakaiError(ErrorCode.INTERNAL_ERROR) from None
             except (httpx.HTTPError, TimeoutError):
                 if attempt + 1 == op.attempts:
                     raise SakaiError(ErrorCode.DEPENDENCY_UNAVAILABLE) from None

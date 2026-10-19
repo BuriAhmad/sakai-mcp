@@ -92,25 +92,6 @@ public class McpGradingFileService {
         }
     }
 
-    public FileContents submissionFile(
-            String site, String id, String sid, String file, String revision) {
-        Assignment a = authorization.assignment(site, id);
-        authorization.identityRead(a);
-        AssignmentSubmission s = authorization.submission(a, sid);
-        if (revision == null || !revision.equals(evidence.contentRevision(s)))
-            throw failure(HttpStatus.CONFLICT);
-        FileContents result;
-        if ("inline".equals(file)) {
-            if (s.getSubmittedText() == null) throw failure(HttpStatus.NOT_FOUND);
-            byte[] bytes = s.getSubmittedText().getBytes(StandardCharsets.UTF_8);
-            if (bytes.length > 65535) throw failure(HttpStatus.NOT_IMPLEMENTED);
-            result = new FileContents(bytes, "text/html", digest(s.getSubmittedText()));
-        } else result = readAttachment(s.getAttachments(), file);
-        if (!revision.equals(evidence.contentRevision(authorization.submission(a, sid))))
-            throw failure(HttpStatus.CONFLICT);
-        return result;
-    }
-
     public FileContents assignmentFile(String site, String id, String file, String revision) {
         Assignment a = authorization.assignment(site, id);
         authorization.identityRead(a);
