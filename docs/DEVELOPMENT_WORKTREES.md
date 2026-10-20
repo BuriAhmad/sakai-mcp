@@ -201,3 +201,11 @@ No regression suite or package build was run as part of this Git-only separation
 prior test reports remain historical. No failed attachment proof was fixed or
 newly accepted. Neither new source line is a deployment release. No worktree shares
 runtime credentials, virtual environments, generated binaries or running services.
+
+For subsequent reviewed code commits, keep `extraction_anchor` immutable and advance
+`source_anchor` in the role record to the newly reviewed code commit. The checker
+validates initial extraction against the saved source, then verifies later code
+against that reviewed anchor; documentation commits may follow it. Update current
+coverage/pins/evidence as appropriate. Auth ownership explicitly includes original
+Python auth/OBO and legacy native bearer/JWT files; original business host changes
+remain forbidden. The initial separation changed none of those legacy auth bodies.
