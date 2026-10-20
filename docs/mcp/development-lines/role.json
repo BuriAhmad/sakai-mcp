@@ -55,5 +55,8 @@
     "status": "Unchanged client protocol dependency, not server auth implementation"
   },
   "runtime_acceptance": "Not established; no deployment or feature activation. Attachment audit failure preserved.",
-  "required_native_auth": "Auth development source pinned at b5100547aaee02e7cd33adaa5e7bf86a38d01c1e with separate future matching native/Python integration acceptance."
+  "required_native_auth": "Auth development source pinned at b5100547aaee02e7cd33adaa5e7bf86a38d01c1e with separate future matching native/Python integration acceptance.",
+  "extraction_anchor": "0cb3f331cb23ac2e3aaae14420bdc152dc3d7603",
+  "legacy_client_auth_paths": [],
+  "legacy_native_auth_paths": []
 }
