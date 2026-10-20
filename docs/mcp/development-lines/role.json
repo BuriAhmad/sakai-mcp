@@ -40,5 +40,14 @@
     "status": "Unchanged client protocol dependency, not server auth implementation"
   },
   "runtime_acceptance": "Not established; no deployment or feature activation. Attachment audit failure preserved.",
-  "required_native_auth": "Original host retains baseline legacy auth. Shared integration gates remain disabled by default."
+  "required_native_auth": "Original host retains baseline legacy auth. Shared integration gates remain disabled by default.",
+  "extraction_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
+  "legacy_client_auth_paths": [
+    "services/mcp/src/sakai_mcp/auth.py",
+    "services/mcp/src/sakai_mcp/obo.py"
+  ],
+  "legacy_native_auth_paths": [
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpBearerFilter.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpJwtVerifier.java"
+  ]
 }
