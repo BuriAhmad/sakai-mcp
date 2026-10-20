@@ -53,6 +53,13 @@ class WireSubmission(WireModel):
         default=None, max_length=65535, repr=False
     )
 
+    # Internal preservation evidence; never copied into public submission models.
+    privateNotes: StrictStr | None = Field(default=None, max_length=65535, repr=False)
+    feedbackText: StrictStr | None = Field(default=None, max_length=65535, repr=False)
+    properties: dict[str, StrictStr] | None = Field(
+        default=None, max_length=1000, repr=False
+    )
+
 
 class AssignmentEvidence(AssignmentMetadata):
     anonymousGrading: StrictBool

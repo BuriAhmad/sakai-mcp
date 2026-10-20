@@ -1,6 +1,6 @@
 # Sakai integration guide
 
-**Current migration boundary:** follow the [canonical existing-HTTP plan](mcp/existing-api-migration/implementation-plan.md). Python must replace custom Sakai business endpoints/services with existing HTTP APIs and researched native browser forms/AJAX. Only delegated authentication/session integration may remain as a native extension. Historical endpoint recommendations and release descriptions below are evidence, not permission to add business handlers or retain the old architecture. See [current local replacement evidence and limits](mcp/existing-api-migration/five-tool-cutover-2026-10-19.md).
+**Current migration boundary:** follow the [canonical existing-HTTP plan](mcp/existing-api-migration/implementation-plan.md). Python must replace custom Sakai business endpoints/services with existing HTTP APIs and researched native browser forms/AJAX. Only delegated authentication/session integration may remain as a native extension. Historical endpoint recommendations and release descriptions below are evidence, not permission to add business handlers or retain the old architecture. See [current local replacement evidence](mcp/existing-api-migration/external-capture-cutover-2026-10-19.md) and [limits](mcp/existing-api-migration/tool-limitations.md).
 
 The [MCP-only grading migration](SAKAI_GRADING_MCP_RESOURCES.md) replaces the local importer with SDK resources and server proposal/report tools. Native resource/proposal endpoints preserve delegated permissions and existing grading gates; see its release requirements before deployment.
 ## Purpose
@@ -395,3 +395,38 @@ Preserve the [release](SAKAI_RELEASES.md), [VM access](VM_ACCESS.md) and [pause/
 - **Samigo:** question/QTI import, draft/publish, delivery, attempts, permissions and Gradebook synchronization remain unexercised. Tool presence and Gradebook scores cannot establish these capabilities.
 - **Conversations, Email, Drop Box and Site Info domain APIs:** not investigated beyond course tool placement.
 - **Transport adoption:** native SOAP/EntityBroker endpoints were exercised with development sessions, not downstream V1 bearer tokens. Any new adapter must establish a safe delegated path and preserve request/session isolation. Do not promote an admin or Wicket workaround into MCP by default.
+
+### Existing-HTTP setup continuation — 20 October 2026
+
+The canonical migration now routes the three actual setup defaults through native
+Assignment list/edit/save/post HTTP in Python. The practical individual points/draft/
+publication subset, partial context/readback, native default Gradebook policy,
+restrictions and fresh local evidence are in
+[setup cutover evidence](mcp/existing-api-migration/setup-cutover-2026-10-20.md).
+Historical custom-endpoint setup recommendations above are transition history;
+they do not authorize new native business code or establish live acceptance.
+
+### Existing HTTP grading continuation — 20 October 2026
+
+Save, return/release and advisory payload preparation now have actual Python
+HTTP defaults for one submitted individual integer-score row, with no Gradebook
+integration and exactly preservable plain-text side fields. The existing
+`AssignmentEntityProvider.setGrade` and `AssignmentToolUtils.gradeSubmission`
+retain all business authorization and effects. Validation is read-only, native
+context revisions are incompatible, commits are durably single-send, and readback
+remains partial without CAS/causal guarantees. See
+[grading write evidence](mcp/existing-api-migration/grading-write-2026-10-20.md)
+and its explicit unsupported/live/legacy limits. No deployment or academic write
+is established by synthetic tests.
+
+The subsequent [context/MCQ evidence review](mcp/existing-api-migration/evidence-review-2026-10-20.md)
+checks modern grader stored-row enumeration and site membership/role candidates.
+They do not establish a complete Assignment-eligible roster or strict context raw
+scale/release representation. Four unused native mutation helpers are retired;
+remaining context helpers and native records/schema/domain are preserved.
+
+[Native attachment characterization](mcp/existing-api-migration/attachment-proof-2026-10-20.md)
+now tests kernel content HTTP stream/copyright/filter/redirect/sendfile behavior.
+It also records the Roster2 filtered-total candidate and Assignment-specific realm
+eligibility gap. No content/roster route was adopted; delegated AccessServlet and
+full evidence acceptance remain open.

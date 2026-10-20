@@ -14,6 +14,8 @@ from sakai_mcp.security.obo import OBOProvider
 from sakai_mcp.storage.azure_blob import AzureBlobObjectStore
 from sakai_mcp.storage.records import PrivateRecords
 from sakai_mcp.workflows.announcements import AnnouncementCreation
+from sakai_mcp.workflows.assignment_setup import AssignmentSetup
+from sakai_mcp.workflows.captures import Captures
 from sakai_mcp.workflows.submissions import SubmissionReads
 
 
@@ -54,9 +56,16 @@ class SakaiClient:
         self.submissions = SubmissionReads(
             self.existing_transport, self.browser_transport
         )
-        self.assignments = AssignmentOperations(self.transport, self.submissions)
+        self.assignments = AssignmentOperations(
+            settings,
+            self.submissions,
+            AssignmentSetup(self.submissions, private_records),
+        )
         self.grading = GradingOperations(
-            self.transport, self.existing_transport, self.submissions
+            self.transport,
+            self.existing_transport,
+            self.submissions,
+            Captures(self.submissions, private_records),
         )
 
     async def aclose(self) -> None:

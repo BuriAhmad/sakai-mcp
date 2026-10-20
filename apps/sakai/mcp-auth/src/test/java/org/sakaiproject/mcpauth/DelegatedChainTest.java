@@ -174,6 +174,22 @@ public class DelegatedChainTest {
         }
     }
 
+    @Test
+    public void unacceptedContentContextCannotBindDelegatedCredentials() throws Exception {
+        for (String path : List.of("/access/content/attachment/course-a/answers.txt",
+                "/access/content/group/course-a/answers.txt")) {
+            var request = request(path);
+            request.setContextPath("/access");
+            request.setServletPath("");
+            request.setPathInfo(path.substring("/access".length()));
+            var response = new MockHttpServletResponse();
+            guard.doFilter(request, response, (r, s) -> fail("unaccepted content context"));
+            assertEquals(403, response.getStatus());
+            verifyNoInteractions(verifier, authentication);
+            assertNull(sessions.getCurrentSession());
+        }
+    }
+
     private MockHttpServletRequest request(String path) {
         MockHttpServletRequest r = new MockHttpServletRequest("GET", path);
         r.setSecure(true);
@@ -296,6 +312,27 @@ public class DelegatedChainTest {
         response = new MockHttpServletResponse();
         guard.doFilter(mutation, response, (r, s) -> fail("grade write accepted"));
         assertEquals(403, response.getStatus());
+    }
+
+    @Test
+    public void selectedGradingPostHasNarrowCredentialReach() throws Exception {
+        for (String failure : List.of("none", "query", "field", "action", "duplicate", "multipart", "oversize", "badtype")) {
+            var request = request("/direct/assignment/setGrade.json");
+            request.setMethod("POST");
+            request.setContentType("application/x-www-form-urlencoded; charset=UTF-8");
+            request.setContent("synthetic=body".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            for (String name : List.of("courseId", "siteId", "gradableId", "studentId", "submissionId", "grade"))
+                request.addParameter(name, "synthetic");
+            request.addParameter("gradeOption", "save");
+            if (failure.equals("query")) request.setQueryString("extra=1");
+            if (failure.equals("field")) request.addParameter("sessionid", "forbidden");
+            if (failure.equals("action")) request.setParameter("gradeOption", "release");
+            if (failure.equals("duplicate")) request.addParameter("grade", "other");
+            if (failure.equals("multipart")) request.setContentType("multipart/form-data");
+            if (failure.equals("oversize")) request.setContent(new byte[60001]);
+            if (failure.equals("badtype")) request.setContentType("application/x-www-form-urlencoded-evil");
+            assertEquals(failure, failure.equals("none"), DelegatedRoutes.allows(request));
+        }
     }
 
     @Test

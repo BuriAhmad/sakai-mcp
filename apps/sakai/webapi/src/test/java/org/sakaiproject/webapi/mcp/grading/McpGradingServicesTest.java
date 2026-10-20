@@ -24,7 +24,6 @@ import org.sakaiproject.rubrics.api.RubricsService;
 import org.sakaiproject.site.api.*;
 import org.sakaiproject.tool.api.*;
 import org.sakaiproject.user.api.*;
-import org.sakaiproject.util.api.FormattedText;
 import org.sakaiproject.webapi.mcp.assessment.McpAssessmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,7 +33,6 @@ import java.nio.file.*;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Function;
 
 public class McpGradingServicesTest {
     @Rule public TemporaryFolder temporary = new TemporaryFolder();
@@ -44,15 +42,10 @@ public class McpGradingServicesTest {
     McpGradingAuthorization authorization;
     McpGradingEvidence evidence;
     McpGradebookProjection gradebook;
-    McpGradingExportService exports;
     McpGradingQueryService queries;
-    McpGradingFileService files;
-    McpGradingProposalService proposals;
-    McpGradeMutationService mutations;
     McpGradingStore store;
     McpAssessmentService metadata;
     GradingService grading;
-    GradingAuthz authz;
     Assignment a;
     AssignmentSubmission s;
     User student;
@@ -133,27 +126,21 @@ public class McpGradingServicesTest {
         when(users.getUser("student-a")).thenReturn(student);
         when(users.getUser("student-b")).thenReturn(other);
         grading = mock(GradingService.class);
-        authz = mock(GradingAuthz.class);
         content = mock(ContentHostingService.class);
         metadata = mock(McpAssessmentService.class);
         when(metadata.revision(any())).thenReturn("config");
-        FormattedText formatted = mock(FormattedText.class);
-        when(formatted.escapeHtmlFormattedText(anyString())).thenAnswer(i -> i.getArgument(0));
-        when(formatted.convertFormattedTextToPlaintext(any())).thenAnswer(i -> i.getArgument(0));
         RubricsService rubrics = mock(RubricsService.class);
         store = new McpGradingStore(config);
         authorization =
                 new McpGradingAuthorization(
                         assignments, grading, sessions, sites, security, config, rubrics);
-        evidence = new McpGradingEvidence(assignments, content, users, metadata, authorization);
+        evidence = new McpGradingEvidence(assignments, content, users);
         gradebook =
                 new McpGradebookProjection(
-                        assignments, grading, sites, authz, authorization, evidence);
-        exports = new McpGradingExportService(grading, store, authorization, evidence);
+                        grading, authorization);
         queries =
                 new McpGradingQueryService(
                         assignments,
-                        grading,
                         store,
                         sites,
                         config,
@@ -161,22 +148,6 @@ public class McpGradingServicesTest {
                         authorization,
                         evidence,
                         gradebook);
-        files = new McpGradingFileService(security, authorization, evidence);
-        proposals = new McpGradingProposalService(store, authorization, exports);
-        mutations =
-                new McpGradeMutationService(
-                        assignments, grading, store, formatted, authorization, evidence, gradebook);
-
-        when(assignments.withGradingSubmissionLock(anyString(), any()))
-                .thenAnswer(
-                        i -> ((Function<AssignmentSubmission, Object>) i.getArgument(1)).apply(s));
-        doAnswer(
-                        i -> {
-                            s.setLockVersion(s.getLockVersion() + 1);
-                            return null;
-                        })
-                .when(assignments)
-                .updateSubmission(any());
     }
 
     @Test
@@ -259,185 +230,6 @@ public class McpGradingServicesTest {
                         .getStatus());
     }
 
-    Map<String, Object> row(String score) {
-        return obj(
-                "submission_id",
-                s.getId(),
-                "sakai_user_id",
-                "student-a",
-                "expected_content_revision",
-                evidence.contentRevision(s),
-                "expected_grade_revision",
-                evidence.gradeRevision(s),
-                "score",
-                score,
-                "feedback",
-                obj("action", "preserve", "text", null));
-    }
-
-    Map<String, Object> request(String kind, List<Map<String, Object>> rows) {
-        var request =
-                obj(
-                        "operation_id",
-                        UUID.randomUUID().toString(),
-                        "mode",
-                        "commit",
-                        "expected_assignment_revision",
-                        "config",
-                        "grades",
-                        rows);
-        request.put(
-                "payload_sha256",
-                McpGradingJson.hash(
-                        McpGradingJson.canonical(
-                                obj(
-                                        "kind",
-                                        kind,
-                                        "course_id",
-                                        "course-a",
-                                        "assignment_id",
-                                        "assignment-a",
-                                        "expected_assignment_revision",
-                                        "config",
-                                        "grades",
-                                        rows))));
-        return request;
-    }
-
-    @Test
-    public void savePreservesStudentEvidenceAndUnreleasedFlagsAndReplayDoesNotWrite()
-            throws Exception {
-        s.setSubmittedText("A C B D A");
-        s.setPrivateNotes("preserve");
-        s.getProperties().put(AssignmentConstants.ALLOW_EXTENSION_CLOSETIME, "123");
-        var request = request("save", List.of(row("4")));
-        var result = mutations.write("course-a", "assignment-a", "save", request);
-        assertEquals("completed", result.get("outcome"));
-        assertEquals("40", s.getGrade());
-        assertFalse(s.getGradeReleased());
-        assertFalse(s.getReturned());
-        assertEquals("preserve", s.getPrivateNotes());
-        assertEquals("123", s.getProperties().get(AssignmentConstants.ALLOW_EXTENSION_CLOSETIME));
-        assertEquals("A C B D A", s.getSubmittedText());
-        assertEquals(result, mutations.write("course-a", "assignment-a", "save", request));
-        verify(assignments, times(1)).updateSubmission(s);
-        verify(grading, never())
-                .updateExternalAssessmentScore(
-                        anyString(), anyString(), anyString(), anyString(), anyString());
-    }
-
-    @Test
-    public void validateAndAboveMaximumNeverWrite() throws Exception {
-        var request = request("save", List.of(row("4")));
-        request.put("mode", "validate");
-        assertEquals(
-                "validated",
-                mutations.write("course-a", "assignment-a", "save", request).get("outcome"));
-        assertThrows(
-                ResponseStatusException.class,
-                () ->
-                        mutations.write(
-                                "course-a",
-                                "assignment-a",
-                                "save",
-                                request("save", List.of(row("6")))));
-        verify(assignments, never()).updateSubmission(any());
-    }
-
-    @Test
-    public void resubmissionAndReleasedRowsConflict() throws Exception {
-        var request = request("save", List.of(row("4")));
-        s.setSubmittedText("changed");
-        assertThrows(
-                ResponseStatusException.class,
-                () -> mutations.write("course-a", "assignment-a", "save", request));
-        s.setGradeReleased(true);
-        assertThrows(
-                ResponseStatusException.class,
-                () ->
-                        mutations.write(
-                                "course-a",
-                                "assignment-a",
-                                "save",
-                                request("save", List.of(row("4")))));
-        verify(assignments, never()).updateSubmission(any());
-    }
-
-    @Test
-    public void uncertainNativeOutcomeIsJournaledAndNeverReplayed() throws Exception {
-        doThrow(new RuntimeException("private-data-must-not-leak"))
-                .when(assignments)
-                .updateSubmission(any());
-        var request = request("save", List.of(row("4")));
-        var result = mutations.write("course-a", "assignment-a", "save", request);
-        assertEquals("partial", result.get("outcome"));
-        assertFalse(result.toString().contains("private-data"));
-        assertEquals(result, mutations.write("course-a", "assignment-a", "save", request));
-        verify(assignments, times(1)).updateSubmission(any());
-    }
-
-    @Test
-    public void releaseAndReturnAreSeparateFromSave() {
-        mutations.write("course-a", "assignment-a", "save", request("save", List.of(row("4"))));
-        var row =
-                obj(
-                        "submission_id",
-                        s.getId(),
-                        "sakai_user_id",
-                        "student-a",
-                        "expected_content_revision",
-                        evidence.contentRevision(s),
-                        "expected_grade_revision",
-                        evidence.gradeRevision(s),
-                        "expected_score",
-                        "4",
-                        "expected_feedback_sha256",
-                        null);
-        var result =
-                mutations.write(
-                        "course-a", "assignment-a", "release", request("release", List.of(row)));
-        assertEquals("completed", result.get("outcome"));
-        assertTrue(s.getReturned());
-        assertTrue(s.getGradeReleased());
-        assertNotNull(s.getDateReturned());
-    }
-
-    @Test
-    public void exportedBytesAreChecksummedAndExpiryAndOwnershipAreEnforced() throws Exception {
-        s.setSubmittedText("A\nC\nB\nD\nA\n");
-        var request =
-                obj(
-                        "export_request_id",
-                        UUID.randomUUID().toString(),
-                        "expected_assignment_revision",
-                        "config",
-                        "submissions",
-                        List.of(
-                                obj(
-                                        "submission_id",
-                                        s.getId(),
-                                        "expected_content_revision",
-                                        evidence.contentRevision(s))));
-        var receipt = exports.export("course-a", "assignment-a", request);
-        String eid = (String) receipt.get("export_id");
-        var status = exports.exportStatus("course-a", "assignment-a", eid, null, 50);
-        var artifact = ((List<Map<String, Object>>) status.get("artifacts")).get(0);
-        var file =
-                exports.download(
-                        "course-a", "assignment-a", eid, (String) artifact.get("artifact_id"));
-        assertEquals(digest(s.getSubmittedText()), file.sha256());
-        assertEquals(s.getSubmittedText(), Files.readString(file.path()));
-        when(session.getUserId()).thenReturn("other");
-        assertThrows(
-                ResponseStatusException.class,
-                () ->
-                        exports.download(
-                                "course-a",
-                                "assignment-a",
-                                eid,
-                                (String) artifact.get("artifact_id")));
-    }
-
     @Test
     public void contextCannotClaimReadinessWithoutStore() {
         when(config.getString("mcp.assignment.grading.storage", "")).thenReturn("");
@@ -445,293 +237,11 @@ public class McpGradingServicesTest {
         assertFalse((Boolean) ((Map<?, ?>) context.get("supported")).get("save"));
     }
 
-    @Test
-    public void retainedAttachmentReaderPreservesBytesAndRejectsChangedHashAndForeignFile() throws Exception {
-        byte[] bytes = "A\r\nC\r\n".getBytes(java.nio.charset.StandardCharsets.UTF_8);
-        String sha =
-                HexFormat.of()
-                        .formatHex(
-                                java.security.MessageDigest.getInstance("SHA-256").digest(bytes));
-        s.setAttachments(Set.of("reference"));
-        when(assignments.removeReferencePrefix("reference")).thenReturn("resource");
-        ContentResource r = mock(ContentResource.class);
-        ResourceProperties properties = mock(ResourceProperties.class);
-        when(content.getResource("resource")).thenReturn(r);
-        when(r.getProperties()).thenReturn(properties);
-        when(r.getContentType()).thenReturn("text/plain");
-        when(r.getContentSha256()).thenReturn(sha);
-        when(r.getContentLength()).thenReturn((long) bytes.length);
-        when(r.streamContent()).thenAnswer(i -> new ByteArrayInputStream(bytes));
-        var result = files.readAttachment(s.getAttachments(), digest("reference"));
-        assertArrayEquals(bytes, result.bytes());
-        assertEquals("text/plain", result.contentType());
-        assertEquals(sha, result.sha256());
-        assertEquals(HttpStatus.NOT_FOUND,
-                assertThrows(ResponseStatusException.class,
-                        () -> files.readAttachment(s.getAttachments(), digest("other"))).getStatus());
-        when(r.getContentSha256()).thenReturn("0".repeat(64));
-        assertEquals(HttpStatus.CONFLICT,
-                assertThrows(ResponseStatusException.class,
-                        () -> files.readAttachment(s.getAttachments(), digest("reference"))).getStatus());
-    }
 
-    @Test
-    public void assignmentResourcesUseContentRevisionAndNeverFetchUrl() throws Exception {
-        a.setAttachments(Set.of("reference"));
-        when(assignments.removeReferencePrefix("reference")).thenReturn("resource");
-        ContentResource r = mock(ContentResource.class);
-        ResourceProperties properties = mock(ResourceProperties.class);
-        when(content.getResource("resource")).thenReturn(r);
-        when(r.getProperties()).thenReturn(properties);
-        when(r.getContentType()).thenReturn(ResourceProperties.TYPE_URL);
-        when(r.getContentSha256()).thenReturn("a".repeat(64));
-        assertEquals(
-                HttpStatus.NOT_IMPLEMENTED,
-                assertThrows(
-                                ResponseStatusException.class,
-                                () ->
-                                        files.assignmentFile(
-                                                "course-a",
-                                                "assignment-a",
-                                                digest("reference"),
-                                                "a".repeat(64)))
-                        .getStatus());
-        verify(r, never()).streamContent();
-    }
 
-    @Test
-    public void proposalsAreDurablePrincipalBoundAndNeverWriteGrades() throws Exception {
-        s.setSubmittedText("A\nC\nB\nD\nA\n");
-        String eid =
-                (String)
-                        exports.export(
-                                        "course-a",
-                                        "assignment-a",
-                                        obj(
-                                                "export_request_id",
-                                                UUID.randomUUID().toString(),
-                                                "expected_assignment_revision",
-                                                "config",
-                                                "submissions",
-                                                List.of(
-                                                        obj(
-                                                                "submission_id",
-                                                                s.getId(),
-                                                                "expected_content_revision",
-                                                                evidence.contentRevision(s)))))
-                                .get("export_id");
-        String pid = UUID.randomUUID().toString();
-        var request =
-                obj(
-                        "proposal_id",
-                        pid,
-                        "export_id",
-                        eid,
-                        "payload",
-                        obj("rows", List.of(obj("score", "5"))));
-        var first = proposals.createProposal("course-a", "assignment-a", request);
-        assertEquals(first, proposals.proposal("course-a", "assignment-a", pid));
-        assertEquals(first, proposals.createProposal("course-a", "assignment-a", request));
-        request.put("payload", obj("rows", List.of(obj("score", "4"))));
-        assertEquals(
-                HttpStatus.CONFLICT,
-                assertThrows(
-                                ResponseStatusException.class,
-                                () -> proposals.createProposal("course-a", "assignment-a", request))
-                        .getStatus());
-        when(session.getUserId()).thenReturn("other");
-        assertEquals(
-                HttpStatus.NOT_FOUND,
-                assertThrows(
-                                ResponseStatusException.class,
-                                () -> proposals.proposal("course-a", "assignment-a", pid))
-                        .getStatus());
-        verify(assignments, never()).updateSubmission(any());
-        verify(grading, never())
-                .updateExternalAssessmentScore(
-                        anyString(), anyString(), anyString(), anyString(), anyString());
-    }
 
-    org.sakaiproject.grading.api.Assignment external() {
-        var item = new org.sakaiproject.grading.api.Assignment();
-        item.setId(7L);
-        item.setPoints(5.0);
-        item.setExternallyMaintained(true);
-        item.setExternalId(assignmentRef(a));
-        item.setReleased(false);
-        item.setCounted(true);
-        when(grading.isGradebookInitialized("course-a")).thenReturn(true);
-        when(grading.getAssignments(anyString(), anyString(), any())).thenReturn(List.of(item));
-        when(authz.isUserAbleToGradeItemForStudent(
-                        anyString(), anyString(), eq(7L), eq("student-a")))
-                .thenReturn(true);
-        return item;
-    }
 
-    Map<String, Object> returnRequest() {
-        s.setGrade("40");
-        s.setGraded(true);
-        return request(
-                "release",
-                List.of(
-                        obj(
-                                "submission_id",
-                                s.getId(),
-                                "sakai_user_id",
-                                "student-a",
-                                "expected_content_revision",
-                                evidence.contentRevision(s),
-                                "expected_grade_revision",
-                                evidence.gradeRevision(s),
-                                "expected_score",
-                                "4",
-                                "expected_feedback_sha256",
-                                null)));
-    }
 
-    @Test
-    public void externalProjectionPreservesItemVisibility() {
-        var item = external();
-        mutations.write("course-a", "assignment-a", "release", returnRequest());
-        verify(grading)
-                .updateExternalAssessmentScore(
-                        "course-a", "course-a", assignmentRef(a), "student-a", "4");
-        verify(grading)
-                .updateExternalAssessmentComment(
-                        "course-a", "course-a", assignmentRef(a), "student-a", null);
-        assertFalse(item.getReleased());
-        assertTrue(item.getCounted());
-    }
-
-    @Test
-    public void projectionFailureRetainsAssignmentStageAndReplayDoesNotNotify() throws Exception {
-        external();
-        doThrow(new RuntimeException("projection failure"))
-                .when(grading)
-                .updateExternalAssessmentComment(
-                        anyString(), anyString(), anyString(), anyString(), any());
-        var request = returnRequest();
-        var result = mutations.write("course-a", "assignment-a", "release", request);
-        assertEquals("partial", result.get("outcome"));
-        assertEquals(
-                "assignment_released",
-                ((List<Map<String, Object>>) result.get("rows")).get(0).get("stage"));
-        assertEquals(result, mutations.write("course-a", "assignment-a", "release", request));
-        verify(assignments, times(1)).updateSubmission(any());
-    }
-
-    @Test
-    public void resubmissionBeforeProjectionDeniesProjection() throws Exception {
-        external();
-        doAnswer(
-                        new org.mockito.stubbing.Answer<Object>() {
-                            int calls;
-
-                            public Object answer(org.mockito.invocation.InvocationOnMock i) {
-                                if (++calls == 2) s.setSubmittedText("new attempt");
-                                return ((Function<AssignmentSubmission, Object>) i.getArgument(1))
-                                        .apply(s);
-                            }
-                        })
-                .when(assignments)
-                .withGradingSubmissionLock(anyString(), any());
-        assertEquals(
-                "partial",
-                mutations
-                        .write("course-a", "assignment-a", "release", returnRequest())
-                        .get("outcome"));
-        verify(grading, never())
-                .updateExternalAssessmentScore(
-                        anyString(), anyString(), anyString(), anyString(), anyString());
-    }
-
-    @Test
-    public void gradebookPermissionAndMismatchedAssociationDenyBeforeWriting() throws Exception {
-        external();
-        when(authz.isUserAbleToGradeItemForStudent(
-                        anyString(), anyString(), anyLong(), anyString()))
-                .thenReturn(false);
-        assertThrows(
-                ResponseStatusException.class,
-                () ->
-                        mutations.write(
-                                "course-a",
-                                "assignment-a",
-                                "save",
-                                request("save", List.of(row("4")))));
-        a.getProperties()
-                .put(
-                        AssignmentConstants.PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT,
-                        "unrelated-item");
-        assertThrows(
-                ResponseStatusException.class,
-                () ->
-                        mutations.write(
-                                "course-a",
-                                "assignment-a",
-                                "save",
-                                request("save", List.of(row("4")))));
-        verify(assignments, never()).updateSubmission(any());
-    }
-
-    @Test
-    public void withdrawnStudentCannotReceiveNewOfficialGrade() throws Exception {
-        when(site.getUsers()).thenReturn(Set.of("student-b"));
-        assertThrows(
-                ResponseStatusException.class,
-                () ->
-                        mutations.write(
-                                "course-a",
-                                "assignment-a",
-                                "save",
-                                request("save", List.of(row("4")))));
-        verify(assignments, never()).updateSubmission(any());
-    }
-
-    @Test
-    public void expiredArtifactIsDeniedAndRemoved() throws Exception {
-        s.setSubmittedText("A");
-        var request =
-                obj(
-                        "export_request_id",
-                        UUID.randomUUID().toString(),
-                        "expected_assignment_revision",
-                        "config",
-                        "submissions",
-                        List.of(
-                                obj(
-                                        "submission_id",
-                                        s.getId(),
-                                        "expected_content_revision",
-                                        evidence.contentRevision(s))));
-        String eid = (String) exports.export("course-a", "assignment-a", request).get("export_id");
-        var status = exports.exportStatus("course-a", "assignment-a", eid, null, 50);
-        String aid =
-                (String)
-                        ((List<Map<String, Object>>) status.get("artifacts"))
-                                .get(0)
-                                .get("artifact_id");
-        var file = exports.download("course-a", "assignment-a", eid, aid);
-        store.locked(
-                store.key("ta", "course-a", "assignment-a", eid, "export"),
-                directory -> {
-                    try {
-                        var record = store.read(directory);
-                        record.put("expires_at", "2020-01-01T00:00:00Z");
-                        store.write(directory, record);
-                        return null;
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-        assertEquals(
-                HttpStatus.GONE,
-                assertThrows(
-                                ResponseStatusException.class,
-                                () -> exports.download("course-a", "assignment-a", eid, aid))
-                        .getStatus());
-        assertFalse(Files.exists(file.path()));
-    }
 
     /** Optional synthetic outputs validate the Java/Python wire contract across implementations. */
     @Test
@@ -743,52 +253,8 @@ public class McpGradingServicesTest {
         var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
         var output = new LinkedHashMap<String, Object>();
         output.put("get_assignment_grading_context", queries.context("course-a", "assignment-a"));
-        // Retired list/detail emitters removed; frozen original fixtures remain unchanged.
-        s.setSubmittedText("A");
-        var exp =
-                exports.export(
-                        "course-a",
-                        "assignment-a",
-                        obj(
-                                "export_request_id",
-                                UUID.randomUUID().toString(),
-                                "expected_assignment_revision",
-                                "config",
-                                "submissions",
-                                List.of(
-                                        obj(
-                                                "submission_id",
-                                                s.getId(),
-                                                "expected_content_revision",
-                                                evidence.contentRevision(s)))));
-        output.put("export_assignment_submissions", exp);
-        output.put(
-                "get_assignment_submission_export",
-                exports.exportStatus(
-                        "course-a", "assignment-a", (String) exp.get("export_id"), null, 100));
-        var save = request("save", List.of(row("4")));
-        output.put(
-                "save_assignment_grades",
-                mutations.write("course-a", "assignment-a", "save", save));
-        output.put(
-                "get_assignment_grading_operation",
-                mutations.operation("course-a", "assignment-a", (String) save.get("operation_id")));
-        output.put(
-                "release_assignment_grades",
-                mutations.write("course-a", "assignment-a", "release", returnRequest()));
-        output.put(
-                "get_assignment_grades",
-                queries.grades(
-                        "course-a",
-                        "assignment-a",
-                        obj(
-                                "rows",
-                                List.of(
-                                        obj(
-                                                "submission_id",
-                                                s.getId(),
-                                                "sakai_user_id",
-                                                "student-a")))));
+        // Other historical emitters retired; frozen fixtures are preserved.
+
         for (var entry : output.entrySet())
             mapper.writeValue(
                     directory.resolve(entry.getKey() + ".json").toFile(), entry.getValue());

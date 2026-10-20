@@ -1,5 +1,6 @@
 """Synthetic source-derived Sakai 25.2 wire views; no exercised/live claim."""
 
+import json
 from copy import deepcopy
 from datetime import UTC, datetime
 from html import escape
@@ -53,6 +54,33 @@ ASSIGNMENT = {
 }
 
 
+def gradebook_table():
+    # GbGradebookData has category columns inside the same row-major matrix.
+    return {
+        "students": [{"userId": "other-student"}, {"userId": "student-a"}],
+        "columns": [
+            {"type": "category"},
+            {
+                "type": "assignment",
+                "assignmentId": 7,
+                "externalId": "/assignment/a/course-a/assignment-a",
+                "externalAppName": "sakai.assignment.grades",
+                "externallyMaintained": True,
+                "released": False,
+                "includedInCourseGrade": True,
+            },
+        ],
+        "rowCount": 2,
+        "columnCount": 2,
+        "settings": {
+            "gUid": "course-a",
+            "isPointsGradeEntry": True,
+            "isPercentageGradeEntry": False,
+        },
+        "serializedGrades": "json:[null, 99, null, 7.25]",
+    }
+
+
 def page(data):
     return httpx.Response(
         200, text=data, headers={"content-type": "text/html; charset=utf-8"}
@@ -71,6 +99,7 @@ class FiveToolHTTP:
         self.grade_html = """<div id="studentGradeSummary"><table id="gradeSummaryTable"><tr class="gb-summary-grade-row">
         <th><span class="gb-summary-grade-title">Synthetic Quiz</span></th>
         <td class="gb-summary-grade-score"><span class="gb-summary-grade-score-raw">8.5</span><span class="gb-summary-grade-score-outof">/ 10.0</span></td></tr></table></div>"""
+        self.gradebook_data = None
         self.announcements = []
         self.failure = None
         self.native_eid = "synthetic-eid"
@@ -138,10 +167,24 @@ class FiveToolHTTP:
                     )
                     else "student-a"
                 )
+                rows = ""
+                for submission in self.assignment.get("submissions", []):
+                    student = (
+                        submission["submitters"][0]["id"] if uid != "blank" else "blank"
+                    )
+                    sid = submission["id"]
+                    released = (
+                        '<span class="si si-check fs-3" aria-label="Released" />'
+                        if submission.get("gradeReleased", False)
+                        else ""
+                    )
+                    rows += f'<tr><td headers="studentname"><sakai-user-photo user-id="{student}"></sakai-user-photo><a href="/portal/tool/assignments-p?eventSubmit_doGrade_submission=&amp;assignmentId=%2Fassignment%2Fa%2Fcourse-a%2Fassignment-a&amp;submissionId=%2Fassignment%2Fs%2Fcourse-a%2Fassignment-a%2F{sid}">Grade</a></td><td headers="gradereleased">{released}</td></tr>'
+                if not rows:
+                    rows = '<tr><td headers="studentname">Synthetic Missing Student</td><td headers="gradereleased">&nbsp;</td></tr>'
                 return page(
-                    '<table id="submissionList"><tr><td headers="studentname"><sakai-user-photo user-id="'
-                    + uid
-                    + '"></sakai-user-photo></td></tr></table>'
+                    '<table id="submissionList">'
+                    + rows
+                    + '</table><input name="eventSubmit_doList_next" disabled>'
                 )
             return page(
                 '<td headers="title"><a href="javascript:void(0)" onclick="window.location=\'/portal/tool/assignments-p?eventSubmit_doGrade_assignment=&amp;assignmentId=%2Fassignment%2Fa%2Fcourse-a%2Fassignment-a\';">Grade</a></td>'
@@ -173,6 +216,16 @@ class FiveToolHTTP:
                         }
                     ]
                 },
+            )
+        if (
+            path == "/portal/tool/gradebook-p/grades"
+            and self.gradebook_data is not None
+        ):
+            return page(
+                '<form data-site-id="course-a" data-guid="course-a"></form>'
+                "<script>var tableData = "
+                + json.dumps(self.gradebook_data)
+                + ";</script>"
             )
         if path == "/portal/tool/gradebook-p/gradebook":
             return page(self.grade_html)

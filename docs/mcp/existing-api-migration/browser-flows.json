@@ -9,7 +9,7 @@
   },
   "plan": {
     "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp/docs/mcp/existing-api-migration/implementation-plan.md",
-    "sha256": "8c5d5a6f5f30168f002021af4abb7f1c5ee94882c6c64d5767f02d2ef3eb8569",
+    "sha256": "c03d891b5724f75ba92988ab9991e9ca3dcec8ea4a5bbe57e04816dab752437b",
     "previous_sha256": "ed07da7540b98b6748ad47312886ee9cb2e5006f3005df2f3f231c7cb49ea23b",
     "previous_private_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Migration-Baseline-2026-10-17/plan-before-browser-research.md",
     "prior_delivery_path": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md",
@@ -112,7 +112,7 @@
     {
       "id": "T06",
       "tool": "get_course_assessment_context",
-      "status": "source-candidate; dynamic delegated acceptance pending",
+      "status": "actual default locally tested; practical partial setup forms plus metadata-only items/categories; full native-role/delegated/field/staging/recovery acceptance pending",
       "event_sequence_and_checks": "Validate instructor setup authority\u2192B0 required placements\u2192B3 Assignment list plus read-only edit/view forms\u2192B6 Gradebook settings/categories/item metadata\u2192A10/B5 calendar view\u2192join native relationships, normalize timezone/window/configuration and produce explicit per-section completeness/revisions\u2192return. Do not traverse student submission detail or call the default-hydrating A4 list just to get setup metadata. Tool initialization/preferences/access events are recorded as native read effects. Test not-initialized Gradebook/Calendar, category modes, drafts, multiple Gradebooks, missing permissions and unavailable fields. No native save, preview-save, new item or calendar creation is part of context discovery.",
       "browser_cards": [
         "B0",
@@ -124,12 +124,13 @@
       "current_catalogs": [
         "10",
         "11"
-      ]
+      ],
+      "evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
     },
     {
       "id": "T07",
       "tool": "create_assignment",
-      "status": "source-candidate; dynamic delegated acceptance pending",
+      "status": "actual default locally tested; practical partial setup forms plus metadata-only items/categories; full native-role/delegated/field/staging/recovery acceptance pending",
       "event_sequence_and_checks": "Validate the full approved setup contract\u2192T06 context/preflight\u2192B4 Add form with native values/date units\u2192B8 attachment selection as needed\u2192record intent/baseline IDs\u2192submit the selected draft/save or published/post action once\u2192reopen exact created ID/configuration\u2192for published setup verify B5 linked deadline and B6 external item/category/flags, coordinating existing native item edits if allowed\u2192record complete/partial/unknown with remaining steps\u2192return. Preserve draft/publication functionality; enumerate title-length, minute/timezone, copy/link and transient Gradebook-default differences. A new internal Gradebook item is not equivalent to `new_external`. Reconciliation of a lost create response identifies the native object before any further creation.",
       "browser_cards": [
         "B4",
@@ -141,12 +142,13 @@
       "current_catalogs": [
         "10",
         "11"
-      ]
+      ],
+      "evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
     },
     {
       "id": "T08",
       "tool": "publish_assignment",
-      "status": "source-candidate; dynamic delegated acceptance pending",
+      "status": "actual default locally tested; practical partial setup forms plus metadata-only items/categories; full native-role/delegated/field/staging/recovery acceptance pending",
       "event_sequence_and_checks": "Validate actor and exact existing draft ID\u2192B3 read edit form and current observation\u2192compare the approved expected revision, fail/review if changed\u2192preserve unrelated controls/attachments\u2192B4 same-ID `option=post` with requested Gradebook/calendar choices\u2192fresh same-ID draft/status read\u2192B5 authoritative native deadline coordination\u2192B6 external item/category/released/count flags readback and permitted edits\u2192journal and return verified remaining steps. Prefer edit/post over bulk publication when deadline creation is needed. An observation match is not a native lock. If already posted, reconcile expected configuration first; do not recreate Assignment, calendar event or Gradebook item just to produce an unchanged result.",
       "browser_cards": [
         "B3",
@@ -158,13 +160,14 @@
       "current_catalogs": [
         "10",
         "11"
-      ]
+      ],
+      "evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
     },
     {
       "id": "T09",
       "tool": "get_assignment_grading_context",
-      "status": "source-candidate; dynamic delegated acceptance pending",
-      "event_sequence_and_checks": "Validate grader and Assignment/site relationship\u2192B3 native grading-accessible metadata/view (instructor edit form only if independently permitted)\u2192B7 native grade/list state and current scope\u2192B6 linked Gradebook metadata and selected score-read capability where authorized\u2192A12 rubric association only after native scope validation\u2192assemble observed fields, supported variant flags and coverage\u2192return revisioned context. Preserve grade-only TA support independently of setup permissions. Raw release/configuration/version not exposed by the active view stays unknown; use B7 rendered release state where available. Do not force legacy-grader preferences or invent raw native version fields.",
+      "status": "source-reviewed 2026-10-20; strict frozen fields and compatible native revision inputs are not established by verified existing-HTTP projections; no cutover",
+      "event_sequence_and_checks": "Validate grader and Assignment/site relationship\u2192B3 native grading-accessible metadata/view (instructor edit form only if independently permitted)\u2192B7 native grade/list state and current scope\u2192B6 linked Gradebook metadata and selected score-read capability where authorized\u2192A12 rubric association only after native scope validation\u2192assemble observed fields, supported variant flags and coverage\u2192return revisioned context. Preserve grade-only TA support independently of setup permissions. Raw release/configuration/version not exposed by the active view stays unknown; use B7 rendered release state where available. Do not force legacy-grader preferences or invent raw native version fields. Current revision consumers in save/release hash additional persisted Assignment properties and flags not exposed by the verified projections; do not substitute http1 revisions or fabricate required context flags.",
       "browser_cards": [
         "B3",
         "B6",
@@ -174,7 +177,8 @@
       "current_catalogs": [
         "01",
         "11"
-      ]
+      ],
+      "latest_gate_review": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
     },
     {
       "id": "T10",
@@ -238,7 +242,7 @@
     {
       "id": "T14",
       "tool": "save_assignment_grades",
-      "status": "source-candidate; dynamic delegated acceptance pending",
+      "status": "fixture-confirmed actual default supported subset; delegated live acceptance pending",
       "event_sequence_and_checks": "Validate approved exact operation ID/payload hash/mode\u2192T09/T10/T11 fresh scope/field-preservation observations\u2192compare expected observation revisions and supported score units\u2192for `validate`, return Python advisory checks with **no native grading POST**\u2192for approved `commit`, conditionally journal each row before send\u2192B7 existing Direct/form save action chosen for accepted save-versus-retract semantics\u2192read Assignment and B6 linked Gradebook after each selected row\u2192persist observed success/partial/unknown and return. Preserve current native side fields and attachment state. No blind retry, duplicate official write or batch-atomicity claim. Test grading permission changes, UI/student concurrent edits, lost responses, already-released submissions, resubmission/extension preservation, group overrides and swallowed projection errors.",
       "browser_cards": [
         "B6",
@@ -248,12 +252,14 @@
       "current_catalogs": [
         "01",
         "11"
-      ]
+      ],
+      "local_evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
+      "implemented_subset": "One submitted individual site-wide points row; integral displayed scores; no Gradebook link; exact plain ASCII side-field/override preservation; HTTP observation revisions. T18 read-only advisory; commit durable Prepared/Sending then one setGrade POST, save or return, with partial/unknown readback and no replay/CAS/causal receipt."
     },
     {
       "id": "T15",
       "tool": "release_assignment_grades",
-      "status": "source-candidate; dynamic delegated acceptance pending",
+      "status": "fixture-confirmed actual default supported subset; delegated live acceptance pending",
       "event_sequence_and_checks": "Validate the separately approved return payload and current actor/scope\u2192preflight exact currently saved/approved scores and observations\u2192journal per-row intent\u2192B7 native `gradeOption=return` or legacy `option=returngrade` once\u2192verify returned plus release state, score/feedback and B6 projection\u2192persist receipt/unknown attribution\u2192return. Native Return can rewrite score/feedback and emit notifications; it is not a passive toggle. Do not replace it with Gradebook `setScore`, native release-without-return, a custom boolean write, or a repeated request after timeout. Validation mode performs no academic write.",
       "browser_cards": [
         "B6",
@@ -263,12 +269,14 @@
       "current_catalogs": [
         "01",
         "11"
-      ]
+      ],
+      "local_evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
+      "implemented_subset": "One submitted individual site-wide points row; integral displayed scores; no Gradebook link; exact plain ASCII side-field/override preservation; HTTP observation revisions. T18 read-only advisory; commit durable Prepared/Sending then one setGrade POST, save or return, with partial/unknown readback and no replay/CAS/causal receipt."
     },
     {
       "id": "T16",
       "tool": "get_assignment_grades",
-      "status": "source-candidate; dynamic delegated acceptance pending",
+      "status": "actual default locally tested; bounded native pagination and narrowly authorized B6 display-score readback; actual-view/role/precision/comment acceptance pending",
       "event_sequence_and_checks": "Validate selected submission/user relationships and current scope\u2192B7 current Assignment grade/release/return observations\u2192B6 selected native Gradebook item and student row/summary readback\u2192join by native external Assignment reference/item ID and native UID\u2192normalize actual units/precision and distinguish blank/zero\u2192return requested pairs with verification status. Gradebook table/summary is a new credible exact-selected read candidate; the prior average-only conclusion is superseded for the expanded HTTP surface. Never substitute Assignment score for an unreadable Gradebook score, bypass TA restrictions, identify an item by title alone, or mark a rounded display value exact beyond its representation.",
       "browser_cards": [
         "B6",
@@ -278,31 +286,35 @@
       "current_catalogs": [
         "01",
         "11"
-      ]
+      ],
+      "evidence": "docs/mcp/existing-api-migration/readback-2026-10-20.md"
     },
     {
       "id": "T17",
       "tool": "get_assignment_grading_operation",
-      "status": "source-candidate; dynamic delegated acceptance pending",
-      "event_sequence_and_checks": "Load the external owner-bound operation receipt\u2192authorize current source targets\u2192for unknown rows use T11/T16 readback only\u2192record any new observations under receipt concurrency control, preserving original request and attribution uncertainty\u2192return status. A read cannot replay native writes. Native UI has no need to implement MCP operation IDs. Import unresolved legacy receipts before retiring their native store; a current grade match does not prove exclusive authorship of a past write.",
+      "status": "actual external default locally tested; owner/target-bound historical receipt subset; unknowns preserved; legacy/live/reconciliation gates pending",
+      "event_sequence_and_checks": "Require configured durable external storage \u2192 current delegated actor/site/site-wide grading + positive individual native view \u2192 load owner-bound operation \u2192 validate provenance, exact typed approved request, payload/receipt hashes, ID/kind/mode/targets \u2192 reauthorize every exact submission/user pair \u2192 return historical receipt with withheld Gradebook values and explicit unresolved outcome/reconciliation warnings. Read never writes storage or HTTP academic state, resumes or retries. Transitional save/release commits persist Prepared/Sending before one native POST and persist matching confirmed replies; same ID returns stored outcome, never resends. Native legacy receipt import and durable retention/backend acceptance remain open.",
       "browser_cards": [],
       "plan_anchor": "t17",
       "current_catalogs": [
         "01",
         "11"
-      ]
+      ],
+      "evidence": "docs/mcp/existing-api-migration/operation-read-2026-10-20.md"
     },
     {
       "id": "T18",
       "tool": "prepare_assignment_grade_payload",
-      "status": "source-candidate; dynamic delegated acceptance pending",
-      "event_sequence_and_checks": "Validate input schema/targets/kind/score units\u2192T09\u2013T11 read-only preflight and observed revisions\u2192retain existing canonical payload hashing and exact commit-arguments construction in Python\u2192return advisory validation plus arguments for separate approval. Do not submit any existing save/return form with a fictitious `mode=validate`; native UI has no such dry-run contract. The current native validate call is replaced, not redirected to a mutating endpoint. Test hash/CSV/evaluator compatibility where applicable, changed state after preparation, invalid targets and no outgoing academic POSTs.",
+      "status": "fixture-confirmed actual default supported subset; delegated live acceptance pending",
+      "event_sequence_and_checks": "Validate input schema/targets/kind/score units\u2192T09\u2013T11 read-only preflight and observed revisions\u2192retain existing canonical payload hashing and exact commit-arguments construction in Python\u2192return advisory validation plus arguments for separate approval. Do not submit any existing save/return form with a fictitious `mode=validate`; native UI has no such dry-run contract. The current native validate call is replaced, not redirected to a mutating endpoint. Test hash/CSV/evaluator compatibility where applicable, changed state after preparation, invalid targets and no outgoing academic POSTs. Current validate call checks native authorization, semantic Assignment revision, selected current submission revisions, score bounds and state; Python may provide correctly labelled advisory validation from sufficient existing read evidence; merely validating the input schema does not establish current state. Do not send mode=validate to a normal form or claim current-state validation without equivalent read evidence.",
       "browser_cards": [],
       "plan_anchor": "t18",
       "current_catalogs": [
         "01",
         "11"
-      ]
+      ],
+      "local_evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
+      "implemented_subset": "One submitted individual site-wide points row; integral displayed scores; no Gradebook link; exact plain ASCII side-field/override preservation; HTTP observation revisions. T18 read-only advisory; commit durable Prepared/Sending then one setGrade POST, save or return, with partial/unknown readback and no replay/CAS/causal receipt."
     },
     {
       "id": "T19",
@@ -329,7 +341,8 @@
       "current_catalogs": [
         "01",
         "11"
-      ]
+      ],
+      "latest_gate_review": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
     },
     {
       "id": "T21",
@@ -1346,7 +1359,10 @@
     "active-mode grade release/save versus retract semantics",
     "setup/title/timezone/attachment representability and transient flags",
     "missing/orphan completeness",
-    "deployed baseline and legacy owner/storage inventory"
+    "deployed baseline and legacy owner/storage inventory",
+    "Membership pagination, omitted user records, Assignment-reference realm eligibility and strict context raw-scale/release representability: evidence-review-2026-10-20.md",
+    "B8 actual native handler characterization in attachment-proof-2026-10-20.md; delegated AccessServlet/native-role/source-bound stream acceptance remains open. Roster2 filtered totals are not eligibility proof.",
+    "attachment-audit-2026-10-20.md: actual servlet/content component cases pass; positive delegated chain fails403 before native target; positive Python harness collection error; no repairs per user instruction."
   ],
-  "implementation_checkpoint": "read-discovery-2026-10-18.md; B0 pages discovery/T03 explicit read locally tested; dynamic native form flows remain unaccepted"
+  "implementation_checkpoint": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md; 20/22 actual defaults, 22/23 historical routes retired locally; no live acceptance"
 }

@@ -1,0 +1,19 @@
+{
+  "format_version": 2,
+  "date": "2026-10-20",
+  "head": "0f9f44a76f34777b52f56ae03634ffd3a0b3bc6c",
+  "branch": "codex/replace-custom-sakai-api",
+  "previous_record": "continuation-2026-10-20-attachment-audit.json",
+  "previous_record_sha256": "c3fc42f64492b1b408f7fcbde0ab15e9991696697dc1368f435e16e39b939a67",
+  "scope": "User-authorized documentation and separate auth/tool worktrees; preserve mixed checkout and all original code/data.",
+  "private_checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Worktree-Separation-2026-10-20",
+  "private_hashes": {
+    "source-before.tar.gz": "1ee2aecf8e00db8ce14ea9dd79092d4aadac647573ebdd6608fd1b9f3b56632e",
+    "worktrees-before.txt": "e37c0ce4a39dcf4774e4d4d3f5b709c9f8e2a2122cd0f3e006ce2c14f7c8f05a",
+    "status-before.txt": "acb1d666fa62166b2c698aea40d91a6754ad6f497041585453f779828fe599c7",
+    "refs-before.txt": "53a88af77654bd666b99b5821240aeb0c7c783eb984276af79199d1190e34d9b",
+    "manifest.json": "1b141c9399cf2082784818d1106720e35c9a4c61cb2132f3662eab3fb8b9603a"
+  },
+  "evidence": "docs/DEVELOPMENT_WORKTREES.md",
+  "files": []
+}

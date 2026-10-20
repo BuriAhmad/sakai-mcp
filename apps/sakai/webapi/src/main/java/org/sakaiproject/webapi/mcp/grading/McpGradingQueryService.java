@@ -2,18 +2,12 @@
 package org.sakaiproject.webapi.mcp.grading;
 
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.assignmentRef;
-import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.digest;
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.failure;
-import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.id;
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.obj;
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.stamp;
 import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.count;
 import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.decimal;
-import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.fields;
-import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.hash;
 import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.instant;
-import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.rows;
-import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.string;
 
 import org.sakaiproject.assignment.api.AssignmentConstants;
 import org.sakaiproject.assignment.api.AssignmentService;
@@ -22,18 +16,13 @@ import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.authz.api.Member;
 import org.sakaiproject.component.api.ServerConfigurationService;
-import org.sakaiproject.exception.IdUnusedException;
-import org.sakaiproject.exception.PermissionException;
-import org.sakaiproject.grading.api.GradingService;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.webapi.mcp.assessment.McpAssessmentService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,11 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** Read-only grading context, roster, submission and grade queries. */
+/** Retained grading context and its scoped roster dependencies. */
 @Service
 public class McpGradingQueryService {
     private final AssignmentService assignments;
-    private final GradingService grading;
     private final McpGradingStore store;
     private final SiteService sites;
     private final ServerConfigurationService config;
@@ -57,7 +45,6 @@ public class McpGradingQueryService {
 
     public McpGradingQueryService(
             AssignmentService assignments,
-            @Qualifier("org.sakaiproject.grading.api.GradingService") GradingService grading,
             McpGradingStore store,
             SiteService sites,
             ServerConfigurationService config,
@@ -66,7 +53,6 @@ public class McpGradingQueryService {
             McpGradingEvidence evidence,
             McpGradebookProjection gradebook) {
         this.assignments = assignments;
-        this.grading = grading;
         this.store = store;
         this.sites = sites;
         this.config = config;
@@ -312,77 +298,4 @@ public class McpGradingQueryService {
         }
     }
 
-    public Map<String, Object> grades(String site, String id, Map<String, Object> request) {
-        fields(request, "rows");
-        Assignment a = authorization.assignment(site, id);
-        authorization.identityRead(a);
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (var row : rows(request, "rows")) {
-            fields(row, "submission_id", "sakai_user_id");
-            AssignmentSubmission s = authorization.submission(a, string(row, "submission_id"));
-            gradebook.target(a, s, row);
-            String uid = string(row, "sakai_user_id");
-            String gbScore = null, comment = null, state = "not_linked", reason = null;
-            try {
-                var item = gradebook.linked(a);
-                if (item != null) {
-                    gbScore = grading.getAssignmentScoreString(site, site, item.getId(), uid);
-                    var definition = grading.getAssignmentScoreComment(site, item.getId(), uid);
-                    comment = definition == null ? null : definition.getCommentText();
-                    state = "available";
-                } else if (a.getProperties()
-                                .get(
-                                        AssignmentConstants
-                                                .PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT)
-                        != null) {
-                    state = "unavailable";
-                    reason = "missing_link";
-                }
-            } catch (Exception e) {
-                state = "unavailable";
-                reason = "projection_unavailable";
-            }
-            result.add(
-                    obj(
-                            "submission_id",
-                            s.getId(),
-                            "sakai_user_id",
-                            uid,
-                            "content_revision",
-                            evidence.contentRevision(s),
-                            "grade_revision",
-                            evidence.gradeRevision(s),
-                            "score",
-                            decimal(s.getGrade(), a.getScaleFactor()),
-                            "feedback_sha256",
-                            s.getFeedbackComment() == null ? null : digest(s.getFeedbackComment()),
-                            "flags",
-                            evidence.flags(s),
-                            "returned_at",
-                            stamp(s.getDateReturned()),
-                            "gradebook_score",
-                            gbScore == null || gbScore.isBlank()
-                                    ? null
-                                    : new BigDecimal(gbScore).stripTrailingZeros().toPlainString(),
-                            "gradebook_comment_sha256",
-                            comment == null ? null : digest(comment),
-                            "gradebook_state",
-                            state,
-                            "reason",
-                            reason));
-        }
-        return obj(
-                "observed_at",
-                stamp(Instant.now()),
-                "assignment_revision",
-                metadata.revision(a),
-                "gradebook",
-                gradebook.link(a),
-                "rows",
-                result,
-                "completeness",
-                completeness(a),
-                "warnings",
-                List.of());
-    }
 }

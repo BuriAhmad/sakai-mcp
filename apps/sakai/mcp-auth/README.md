@@ -77,3 +77,24 @@ unhandled downstream failures yield an empty 502; normal tested bodies remain
 byte-exact. This does not parse business HTML/JSON and does not certify every
 native error renderer. General content streaming beyond these selected bounded
 reads requires a separate capability review. Ordinary requests bypass this wrapper.
+
+### Attachment handler characterization
+
+`ExistingContentAccessTest` (test package `org.sakaiproject.content.impl`) exercises
+the unchanged kernel HTTP handler with synthetic ACL/resource/storage collaborators.
+Storage-util and json-simple additions are test-only dependencies; runtime JAR
+boundaries are unchanged. The tests cover exact native streams, permission/copyright
+gates, default HTML filter behavior, filtering/truncation and redirect/sendfile
+branches. They do not accept the delegated AccessServlet context. `DelegatedChainTest`
+asserts that unaccepted content requests fail before identity binding. See
+[attachment proof](../../docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md).
+
+### Explicit attachment readiness audit
+
+`AccessServletProof` and `AttachmentReachProof` are explicitly selected audit
+classes (their names are outside normal `*Test` selection). The former invokes
+actual servlet dispatch/content using synthetic collaborators; the latter's
+positive delegated path currently fails403 before that target. Test-only Access/
+Velocity dependencies and content fixture bridges support this audit; runtime
+code/dependency boundaries are unchanged. Failures are intentionally preserved
+under the user's no-fix instruction. See [audit outcomes](../../docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md).

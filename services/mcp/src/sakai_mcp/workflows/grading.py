@@ -64,6 +64,8 @@ class GradingWorkflow:
         manifest = await export_manifest(
             client, token, course_id, assignment_id, export_id
         )
+        if not manifest.completeness.complete:
+            raise SakaiError(ErrorCode.CONFLICT)
         files: dict[str, bytes] = {}
         for artifact in manifest.artifacts:
             try:
@@ -200,16 +202,24 @@ class GradingWorkflow:
         record = await client.grading.get_proposal(
             token, course_id, assignment_id, proposal_id
         )
-        offset = 0 if cursor is None else int(cursor)
-        if offset > len(record.payload.rows):
+        if isinstance(limit, bool) or not 1 <= limit <= 100:
             raise SakaiError(ErrorCode.VALIDATION_ERROR)
-        end = min(len(record.payload.rows), offset + limit)
+        # The frozen public input schema permits numeric proposal offsets only.
+        # The record itself is immutable and owner/source-authorized on every page.
+        if cursor is not None and (
+            not cursor.isascii() or not cursor.isdecimal() or len(cursor) > 6
+        ):
+            raise SakaiError(ErrorCode.VALIDATION_ERROR)
+        start = 0 if cursor is None else int(cursor)
+        if start > len(record.payload.rows):
+            raise SakaiError(ErrorCode.VALIDATION_ERROR)
+        end = min(len(record.payload.rows), start + limit)
         return proposals.ProposalPage(
             proposal_id=record.proposal_id,
             export_id=record.export_id,
             expires_at=record.expires_at,
             config=record.payload.config,
-            rows=record.payload.rows[offset:end],
+            rows=record.payload.rows[start:end],
             total=len(record.payload.rows),
             next_cursor=str(end) if end < len(record.payload.rows) else None,
         )

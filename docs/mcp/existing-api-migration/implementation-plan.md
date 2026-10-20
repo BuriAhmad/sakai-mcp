@@ -286,10 +286,267 @@ See [five-tool evidence](five-tool-cutover-2026-10-19.md), coverage and progress
 fresh checks and separate live/deployment gates. No activation or deployment occurred.
 
 
+### 0.12 External captures and selected grade observations — 19 October 2026
+
+Fresh Git verification matches the independent-line handoff: migration worktree
+HEAD `0f9f44a7`, custom worktree/branch and main at `208d69ac`; original source,
+archives and editor files preserved. See `git-worktrees.md` and the new explicit
+`continuation-2026-10-19.json` preservation record, not a rewritten start manifest.
+
+T12 export, T13 export read, T16 selected grades, T21 frozen proposal read and T22
+resource fallback now use their actual default facades over existing HTTP/private
+external records, without legacy fallback. **13 defaults locally replaced; nine
+still require migration.** This records implementation replacement separately from
+functionality/live acceptance. New captures contain inline bytes only, always
+partial/incomplete. Same-ID requests never resume/recapture or extend expiry;
+owner, current source scope, artifact integrity and original expiry are checked.
+T16 establishes release from exact existing native list cells/links, distinct from
+returned, but independent Gradebook readback stays unavailable and completeness
+false. Source/representation/paging limits remain explicit. T21 reads frozen records;
+legacy owner conversion/import is not implemented or authorized. T20 MCQ preparation
+remains blocked on complete source evidence and is **not** counted as a completion.
+The evaluator and its complete-input gate are unchanged.
+
+Retired seven more custom routes and three unused native file/export/proposal
+services plus the sole selected-grades query method. **16 retired locally, seven
+remain.** Shared query/context/mutation/authorization/evidence/projection/native
+store and domain/UI helpers remain for actual callers. Academic data/schema,
+exports, proposals, receipts and native cleanup ownership are preserved. R01 stays
+inline-only; R02 Assignment files explicitly unsupported; R03–R05 use external
+records locally, with full family/legacy/live acceptance open. No native business
+handler, permission, model or storage was added. No deployment/runtime/academic
+operation occurred. Compatibility remains additive auth → accepted Python →
+authorized native retirement, never a blind native-tip release against old clients.
+See [fresh scoped evidence](external-capture-cutover-2026-10-19.md), current limits,
+coverage and progress for exact verification and next gates.
+
+
 The [current tool limitations reference](tool-limitations.md) consolidates per-tool
 restrictions, caps, error behavior and unresolved acceptance gates. Keep it current
 with capability changes; dated cutover reports remain historical evidence.
 
+
+### 0.13 Selected Gradebook readback and paging — 20 October 2026
+
+Fresh repository verification retained migration HEAD `0f9f44a7`, independent
+custom baseline/main `208d69ac` and the saved support/restructuring/migration
+ancestry. October 19 evidence is historical. A new owner-only 292-file checkpoint
+precedes edits; `continuation-2026-10-20.json` chains exact prior record bytes and
+source hashes without rewriting original manifests or the October 19 continuation.
+
+T16's existing default now follows rendered Assignment grading-list Next controls
+in bounded same-conversation enumeration before/after release observation. It also
+reads independent B6 point display scores for instructors with fresh full grading,
+item-edit and instructor-role functions. Site/Gradebook UID, external Assignment
+reference/application and student UID bind the projection; no title correlation or
+Assignment-score substitution. Other Assignment graders retain explicit unavailable
+projection. Category-aware score decoding, precision restrictions, unavailable
+comment bytes, non-atomic reads, native table over-fetch/initialization effects and
+actual-view acceptance gates are documented in `tool-limitations.md`.
+
+The native no-submission template branch lacks stable student IDs. Paging therefore
+does not resolve B7 complete eligible roster; source hydration refuses all-missing
+views without positive individual identity evidence. B8 attachment scope/fidelity,
+strict context field coverage and T20 complete-input gate remain open. No new tool
+is counted for these T16 improvements: **13 default replacements, nine remaining;
+16 routes retired locally, seven active**. No additional native source retirement,
+permission/service/model/schema change, runtime change or academic write occurred.
+Shared native context/mutation/store/domain dependencies remain for actual callers.
+See [fresh evidence](readback-2026-10-20.md); additive auth → accepted Python →
+separately authorized native retirement ordering remains binding.
+
+### 0.14 Practical setup defaults — 20 October 2026
+
+The user prioritized a working useful subset and continuing independent migrations
+before closing every previous read limitation. This does not authorize weaker
+identity/permissions, fabricated values, automatic uncertain-write retries, native
+business additions or runtime/academic operations. T06 assessment context, T07
+creation and T08 publication now use their actual Python default facades over existing
+Assignment list/edit/save/post and external journals, without legacy fallback.
+**16 defaults locally replaced, six remaining; 19 routes retired locally, four active.**
+
+T06 returns labelled metadata observations/revisions and bounded independently
+observed Gradebook metadata from the existing item-data endpoint, without student
+score/submission reads during setup. Strict full Assignment/Category fields remain unavailable,
+with unavailable sections rather than fake flags or complete inventories. T07/T08
+support individual points assignments, draft/posted create and current-draft publish,
+minute dates converted to verified native user timezone, common submission/resubmission
+modes, no current attachments/calendar deadline, and no-link or the native released/
+counted external Gradebook policy. Native category/counting constraints are enforced.
+Unsupported policies fail before POST. Normalized instructions or later Gradebook
+verification gaps preserve known IDs and explicit partial review status. All successes
+remain partial under the frozen full Assignment contract. No native private-first,
+CAS, causation, atomic setup or automatic recovery guarantee is inferred.
+
+Three unused native routes, their two controllers and setup coordinator are retired
+locally with dedicated tests archived. Shared McpAssessmentService is reduced to its
+unchanged revision method, required by retained grading context/evidence callers.
+Ordinary Assignment/Gradebook/Calendar native handlers, auth, domain/schema/private
+records and independent custom baseline remain untouched. Source and selected stale
+generated classes are privately preserved. New named continuation
+`continuation-2026-10-20-setup.json` pins the prior October 20 record; original
+manifests and older continuation records remain unchanged.
+
+See [setup cutover evidence](setup-cutover-2026-10-20.md), current limitations,
+coverage, progress and native ledger. Local implementation is distinct from full
+functionality, actual native rendered/delegated acceptance and deployment. Compatible
+release remains additive native auth → accepted Python HTTP cutover → separately
+authorized native retirement. The migration native tip cannot serve older clients
+that require any retired route. No push, deployment, activation, academic operation,
+Azure change, data import or cleanup occurred.
+
+### 0.15 Grading-context and grade-payload dependency review — 20 October 2026
+
+The next T09/T18 group was traced through the public grading facade, its native DTOs, current default callers, selected-grade readback, Assignment HTTP metadata and the retained Java revision consumer. Neither target was switched or counted.
+
+T09's frozen context contract requires non-null configuration fields and booleans for deletion, native release, group/anonymous policy and capabilities; it has no unknown representation for several of these. The existing Assignment entity projection covers some settings but omits others. The setup edit form is permission-gated and does not establish those fields for a grade-only TA. Returning defaults would invent academic state; returning a different partial schema would change frozen contracts. Thus the strict context cannot currently be built from the verified existing-HTTP evidence without either an unproven role/form path or an inaccurate result.
+
+There is a second dependency: current save/release requests consume the assignment revision returned by T09. `McpAssessmentService.revision(Assignment)` hashes persisted content and associations, including release, deleted/individual/content-review flags, attachments and the complete property map. Existing HTTP Assignment metadata and the setup form do not expose that exact semantic input. The new `http1-` observation revision is a different projection and is not accepted by the still-active native mutation service. Passing it through would make prepared arguments incompatible; substituting the old revision would retain the business route being migrated. The setup-specific form observation revision also remains a distinct projection and is not interchangeable.
+
+T18 currently sends `mode=validate` to the native save or release route. That route does no academic commit in validation mode, but it does native assignment/submission authorization, semantic revision, row content/grade revision, score bound, and field-state validation. Its response shape and public description mean current state was validated. The existing native UI has no equivalent dry-run operation. A static Python-only result cannot claim that validation, and changing the frozen result/descriptions to label it schema-only is outside this increment.
+
+Keep T09/T18 and their shared revision dependency intact until a coordinated plan preserves the grading-context → prepare → separately approved save/release chain. The next concrete research gate is to establish an existing-HTTP source for every revision input or sequence a compatible T14/T15 observation-revision cutover with the context/preparation callers; separately resolve D3 write/recovery semantics and D6 durable operation ownership before mutation migration. No custom endpoint/service, property, schema, permission or native API behavior may be added to bridge the gap. Evidence and exact source references are in [grading context/payload review](grading-context-payload-review-2026-10-20.md).
+
+### 0.16 Revision input review and independent operation receipt default — 20 October 2026
+
+The subsequent source review checked all 22 inputs to the old semantic Assignment hash against Direct JSON/XML, the curated PropertiesProvider map, Assignment SOAP lists, native edit/grading forms and the archive path. The full property map, raw scale/points, native release/deleted/individual/content-review flags and exact attachment-reference inventory cannot all be reconstructed from the researched delegated views. JSON/XML share the same DTO; requesting XML adds no fields. The archive contains raw data but its HTTP caller requires superuser authority and creates an archive, so it is not an accepted delegated read. T09/T18 remain unmigrated; their revision consumer coupling to current native writes is real.
+
+Clarification of §0.15: an existing UI dry-run action is **not** required for Python advisory validation. The canonical T18 design is read-only preflight over existing evidence. Frozen schemas allow warnings and rejected/partial results. The actual unresolved issues are sufficient source/field evidence and compatible revision handling across still-native T14/T15, not the absence of a native `validate` action. Do not turn that earlier inference into a general prerequisite for Python preparation.
+
+T17 `get_assignment_grading_operation` now uses its actual external-record default with fresh existing-HTTP owner/site/individual-submission authorization. This is a useful historical receipt subset: exact request/row/hash/binding checks, no pending execution or academic HTTP, immutable reads, withheld historical Gradebook values, and unchanged unknown outcomes. It does not claim causal readback reconciliation or import legacy native records. The former native operation reader also only reauthorized and returned its stored receipt; it did not reconcile unknown rows.
+
+To keep receipt reads usable with the currently native T14/T15 writers, Python now journals commit intent externally before their one native POST, persists a confirmed native reply externally, and preserves unknown after lost/malformed replies or receipt-persistence failures. Repeated operation IDs return their existing external record and never send/resume; different hashes conflict. This is transitional external coordination, **not** migration of the underlying save/release business calls. Validation mode remains native and is not an academic commit. Configured durable storage is required before HTTP for commits; backend/retention/legacy/live gates stay open.
+
+Removed only the unused native operation-read mapping and `McpGradeMutationService.operation`, plus its optional test emitter. Native grading context, save/release implementation, private store/writer/idempotency records, cleanup, domain/schema and ordinary handlers remain. **17 defaults locally replaced; five tools remain. Twenty historical routes retired locally; three active.** Public contracts/catalog/descriptions/evaluator/report baselines are preserved. See [operation receipt evidence](operation-read-2026-10-20.md). No runtime/deployment/academic operation occurred.
+
+### 0.17 Existing HTTP grading write subset and advisory preparation — 20 October 2026
+
+T14 `save_assignment_grades`, T15 `release_assignment_grades` and T18
+`prepare_assignment_grade_payload` now use their actual default facades through
+`workflows/grading_writes.py`, existing Direct `assignment/setGrade.json` and
+read-only Python preflight. There is no native business-route fallback. T18 keeps
+the frozen canonical payload hash and exact commit arguments; validation sends
+no academic POST. This supersedes the T18/write status in §§0.15–0.16.
+
+The useful subset is one submitted individual, site-wide points row, an integer
+displayed score, English locale, an editable native Assignment with no Gradebook
+integration and the existing instructor/item-edit authorities. Unsupported groups,
+anonymous/peer/review/rubric/tag/calendar/attachment and policy variants fail before
+mutation. Existing private notes, feedback text/comment and resubmission/extension
+properties must be observable and exactly preservable; text is restricted to plain
+ASCII. `save` retains an unreleased row; `return` performs native return/release
+with its existing notification effects. Already released/returned rows are rejected.
+
+Use the HTTP Assignment metadata revision returned by `list_assignments` or
+`get_assignment_grades`, plus the current T11 submission grade revision or T16
+composite grade/release revision and content revision. Both row projections are
+explicitly checked against current observations. T09's native semantic revision
+is not interchangeable; the retained context now advertises prepare/save/release
+unsupported with a reason directing callers to HTTP observations. Its strict full
+Assignment contract remains a migration gate; no missing configuration is guessed.
+
+A configured durable external journal precedes academic HTTP. Prepared/Sending
+precedes one POST, repeated IDs read their historical record without replay, and
+uncertain writes remain unknown. A second read narrows races without acquiring
+native locks/CAS; readback is not causal or atomic. Successful writes always return
+`outcome=partial`, with explicit observed stages/revisions and warnings. No
+Gradebook score/projection success, batch atomicity or concurrency protection is
+claimed. D3 acceptance, D6 backend/retention/legacy compatibility and D8 real
+native-role/rendered/deployment acceptance remain open.
+
+The unused save/release mappings and `McpGradeMutationService` are retired after
+actual default and caller review. Native context, shared helpers, original private
+records, schema, domain helpers and cleanup remain preserved. Mutation-only helper
+methods are explicitly recorded for subsequent D7 retirement review. **20 of 22
+actual defaults are replaced locally; T09 and T20 remain. 22 of 23 historical
+native business routes are retired; only grading-context remains.** No resource
+family is fully migrated. See [fresh evidence](grading-write-2026-10-20.md).
+
+### 0.18 Remaining evidence gates and focused helper retirement — 20 October 2026
+
+The post-write review leaves totals unchanged: **20/22 actual defaults replaced,
+22/23 historical native routes retired locally**. T09's frozen Assignment object
+still requires a raw scale factor and native release flag which the researched
+Direct DTO/edit forms do not certify; warnings cannot make invented required fields
+valid. T20 still rejects current partial captures before native context/evaluation
+or proposal persistence. No complete-input gate or evaluator fingerprint changed.
+
+Additional roster research checked existing `assignment/gradable`, site membership
+and role-permission reads. The modern grader enumerates stored submissions, not
+students without records, despite computing allowed/visible users internally.
+Membership responses offer stable IDs/active/roles with separate roster authority,
+privacy and user-directory omission behavior. Site role permissions require site
+maintainer authority and are not equivalent to Assignment-reference realm unlocks.
+The membership provider's current start/limit loop also prevents using a normal
+pagination exhaustion assertion as completeness proof. These remain candidates,
+not adopted credential routes or complete eligible-roster replacements. No display
+name, role name or empty page is used to infer missing-student identity/eligibility.
+
+The four methods deferred in §0.17 now have no production/test caller after
+`McpGradeMutationService` retirement and are removed: Gradebook projection
+`writeTarget`/`target`, grading evidence `revision`/`current`. Removed only their
+unused injected collaborators and mutation-only test mocks; retained context
+`link`/`writable`, evidence mapping, authorizers and semantic metadata hash remain.
+Actual Spring wiring verifies the smaller constructors and absent helper methods.
+No native business operation/permission/model/schema/data behavior is added.
+
+This closes only that focused D7 helper cleanup. Assignment factory, hydration,
+version/lock, store/configuration and legacy record/cleanup reviews remain open.
+See [review and fresh verification](evidence-review-2026-10-20.md). No deployment,
+feature activation, runtime change or academic operation occurred.
+
+### 0.19 Native attachment handler characterization — 20 October 2026
+
+Nine new tests exercise the unchanged `BaseContentService.handleAccessResource`
+with synthetic ACL/storage/resource collaborators: exact text bytes/MIME, read
+permission and copyright gates, output-filter changes, truncated success, URL and
+cloud redirects, sendfile success without body and the configured default HTML
+filter's identity behavior on text/plain/PDF. They establish handler behavior,
+not effective native-role ACL correctness or delegated AccessServlet integration.
+HTTP 200 alone is demonstrably insufficient evidence of complete stored bytes.
+
+A credential-guard regression keeps the unaccepted `/access/content` context
+rejected before identity binding. Three Python checks cover the actual content
+method and R01/R02 resource facades rejecting before HTTP/OBO. `CONTENT` remains
+blocked; no new content credential reach, servlet registration or business code.
+The next local implementation gate is a proven delegated RequestFilter → actual
+AccessServlet → native permission/content chain, plus source-bound response
+validation and the supported MIME/storage/filter policy. No attachment availability
+or complete MCQ input is claimed from handler-only tests.
+
+Additional source review found `roster-membership/{site}/get-membership` has
+proper page/all/total structure but reports the already filtered roster: hidden
+members, configured visible-role filters, group authority, caching and directory
+omissions apply. Optional pronunciation integration can contact a third party.
+Assignment-reference authorization also includes the Assignment's own realm,
+so combining generic site memberships with site role functions is not a proven
+eligible-submitter calculation. No roster route was adopted.
+
+Totals remain 20/22 local actual defaults and 22/23 retired historical business
+routes; T09/T20 and all full-resource-family gates remain. See
+[native attachment proof](attachment-proof-2026-10-20.md). No runtime change.
+
+### 0.20 Attachment proof audit: failures recorded without fixes — 20 October 2026
+
+At the user's explicit direction, run proofs and record any failing test without
+repairing it. Two actual AccessServlet.dispatch → unchanged native content-handler
+cases pass using synthetic session/ACL/resource/storage collaborators. The positive
+delegated chain probe fails HTTP403 at the current credential guard; RequestFilter,
+binder and AccessServlet/content target are never reached. Missing Access servlet
+auth filter registration is independently visible in source. Actual role grants,
+source-binding/response validation, concurrency and live configuration remain
+unproved. No content credential reach or production implementation was changed.
+
+A separate Python positive-readiness probe errors during collection because its
+external test path cannot import `tests` with the recorded invocation. No Python
+capability result may be inferred from it; the harness failure is preserved without
+fixing source or changing invocation/environment. Positive readiness probes are
+explicitly selected outside the normal passing regression suite; a passing
+regression run does not erase the failed proof. See [audit](attachment-audit-2026-10-20.md)
+and [machine results](attachment-audit-results-2026-10-20.json).
+
+Counts stay 20/22 actual defaults and 22/23 historical routes retired locally.
+No deployment, feature activation, native record/schema change or academic operation.
 
 ## 1. Executive findings and binding decisions
 
