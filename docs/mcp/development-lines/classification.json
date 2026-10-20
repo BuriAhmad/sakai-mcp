@@ -248,11 +248,11 @@
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpBearerFilter.java",
-      "owner": "tool-migration-or-preimplementation-restructuring"
+      "owner": "legacy-auth package/import/format restructuring; normalized bodies unchanged"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpJwtVerifier.java",
-      "owner": "tool-migration-or-preimplementation-restructuring"
+      "owner": "legacy-auth package/import/format restructuring; normalized bodies unchanged"
     },
     {
       "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/mcpauth/ExistingSitesChainTest.java",
@@ -820,15 +820,15 @@
     },
     {
       "path": "services/mcp/src/sakai_mcp/security/auth.py",
-      "owner": "tool-migration-or-preimplementation-restructuring"
+      "owner": "legacy-auth layout migration; future behavior changes owned by auth development"
     },
     {
       "path": "services/mcp/src/sakai_mcp/security/obo.py",
-      "owner": "tool-migration-or-preimplementation-restructuring"
+      "owner": "legacy-auth layout migration; future behavior changes owned by auth development"
     },
     {
       "path": "services/mcp/src/sakai_mcp/security/sakai_flow.py",
-      "owner": "tool-migration-or-preimplementation-restructuring"
+      "owner": "shared-client-protocol; pinned tool dependency and auth reference"
     },
     {
       "path": "services/mcp/src/sakai_mcp/server.py",
