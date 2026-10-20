@@ -808,8 +808,8 @@
   "storage_note": "Paths verified in checkout. Native private store and SQL version column state remain unverified live; preserve before retirement.",
   "latest_review": {
     "date": "2026-10-20",
-    "evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
-    "result": "User-requested proof audit without fixes. Delegated path fails403 before target; native servlet component passes; Python harness errors at collection. Production implementations/permissions/registration/storage unchanged."
+    "evidence": "docs/DEVELOPMENT_WORKTREES.md",
+    "result": "New native auth framework/wiring and auth-specific tests transferred to auth-development. Tool business source preserved; transferred helpers are not business retirement. No functionality/proof repair or deployment."
   },
   "deferred_setup_domain_cleanup": {
     "method": "AssignmentService.addDraftAssignment / AssignmentServiceImpl.addDraftAssignment",
@@ -828,5 +828,10 @@
     "gate": "Focused method/constructor cleanup closed locally. Broader D7 domain/hydration/version/locks/stores and D6 legacy record preservation remain open.",
     "status": "retired-local after caller review and actual constructor/wiring regression",
     "evidence": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
+  },
+  "previous_review_before_separation": {
+    "date": "2026-10-20",
+    "evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
+    "result": "User-requested proof audit without fixes. Delegated path fails403 before target; native servlet component passes; Python harness errors at collection. Production implementations/permissions/registration/storage unchanged."
   }
 }

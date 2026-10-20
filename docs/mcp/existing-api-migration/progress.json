@@ -182,13 +182,12 @@
     "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/AttachmentReachProof.java"
   ],
   "verification": {
-    "dependency_sync": "Fresh uv sync --locked passed; no Python dependency change.",
-    "python": "Normal check-mcp.sh passes 568 tests, Ruff131 files, mypy73 source files; frozen baselines unchanged. SEPARATE positive audit has collection error (tests import), zero executed probes; not fixed.",
-    "native": "Normal explicit Java17 selection passes 48 tests in9 suites. SEPARATE positive Java audit:2 actual servlet component passes,1 delegated-chain failure (expected200,actual403,reached=false). Failure not fixed; no content acceptance claim.",
-    "package": "Not rebuilt/deployed in this proof-only audit. Previous artifact checks are historical. Test-only Access/Velocity dependencies and fixture bridges added; production source/runtime boundaries unchanged.",
-    "live": "No real native role/config/deployed acceptance, content route activation, live reads, deployment, runtime/Azure or academic operation.",
-    "preservation": "Fresh verified private76-path manifest/72-file source archive and4 editor fingerprints; exact failed audit logs/JUnit XML privately preserved. Prior continuation pinned; original records/archives untouched, empty index/custom worktree/refs preserved.",
-    "repository": "Required scope/progress/preservation, guidance and whitespace checks pass. Counts unchanged20/22 actual defaults,1 active of23 historical routes. Full attachment proof NOT accepted; failures deliberately preserved."
+    "source": "Fresh development-line source/commit verifier and check_scope.py --verify-progress pass; original mixed Python implementation preserved exactly; native auth transferred with explicit protocol/server requirement.",
+    "repository": "Fresh guide checks pass; new worktree/index clean after metadata commits. Original baseline/current mixed/editor files preserved.",
+    "python": "Not rerun after extraction. Earlier counts describe mixed recovery source, not a fresh test result for this worktree.",
+    "native": "Not rerun or packaged after extraction. Native auth module/wiring intentionally absent; server auth must be integrated separately before live use.",
+    "proofs": "Failed attachment audit preserved, not repaired, rerun or accepted.",
+    "deployment": "None; no runtime/configuration/academic/schema/data operation."
   },
   "next_gate": [
     "Attachment proof FAILED locally: current guard rejects content403 before RequestFilter/binder/AccessServlet. Native Access auth filter registration absent. User explicitly requested no fixes in this audit; preserve failure and do not adopt content route.",
@@ -527,5 +526,14 @@
   },
   "historical_mixed_branch": "codex/replace-custom-sakai-api",
   "preservation_model": "split-extraction; original continuation chain remains historical in mixed recovery checkout",
-  "development_role": "Tool code preserved, server auth extracted; native runtime requires separate matching integration."
+  "development_role": "Tool code preserved, server auth extracted; native runtime requires separate matching integration.",
+  "historical_mixed_verification_before_separation": {
+    "dependency_sync": "Fresh uv sync --locked passed; no Python dependency change.",
+    "python": "Normal check-mcp.sh passes 568 tests, Ruff131 files, mypy73 source files; frozen baselines unchanged. SEPARATE positive audit has collection error (tests import), zero executed probes; not fixed.",
+    "native": "Normal explicit Java17 selection passes 48 tests in9 suites. SEPARATE positive Java audit:2 actual servlet component passes,1 delegated-chain failure (expected200,actual403,reached=false). Failure not fixed; no content acceptance claim.",
+    "package": "Not rebuilt/deployed in this proof-only audit. Previous artifact checks are historical. Test-only Access/Velocity dependencies and fixture bridges added; production source/runtime boundaries unchanged.",
+    "live": "No real native role/config/deployed acceptance, content route activation, live reads, deployment, runtime/Azure or academic operation.",
+    "preservation": "Fresh verified private76-path manifest/72-file source archive and4 editor fingerprints; exact failed audit logs/JUnit XML privately preserved. Prior continuation pinned; original records/archives untouched, empty index/custom worktree/refs preserved.",
+    "repository": "Required scope/progress/preservation, guidance and whitespace checks pass. Counts unchanged20/22 actual defaults,1 active of23 historical routes. Full attachment proof NOT accepted; failures deliberately preserved."
+  }
 }
