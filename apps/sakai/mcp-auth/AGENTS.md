@@ -1,14 +1,5 @@
-# Delegated authentication extension
+# Independent MCP authentication development
 
-This shared JAR is the sole native integration exception under the canonical
-existing-HTTP migration plan. It may verify identity, select/bind existing native
-sessions, limit credential reach, wrap requests/responses and clean up context.
+Read [the maintained worktree plan](../../../docs/DEVELOPMENT_WORKTREES.md) and the local role record. This worktree owns only identity/session lifecycle, credential reach, response protection and explicit auth wiring. Original business code is an unchanged host. Never add native business endpoints/models/services/schema, permission advisors or persistence here. Existing handlers retain authorization. Ordinary login and legacy custom endpoint compatibility must remain explicit.
 
-Never add an endpoint, domain-service dependency, security advisor, business DTO,
-workflow coordinator, schema/ORM mapping or custom persistent store here. Route
-restrictions limit where credentials are accepted; existing handlers authorize
-business operations. Preserve ordinary non-Bearer behavior and legacy release
-compatibility. Test actual RequestFilter chains before adopting a context.
-
-Use Java 17 and focused Maven tests. Shared-library deployment/feature activation
-requires separate authorization; local registration does not imply runtime proof.
+Use Java17 for existing focused tests. Positive attachment proofs still fail; preserve their exact evidence until separately instructed to repair them. Source organization does not enable flags or establish runtime acceptance. Client protocol reference is `docs/mcp/development-lines/protocol/sakai_flow.py`; review any client/server compatibility change before porting it to the tool line.

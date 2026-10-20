@@ -14,3 +14,7 @@ Consult [the Sakai integration guide](../../docs/SAKAI_INTEGRATION_GUIDE.md) bef
 - Follow Sakai's existing Maven/module structure and run focused tests for changed modules.
 - Check database and runtime compatibility before changing schema, authentication, or public APIs.
 - Treat `/opt/sakai-src` on the VM as a deployed copy; make durable code changes here.
+
+## Separate auth ownership
+
+The shared `mcp-auth/` module owns the new request/session integration; follow its scoped guide. Original business sources remain baseline. See [worktree ownership](../../docs/DEVELOPMENT_WORKTREES.md). Do not develop business migration here.
