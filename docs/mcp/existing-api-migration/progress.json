@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "date": "2026-10-20",
-  "branch": "codex/replace-custom-sakai-api",
+  "branch": "codex/tool-migration-development",
   "base_sha": "208d69ac624910a29a7529934ddcc18bbac853e8",
   "scope": "Whole custom business API replacement; twenty actual defaults locally replaced with disclosed partial functionality; two tools remain.",
   "phase_0": "reviewed-checkpoint-and-branch-complete",
@@ -524,5 +524,8 @@
       "sha256": "9f6081b7280889f4cfb86e1a1cbe99573985c528f95fd666e05418bae56d2f11",
       "deployed": false
     }
-  }
+  },
+  "historical_mixed_branch": "codex/replace-custom-sakai-api",
+  "preservation_model": "split-extraction; original continuation chain remains historical in mixed recovery checkout",
+  "development_role": "Tool code preserved, server auth extracted; native runtime requires separate matching integration."
 }

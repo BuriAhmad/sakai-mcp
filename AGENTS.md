@@ -1,6 +1,6 @@
 # Repository guide
 
-The user-authorized [development worktree separation](docs/DEVELOPMENT_WORKTREES.md) assigns auth and tool work to distinct checkouts. This original checkout is retained as the mixed recovery source; preserve its files and use the recorded development directories for new implementation.
+This is the tool-migration development worktree. Read [worktree ownership and dependencies](docs/DEVELOPMENT_WORKTREES.md) and the local role record. Native servlet-auth implementation and registration are owned by the separate auth worktree and are absent here. Keep the pinned Python client protocol unchanged unless deliberately porting an auth-originated protocol revision. Do not redesign auth here or assume this native tree can serve the migrated client without a separately assembled matching auth integration.
 
 The [canonical existing-HTTP migration plan](docs/mcp/existing-api-migration/implementation-plan.md) governs current migration work. Historical native business/lock/storage descriptions below document transition dependencies, not authorization to extend or retain them indefinitely. Only delegated authentication/session integration may be added in Sakai; replacement, focused retirement and data preservation follow the plan.
 
@@ -13,7 +13,7 @@ This repository owns the Sakai development environment's Azure infrastructure, o
 - `services/mcp/` — project-owned Python MCP service, tests, and container source; follow its README and scoped `AGENTS.md`. All public tool definitions are in `src/sakai_mcp/mcp/tools.py`; the README maps the implementation layers.
 - `docs/` — architecture, access instructions, runbooks, and deployment history.
 - `skills/` — repository-owned agent Skill definitions; the [assignment setup Skill](skills/sakai-assignment-setup/SKILL.md) has a separately authorized opt-in development release; see [release evidence](docs/evidence/mcp/assignment-setup-release.md).
-- `apps/sakai/` — tracked Sakai application source and project changes; `mcp-auth/` is the shared authentication/session-only extension with its own guide.
+- `apps/sakai/` — tracked Sakai application source and project changes; server authentication integration is developed in the separate auth worktree.
 
 ## MCP integration boundary
 

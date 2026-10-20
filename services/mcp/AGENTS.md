@@ -28,3 +28,7 @@ The [assignment grading design](../../docs/SAKAI_ASSIGNMENT_GRADING.md), [contra
 - Keep credentials, tokens, test-user identifiers, and sensitive Sakai content out of Git, logs, and evidence. Use synthetic sandbox data for tests.
 - Treat ambiguous announcement-create outcomes as unknown; never retry them automatically without the runbook's verified reconciliation mechanism.
 - Put Sakai Java changes in tracked `apps/sakai/`, Azure Bicep in `deployment/infra/`, and implementation or operations documentation in `docs/`.
+
+## Separate auth dependency
+
+This tool-development line excludes the new native auth framework and servlet wiring. The Python client/flow protocol is retained unchanged and pinned in `docs/mcp/development-lines/role.json`; native auth compatibility/acceptance must be assembled separately. Do not repair the recorded attachment proof failures or change server auth here. See `docs/DEVELOPMENT_WORKTREES.md` for ownership.

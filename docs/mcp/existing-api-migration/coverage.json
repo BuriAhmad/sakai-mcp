@@ -1768,8 +1768,8 @@
   ],
   "canonical_plan": {
     "repository_path": "docs/mcp/existing-api-migration/implementation-plan.md",
-    "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp/docs/mcp/existing-api-migration/implementation-plan.md",
-    "sha256": "c03d891b5724f75ba92988ab9991e9ca3dcec8ea4a5bbe57e04816dab752437b",
+    "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp-tool-migration-development/docs/mcp/existing-api-migration/implementation-plan.md",
+    "sha256": "db7029e9ec4021f8afe3dad6c534b5b16a8f7c4ce5c4a9f624b15894ce6ec978",
     "delivery_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md",
     "updated_date": "2026-10-20"
   }

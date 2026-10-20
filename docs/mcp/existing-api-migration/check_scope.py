@@ -278,7 +278,13 @@ def validate(verify_working_tree=False, verify_progress=False):
     for path in ledger["storage_configuration_paths"]:
         need((ROOT / path).is_file(), f"Missing preservation dependency: {path}")
     if verify_progress:
-        validate_progress()
+        role_path = ROOT / "docs/mcp/development-lines/role.json"
+        if role_path.is_file() and json.loads(role_path.read_text())["kind"] == "tool-migration-development":
+            import runpy
+            checks = runpy.run_path(str(ROOT / "docs/mcp/development-lines/verify_arrangement.py"))
+            checks["verify_current"]()
+        else:
+            validate_progress()
     if verify_working_tree:
         current_head = subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True

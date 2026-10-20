@@ -2,7 +2,7 @@
 
 The [canonical existing-HTTP migration plan](../../docs/mcp/existing-api-migration/implementation-plan.md) governs current migration work. Historical native business/lock/storage descriptions below document transition dependencies, not authorization to extend or retain them indefinitely. Only delegated authentication/session integration may be added in Sakai; replacement, focused retirement and data preservation follow the plan.
 
-The shared [`mcp-auth/`](mcp-auth/README.md) module owns only delegated identity/session integration for selected existing handlers; follow its scoped guide. Its local tests and disabled registrations do not establish live tool acceptance.
+The native shared auth module and filter wiring are intentionally absent from this tool-only source line. See [development-line ownership](../../docs/DEVELOPMENT_WORKTREES.md). Keep existing business migration/retirement here; assemble matching auth only in a separately authorized integration line.
 
 The transitional legacy native MCP integration is grouped under `webapi/src/main/java/org/sakaiproject/webapi/mcp/{security,assessment,contracts,grading}/`. Its [source map](webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md) explains focused grading services and mirrored tests. Preserve their explicit authorization, evidence loading, row-lock boundaries and durable records.
 

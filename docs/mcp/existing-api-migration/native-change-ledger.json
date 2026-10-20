@@ -563,91 +563,114 @@
     {
       "path": "apps/sakai/mcp-auth/AGENTS.md",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "present_in_working_tree": false,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/README.md",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "present_in_working_tree": false,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/pom.xml",
       "group": "auth-integration",
-      "present_in_working_tree": true,
+      "present_in_working_tree": false,
       "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
       "sha256": "f5944777a77a6d2bb752b63ff935995b96715b45eea38909c675c905480bd115",
-      "state": "Test-only audit harness/dependencies; two servlet component passes, positive delegated failure preserved; no production repair",
+      "state": "transferred-to-auth-development; not business retirement",
       "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
-      "previous_sha256": "d1b20da6079ac44255c017757dac8e1f6f9e861ef8ee983ddee435c9bf48084e"
+      "previous_sha256": "d1b20da6079ac44255c017757dac8e1f6f9e861ef8ee983ddee435c9bf48084e",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedConversations.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "present_in_working_tree": false,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedCredentialGuard.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "present_in_working_tree": false,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedJwtVerifier.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "present_in_working_tree": false,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedResponse.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "present_in_working_tree": false,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedRoutes.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
+      "present_in_working_tree": false,
       "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
       "sha256": "ff9206476d00aa821b28dd9bc15bec2ea78d776f918937a66eb47781273b9e6c",
       "local_evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
-      "state": "Local grading write cutover; auth-only exact form POST credential reach or focused native mutation retirement/test adjustment"
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedSessionFilter.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "present_in_working_tree": false,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedChainTest.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
+      "present_in_working_tree": false,
       "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
       "sha256": "3d44daa47d7e1eb1f4f6c3c27a6ef4b3e018dcb25586d91b4e47f406f8d0072a",
       "local_evidence": "docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md",
-      "state": "Local native content characterization/test dependencies only; production auth reach unchanged; content route remains unaccepted",
-      "previous_sha256": "6a4932531ca8b8e15c3cf0511525cade0b6544cd8101f57b3f67c717177a8712"
+      "state": "transferred-to-auth-development; not business retirement",
+      "previous_sha256": "6a4932531ca8b8e15c3cf0511525cade0b6544cd8101f57b3f67c717177a8712",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedJwtVerifierTest.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "present_in_working_tree": false,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/PortalContainerTest.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "present_in_working_tree": false,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/mcpauth/ExistingSitesChainTest.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "present_in_working_tree": false,
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/announcement/announcement-tool/tool/pom.xml",
@@ -742,33 +765,38 @@
     {
       "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedResponseTest.java",
       "group": "auth-integration",
-      "present_in_working_tree": true,
-      "implementation_evidence": "read-discovery-2026-10-18.md; auth protection or existing-provider characterization only"
+      "present_in_working_tree": false,
+      "implementation_evidence": "read-discovery-2026-10-18.md; auth protection or existing-provider characterization only",
+      "state": "transferred-to-auth-development; not business retirement",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/content/impl/ExistingContentAccessTest.java",
       "group": "existing-handler-tests",
-      "present_in_working_tree": true,
+      "present_in_working_tree": false,
       "sha256": "11947694d7cdb8cf7c8267fc3eb8d40eab9705f26ee87eda85b76a882cd92037",
-      "state": "Test-only audit harness/dependencies; two servlet component passes, positive delegated failure preserved; no production repair",
+      "state": "transferred-to-auth-development; not business retirement",
       "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
-      "previous_sha256": "5f675fb648d8630714290d90ae79514e548334c7f88cdd92ceb8a48758f3fd20"
+      "previous_sha256": "5f675fb648d8630714290d90ae79514e548334c7f88cdd92ceb8a48758f3fd20",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/access/tool/AccessServletProof.java",
       "group": "existing-handler-tests",
-      "present_in_working_tree": true,
+      "present_in_working_tree": false,
       "sha256": "1f733e69866ee74eaa3d1c90befd54c380101a49291c791bb821668ae88b9b15",
-      "state": "Test-only audit harness/dependencies; two servlet component passes, positive delegated failure preserved; no production repair",
-      "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md"
+      "state": "transferred-to-auth-development; not business retirement",
+      "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/AttachmentReachProof.java",
       "group": "existing-handler-tests",
-      "present_in_working_tree": true,
+      "present_in_working_tree": false,
       "sha256": "b52233cab673028c4d1bb4b986ea151a514b4c47788e088c398ed5bb085cd0f6",
-      "state": "Test-only audit harness/dependencies; two servlet component passes, positive delegated failure preserved; no production repair",
-      "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md"
+      "state": "transferred-to-auth-development; not business retirement",
+      "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
+      "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
     }
   ],
   "storage_configuration_paths": [

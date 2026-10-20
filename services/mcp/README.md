@@ -269,3 +269,7 @@ makes no academic POST. Commit requires durable external records; success remain
 partial, unknown never replays, and no native CAS/atomicity/causation is claimed.
 See [current evidence](../../docs/mcp/existing-api-migration/grading-write-2026-10-20.md)
 and the limitations reference before adopting this subset. T09 and T20 remain.
+
+## Separate auth dependency
+
+This tool-development line excludes the new native auth framework and servlet wiring. The Python client/flow protocol is retained unchanged and pinned in `docs/mcp/development-lines/role.json`; native auth compatibility/acceptance must be assembled separately. Do not repair the recorded attachment proof failures or change server auth here. See `docs/DEVELOPMENT_WORKTREES.md` for ownership.

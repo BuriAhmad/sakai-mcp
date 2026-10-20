@@ -71,3 +71,7 @@ and `McpGradingEvidence.revision/current` only. Evidence no longer injects metad
 or authorization; projection no longer injects Assignment/Site/GradingAuthz/evidence.
 Query still owns the native semantic revision and ordinary context permission path.
 No native store/schema/domain or ordinary Assignment/API cleanup is included.
+
+## Separate auth dependency
+
+This tool-development line excludes the new native auth framework and servlet wiring. The Python client/flow protocol is retained unchanged and pinned in `docs/mcp/development-lines/role.json`; native auth compatibility/acceptance must be assembled separately. Do not repair the recorded attachment proof failures or change server auth here. See `docs/DEVELOPMENT_WORKTREES.md` for ownership.
