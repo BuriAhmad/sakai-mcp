@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-20",
+  "kind": "Git/source organization verification only; no implementation or live tests run",
+  "source_anchors": {
+    "original_baseline": "208d69ac624910a29a7529934ddcc18bbac853e8",
+    "mixed_source": "98364680e73489addf649685bb79511e8febf917",
+    "auth_core_commit": "98a4ca7de32e9ebbeec743c244a2c6193351829a",
+    "auth_source_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
+    "tool_source_anchor": "0cb3f331cb23ac2e3aaae14420bdc152dc3d7603"
+  },
+  "initial_metadata_tips": {
+    "auth": "06958ae1cb9c66f5aa91b11320ab4792d9d3b769",
+    "tools": "b6b07607f98888227cdecdb05d349d6c1a696410"
+  },
+  "results": {
+    "baseline_source_and_refs": "unchanged; custom worktree clean, main stays208d69ac",
+    "original_business_host": "Auth branch Python src/native business source match original baseline byte-for-byte",
+    "migrated_python_and_frozen_contracts": "Tool src matches saved mixed snapshot; test changes only transferred auth-source boundary case",
+    "native_auth_exclusion": "New native module absent from tool tree; pre-auth servlet/root wiring restored; WebAPI auth dependency removed",
+    "auth_extraction": "Native auth source/test bodies preserved from mixed snapshot; no proof fix",
+    "legacy_auth_restructuring": "Java bearer/JWT lexical bodies match baseline excluding package/import/formatting",
+    "client_protocol": "Unchanged hash pin and independent auth reference copy; no cross-worktree runtime imports/symlinks",
+    "scope": "Separated tool check_scope.py --verify-progress passed;22tools5resources1active/23historical routes",
+    "source_role_verifiers": "Pass in both new worktrees",
+    "guidance": "check-repo-context.sh passed in both new worktrees",
+    "new_worktrees": "Clean tracked/untracked source and empty indexes",
+    "editor_files": "All4 original excluded fingerprints unchanged",
+    "failed_attachment_proofs": "Preserved, not rerun or repaired; no new acceptance",
+    "deployment_and_runtime": "None; no credentials/ignored runtime outputs copied or activated"
+  },
+  "not_claimed": [
+    "New Python/Java regression pass after extraction",
+    "Native build/package/runtime acceptance",
+    "Working migrated-tools/original-auth combination",
+    "Acceptance or repair of failed attachment proofs"
+  ]
+}

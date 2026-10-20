@@ -175,3 +175,29 @@ The arrangement is verified by the separate source/commit checks described in
 checks remain available in the unchanged mixed recovery checkout. The tool line's
 scope command additionally checks its extraction record; it does not rewrite the
 old preservation chain or claim that the auth-free native tree is deployable.
+
+## Established source anchors and verification — 20 October 2026
+
+The three documented lines now exist. Their immutable extraction anchors are:
+
+| Anchor | Commit | Meaning |
+| --- | --- | --- |
+| Original baseline | `208d69ac` | Untouched baseline/main/custom source. |
+| Mixed recovery snapshot | `98364680` | Complete explicitly selected mixed working source, including failed proofs; editors/caches/private runtime excluded. |
+| Portable native auth core | `98a4ca7d` | Auth module/test source extracted without business migration. |
+| Auth integration source | `b5100547` | Auth build/filter wiring on the unchanged original business host. |
+| Tool migration source | `0cb3f331` | Current migration source with new native auth module/wiring removed. |
+
+Later commits on the new branches contain ownership/dependency metadata. Use branch
+refs or `git worktree list` for current tips; the stable anchors above do not move.
+The machine [verification record](mcp/development-lines/verification.json) describes
+source comparisons, clean new worktrees, baseline/main/editor preservation and
+scope checks. All current migrated Python implementation bytes match the mixed
+snapshot, original auth-host business bytes match208d69ac, extracted auth source
+and failed native proofs match the mixed snapshot, and the client protocol pin
+matches in both locations. Source role verifiers and repository guidance passed.
+
+No regression suite or package build was run as part of this Git-only separation;
+prior test reports remain historical. No failed attachment proof was fixed or
+newly accepted. Neither new source line is a deployment release. No worktree shares
+runtime credentials, virtual environments, generated binaries or running services.
