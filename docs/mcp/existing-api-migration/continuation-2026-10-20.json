@@ -1,0 +1,120 @@
+{
+  "format_version": 2,
+  "date": "2026-10-20",
+  "head": "0f9f44a76f34777b52f56ae03634ffd3a0b3bc6c",
+  "branch": "codex/replace-custom-sakai-api",
+  "previous_record": "continuation-2026-10-19.json",
+  "previous_record_sha256": "4f3d415ed7b69f02860fd37996b95aa5e97170b1ac270c8d4097b1783e3023df",
+  "scope": "Strengthen the existing T16 default and correct native missing-row identity characterization; no new tool-count or native retirement claim.",
+  "private_checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Readback-2026-10-20",
+  "private_hashes": {
+    "manifest.json": "2deec733e4cb882d2b87ae10229bb66eb5a5601815c650ecdb2bbdc1ed415041",
+    "source-before.tar.gz": "90f43ca81224e9c0681e19c5a5e481e0b34eb3e4b3fc9ac380cee947d6d22b6f"
+  },
+  "evidence": "docs/mcp/existing-api-migration/readback-2026-10-20.md",
+  "original_manifests": "Original baseline, implementation start, Git organization and October 19 continuation remain immutable.",
+  "files": [
+    {
+      "path": "docs/mcp/existing-api-migration/README.md",
+      "before_sha256": "9a400808da461dd9d562750557bd1f3d6ee38a1f471de48381556694c7b026d4",
+      "after_sha256": "893829b787dcfe9479b62e23e309d6219272e4cf5dc9fd9d38515c22c07260d6",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/browser-flows.json",
+      "before_sha256": "a8570f57ad8912cca8c6cd903d69b368a187b06dc1c124bf1513bcf5d1f7bd32",
+      "after_sha256": "ae1d843ef6d226089c5b11cd0e0165bc09b084ed7ede3467f7bfc9062e9b11f3",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/check_scope.py",
+      "before_sha256": "0c2beb1cbbb1bf12233b9468a4ed681ade7f8e71569af5da4c73802807e18f95",
+      "after_sha256": "d77ea9ef3e44714310bd208210e3182ddae6d390653ae99b630a76e1fc804812",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/coverage.json",
+      "before_sha256": "1d5a9632e58072914d5a96267b34cf2fc3ba43d7894fdbdbb2a28587165f8514",
+      "after_sha256": "54be6103d2bebc357a2179aa9ff8e5f1bd5e0bafab2b227d2dfa50cad7d18c9c",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/implementation-plan.md",
+      "before_sha256": "4c9df1aa2062d7222a9e8e2dd4483523c45890785e83a701d5aa523fa2905e7a",
+      "after_sha256": "94c41a881788aa8aedea8d1d97fc795c240f73313b907cf22f24fb950b8d8267",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/native-change-ledger.json",
+      "before_sha256": "b6658c436d49941a52cea9f41210894e6293d301b3d6d73b2c4b50250159b225",
+      "after_sha256": "2c71b80a63f715f20a378264b8a5694f1e3a88c7d81231e4fe45df98f55e5a19",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/progress.json",
+      "before_sha256": "9000cea13a5663d0e2bd5df1f62aeb092dd18b8b0e56193f1f7b27215b7a16ba",
+      "after_sha256": "e1cc6a14010c0e4b22c0aacdaf2200d6d1eba0be4b26a1687f59429a028ed318",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/readback-2026-10-20.md",
+      "before_sha256": null,
+      "after_sha256": "72e077efbbbe857f8b0b2fad9a2777a7c7d6eb5bf38247ae3cd32d7c0c49003e",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/tool-limitations.md",
+      "before_sha256": "3d48c66ee34505969c783bcac030188de15c54e2580f66405cf66e66119d0b46",
+      "after_sha256": "64730eb739cb54e090e7ad1582f065011f19e720a74cbb43468d57f4b5b29897",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/README.md",
+      "before_sha256": "69e57384f96ee939135b102d2cd2c9473dd168bc556e17c8dd9c3e43de1b1a93",
+      "after_sha256": "d454598141c6ae1e46359f59d12fe9dea5027ad224ff2ec5dc443bf907c7df1d",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/gradebook_projection.py",
+      "before_sha256": null,
+      "after_sha256": "5ca37c110607b8f1d143652f3daf763bc401c2b3c520056bd7976247b88296e7",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/selected_grades.py",
+      "before_sha256": "7125d231cce42a0e9fd6cbe2ff9070cd2a7181d7a142bdcd60fda9a4d70f7d81",
+      "after_sha256": "6af81e0554f2b9e7facae99e6894066aae89972d9b167bdd3b7f6776c8cc69f9",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/submissions.py",
+      "before_sha256": "200438dcc78e8464c813f92fa40fcbda6b8f0e847ee42d530faa2fa533b05236",
+      "after_sha256": "49b8ebd0e85f55a4a7a06b8706757016e128fde5b79eb1ca40a05b5351bac717",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/five_tool_http.py",
+      "before_sha256": "de57252c6ecd5283338586ba906a6c70ba53d3756fdb47e0e576b53e539431c8",
+      "after_sha256": "1ad4200054fad7af28f6252a297cb282694351fbb119c0a8f806863dda638855",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/integration/test_pipeline.py",
+      "before_sha256": "b2b342ec53bfab03ddb4c9d13c4ce6cce42c73d7781835615eb849588e19172b",
+      "after_sha256": "38fb09e42b05d17800b7de5fd41bfbbdc91e73c4ca8e519ef35c62b554272767",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_five_tool_cohort.py",
+      "before_sha256": "c7bd00fc2ea2a8f761fc9841b01cfe829e85d99ae687f4ff2140e58b6d5456ea",
+      "after_sha256": "a174cb5542ee5c9400ddfae9e1d6616b6acc4da952417c8c754db4943fb634d3",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_selected_grades.py",
+      "before_sha256": "33d7b62745c0f0a5dfbceb1ab201a6d3c50c53f917486899152056cc36ff23a0",
+      "after_sha256": "994258481f807a3509b402bc85327bcc08c4e49f538e3b0983e6dad4bec8a83c",
+      "after_mode": "0o644"
+    }
+  ]
+}

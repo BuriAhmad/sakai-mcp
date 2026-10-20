@@ -67,7 +67,9 @@ class Operation:
         encoded = {}
         for name, value in parameters.items():
             if name == "resource":
-                if not value.startswith("/content/"):
+                if not isinstance(value, str) or not value.startswith(
+                    ("/content/attachment/", "/content/group/")
+                ):
                     raise SakaiError(ErrorCode.VALIDATION_ERROR)
                 components = value.removeprefix("/content/").split("/")
                 encoded[name] = "/".join(_segment(part) for part in components)
@@ -103,7 +105,7 @@ CURRENT_USER = Operation(
     "GET",
     "/direct/user/current.json",
     PROVIDERS + "UserEntityProvider.java",
-    "getEntity",
+    "getCurrentUser",
     "A0",
 )
 CURRENT_SITE = Operation(
@@ -130,6 +132,23 @@ SITES = Operation(
     "getSites",
     "A1",
 )
+SITE_PAGES = Operation(
+    "site-pages",
+    "GET",
+    "/direct/site/{site}/pages.json",
+    PROVIDERS + "SiteEntityProvider.java",
+    "getPagesAndTools",
+    "B0",
+)
+ACCESS_SITES = Operation(
+    "access-sites",
+    "GET",
+    "/direct/site.json",
+    PROVIDERS + "SiteEntityProvider.java",
+    "getEntities",
+    "A0",
+    query_keys=frozenset({"select", "_start", "_limit"}),
+)
 GRADES = Operation(
     "grade-summaries",
     "GET",
@@ -137,7 +156,7 @@ GRADES = Operation(
     WEB + "GradesController.java",
     "getSiteGrades",
     "A2",
-    blocked_reason="D4: prove student-only scope before invoking; grader branch returns aggregates",
+    # Only OwnGradeReads may select this after excluding the native aggregate branch.
 )
 ITEM_DATA = Operation(
     "grading-item-data",
@@ -147,7 +166,7 @@ ITEM_DATA = Operation(
     "getSiteCategories",
     "A2",
     effect=Effect.MAY_INITIALIZE,
-    blocked_reason="D4: may initialize Gradebook; metadata authorization/coverage required",
+    # Authorized grader/editor metadata reads; may initialize native backing state.
 )
 ANNOUNCEMENTS = Operation(
     "announcements",
@@ -157,7 +176,6 @@ ANNOUNCEMENTS = Operation(
     "getAnnouncementsForSite",
     "A3",
     query_keys=frozenset({"n", "d", "a"}),
-    blocked_reason="D4: merged-channel and date-window coverage not yet accepted",
 )
 ASSIGNMENTS = Operation(
     "assignments",
@@ -166,7 +184,8 @@ ASSIGNMENTS = Operation(
     ASSIGNMENT,
     "getAssignmentsForSite",
     "A4",
-    blocked_reason="D4: default serializer hydrates submissions; not a lean metadata read",
+    # Adopted only by the site-wide-grader discovery workflow. Hydrates evidence;
+    # never use for setup or group-restricted graders.
 )
 ASSIGNMENT_ITEM = Operation(
     "assignment-item",
@@ -175,7 +194,7 @@ ASSIGNMENT_ITEM = Operation(
     ASSIGNMENT,
     "getAssignment",
     "A4",
-    blocked_reason="D4: hydration and role-scope validation required",
+    # Adopted only after site-wide authority and B7 individual/non-anonymous UI proof.
 )
 GRADABLE = Operation(
     "gradable",
@@ -205,17 +224,18 @@ SET_GRADE = Operation(
     "setGrade",
     "A7",
     effect=Effect.WRITE,
-    blocked_reason="D3/D4: official writes require accepted guarantees, scope and preserved side fields",
+    # Adopted only by the supported single-row grading workflow after preflight.
 )
 CONTENT = Operation(
     "content",
     "GET",
     "/access/content/{resource}",
     "apps/sakai/kernel/kernel-impl/src/main/java/org/sakaiproject/content/impl/BaseContentService.java",
-    "handleAccess",
+    "handleAccessResource",
     "A9",
     encoding=Encoding.CONTENT,
     max_bytes=10 * 1024 * 1024,
+    blocked_reason="D4: selected-source scope, MIME and byte-fidelity acceptance required",
 )
 CALENDAR = Operation(
     "calendar",
@@ -224,6 +244,7 @@ CALENDAR = Operation(
     WEB + "CalendarController.java",
     "getSiteCalendar",
     "A10",
+    blocked_reason="D4: visit checks, backing-state effects and swallowed errors unverified",
 )
 SOAP_ASSIGNMENTS = Operation(
     "soap-assignments",
@@ -264,6 +285,8 @@ OPERATIONS = MappingProxyType(
             CURRENT_SITE,
             USER_PERMISSIONS,
             SITES,
+            SITE_PAGES,
+            ACCESS_SITES,
             GRADES,
             ITEM_DATA,
             ANNOUNCEMENTS,

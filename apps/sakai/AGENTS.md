@@ -1,6 +1,10 @@
 # Sakai application source
 
-The native MCP integration is grouped under `webapi/src/main/java/org/sakaiproject/webapi/mcp/{security,courses,announcements,assessment,contracts,grading}/`. Its [source map](webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md) explains focused grading services and mirrored tests. Preserve their explicit authorization, evidence loading, row-lock boundaries and durable records.
+The [canonical existing-HTTP migration plan](../../docs/mcp/existing-api-migration/implementation-plan.md) governs current migration work. Historical native business/lock/storage descriptions below document transition dependencies, not authorization to extend or retain them indefinitely. Only delegated authentication/session integration may be added in Sakai; replacement, focused retirement and data preservation follow the plan.
+
+The shared [`mcp-auth/`](mcp-auth/README.md) module owns only delegated identity/session integration for selected existing handlers; follow its scoped guide. Its local tests and disabled registrations do not establish live tool acceptance.
+
+The transitional legacy native MCP integration is grouped under `webapi/src/main/java/org/sakaiproject/webapi/mcp/{security,assessment,contracts,grading}/`. Its [source map](webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md) explains focused grading services and mirrored tests. Preserve their explicit authorization, evidence loading, row-lock boundaries and durable records.
 
 The [MCP-only grading migration](../../docs/SAKAI_GRADING_MCP_RESOURCES.md) replaces the local importer with SDK resources and server proposal/report tools. Native resource/proposal endpoints preserve delegated permissions and existing grading gates; use the [two-stage grading release procedure](../../docs/GRADING_MCP_RESOURCE_RELEASE.md) before deployment.
 This directory is the tracked Sakai 25.2 source in the `sakai-mcp` repository. The baseline is upstream commit `b5b7800f0fcddf9d0db47276a66065189365d905`; see `docs/SAKAI_SOURCE.md` for provenance and the deployment boundary.

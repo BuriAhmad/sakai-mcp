@@ -332,8 +332,8 @@ def test_byte_adapter_verifies_stream_and_closes_it():
     )
     with pytest.raises(SakaiError) as error:
         asyncio.run(
-            client.grading.read_grading_file(
-                principal(), f.COURSE, f.ASSIGNMENT, f.SUBMISSION, "a" * 64, "content"
+            client.transport.read_bytes(
+                principal(), "/synthetic-byte-transport-fixture"
             )
         )
     assert error.value.code == ErrorCode.CONFLICT

@@ -1,14 +1,9 @@
 """Ordinary native calendar events must not break instructor context reads."""
 
-import asyncio
-
-import httpx
 import pytest
 from pydantic import ValidationError
 
-from sakai_mcp.contracts.assignment_setup import CalendarEvent
-from tests.fixtures.assignment_setup import adapter
-from tests.fixtures.sakai import principal
+from sakai_mcp.contracts.assignment_setup import AssessmentContext, CalendarEvent
 
 
 def event(**changes):
@@ -50,7 +45,7 @@ def test_invalid_references_are_still_rejected(changes):
         CalendarEvent.model_validate(event(**changes))
 
 
-def test_context_read_accepts_mixed_native_calendar_events():
+def test_frozen_context_contract_accepts_mixed_native_calendar_events():
     context = {
         "course": {
             "id": "course-a",
@@ -99,19 +94,7 @@ def test_context_read_accepts_mixed_native_calendar_events():
         },
         "warnings": [],
     }
-    calls = []
-
-    def handle(request):
-        calls.append(request)
-        assert request.method == "GET"
-        return httpx.Response(200, json=context)
-
-    result = asyncio.run(
-        adapter(handle).assignments.get_course_assessment_context(
-            principal(), "course-a"
-        )
-    )
-    assert len(calls) == 1
+    result = AssessmentContext.model_validate(context)
     assert len(result.calendar.events) == 2
     assert result.calendar.events[0].assignment_id is None
     assert result.calendar.events[1].assignment_id == "assignment-a"

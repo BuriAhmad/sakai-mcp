@@ -22,7 +22,12 @@ def authorized(monkeypatch):
     monkeypatch.setattr(
         server_module,
         "get_access_token",
-        lambda: AccessToken(token="synthetic", client_id="test", scopes=["mcp.access"]),
+        lambda: AccessToken(
+            token="synthetic",
+            client_id="test",
+            scopes=["mcp.access"],
+            subject="synthetic-subject",
+        ),
     )
 
 
@@ -55,11 +60,15 @@ def test_read_tools_and_pagination(monkeypatch):
             "get_course_announcements", {"course_id": "course-a", "limit": 1}
         )
     )
-    assert first.structured_content["next_cursor"] == "1"
+    assert first.structured_content["next_cursor"].endswith(":1")
     assert first.structured_content["items"][0]["posted_at"].endswith("Z")
     second = asyncio.run(
         server.call_tool(
-            "get_course_announcements", {"course_id": "course-a", "cursor": "1"}
+            "get_course_announcements",
+            {
+                "course_id": "course-a",
+                "cursor": first.structured_content["next_cursor"],
+            },
         )
     )
     assert second.structured_content["next_cursor"] is None
@@ -282,3 +291,50 @@ def test_opt_in_partial_setup_is_structured_and_audited_without_creating_announc
     assert client.writes == 0
     assert '"outcome":"PARTIAL_SUCCESS"' in caplog.text
     assert "Submit a report" not in caplog.text
+
+
+def test_announcement_cursor_rejects_changed_actor_and_changed_source(monkeypatch):
+    authorized(monkeypatch)
+    client = FakeClient()
+    server = make_server(client)
+    first = asyncio.run(
+        server.call_tool(
+            "get_course_announcements", {"course_id": "course-a", "limit": 1}
+        )
+    )
+    cursor = first.structured_content["next_cursor"]
+    monkeypatch.setattr(
+        server_module,
+        "get_access_token",
+        lambda: AccessToken(
+            token="other-synthetic",
+            client_id="test",
+            scopes=["mcp.access"],
+            subject="other-subject",
+        ),
+    )
+    with pytest.raises(ToolError, match="CONFLICT"):
+        asyncio.run(
+            server.call_tool(
+                "get_course_announcements", {"course_id": "course-a", "cursor": cursor}
+            )
+        )
+    authorized(monkeypatch)
+
+    async def changed(_, course):
+        return [
+            {
+                "id": "changed",
+                "title": "Changed",
+                "body": "Data",
+                "postedAt": 1780000000000,
+            }
+        ]
+
+    client.get_course_announcements = changed
+    with pytest.raises(ToolError, match="CONFLICT"):
+        asyncio.run(
+            server.call_tool(
+                "get_course_announcements", {"course_id": "course-a", "cursor": cursor}
+            )
+        )

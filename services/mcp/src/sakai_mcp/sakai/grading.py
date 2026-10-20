@@ -1,147 +1,173 @@
 """Typed native grading operations; no MCP tool-name dispatch."""
 
 import json
-from typing import Any, TypeVar
+from typing import TypeVar
 from urllib.parse import urlencode
 
 from mcp.server.auth.provider import AccessToken
 from pydantic import ValidationError
 
 from sakai_mcp.contracts import grading_native as native
+from sakai_mcp.contracts.assignments import assignment_summaries, observation_revision
+from sakai_mcp.contracts.existing_api import user_permissions
 from sakai_mcp.contracts.grading_proposals import ProposalPayload, ProposalRecord
 from sakai_mcp.contracts.grading_public import AssignmentListResult
 from sakai_mcp.errors import ErrorCode, SakaiError
+from sakai_mcp.sakai.existing_transport import ExistingApiTransport
+from sakai_mcp.sakai.operations import ASSIGNMENTS, USER_PERMISSIONS
 from sakai_mcp.sakai.paths import segment
 from sakai_mcp.sakai.transport import SakaiTransport
+from sakai_mcp.workflows.access import AccessObservations
+from sakai_mcp.workflows.captures import Captures
+from sakai_mcp.workflows.grading_operations import GradingOperationsJournal
+from sakai_mcp.workflows.grading_writes import GradingWrites
+from sakai_mcp.workflows.selected_grades import selected_grades
+from sakai_mcp.workflows.submissions import SubmissionReads
 
 Result = TypeVar("Result", bound=native.GradingModel)
 
 
 class GradingOperations:
-    def __init__(self, transport: SakaiTransport) -> None:
+    def __init__(
+        self,
+        transport: SakaiTransport,
+        existing: ExistingApiTransport,
+        submissions: SubmissionReads,
+        captures: Captures,
+    ) -> None:
         self.transport = transport
         self.settings = transport.settings
+        self.existing = existing
+        self.access = AccessObservations(existing)
+        self.submissions = submissions
+        self.captures = captures
+        self.operations = GradingOperationsJournal(submissions, captures.records)
+        self.writes = GradingWrites(submissions, self.operations)
 
     async def get_assignment_grading_context(
         self, principal: AccessToken, request: native.GetAssignmentGradingContextRequest
     ) -> native.GetAssignmentGradingContextResult:
-        return await self._send(
+        result = await self._send(
             principal,
             request,
             "GET",
             "/grading-context",
             native.GetAssignmentGradingContextResult,
             mutation=False,
-            query_post=False,
         )
+        result = result.model_copy(
+            update={
+                "supported": result.supported.model_copy(
+                    update={
+                        "prepare": False,
+                        "save": False,
+                        "release": False,
+                        "reasons": list(
+                            dict.fromkeys(
+                                [
+                                    *result.supported.reasons,
+                                    "legacy_context_revision_not_http_write_projection",
+                                ]
+                            )
+                        ),
+                    }
+                ),
+                "warnings": list(
+                    dict.fromkeys(
+                        [
+                            *result.warnings,
+                            "grading_writes_require_http_metadata_and_submission_revisions",
+                        ]
+                    )
+                ),
+            }
+        )
+        # This context still uses its transitional native query. Do not advertise
+        # file URIs after the last native file consumer has been retired.
+        if result.assignment.attachments:
+            result = result.model_copy(
+                update={
+                    "assignment": result.assignment.model_copy(
+                        update={
+                            "attachments": [
+                                a.model_copy(
+                                    update={
+                                        "readable": False,
+                                        "resource_revision": None,
+                                    }
+                                )
+                                for a in result.assignment.attachments
+                            ]
+                        }
+                    ),
+                    "warnings": list(
+                        dict.fromkeys(
+                            [*result.warnings, "current_assignment_files_unsupported"]
+                        )
+                    ),
+                }
+            )
+        if len(result.warnings) > 30 or len(result.supported.reasons) > 30:
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+        return result
 
     async def list_assignment_submissions(
         self, principal: AccessToken, request: native.ListAssignmentSubmissionsRequest
     ) -> native.ListAssignmentSubmissionsResult:
-        return await self._send(
-            principal,
-            request,
-            "GET",
-            "/grading-submissions",
-            native.ListAssignmentSubmissionsResult,
-            mutation=False,
-            query_post=False,
-        )
+        if not self.settings.assignment_grading_enabled:
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+        return await self.submissions.page(principal, request)
 
     async def get_assignment_submission(
         self, principal: AccessToken, request: native.GetAssignmentSubmissionRequest
     ) -> native.GetAssignmentSubmissionResult:
-        return await self._send(
-            principal,
-            request,
-            "GET",
-            f"/grading-submissions/{segment(request.submission_id)}",
-            native.GetAssignmentSubmissionResult,
-            mutation=False,
-            query_post=False,
-        )
+        if not self.settings.assignment_grading_enabled:
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+        return await self.submissions.detail(principal, request)
 
     async def export_assignment_submissions(
         self, principal: AccessToken, request: native.ExportAssignmentSubmissionsRequest
     ) -> native.ExportAssignmentSubmissionsResult:
-        return await self._send(
-            principal,
-            request,
-            "POST",
-            "/grading-exports",
-            native.ExportAssignmentSubmissionsResult,
-            mutation=True,
-            query_post=False,
-        )
+        self._enabled()
+        return await self.captures.export(principal, request)
 
     async def get_assignment_submission_export(
         self,
         principal: AccessToken,
         request: native.GetAssignmentSubmissionExportRequest,
     ) -> native.GetAssignmentSubmissionExportResult:
-        return await self._send(
-            principal,
-            request,
-            "GET",
-            f"/grading-exports/{segment(request.export_id)}",
-            native.GetAssignmentSubmissionExportResult,
-            mutation=False,
-            query_post=False,
-        )
+        self._enabled()
+        return await self.captures.page(principal, request)
+
+    def _enabled(self) -> None:
+        if not self.settings.assignment_grading_enabled:
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
 
     async def save_assignment_grades(
         self, principal: AccessToken, request: native.SaveAssignmentGradesRequest
     ) -> native.SaveAssignmentGradesResult:
-        return await self._send(
-            principal,
-            request,
-            "POST",
-            "/grading-save",
-            native.SaveAssignmentGradesResult,
-            mutation=True,
-            query_post=False,
-        )
+        self._enabled()
+        return await self.writes.execute(principal, request, "save")
 
     async def release_assignment_grades(
         self, principal: AccessToken, request: native.ReleaseAssignmentGradesRequest
     ) -> native.ReleaseAssignmentGradesResult:
-        return await self._send(
-            principal,
-            request,
-            "POST",
-            "/grading-release",
-            native.ReleaseAssignmentGradesResult,
-            mutation=True,
-            query_post=False,
-        )
+        self._enabled()
+        return await self.writes.execute(principal, request, "release")
 
     async def get_assignment_grades(
         self, principal: AccessToken, request: native.GetAssignmentGradesRequest
     ) -> native.GetAssignmentGradesResult:
-        return await self._send(
-            principal,
-            request,
-            "POST",
-            "/grading-grades/query",
-            native.GetAssignmentGradesResult,
-            mutation=False,
-            query_post=True,
-        )
+        self._enabled()
+        return await selected_grades(self.submissions, principal, request)
 
     async def get_assignment_grading_operation(
         self,
         principal: AccessToken,
         request: native.GetAssignmentGradingOperationRequest,
     ) -> native.GetAssignmentGradingOperationResult:
-        return await self._send(
-            principal,
-            request,
-            "GET",
-            f"/grading-operations/{segment(request.operation_id)}",
-            native.GetAssignmentGradingOperationResult,
-            mutation=False,
-            query_post=False,
-        )
+        self._enabled()
+        return await self.operations.read(principal, request)
 
     async def _send(
         self,
@@ -152,7 +178,6 @@ class GradingOperations:
         result_type: type[Result],
         *,
         mutation: bool,
-        query_post: bool = False,
     ) -> Result:
         payload = request.model_dump()
         course, assignment = payload.pop("course_id"), payload.pop("assignment_id")
@@ -170,18 +195,13 @@ class GradingOperations:
             }
             if query:
                 suffix += "?" + urlencode(query)
-        try:
-            value = await self.transport.request(
-                method,
-                root + suffix,
-                principal,
-                payload if method == "POST" else None,
-                unsupported=True,
-            )
-        except SakaiError as error:
-            if query_post and error.code == ErrorCode.AMBIGUOUS_WRITE_OUTCOME:
-                raise SakaiError(ErrorCode.DEPENDENCY_UNAVAILABLE) from None
-            raise
+        value = await self.transport.request(
+            method,
+            root + suffix,
+            principal,
+            payload if method == "POST" else None,
+            unsupported=True,
+        )
         try:
             return result_type.model_validate(value)
         except ValidationError:
@@ -207,15 +227,18 @@ class GradingOperations:
         file: str,
         revision: str,
     ) -> tuple[bytes, str, str]:
-        root = self.grading_root(course, assignment)
-        suffix = (
-            f"/grading-submissions/{segment(submission)}/files/{segment(file)}"
-            if submission
-            else f"/grading-files/{segment(file)}"
-        )
-        return await self.transport.read_bytes(
-            principal, root + suffix + "?" + urlencode({"revision": revision})
-        )
+        if submission is not None:
+            if not self.settings.assignment_grading_enabled:
+                raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+            if file != "inline":
+                raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+            return await self.submissions.inline(
+                principal, course, assignment, submission, revision
+            )
+        self._enabled()
+        # Existing content ACL/availability/byte fidelity is not yet accepted.
+        # Never fall back to a custom native file service.
+        raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
 
     async def read_grading_artifact(
         self,
@@ -225,32 +248,61 @@ class GradingOperations:
         export: str,
         artifact: str,
     ) -> tuple[bytes, str, str]:
-        path = (
-            self.grading_root(course, assignment)
-            + f"/grading-exports/{segment(export)}/artifacts/{segment(artifact)}"
+        self._enabled()
+        return await self.captures.artifact(
+            principal, course, assignment, export, artifact
         )
-        return await self.transport.read_bytes(principal, path)
 
     async def list_assignments(
         self, principal: AccessToken, course: str, cursor: str | None, limit: int
     ) -> AssignmentListResult:
         if not self.settings.assignment_grading_enabled:
             raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
-        path = (
-            f"/api/mcp/v1/courses/{segment(course)}/grading-assignments?"
-            + urlencode(
-                {
-                    k: v
-                    for k, v in {"cursor": cursor, "limit": limit}.items()
-                    if v is not None
-                }
+        if isinstance(limit, bool) or not 1 <= limit <= 100:
+            raise SakaiError(ErrorCode.VALIDATION_ERROR)
+        actor = await self.access.actor(principal)
+        access = await self.access.course(principal, actor, course)
+        functions = access.functions
+        if functions is None:
+            permission = await self.existing.observe_json(
+                USER_PERMISSIONS, principal, parameters={"site": course}
             )
+            actor.require_same(permission)
+            functions = user_permissions(permission.value)
+        if "asn.grade" not in functions:
+            # A4 hydrates whole-assignment evidence; never send it for a group TA.
+            # Existing B3/B7 metadata-only native lists remain the narrower candidate.
+            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+        observed = await self.existing.observe_json(
+            ASSIGNMENTS, principal, parameters={"site": course}
         )
-        value = await self.transport.request("GET", path, principal, unsupported=True)
-        try:
-            return AssignmentListResult.model_validate(value)
-        except ValidationError:
-            raise SakaiError(ErrorCode.INTERNAL_ERROR) from None
+        actor.require_same(observed)
+        items = assignment_summaries(observed.value, course)
+        revision = observation_revision(
+            {
+                "actor": [actor.tenant, actor.object_id, actor.uid],
+                "site": course,
+                "items": items,
+            }
+        )
+        offset = 0
+        if cursor is not None:
+            parts = cursor.split(":")
+            if len(parts) != 2 or parts[0] != revision:
+                raise SakaiError(ErrorCode.CONFLICT)
+            if not parts[1].isascii() or not parts[1].isdecimal() or len(parts[1]) > 6:
+                raise SakaiError(ErrorCode.VALIDATION_ERROR)
+            offset = int(parts[1])
+            if offset > len(items):
+                raise SakaiError(ErrorCode.VALIDATION_ERROR)
+        end = min(len(items), offset + limit)
+        return AssignmentListResult.model_validate(
+            {
+                "items": items[offset:end],
+                "snapshot_revision": revision,
+                "next_cursor": f"{revision}:{end}" if end < len(items) else None,
+            }
+        )
 
     async def get_proposal(
         self,
@@ -259,13 +311,10 @@ class GradingOperations:
         assignment_id: str,
         proposal_id: str,
     ) -> ProposalRecord:
-        path = (
-            self.grading_root(course_id, assignment_id)
-            + "/grading-proposals/"
-            + segment(proposal_id)
+        self._enabled()
+        return await self.captures.proposal(
+            principal, course_id, assignment_id, proposal_id
         )
-        value = await self.transport.request("GET", path, principal, unsupported=True)
-        return self._proposal_record(value, proposal_id, None, mutation=False)
 
     async def create_proposal(
         self,
@@ -276,37 +325,7 @@ class GradingOperations:
         payload: ProposalPayload,
         export_id: str,
     ) -> ProposalRecord:
-        path = self.grading_root(course_id, assignment_id) + "/grading-proposals"
-        body = {
-            "proposal_id": proposal_id,
-            "export_id": export_id,
-            "payload": payload.model_dump(),
-        }
-        if len(json.dumps(body, ensure_ascii=False).encode()) > 900_000:
-            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
-        value = await self.transport.request(
-            "POST", path, principal, body, unsupported=True
+        self._enabled()
+        return await self.captures.create_proposal(
+            principal, course_id, assignment_id, proposal_id, payload, export_id
         )
-        return self._proposal_record(value, proposal_id, export_id, mutation=True)
-
-    @staticmethod
-    def _proposal_record(
-        value: dict[str, Any],
-        proposal_id: str,
-        export_id: str | None,
-        *,
-        mutation: bool,
-    ) -> ProposalRecord:
-        try:
-            result = ProposalRecord.model_validate(value)
-            if result.proposal_id != proposal_id or (
-                export_id is not None and result.export_id != export_id
-            ):
-                raise ValueError("Wrong receipt")
-            return result
-        except (ValidationError, ValueError):
-            raise SakaiError(
-                ErrorCode.AMBIGUOUS_WRITE_OUTCOME
-                if mutation
-                else ErrorCode.INTERNAL_ERROR
-            ) from None

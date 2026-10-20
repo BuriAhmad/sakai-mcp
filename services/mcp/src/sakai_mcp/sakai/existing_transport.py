@@ -1,6 +1,6 @@
-"""Isolated existing-interface transport; not wired into the public client yet.
+"""Bounded existing-interface transport used by the default course-list facade.
 
-Native auth/context and domain authorization must be established before cutover.
+Native auth/context and domain authorization require separate live acceptance.
 No password login, cookie/session reuse, redirects or caller-selected URLs.
 """
 
@@ -9,6 +9,7 @@ import hashlib
 import json
 from dataclasses import dataclass
 from typing import Any
+from urllib.parse import urlencode
 
 import httpx
 from mcp.server.auth.provider import AccessToken
@@ -25,6 +26,19 @@ class ContentBytes:
     data: bytes
     mime_type: str
     sha256: str
+
+
+@dataclass(frozen=True, repr=False)
+class TokenIdentity:
+    tenant_id: str
+    object_id: str
+    sakai_eid: str
+
+
+@dataclass(frozen=True, repr=False)
+class JsonObservation:
+    value: Any
+    identity: TokenIdentity
 
 
 class ExistingApiTransport:
@@ -62,24 +76,61 @@ class ExistingApiTransport:
         parameters: dict[str, str] | None = None,
         query: dict[str, str] | None = None,
     ) -> Any:
+        return (
+            await self.observe_json(op, principal, parameters=parameters, query=query)
+        ).value
+
+    async def observe_json(
+        self,
+        op: Operation,
+        principal: AccessToken,
+        *,
+        parameters: dict[str, str] | None = None,
+        query: dict[str, str] | None = None,
+    ) -> JsonObservation:
         if op.encoding != Encoding.JSON:
             raise SakaiError(ErrorCode.VALIDATION_ERROR)
-        data, _ = await self._read(op, principal, parameters, query)
+        data, _, identity = await self._read(op, principal, parameters, query)
         try:
-            # Reject nonstandard numeric constants and duplicate object keys rather
-            # than letting different parsers disagree on identity/scope fields.
-            return json.loads(
-                data, parse_constant=_invalid_constant, object_pairs_hook=_unique_keys
+            value = json.loads(
+                data.decode("utf-8-sig"),
+                parse_constant=_invalid_constant,
+                object_pairs_hook=_unique_keys,
             )
+            return JsonObservation(value, identity)
         except (ValueError, UnicodeDecodeError, RecursionError):
             raise SakaiError(ErrorCode.INTERNAL_ERROR) from None
+
+    async def grade_form(
+        self, principal: AccessToken, values: dict[str, str]
+    ) -> JsonObservation:
+        """One source-defined existing action. Caller journals before invoking."""
+        from sakai_mcp.sakai.operations import SET_GRADE
+
+        body = urlencode(values).encode()
+        if len(body) > 60_000:
+            raise SakaiError(ErrorCode.VALIDATION_ERROR)
+        data, _, identity = await self._read(
+            SET_GRADE, principal, None, None, body=body
+        )
+        try:
+            return JsonObservation(
+                json.loads(
+                    data.decode("utf-8-sig"),
+                    parse_constant=_invalid_constant,
+                    object_pairs_hook=_unique_keys,
+                ),
+                identity,
+            )
+        except (ValueError, UnicodeDecodeError, RecursionError):
+            raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME) from None
 
     async def content(self, principal: AccessToken, reference: str) -> ContentBytes:
         """Caller must first select ref from currently authorized source evidence."""
         from sakai_mcp.sakai.operations import CONTENT
 
         async with self._streams:
-            data, headers = await self._read(
+            data, headers, _ = await self._read(
                 CONTENT, principal, {"resource": reference}, None
             )
         return ContentBytes(
@@ -94,11 +145,16 @@ class ExistingApiTransport:
         principal: AccessToken,
         parameters: dict[str, str] | None,
         query: dict[str, str] | None,
-    ) -> tuple[bytes, httpx.Headers]:
+        *,
+        body: bytes | None = None,
+    ) -> tuple[bytes, httpx.Headers, TokenIdentity]:
         if OPERATIONS.get(op.name) is not op:
             raise SakaiError(ErrorCode.VALIDATION_ERROR)
-        if op.blocked_reason or op.effect != Effect.READ:
+        academic = op.effect == Effect.WRITE
+        if op.blocked_reason or (academic and (op.name != "set-grade" or body is None)):
             raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+        if not academic and body is not None:
+            raise SakaiError(ErrorCode.VALIDATION_ERROR)
         path = op.path(parameters, query)
         try:
             delegated = await self.obo.acquire(principal)
@@ -125,17 +181,46 @@ class ExistingApiTransport:
                             "X-Correlation-ID": current_request_id(),
                             "Accept": accept,
                             "Accept-Encoding": "identity",
+                            **(
+                                {
+                                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+                                }
+                                if body is not None
+                                else {}
+                            ),
                         },
+                        content=body,
                     )
                     response = await self._http.send(
                         request, stream=True, follow_redirects=False, auth=None
                     )
+                    if academic and response.status_code not in {
+                        200,
+                        400,
+                        401,
+                        403,
+                        404,
+                        422,
+                        429,
+                    }:
+                        raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME)
                     self._status(response.status_code)
                     encoding = response.headers.get(
                         "content-encoding", "identity"
                     ).lower()
                     if encoding != "identity":
                         raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+                    media_type = (
+                        response.headers.get("content-type", "")
+                        .split(";", 1)[0]
+                        .strip()
+                        .lower()
+                    )
+                    if (
+                        op.encoding == Encoding.JSON
+                        and media_type != "application/json"
+                    ):
+                        raise SakaiError(ErrorCode.INTERNAL_ERROR)
                     length = response.headers.get("content-length")
                     if length is not None and (
                         not length.isascii() or not length.isdecimal()
@@ -151,20 +236,47 @@ class ExistingApiTransport:
                     if length is not None and len(chunks) != int(length):
                         raise SakaiError(ErrorCode.CONFLICT)
                     # Return no cookies, session headers, URLs or arbitrary raw headers.
-                    return bytes(chunks), httpx.Headers(
-                        {
-                            "content-type": response.headers.get(
-                                "content-type", "application/octet-stream"
-                            )
-                        }
+                    return (
+                        bytes(chunks),
+                        httpx.Headers(
+                            {
+                                "content-type": response.headers.get(
+                                    "content-type", "application/octet-stream"
+                                )
+                            }
+                        ),
+                        TokenIdentity(
+                            delegated.tenant_id,
+                            delegated.object_id,
+                            delegated.sakai_eid,
+                        ),
                     )
             except SakaiError as error:
+                if academic:
+                    if response is not None and response.status_code in {
+                        400,
+                        401,
+                        403,
+                        404,
+                        422,
+                        429,
+                    }:
+                        raise
+                    raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME) from None
                 if (
                     error.code != ErrorCode.DEPENDENCY_UNAVAILABLE
                     or attempt + 1 == op.attempts
                 ):
                     raise
+            except httpx.DecodingError:
+                raise SakaiError(
+                    ErrorCode.AMBIGUOUS_WRITE_OUTCOME
+                    if academic
+                    else ErrorCode.INTERNAL_ERROR
+                ) from None
             except (httpx.HTTPError, TimeoutError):
+                if academic:
+                    raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME) from None
                 if attempt + 1 == op.attempts:
                     raise SakaiError(ErrorCode.DEPENDENCY_UNAVAILABLE) from None
             finally:

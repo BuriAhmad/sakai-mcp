@@ -30,6 +30,8 @@ def paginate_rows(
     limit: int | None,
     settings: Settings,
     cap: int,
+    *,
+    scope: tuple[str, ...] | None = None,
 ) -> dict[str, Any]:
     size = settings.page_size_default if limit is None else limit
     if (
@@ -38,6 +40,16 @@ def paginate_rows(
         or not 1 <= size <= settings.page_size_max
     ):
         raise ToolError(ErrorCode.VALIDATION_ERROR.value)
+    revision = None
+    if scope is not None:
+        revision = "http1-" + digest(canonical({"scope": scope, "rows": rows}))
+        if cursor is not None:
+            parts = cursor.split(":")
+            if len(parts) != 2:
+                raise ToolError(ErrorCode.VALIDATION_ERROR.value)
+            if parts[0] != revision:
+                raise ToolError(ErrorCode.CONFLICT.value)
+            cursor = parts[1]
     if cursor is None:
         offset = 0
     elif (
@@ -52,7 +64,9 @@ def paginate_rows(
     end = min(offset + size, len(rows))
     return {
         "items": rows[offset:end],
-        "next_cursor": str(end) if end < len(rows) else None,
+        "next_cursor": (f"{revision}:{end}" if revision else str(end))
+        if end < len(rows)
+        else None,
         "source_limit_reached": len(rows) >= cap,
     }
 

@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from pydantic import Field, HttpUrl, ValidationInfo, field_validator
+from pydantic import Field, HttpUrl, ValidationInfo, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -30,6 +30,22 @@ class Settings(BaseSettings):
     page_size_default: int = Field(default=20, ge=1, le=100)
     page_size_max: int = Field(default=50, ge=1, le=100)
     log_level: str = "INFO"
+    private_store_account_url: str | None = None
+    private_store_container: str | None = None
+    private_store_managed_identity_client_id: str | None = None
+
+    @model_validator(mode="after")
+    def require_private_store_pair(self) -> "Settings":
+        if bool(self.private_store_account_url) != bool(self.private_store_container):
+            raise ValueError(
+                "Private store account URL and container must be supplied together"
+            )
+        if (
+            self.private_store_managed_identity_client_id
+            and not self.private_store_account_url
+        ):
+            raise ValueError("Private store identity requires an account/container")
+        return self
 
     @property
     def mcp_resource_uri(self) -> str:

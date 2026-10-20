@@ -1,0 +1,1368 @@
+{
+  "format_version": 1,
+  "research_date": "2026-10-17",
+  "scope": "User-authorized planning research: existing native browser HTTP flows for all tools/resources. No implementation or live mutation.",
+  "baseline": {
+    "upstream": "b5b7800f0fcddf9d0db47276a66065189365d905",
+    "root_import": "e092fa042862f42161bbee68f8ecff226ee64996",
+    "head": "208d69ac624910a29a7529934ddcc18bbac853e8"
+  },
+  "plan": {
+    "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp/docs/mcp/existing-api-migration/implementation-plan.md",
+    "sha256": "c03d891b5724f75ba92988ab9991e9ca3dcec8ea4a5bbe57e04816dab752437b",
+    "previous_sha256": "ed07da7540b98b6748ad47312886ee9cb2e5006f3005df2f3f231c7cb49ea23b",
+    "previous_private_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Migration-Baseline-2026-10-17/plan-before-browser-research.md",
+    "prior_delivery_path": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md",
+    "prior_amendment_sha256": "9828366ee9823583bbea2fbda613bde313fd5dd239d7d5fdf2a96038c549edba",
+    "repository_path": "docs/mcp/existing-api-migration/implementation-plan.md",
+    "delivery_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md",
+    "consolidated_date": "2026-10-18"
+  },
+  "companion_sha256": "ed97d7e46622f25f567479e6a4a50f9e46b895edbcc3503d4b91cc07aa511757",
+  "live_evidence": "No fresh browser/network capture, native installed-state check or academic mutation in this amendment. All handler/form findings are source evidence; proposed auth conversation is design requiring local/container proof.",
+  "tools": [
+    {
+      "id": "T01",
+      "tool": "list_my_courses",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Validate identity/OBO\u2192A0 current actor\u2192A1 `GET /api/users/me/sites` without pinned-only filtering\u2192check course flag/membership and effective visit eligibility\u2192map `siteId,title`, discard unrelated rich fields, sort/cap honestly\u2192return. B0 supplies placement discovery only if later workflows need it; no browser form is needed for this tool. Source IDs and existing membership semantics are retained. Test unpublished/deleted/public-only sites, multiple page tools, empty lists and oversized responses. Do not open every course's tool page merely to list courses.",
+      "browser_cards": [
+        "B0"
+      ],
+      "plan_anchor": "t01",
+      "current_catalogs": [
+        "00",
+        "10",
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T02",
+      "tool": "get_my_grades",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Validate actor/course\u2192determine the native role/access without calling a known broad grader aggregate route\u2192B0/B1 Gradebook\u2192B6 current-user StudentPage\u2192read released visible rows and maximums\u2192establish native item IDs using a safe unambiguous metadata/own-API correlation\u2192sort/normalize blank versus zero, points versus percentages, locale and IDs\u2192return only the current user's grades. A2 is a student-only shortcut when its field coverage suffices; it is not a grader-own-score source. For mixed-role users test the StudentPage current-user binding and metadata permissions. Source-confirmed own-page behavior improves coverage; exact ID/precision/empty-setting semantics still require fixture proof. No arbitrary student target, title-derived ID or aggregate-to-own conversion.",
+      "browser_cards": [
+        "B0",
+        "B1",
+        "B6"
+      ],
+      "plan_anchor": "t02",
+      "current_catalogs": [
+        "00",
+        "10",
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T03",
+      "tool": "get_course_announcements",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Validate course\u2192A3 narrow read where coverage is proven, otherwise B0/B1 Announcements\u2192B2 native list/detail pagination\u2192apply the public visibility/main-channel rules and read authoritative native IDs\u2192normalize title/plain body/author/date\u2192bind local cursor to actor/query/observation\u2192return. Stop on native completeness evidence and configured budgets; do not silently keep the browser's page-size default. For an instructor, distinguish permission to see drafts from the public tool's intended published-visible output. Test older announcements beyond A3's date window, merged channels, scheduled/retracted/group/role visibility and page changes.",
+      "browser_cards": [
+        "B0",
+        "B1",
+        "B2"
+      ],
+      "plan_anchor": "t03",
+      "current_catalogs": [
+        "00",
+        "10",
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T04",
+      "tool": "get_course_submissions",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Validate course/Assignment relation and grade scope\u2192B0/B1 Assignments\u2192B7 native grade-assignment list (or verified A5)\u2192collect submitted rows and exact submission/submitter references across native pages\u2192prove all-submitters scope before retrieving evidence where the public contract requires it\u2192filter submitted-only metadata, preserve original cap and sort/null-date policy\u2192return cursor page. B7 list supplies missing-user metadata for other tools but this tool still outputs only submitted rows. Test student/outsider denial, grade-only TA, group submissions spanning allowed/unallowed users, anonymous mode and changed pagination. Unknown object equality/scope is not repaired after fetching forbidden bodies.",
+      "browser_cards": [
+        "B0",
+        "B1",
+        "B7"
+      ],
+      "plan_anchor": "t04",
+      "current_catalogs": [
+        "00",
+        "10",
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T05",
+      "tool": "create_course_announcement",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Validate approved title/body and actor/site\u2192B0 placement/main-channel check\u2192B1 isolated flow\u2192B2 Add form\u2192set literal-safe body, site-only visibility, no implicit scheduling/notifications beyond the current contract\u2192journal pre-send baseline/request fingerprint\u2192POST `option=post` once\u2192parse alerts and new native reference\u2192fresh list/detail/A3 readback\u2192return receipt or partial/unknown. The existing UI is now the primary candidate, not an unavailable-write placeholder. Test actual current-author audit, literal HTML/entities, line breaks, disabled account, permission denial, native body sanitization, missing response, duplicate text and reconciliation without duplicate POST.",
+      "browser_cards": [
+        "B0",
+        "B1",
+        "B2"
+      ],
+      "plan_anchor": "t05",
+      "current_catalogs": [
+        "00",
+        "10",
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T06",
+      "tool": "get_course_assessment_context",
+      "status": "actual default locally tested; practical partial setup forms plus metadata-only items/categories; full native-role/delegated/field/staging/recovery acceptance pending",
+      "event_sequence_and_checks": "Validate instructor setup authority\u2192B0 required placements\u2192B3 Assignment list plus read-only edit/view forms\u2192B6 Gradebook settings/categories/item metadata\u2192A10/B5 calendar view\u2192join native relationships, normalize timezone/window/configuration and produce explicit per-section completeness/revisions\u2192return. Do not traverse student submission detail or call the default-hydrating A4 list just to get setup metadata. Tool initialization/preferences/access events are recorded as native read effects. Test not-initialized Gradebook/Calendar, category modes, drafts, multiple Gradebooks, missing permissions and unavailable fields. No native save, preview-save, new item or calendar creation is part of context discovery.",
+      "browser_cards": [
+        "B0",
+        "B3",
+        "B5",
+        "B6"
+      ],
+      "plan_anchor": "t06",
+      "current_catalogs": [
+        "10",
+        "11"
+      ],
+      "evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
+    },
+    {
+      "id": "T07",
+      "tool": "create_assignment",
+      "status": "actual default locally tested; practical partial setup forms plus metadata-only items/categories; full native-role/delegated/field/staging/recovery acceptance pending",
+      "event_sequence_and_checks": "Validate the full approved setup contract\u2192T06 context/preflight\u2192B4 Add form with native values/date units\u2192B8 attachment selection as needed\u2192record intent/baseline IDs\u2192submit the selected draft/save or published/post action once\u2192reopen exact created ID/configuration\u2192for published setup verify B5 linked deadline and B6 external item/category/flags, coordinating existing native item edits if allowed\u2192record complete/partial/unknown with remaining steps\u2192return. Preserve draft/publication functionality; enumerate title-length, minute/timezone, copy/link and transient Gradebook-default differences. A new internal Gradebook item is not equivalent to `new_external`. Reconciliation of a lost create response identifies the native object before any further creation.",
+      "browser_cards": [
+        "B4",
+        "B5",
+        "B6",
+        "B8"
+      ],
+      "plan_anchor": "t07",
+      "current_catalogs": [
+        "10",
+        "11"
+      ],
+      "evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
+    },
+    {
+      "id": "T08",
+      "tool": "publish_assignment",
+      "status": "actual default locally tested; practical partial setup forms plus metadata-only items/categories; full native-role/delegated/field/staging/recovery acceptance pending",
+      "event_sequence_and_checks": "Validate actor and exact existing draft ID\u2192B3 read edit form and current observation\u2192compare the approved expected revision, fail/review if changed\u2192preserve unrelated controls/attachments\u2192B4 same-ID `option=post` with requested Gradebook/calendar choices\u2192fresh same-ID draft/status read\u2192B5 authoritative native deadline coordination\u2192B6 external item/category/released/count flags readback and permitted edits\u2192journal and return verified remaining steps. Prefer edit/post over bulk publication when deadline creation is needed. An observation match is not a native lock. If already posted, reconcile expected configuration first; do not recreate Assignment, calendar event or Gradebook item just to produce an unchanged result.",
+      "browser_cards": [
+        "B3",
+        "B4",
+        "B5",
+        "B6"
+      ],
+      "plan_anchor": "t08",
+      "current_catalogs": [
+        "10",
+        "11"
+      ],
+      "evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
+    },
+    {
+      "id": "T09",
+      "tool": "get_assignment_grading_context",
+      "status": "source-reviewed 2026-10-20; strict frozen fields and compatible native revision inputs are not established by verified existing-HTTP projections; no cutover",
+      "event_sequence_and_checks": "Validate grader and Assignment/site relationship\u2192B3 native grading-accessible metadata/view (instructor edit form only if independently permitted)\u2192B7 native grade/list state and current scope\u2192B6 linked Gradebook metadata and selected score-read capability where authorized\u2192A12 rubric association only after native scope validation\u2192assemble observed fields, supported variant flags and coverage\u2192return revisioned context. Preserve grade-only TA support independently of setup permissions. Raw release/configuration/version not exposed by the active view stays unknown; use B7 rendered release state where available. Do not force legacy-grader preferences or invent raw native version fields. Current revision consumers in save/release hash additional persisted Assignment properties and flags not exposed by the verified projections; do not substitute http1 revisions or fabricate required context flags.",
+      "browser_cards": [
+        "B3",
+        "B6",
+        "B7"
+      ],
+      "plan_anchor": "t09",
+      "current_catalogs": [
+        "01",
+        "11"
+      ],
+      "latest_gate_review": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
+    },
+    {
+      "id": "T10",
+      "tool": "list_assignment_submissions",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Validate actor/site/Assignment/scope\u2192B7 native grading list and its group/search/page controls\u2192join permitted expected users and actual submission references\u2192classify submitted/missing/allowed orphan cases from authoritative observations\u2192produce stable observation/cursor and completeness reasons\u2192return. Native no-submission rows make missing-user coverage a credible UI candidate. They do not prove all inactive/deleted/orphan rows exist. Reconcile observed counts and repeated IDs; test all-submitters scope, roster privacy, group changes and anonymity. No source body download is needed for metadata pagination.",
+      "browser_cards": [
+        "B7"
+      ],
+      "plan_anchor": "t10",
+      "current_catalogs": [
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T11",
+      "tool": "get_assignment_submission",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Validate selected target from T10/native scope and current Assignment\u2192B7 follow the target's native detail link or scoped A5\u2192identify active modern/legacy render mode\u2192read exact submitted text, attachment references, feedback/notes/grade/status allowed by the contract\u2192B8 metadata/bytes only as requested\u2192calculate versioned observation/content hashes in Python\u2192return with explicit missing/coverage fields. Check actual returned submission ID and all submitters; no synthetic sentinel submission ID to bootstrap a scoped roster. Do not leak private notes into public evidence/resources just because they were available internally for field preservation.",
+      "browser_cards": [
+        "B7",
+        "B8"
+      ],
+      "plan_anchor": "t11",
+      "current_catalogs": [
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T12",
+      "tool": "export_assignment_submissions",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Validate request owner/site/Assignment and selected IDs\u2192conditional external intent using request ID+payload hash\u2192T09/T10/T11 current authorization/evidence\u2192B8 bounded content streams (B9 only if safe mapping/over-fetch accepted)\u2192verify before/after observations\u2192write immutable external artifacts and canonical manifest\u2192conditional receipt completion/partial state\u2192return export ID/expiry/MCP links. Hash actual bytes; keep dropped or unreadable files explicit. Native bulk ZIP is a candidate transport optimization, not a required server-side export/proposal service. No native atomic snapshot is claimed. Test restart, partial capture, same-ID/different-payload conflict, permission revocation, unsafe ZIPs and changed submissions during capture.",
+      "browser_cards": [
+        "B8",
+        "B9"
+      ],
+      "plan_anchor": "t12",
+      "current_catalogs": [
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T13",
+      "tool": "get_assignment_submission_export",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Load external record by bound actor/site/Assignment/export ID\u2192check ownership/expiry and source references\u2192fresh native scope/permission reauthorization through B0/B7\u2192read immutable manifest/receipt\u2192produce the same bounded pagination/status and links\u2192return. Never launch/resume capture from a read or extend expiry. A historical partial receipt remains partial until a separately authorized workflow acts. Reconcile imported legacy ownership/IDs separately; no old custom endpoint fallback is a final dependency.",
+      "browser_cards": [
+        "B0",
+        "B7"
+      ],
+      "plan_anchor": "t13",
+      "current_catalogs": [
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T14",
+      "tool": "save_assignment_grades",
+      "status": "fixture-confirmed actual default supported subset; delegated live acceptance pending",
+      "event_sequence_and_checks": "Validate approved exact operation ID/payload hash/mode\u2192T09/T10/T11 fresh scope/field-preservation observations\u2192compare expected observation revisions and supported score units\u2192for `validate`, return Python advisory checks with **no native grading POST**\u2192for approved `commit`, conditionally journal each row before send\u2192B7 existing Direct/form save action chosen for accepted save-versus-retract semantics\u2192read Assignment and B6 linked Gradebook after each selected row\u2192persist observed success/partial/unknown and return. Preserve current native side fields and attachment state. No blind retry, duplicate official write or batch-atomicity claim. Test grading permission changes, UI/student concurrent edits, lost responses, already-released submissions, resubmission/extension preservation, group overrides and swallowed projection errors.",
+      "browser_cards": [
+        "B6",
+        "B7"
+      ],
+      "plan_anchor": "t14",
+      "current_catalogs": [
+        "01",
+        "11"
+      ],
+      "local_evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
+      "implemented_subset": "One submitted individual site-wide points row; integral displayed scores; no Gradebook link; exact plain ASCII side-field/override preservation; HTTP observation revisions. T18 read-only advisory; commit durable Prepared/Sending then one setGrade POST, save or return, with partial/unknown readback and no replay/CAS/causal receipt."
+    },
+    {
+      "id": "T15",
+      "tool": "release_assignment_grades",
+      "status": "fixture-confirmed actual default supported subset; delegated live acceptance pending",
+      "event_sequence_and_checks": "Validate the separately approved return payload and current actor/scope\u2192preflight exact currently saved/approved scores and observations\u2192journal per-row intent\u2192B7 native `gradeOption=return` or legacy `option=returngrade` once\u2192verify returned plus release state, score/feedback and B6 projection\u2192persist receipt/unknown attribution\u2192return. Native Return can rewrite score/feedback and emit notifications; it is not a passive toggle. Do not replace it with Gradebook `setScore`, native release-without-return, a custom boolean write, or a repeated request after timeout. Validation mode performs no academic write.",
+      "browser_cards": [
+        "B6",
+        "B7"
+      ],
+      "plan_anchor": "t15",
+      "current_catalogs": [
+        "01",
+        "11"
+      ],
+      "local_evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
+      "implemented_subset": "One submitted individual site-wide points row; integral displayed scores; no Gradebook link; exact plain ASCII side-field/override preservation; HTTP observation revisions. T18 read-only advisory; commit durable Prepared/Sending then one setGrade POST, save or return, with partial/unknown readback and no replay/CAS/causal receipt."
+    },
+    {
+      "id": "T16",
+      "tool": "get_assignment_grades",
+      "status": "actual default locally tested; bounded native pagination and narrowly authorized B6 display-score readback; actual-view/role/precision/comment acceptance pending",
+      "event_sequence_and_checks": "Validate selected submission/user relationships and current scope\u2192B7 current Assignment grade/release/return observations\u2192B6 selected native Gradebook item and student row/summary readback\u2192join by native external Assignment reference/item ID and native UID\u2192normalize actual units/precision and distinguish blank/zero\u2192return requested pairs with verification status. Gradebook table/summary is a new credible exact-selected read candidate; the prior average-only conclusion is superseded for the expanded HTTP surface. Never substitute Assignment score for an unreadable Gradebook score, bypass TA restrictions, identify an item by title alone, or mark a rounded display value exact beyond its representation.",
+      "browser_cards": [
+        "B6",
+        "B7"
+      ],
+      "plan_anchor": "t16",
+      "current_catalogs": [
+        "01",
+        "11"
+      ],
+      "evidence": "docs/mcp/existing-api-migration/readback-2026-10-20.md"
+    },
+    {
+      "id": "T17",
+      "tool": "get_assignment_grading_operation",
+      "status": "actual external default locally tested; owner/target-bound historical receipt subset; unknowns preserved; legacy/live/reconciliation gates pending",
+      "event_sequence_and_checks": "Require configured durable external storage \u2192 current delegated actor/site/site-wide grading + positive individual native view \u2192 load owner-bound operation \u2192 validate provenance, exact typed approved request, payload/receipt hashes, ID/kind/mode/targets \u2192 reauthorize every exact submission/user pair \u2192 return historical receipt with withheld Gradebook values and explicit unresolved outcome/reconciliation warnings. Read never writes storage or HTTP academic state, resumes or retries. Transitional save/release commits persist Prepared/Sending before one native POST and persist matching confirmed replies; same ID returns stored outcome, never resends. Native legacy receipt import and durable retention/backend acceptance remain open.",
+      "browser_cards": [],
+      "plan_anchor": "t17",
+      "current_catalogs": [
+        "01",
+        "11"
+      ],
+      "evidence": "docs/mcp/existing-api-migration/operation-read-2026-10-20.md"
+    },
+    {
+      "id": "T18",
+      "tool": "prepare_assignment_grade_payload",
+      "status": "fixture-confirmed actual default supported subset; delegated live acceptance pending",
+      "event_sequence_and_checks": "Validate input schema/targets/kind/score units\u2192T09\u2013T11 read-only preflight and observed revisions\u2192retain existing canonical payload hashing and exact commit-arguments construction in Python\u2192return advisory validation plus arguments for separate approval. Do not submit any existing save/return form with a fictitious `mode=validate`; native UI has no such dry-run contract. The current native validate call is replaced, not redirected to a mutating endpoint. Test hash/CSV/evaluator compatibility where applicable, changed state after preparation, invalid targets and no outgoing academic POSTs. Current validate call checks native authorization, semantic Assignment revision, selected current submission revisions, score bounds and state; Python may provide correctly labelled advisory validation from sufficient existing read evidence; merely validating the input schema does not establish current state. Do not send mode=validate to a normal form or claim current-state validation without equivalent read evidence.",
+      "browser_cards": [],
+      "plan_anchor": "t18",
+      "current_catalogs": [
+        "01",
+        "11"
+      ],
+      "local_evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
+      "implemented_subset": "One submitted individual site-wide points row; integral displayed scores; no Gradebook link; exact plain ASCII side-field/override preservation; HTTP observation revisions. T18 read-only advisory; commit durable Prepared/Sending then one setGrade POST, save or return, with partial/unknown readback and no replay/CAS/causal receipt."
+    },
+    {
+      "id": "T19",
+      "tool": "list_assignments",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Validate course/grader\u2192B0/B1 native Assignment list/grading-accessible view or safely scoped A4 metadata\u2192collect published assignments the actor can grade, exact references/titles/dates/max/status and completeness across pages\u2192normalize stable order/cursor and observation revisions\u2192return. Do not require Add/Edit/setup permissions. Exclude drafts per current grading discovery contract even if an instructor UI lists them; do not use default-hydrating A4 for broad metadata without an accepted over-fetch policy. Test grading-only flags, grade-only TA, group visibility and changes between pages.",
+      "browser_cards": [
+        "B0",
+        "B1"
+      ],
+      "plan_anchor": "t19",
+      "current_catalogs": [
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T20",
+      "tool": "prepare_assignment_mcq_grades",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "First reconcile owner-bound existing proposal ID/configuration\u2192T13 export authorization/immutable manifest\u2192T09/T10 current context/eligible scope\u2192read captured bytes via external store, checking manifest digests\u2192run the existing deterministic evaluator with the approved key/config\u2192generate canonical rows/CSV/review reports in Python\u2192conditionally persist proposal tied to original export/source expiry\u2192return MCP links. No new native operation, announcement, Assignment grade save or student return occurs. Missing/changed/ambiguous evidence becomes review-required/conflict according to the accepted contract, never invented marks or guessed answer-key content.",
+      "browser_cards": [],
+      "plan_anchor": "t20",
+      "current_catalogs": [
+        "01",
+        "11"
+      ],
+      "latest_gate_review": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
+    },
+    {
+      "id": "T21",
+      "tool": "get_assignment_grading_proposal",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Load proposal under verified owner/site/Assignment\u2192revalidate source export/lifetime and current native scope\u2192verify frozen configuration/provenance/digests\u2192paginate immutable proposal rows and provide report links\u2192return. Do not recompute a legacy proposal against current submissions or refresh its expiry. Preserve existing canonical report formats where input/provenance semantics remain compatible; migrate old revisions explicitly.",
+      "browser_cards": [],
+      "plan_anchor": "t21",
+      "current_catalogs": [
+        "01",
+        "11"
+      ]
+    },
+    {
+      "id": "T22",
+      "tool": "read_assignment_grading_resource",
+      "status": "source-candidate; dynamic delegated acceptance pending",
+      "event_sequence_and_checks": "Parse the fixed `sakai://` grammar using the existing URI parser\u2192resolve one of R01\u2013R05 below under the acting owner/current native scope\u2192verify revision/digest/expiry\u2192present exactly the SDK text/blob/MIME/EmbeddedResource output already used by the tool fallback\u2192return. This remains the same evidence pipeline as `resources/read`. No arbitrary URL download, password prompt, native custom route, UI-generated external redirect or write occurs merely because a URI was supplied.",
+      "browser_cards": [],
+      "plan_anchor": "t22",
+      "current_catalogs": [
+        "01",
+        "11"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "R01",
+      "suffix": "/submissions/{S}/files/{F}{?revision}",
+      "event_sequence": "Validate URI/revision\u2192B0/B7 exact source/submission scope\u2192resolve F against freshly observed attachment refs or inline text\u2192B8 bounded content/read observed inline bytes\u2192compare expected observation/content digest\u2192SDK text/blob",
+      "verification": "Existing `/access/content` for attachments; existing native detail/A5 for inline submission text. Preserve exact encoding where proven; a rich-text renderer's added markup is not necessarily the stored inline byte contract.",
+      "recovery": "Stale/ambiguous source denies; no arbitrary ref/path. Hash actual content. Native content filtering/copyright/availability behavior remains.",
+      "status": "source-candidate/external workflow design; dynamic delegated acceptance pending"
+    },
+    {
+      "id": "R02",
+      "suffix": "/files/{F}{?revision}",
+      "event_sequence": "Validate URI\u2192B3/B7 grading-accessible Assignment attachment mapping\u2192B8 native content\u2192hash/length/revision\u2192SDK presentation",
+      "verification": "Existing attachment references and native ACL, not a new Assignment-file endpoint. F may remain a digest-derived public ID if canonical reference behavior matches.",
+      "recovery": "Copy/link changes during B8 setup can change attached ID; invalidate prior observation/revision, do not silently remap to a same-name file.",
+      "status": "source-candidate/external workflow design; dynamic delegated acceptance pending"
+    },
+    {
+      "id": "R03",
+      "suffix": "/exports/{E}/submissions/{S}/files/{artifact}",
+      "event_sequence": "Load owner-bound export\u2192check expiry/current B7 scope and S membership in manifest\u2192fetch immutable external artifact\u2192compare length/hash/MIME\u2192SDK presentation",
+      "verification": "Python external capture, not a native UI download token. Legacy artifact UUIDs retained only through verified import/mapping.",
+      "recovery": "No capture/retry-write during read. Revoked source authority or expired export denies access even when bytes still exist.",
+      "status": "source-candidate/external workflow design; dynamic delegated acceptance pending"
+    },
+    {
+      "id": "R04",
+      "suffix": "/exports/{E}/manifest",
+      "event_sequence": "Load/re-authorize export\u2192verify stored canonical manifest and aggregate pages/digests\u2192bounded presentation",
+      "verification": "Python immutable manifest with source observations, artifact identities, capture completeness and expiry.",
+      "recovery": "Detect duplicate artifacts, repeated cursors and mixed snapshots. Native ZIP contents are not silently substituted for the manifest.",
+      "status": "source-candidate/external workflow design; dynamic delegated acceptance pending"
+    },
+    {
+      "id": "R05",
+      "suffix": "/proposals/{P}/reports/{report}",
+      "event_sequence": "T21 owner/source authorization\u2192load frozen proposal\u2192existing report functions for permitted report names\u2192SDK text/blob",
+      "verification": "Python canonical proposals/marks/review-required reports, original evaluator provenance and export expiry.",
+      "recovery": "No official save/return, recomputation or expiry extension. Do not expose answer keys/private notes through another user's report link.",
+      "status": "source-candidate/external workflow design; dynamic delegated acceptance pending"
+    }
+  ],
+  "sources": [
+    {
+      "group": "U01",
+      "path": "apps/sakai/portal/portal-impl/impl/src/java/org/sakaiproject/portal/charon/handlers/ToolHandler.java",
+      "sha256": "92ef6e7defd5f90306a0b05eb70ca155acbfcb2a17c3a0d9c75d11954b1f1178",
+      "import_sha256": "92ef6e7defd5f90306a0b05eb70ca155acbfcb2a17c3a0d9c75d11954b1f1178",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "doGet",
+          "line": 77
+        },
+        {
+          "function": "doPost",
+          "line": 70
+        },
+        {
+          "function": "doTool",
+          "line": 112
+        }
+      ]
+    },
+    {
+      "group": "U01",
+      "path": "apps/sakai/portal/portal-charon/charon/src/webapp/WEB-INF/web.xml",
+      "sha256": "af8c630f575452d4eed23766f7379b70d528eca6ebd7189a60eb9e023857d38d",
+      "import_sha256": "af8c630f575452d4eed23766f7379b70d528eca6ebd7189a60eb9e023857d38d",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U01",
+      "path": "apps/sakai/kernel/kernel-impl/src/main/java/org/sakaiproject/tool/impl/ActiveToolComponent.java",
+      "sha256": "6db6d16ebe09aba8cfa4d55c263f989d309953878c8c882c82f41b5840707eac",
+      "import_sha256": "6db6d16ebe09aba8cfa4d55c263f989d309953878c8c882c82f41b5840707eac",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "forward",
+          "line": 493
+        }
+      ]
+    },
+    {
+      "group": "U01",
+      "path": "apps/sakai/entitybroker/core-providers/src/java/org/sakaiproject/entitybroker/providers/SiteEntityProvider.java",
+      "sha256": "b798e5c78d69ecc91fa4123d4177bb8c69f5715762e146bbfedd869d09d2b39a",
+      "import_sha256": "b798e5c78d69ecc91fa4123d4177bb8c69f5715762e146bbfedd869d09d2b39a",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "getPagesAndTools",
+          "line": 514
+        }
+      ]
+    },
+    {
+      "group": "U01",
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/controllers/SitesController.java",
+      "sha256": "33981378c860cb33673f46f17c87a9e99f8b0ac37748203321cdbdf263da3a87",
+      "import_sha256": "33981378c860cb33673f46f17c87a9e99f8b0ac37748203321cdbdf263da3a87",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "getSites",
+          "line": 59
+        }
+      ]
+    },
+    {
+      "group": "U02",
+      "path": "apps/sakai/velocity/tool/src/java/org/sakaiproject/cheftool/VelocityPortletPaneledAction.java",
+      "sha256": "88d6263bec182b0db21c915c908c82f40b1f4145433630fc3942f2a028ad491c",
+      "import_sha256": "88d6263bec182b0db21c915c908c82f40b1f4145433630fc3942f2a028ad491c",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "actionDispatch",
+          "line": 705
+        }
+      ]
+    },
+    {
+      "group": "U02",
+      "path": "apps/sakai/velocity/tool/src/java/org/sakaiproject/cheftool/ToolServlet.java",
+      "sha256": "2e953f2bd035e4e1118838affd6996b46a1d14dca887eb014360dbb051833f9a",
+      "import_sha256": "2e953f2bd035e4e1118838affd6996b46a1d14dca887eb014360dbb051833f9a",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "doPost",
+          "line": 150
+        },
+        {
+          "function": "doGet",
+          "line": 159
+        }
+      ]
+    },
+    {
+      "group": "U02",
+      "path": "apps/sakai/velocity/tool/src/java/org/sakaiproject/vm/ActionURL.java",
+      "sha256": "670e46932403a9cf721a696436077883f368d20cf589452187fb63adfc4f2f3d",
+      "import_sha256": "670e46932403a9cf721a696436077883f368d20cf589452187fb63adfc4f2f3d",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "setAction",
+          "line": 141
+        }
+      ]
+    },
+    {
+      "group": "U02",
+      "path": "apps/sakai/velocity/tool/src/templates/VM_chef_library.vm",
+      "sha256": "7c02ba53fadef55ceae7cd5d0445917ce75c2fdcfbfb32b2945086122ebb7015",
+      "import_sha256": "7c02ba53fadef55ceae7cd5d0445917ce75c2fdcfbfb32b2945086122ebb7015",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U03",
+      "path": "apps/sakai/announcement/announcement-tool/tool/src/java/org/sakaiproject/announcement/tool/AnnouncementAction.java",
+      "sha256": "aff4bce4ca08ae0f4f477bcec343b83986a150d33bd7b8bfbe0fd3ef685357c2",
+      "import_sha256": "aff4bce4ca08ae0f4f477bcec343b83986a150d33bd7b8bfbe0fd3ef685357c2",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "doNewannouncement",
+          "line": 2365
+        },
+        {
+          "function": "doAnnouncement_form",
+          "line": 2391
+        },
+        {
+          "function": "readAnnouncementForm",
+          "line": 2441
+        },
+        {
+          "function": "doPost",
+          "line": 2604
+        },
+        {
+          "function": "postOrSaveDraft",
+          "line": 2612
+        }
+      ]
+    },
+    {
+      "group": "U03",
+      "path": "apps/sakai/announcement/announcement-tool/tool/src/webapp/vm/announcement/chef_announcements-revise.vm",
+      "sha256": "6e68e1e3b55e0fce886d6baced13031b52652f9bbddf588bbd5e1aee593f2c97",
+      "import_sha256": "6e68e1e3b55e0fce886d6baced13031b52652f9bbddf588bbd5e1aee593f2c97",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U03",
+      "path": "apps/sakai/announcement/announcement-tool/tool/src/webapp/vm/announcement/chef_announcements.vm",
+      "sha256": "2fe4d5b6a9d7122d65c3b77e6488dd258ab14e2efa9322b009b26e471b5fb88c",
+      "import_sha256": "2fe4d5b6a9d7122d65c3b77e6488dd258ab14e2efa9322b009b26e471b5fb88c",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U03",
+      "path": "apps/sakai/announcement/announcement-tool/tool/src/webapp/WEB-INF/web.xml",
+      "sha256": "62bb59c0f6c4e5497064720cbaab7c41ffa227be63f62078d7bfde82be0c02c4",
+      "import_sha256": "62bb59c0f6c4e5497064720cbaab7c41ffa227be63f62078d7bfde82be0c02c4",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U04",
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentAction.java",
+      "sha256": "e221ea1bc508869f34f8aeeacdca55605d708efc16e1b980743b5163118514f2",
+      "import_sha256": "2e94e338ad0bd2f1cf791159a4c0eae3ef9bc7050499aaa4eba394713e113340",
+      "unchanged_from_import": false,
+      "functions": [
+        {
+          "function": "doNew_assignment",
+          "line": 7844
+        },
+        {
+          "function": "post_save_assignment",
+          "line": 9006
+        },
+        {
+          "function": "doSave_assignment",
+          "line": 10712
+        },
+        {
+          "function": "doPost_assignment",
+          "line": 8920
+        },
+        {
+          "function": "doEdit_assignment",
+          "line": 10899
+        },
+        {
+          "function": "doPublish_confirm_assignment",
+          "line": 11429
+        },
+        {
+          "function": "doPublish_assignment",
+          "line": 11463
+        },
+        {
+          "function": "publishAssignment",
+          "line": 11498
+        },
+        {
+          "function": "doAssignment_form",
+          "line": 12146
+        }
+      ]
+    },
+    {
+      "group": "U04",
+      "path": "apps/sakai/assignment/tool/src/webapp/vm/assignment/chef_assignments_instructor_new_edit_assignment.vm",
+      "sha256": "0f9f1b189d3b501a40a4b422af573b4c229a4659aa196e96d744ea269bf6ec3f",
+      "import_sha256": "0f9f1b189d3b501a40a4b422af573b4c229a4659aa196e96d744ea269bf6ec3f",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U04",
+      "path": "apps/sakai/assignment/tool/src/webapp/WEB-INF/web.xml",
+      "sha256": "8399bd6ddcb0fab88cdc5e54b24a0fb3975defca27b09f906c9a5eec6f96c1d3",
+      "import_sha256": "8399bd6ddcb0fab88cdc5e54b24a0fb3975defca27b09f906c9a5eec6f96c1d3",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U05",
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentAction.java",
+      "sha256": "e221ea1bc508869f34f8aeeacdca55605d708efc16e1b980743b5163118514f2",
+      "import_sha256": "2e94e338ad0bd2f1cf791159a4c0eae3ef9bc7050499aaa4eba394713e113340",
+      "unchanged_from_import": false,
+      "functions": [
+        {
+          "function": "setNewAssignmentParameters",
+          "line": 7902
+        },
+        {
+          "function": "putTimeInputInState",
+          "line": 8764
+        }
+      ]
+    },
+    {
+      "group": "U05",
+      "path": "apps/sakai/assignment/tool/src/webapp/vm/assignment/instructor_new_edit/grading_section.vm",
+      "sha256": "5939d7421a17dc8f5ddfe0a9ab3ac1dbfeb4177ed5ca65c03ef1cde19bc5b039",
+      "import_sha256": "5939d7421a17dc8f5ddfe0a9ab3ac1dbfeb4177ed5ca65c03ef1cde19bc5b039",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U05",
+      "path": "apps/sakai/assignment/tool/src/webapp/vm/assignment/instructor_new_edit/assignto_section.vm",
+      "sha256": "832c547cc5609ba66099c9739568a06adf5a9dad31f32fb33aa1d65acf8c02af",
+      "import_sha256": "832c547cc5609ba66099c9739568a06adf5a9dad31f32fb33aa1d65acf8c02af",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U06",
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentAction.java",
+      "sha256": "e221ea1bc508869f34f8aeeacdca55605d708efc16e1b980743b5163118514f2",
+      "import_sha256": "2e94e338ad0bd2f1cf791159a4c0eae3ef9bc7050499aaa4eba394713e113340",
+      "unchanged_from_import": false,
+      "functions": [
+        {
+          "function": "integrateWithCalendar",
+          "line": 10189
+        },
+        {
+          "function": "integrateWithCalendarTool",
+          "line": 10208
+        },
+        {
+          "function": "updateAssignmentWithEventId",
+          "line": 10266
+        },
+        {
+          "function": "addAssignmentIdToCalendar",
+          "line": 10324
+        },
+        {
+          "function": "integrateAssignmentWithGradebook",
+          "line": 9900
+        },
+        {
+          "function": "integrateWithAnnouncement",
+          "line": 10035
+        }
+      ]
+    },
+    {
+      "group": "U06",
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentToolUtils.java",
+      "sha256": "e6d62713ab23ca3e46c56137a481fa394faa100bc42c52bfc6de22efdb71f702",
+      "import_sha256": "e6d62713ab23ca3e46c56137a481fa394faa100bc42c52bfc6de22efdb71f702",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "integrateGradebook",
+          "line": 433
+        }
+      ]
+    },
+    {
+      "group": "U06",
+      "path": "apps/sakai/calendar/calendar-api/api/src/java/org/sakaiproject/calendar/api/CalendarConstants.java",
+      "sha256": "6b8b031ba180a7e03b287a08937cb7c2bd611499cfe6e8aa6493002f57c833a4",
+      "import_sha256": "6b8b031ba180a7e03b287a08937cb7c2bd611499cfe6e8aa6493002f57c833a4",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U07",
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentAction.java",
+      "sha256": "e221ea1bc508869f34f8aeeacdca55605d708efc16e1b980743b5163118514f2",
+      "import_sha256": "2e94e338ad0bd2f1cf791159a4c0eae3ef9bc7050499aaa4eba394713e113340",
+      "unchanged_from_import": false,
+      "functions": [
+        {
+          "function": "doGrade_assignment",
+          "line": 12004
+        },
+        {
+          "function": "doGrade_submission",
+          "line": 11831
+        },
+        {
+          "function": "putSubmissionInfoIntoState",
+          "line": 11864
+        },
+        {
+          "function": "readGradeForm",
+          "line": 12794
+        },
+        {
+          "function": "checkSubmissionStateConsistency",
+          "line": 12300
+        },
+        {
+          "function": "doSave_grade_submission",
+          "line": 6980
+        },
+        {
+          "function": "doReturn_grade_submission",
+          "line": 7085
+        },
+        {
+          "function": "grade_submission_option",
+          "line": 7125
+        },
+        {
+          "function": "useSakaiGrader",
+          "line": 4627
+        }
+      ]
+    },
+    {
+      "group": "U07",
+      "path": "apps/sakai/assignment/tool/src/webapp/vm/assignment/chef_assignments_instructor_list_submissions.vm",
+      "sha256": "4809d055c303ad0975c1fe8bd015f2584fa1f5fc5e143d738475f2e3903eea84",
+      "import_sha256": "4809d055c303ad0975c1fe8bd015f2584fa1f5fc5e143d738475f2e3903eea84",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U07",
+      "path": "apps/sakai/assignment/tool/src/webapp/vm/assignment/chef_assignments_instructor_grading_submission.vm",
+      "sha256": "d796d25645dd315f92250770e82c70e705797bf3c66d9937479cbfe0a676e0fd",
+      "import_sha256": "d796d25645dd315f92250770e82c70e705797bf3c66d9937479cbfe0a676e0fd",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U07",
+      "path": "apps/sakai/assignment/tool/src/webapp/vm/assignment/chef_assignments_instructor_grading_submission_withgrader.vm",
+      "sha256": "e2a8a8fb2ed87797ee2cc368ad435f06d80e19d527db3611040fd11c3e92187e",
+      "import_sha256": "e2a8a8fb2ed87797ee2cc368ad435f06d80e19d527db3611040fd11c3e92187e",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U08",
+      "path": "apps/sakai/webcomponents/tool/src/main/frontend/packages/sakai-grader/src/sakai-gradable-data-mixin.js",
+      "sha256": "6292a7f99e5f5e4f3aef96baa939a2794fc25b3d875456e1dc21214289d945e8",
+      "import_sha256": "6292a7f99e5f5e4f3aef96baa939a2794fc25b3d875456e1dc21214289d945e8",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "_loadGradableData",
+          "line": 6
+        },
+        {
+          "function": "_fetchHydratedSubmissions",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "group": "U08",
+      "path": "apps/sakai/webcomponents/tool/src/main/frontend/packages/sakai-grader/src/SakaiGrader.js",
+      "sha256": "b4347b6a24576a4a637acea2b132c3d62f401e10f9161de7be0603347f33a0ac",
+      "import_sha256": "b4347b6a24576a4a637acea2b132c3d62f401e10f9161de7be0603347f33a0ac",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "_getFormData",
+          "line": 455
+        },
+        {
+          "function": "_submitGradingData",
+          "line": 510
+        }
+      ]
+    },
+    {
+      "group": "U08",
+      "path": "apps/sakai/webcomponents/tool/src/main/frontend/packages/sakai-grader/src/submission.js",
+      "sha256": "7379dba050cf07f7e0a8bdd6361c31be9c623e82fd4f0877812449c8cd45260c",
+      "import_sha256": "7379dba050cf07f7e0a8bdd6361c31be9c623e82fd4f0877812449c8cd45260c",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U08",
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/entityproviders/AssignmentEntityProvider.java",
+      "sha256": "c02588bcae592d8e02724ecc40863aff52d31fb2512e801e412847045ac3e44d",
+      "import_sha256": "c02588bcae592d8e02724ecc40863aff52d31fb2512e801e412847045ac3e44d",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "getGradableForSite",
+          "line": 1002
+        },
+        {
+          "function": "getFullSubmissions",
+          "line": 944
+        },
+        {
+          "function": "submissionToMap",
+          "line": 668
+        },
+        {
+          "function": "setGrade",
+          "line": 1223
+        }
+      ]
+    },
+    {
+      "group": "U08",
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentToolUtils.java",
+      "sha256": "e6d62713ab23ca3e46c56137a481fa394faa100bc42c52bfc6de22efdb71f702",
+      "import_sha256": "e6d62713ab23ca3e46c56137a481fa394faa100bc42c52bfc6de22efdb71f702",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "gradeSubmission",
+          "line": 301
+        }
+      ]
+    },
+    {
+      "group": "U09",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/GradebookNgApplication.java",
+      "sha256": "073583ee983f21e4f61c7ec7b27f9fe43d5bea9b1e278064e7e23e88d74dfc30",
+      "import_sha256": "073583ee983f21e4f61c7ec7b27f9fe43d5bea9b1e278064e7e23e88d74dfc30",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "init",
+          "line": 45
+        }
+      ]
+    },
+    {
+      "group": "U09",
+      "path": "apps/sakai/gradebookng/tool/src/webapp/WEB-INF/web.xml",
+      "sha256": "871484d345e5c36f0231c33a94305ba626940c382c183861de3bcf43278bd9cf",
+      "import_sha256": "871484d345e5c36f0231c33a94305ba626940c382c183861de3bcf43278bd9cf",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U09",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/pages/StudentPage.java",
+      "sha256": "d387a2d0e703585d382f3cdc380fe3f3ef9e63de36048a22ab3b35ec727fd5a9",
+      "import_sha256": "d387a2d0e703585d382f3cdc380fe3f3ef9e63de36048a22ab3b35ec727fd5a9",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "StudentPage",
+          "line": 48
+        }
+      ]
+    },
+    {
+      "group": "U09",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/panels/StudentGradeSummaryGradesPanel.java",
+      "sha256": "f1102380361b77e75788531d6cdf8f20f49d1018f84e8ecc0ab6176bed6a7f8c",
+      "import_sha256": "f1102380361b77e75788531d6cdf8f20f49d1018f84e8ecc0ab6176bed6a7f8c",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "onBeforeRender",
+          "line": 90
+        }
+      ]
+    },
+    {
+      "group": "U09",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/pages/BasePage.java",
+      "sha256": "00267a4b853be2908d8bd18e0f630f6f134e18165721cff420c0429b27e42f85",
+      "import_sha256": "00267a4b853be2908d8bd18e0f630f6f134e18165721cff420c0429b27e42f85",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "getCurrentGradebookUid",
+          "line": 354
+        },
+        {
+          "function": "getCurrentSiteId",
+          "line": 346
+        }
+      ]
+    },
+    {
+      "group": "U10",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/component/GbGradeTable.java",
+      "sha256": "8d7a95d294a0d16135c41f48bfb2a48c8a54685217c02f07ea12b1b9b3e51eb6",
+      "import_sha256": "8d7a95d294a0d16135c41f48bfb2a48c8a54685217c02f07ea12b1b9b3e51eb6",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "renderHead",
+          "line": 118
+        },
+        {
+          "function": "handleEvent",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "group": "U10",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/model/GbGradebookData.java",
+      "sha256": "d7ea703b0c21f3a5a80a03471494c372ab60433253534f6dc04305e6d0248b8d",
+      "import_sha256": "d7ea703b0c21f3a5a80a03471494c372ab60433253534f6dc04305e6d0248b8d",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "toScript",
+          "line": 272
+        },
+        {
+          "function": "serializeGrades",
+          "line": 310
+        },
+        {
+          "function": "serializeSmallGrades",
+          "line": 350
+        }
+      ]
+    },
+    {
+      "group": "U10",
+      "path": "apps/sakai/gradebookng/tool/src/webapp/scripts/gradebook-gbgrade-table.js",
+      "sha256": "b680e7d7764c4ece4381da7ea402bcf3dcf7f478385c96023f7514430c91c440",
+      "import_sha256": "b680e7d7764c4ece4381da7ea402bcf3dcf7f478385c96023f7514430c91c440",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "GbGradeTable.unpackPackedScores",
+          "line": 64
+        },
+        {
+          "function": "GbGradeTable.unpackJsonScores",
+          "line": 66
+        }
+      ]
+    },
+    {
+      "group": "U10",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/pages/GradebookPage.java",
+      "sha256": "8b1ef544c92854c9fdc5e8884b9d76238f4035339adc6a7abd0fab928d7a24b9",
+      "import_sha256": "8b1ef544c92854c9fdc5e8884b9d76238f4035339adc6a7abd0fab928d7a24b9",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "GradebookPage",
+          "line": 138
+        }
+      ]
+    },
+    {
+      "group": "U10",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/business/GradebookNgBusinessService.java",
+      "sha256": "899e8045ad5880d1ac2199c0bdb1ac913a5b3097360f26e7d5fd2ff27be94005",
+      "import_sha256": "899e8045ad5880d1ac2199c0bdb1ac913a5b3097360f26e7d5fd2ff27be94005",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "buildGradeMatrix",
+          "line": 813
+        },
+        {
+          "function": "getGradesForStudent",
+          "line": 2187
+        },
+        {
+          "function": "getGradebookAssignmentsForStudent",
+          "line": 362
+        }
+      ]
+    },
+    {
+      "group": "U11",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/panels/GradeSummaryTablePanel.java",
+      "sha256": "cc9794b8c5ab0cdb489097c68852b13f0981b384a510271d79f41e5f64b31b61",
+      "import_sha256": "cc9794b8c5ab0cdb489097c68852b13f0981b384a510271d79f41e5f64b31b61",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U11",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/panels/GradeSummaryTablePanel.html",
+      "sha256": "6a109724f09085cd7b8fa7c0f9438a8c026da1376f64a74c724258f5ed1cfcc8",
+      "import_sha256": "6a109724f09085cd7b8fa7c0f9438a8c026da1376f64a74c724258f5ed1cfcc8",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U11",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/panels/StudentGradeSummaryPanel.java",
+      "sha256": "a671f4b6b470b78861950c8543901d410d962a16303b424ce3b222f2cede5ff5",
+      "import_sha256": "a671f4b6b470b78861950c8543901d410d962a16303b424ce3b222f2cede5ff5",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U11",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/panels/InstructorGradeSummaryGradesPanel.java",
+      "sha256": "12901f6244c25c56157f58b37211f797161c16a7dcd6b1b20eff079abc450f12",
+      "import_sha256": "12901f6244c25c56157f58b37211f797161c16a7dcd6b1b20eff079abc450f12",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U11",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/panels/StudentGradeSummaryGradesPanel.html",
+      "sha256": "85d94e1c1fb9739c9c8282f5b6d28c0724868804ee9d0d2a662a7fe487aacfc7",
+      "import_sha256": "85d94e1c1fb9739c9c8282f5b6d28c0724868804ee9d0d2a662a7fe487aacfc7",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U12",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/actions/ViewGradeSummaryAction.java",
+      "sha256": "2b67ac3c3f461166d80a96e7a3d3466fb88597a5d6be212b08a0031efea3f88b",
+      "import_sha256": "2b67ac3c3f461166d80a96e7a3d3466fb88597a5d6be212b08a0031efea3f88b",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "handleEvent",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "group": "U12",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/actions/EditAssignmentAction.java",
+      "sha256": "24f66be4b549929a2d53ecd4418a8daa526dba2b12a5b8060236d50596f3419d",
+      "import_sha256": "24f66be4b549929a2d53ecd4418a8daa526dba2b12a5b8060236d50596f3419d",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "handleEvent",
+          "line": 40
+        }
+      ]
+    },
+    {
+      "group": "U12",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/actions/GradeUpdateAction.java",
+      "sha256": "c17e55a2fe411975ae8b9a7738cd7719b634eaa4b716e2babcb331d4701b103e",
+      "import_sha256": "c17e55a2fe411975ae8b9a7738cd7719b634eaa4b716e2babcb331d4701b103e",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "handleEvent",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "group": "U12",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/panels/AddOrEditGradeItemPanel.java",
+      "sha256": "feca9ff6ba61b6653c7afc94b635513983bb5501cd1c1f35f708742358c4e395",
+      "import_sha256": "feca9ff6ba61b6653c7afc94b635513983bb5501cd1c1f35f708742358c4e395",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U12",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/panels/AddOrEditGradeItemPanelContent.java",
+      "sha256": "69fe9e6a24272e30944f7de665bf9ca5379b5d09d749743e0f2a2ef060059986",
+      "import_sha256": "69fe9e6a24272e30944f7de665bf9ca5379b5d09d749743e0f2a2ef060059986",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U12",
+      "path": "apps/sakai/gradebookng/tool/src/java/org/sakaiproject/gradebookng/tool/panels/AddOrEditGradeItemPanelContent.html",
+      "sha256": "36751d9448cfe8700231c77be61e25404ae04e47200192de492204744cb41c96",
+      "import_sha256": "36751d9448cfe8700231c77be61e25404ae04e47200192de492204744cb41c96",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U13",
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentAction.java",
+      "sha256": "e221ea1bc508869f34f8aeeacdca55605d708efc16e1b980743b5163118514f2",
+      "import_sha256": "2e94e338ad0bd2f1cf791159a4c0eae3ef9bc7050499aaa4eba394713e113340",
+      "unchanged_from_import": false,
+      "functions": [
+        {
+          "function": "doAttachmentsFrom",
+          "line": 12314
+        },
+        {
+          "function": "doAttachments",
+          "line": 12409
+        }
+      ]
+    },
+    {
+      "group": "U13",
+      "path": "apps/sakai/content/content-tool/tool/src/java/org/sakaiproject/content/tool/FilePickerAction.java",
+      "sha256": "b67bf7b5009a456c6427e8a6c18a1e8253fed6eb62016fde3a182649619c3667",
+      "import_sha256": "b67bf7b5009a456c6427e8a6c18a1e8253fed6eb62016fde3a182649619c3667",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "doAttachitem",
+          "line": 1323
+        },
+        {
+          "function": "doAddattachments",
+          "line": 1751
+        },
+        {
+          "function": "attachCopy",
+          "line": 2058
+        },
+        {
+          "function": "attachLink",
+          "line": 2239
+        }
+      ]
+    },
+    {
+      "group": "U13",
+      "path": "apps/sakai/content/content-tool/tool/src/webapp/vm/content/sakai_filepicker_select.vm",
+      "sha256": "99e77fcba6df1ec6d361e37c765148e21b5c884a7ce6f3e6c065f0ea0f3f01e9",
+      "import_sha256": "99e77fcba6df1ec6d361e37c765148e21b5c884a7ce6f3e6c065f0ea0f3f01e9",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U13",
+      "path": "apps/sakai/content/content-tool/tool/src/webapp/vm/content/sakai_filepicker_attach.vm",
+      "sha256": "ed19a7804dfa781890bcc2d321c6d9e348c089283c0ac399e25c22600751edc1",
+      "import_sha256": "ed19a7804dfa781890bcc2d321c6d9e348c089283c0ac399e25c22600751edc1",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U13",
+      "path": "apps/sakai/kernel/api/src/main/java/org/sakaiproject/content/api/FilePickerHelper.java",
+      "sha256": "05bab95b36c8195ccf6abd39db512f46f0f4024c8001d7c82952de7587e9960d",
+      "import_sha256": "05bab95b36c8195ccf6abd39db512f46f0f4024c8001d7c82952de7587e9960d",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U14",
+      "path": "apps/sakai/assignment/impl/src/java/org/sakaiproject/assignment/impl/AssignmentServiceImpl.java",
+      "sha256": "0546a25a0144c097ca56c25b07ac15eabe5865b5b89594e099c0742548f6021b",
+      "import_sha256": "ee9f2e50656144b46ef3fa9f342eeaed6ad15e47d51e9dfb164045bdba4e3df2",
+      "unchanged_from_import": false,
+      "functions": [
+        {
+          "function": "getHttpAccess",
+          "line": 641
+        },
+        {
+          "function": "getSubmissionsZip",
+          "line": 2544
+        },
+        {
+          "function": "zipSubmissions",
+          "line": 3812
+        },
+        {
+          "function": "zipGroupSubmissions",
+          "line": 4141
+        }
+      ]
+    },
+    {
+      "group": "U14",
+      "path": "apps/sakai/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentAction.java",
+      "sha256": "e221ea1bc508869f34f8aeeacdca55605d708efc16e1b980743b5163118514f2",
+      "import_sha256": "2e94e338ad0bd2f1cf791159a4c0eae3ef9bc7050499aaa4eba394713e113340",
+      "unchanged_from_import": false,
+      "functions": [
+        {
+          "function": "doDownload_all",
+          "line": 14895
+        },
+        {
+          "function": "doPrep_download_all",
+          "line": 15861
+        }
+      ]
+    },
+    {
+      "group": "U15",
+      "path": "apps/sakai/kernel/api/src/main/java/org/sakaiproject/tool/api/SessionManager.java",
+      "sha256": "4e40d7eadd4f06fd455bd152704a1eaf874df10d2ef6665dd447b8bd4bd265fe",
+      "import_sha256": "4e40d7eadd4f06fd455bd152704a1eaf874df10d2ef6665dd447b8bd4bd265fe",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U15",
+      "path": "apps/sakai/kernel/kernel-impl/src/main/java/org/sakaiproject/tool/impl/SessionComponent.java",
+      "sha256": "a9e855928a99bc7bd48403e111685d0a5ec3a486c1d297f88768e1256a3e2887",
+      "import_sha256": "a9e855928a99bc7bd48403e111685d0a5ec3a486c1d297f88768e1256a3e2887",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "getSession",
+          "line": 241
+        },
+        {
+          "function": "startSession",
+          "line": 348
+        },
+        {
+          "function": "setCurrentSession",
+          "line": 418
+        }
+      ]
+    },
+    {
+      "group": "U15",
+      "path": "apps/sakai/kernel/api/src/main/java/org/sakaiproject/util/RequestFilter.java",
+      "sha256": "02800003e0b47797269188c9d113774a98314311824115edc467920d6fdd4a84",
+      "import_sha256": "02800003e0b47797269188c9d113774a98314311824115edc467920d6fdd4a84",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "assureSession",
+          "line": 1126
+        },
+        {
+          "function": "preProcessRequest",
+          "line": 1356
+        }
+      ]
+    },
+    {
+      "group": "U15",
+      "path": "apps/sakai/kernel/kernel-impl/src/main/java/org/sakaiproject/tool/impl/MySession.java",
+      "sha256": "7bcf3ab1e1785bb3af33bf27229656964e89e30d7a3fef7c8cd76d7c4fd0ebd7",
+      "import_sha256": "7bcf3ab1e1785bb3af33bf27229656964e89e30d7a3fef7c8cd76d7c4fd0ebd7",
+      "unchanged_from_import": true,
+      "functions": [
+        {
+          "function": "currentRequest",
+          "line": 303
+        },
+        {
+          "function": "invalidate",
+          "line": 273
+        }
+      ]
+    },
+    {
+      "group": "U15",
+      "path": "apps/sakai/kernel/api/src/main/java/org/sakaiproject/event/api/UsageSessionService.java",
+      "sha256": "8bf3c9548845f3c2cfa6dba2b389a2b00b6103344261030fe88d1595cc68c22a",
+      "import_sha256": "8bf3c9548845f3c2cfa6dba2b389a2b00b6103344261030fe88d1595cc68c22a",
+      "unchanged_from_import": true,
+      "functions": []
+    },
+    {
+      "group": "U15",
+      "path": "apps/sakai/kernel/kernel-impl/src/main/java/org/sakaiproject/user/impl/UserAuthnComponent.java",
+      "sha256": "685aef0a19c918743af8e6c64c8c463772481f6bf1975cd73e735fb48263cbe2",
+      "import_sha256": "685aef0a19c918743af8e6c64c8c463772481f6bf1975cd73e735fb48263cbe2",
+      "unchanged_from_import": true,
+      "functions": []
+    }
+  ],
+  "source_groups": {
+    "U01": "Portal, placement discovery and actual native cross-context dispatch",
+    "U02": "Velocity action URLs, tool state, helper dispatch and CSRF",
+    "U03": "Existing announcement creation/read forms and handler",
+    "U04": "Existing Assignment save, edit, publish and ordinary permissions",
+    "U05": "Existing setup controls, native time/unit semantics and Gradebook choices",
+    "U06": "Existing native Assignment-owned calendar/announcement/Gradebook integration",
+    "U07": "Existing grading list, detail, legacy form and state consistency",
+    "U08": "Modern grader existing Direct calls and precise save/return effects",
+    "U09": "Wicket mount points and current-user StudentPage",
+    "U10": "Gradebook native individual-score dataset, packing and scope",
+    "U11": "Existing current/selected-user summaries and visible score/maximum fields",
+    "U12": "Existing native Gradebook callbacks, external-item flags and old-grade check",
+    "U13": "Existing attachment selection/helper and copy-versus-link behavior",
+    "U14": "Existing Assignment ZIP HTTP handling; not MCP manifest/storage",
+    "U15": "Native session lifecycle, local map, wrappers, audit and account resolution"
+  },
+  "required_acceptance_states": [
+    "source-candidate",
+    "fixture-confirmed",
+    "delegated-read-confirmed",
+    "synthetic-write-confirmed",
+    "client-confirmed",
+    "retirement-ready"
+  ],
+  "open_evidence": [
+    "flow-session and cross-WAR integration",
+    "dynamic callback/form envelopes",
+    "own-grade item identity correlation",
+    "scoped TA/mixed-group safety",
+    "packed grade precision",
+    "active-mode grade release/save versus retract semantics",
+    "setup/title/timezone/attachment representability and transient flags",
+    "missing/orphan completeness",
+    "deployed baseline and legacy owner/storage inventory",
+    "Membership pagination, omitted user records, Assignment-reference realm eligibility and strict context raw-scale/release representability: evidence-review-2026-10-20.md",
+    "B8 actual native handler characterization in attachment-proof-2026-10-20.md; delegated AccessServlet/native-role/source-bound stream acceptance remains open. Roster2 filtered totals are not eligibility proof.",
+    "attachment-audit-2026-10-20.md: actual servlet/content component cases pass; positive delegated chain fails403 before native target; positive Python harness collection error; no repairs per user instruction."
+  ],
+  "implementation_checkpoint": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md; 20/22 actual defaults, 22/23 historical routes retired locally; no live acceptance"
+}

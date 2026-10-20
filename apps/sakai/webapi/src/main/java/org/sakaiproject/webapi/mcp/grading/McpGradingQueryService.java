@@ -2,18 +2,12 @@
 package org.sakaiproject.webapi.mcp.grading;
 
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.assignmentRef;
-import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.digest;
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.failure;
-import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.id;
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.obj;
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.stamp;
 import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.count;
 import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.decimal;
-import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.fields;
-import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.hash;
 import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.instant;
-import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.rows;
-import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.string;
 
 import org.sakaiproject.assignment.api.AssignmentConstants;
 import org.sakaiproject.assignment.api.AssignmentService;
@@ -22,18 +16,13 @@ import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.authz.api.Member;
 import org.sakaiproject.component.api.ServerConfigurationService;
-import org.sakaiproject.exception.IdUnusedException;
-import org.sakaiproject.exception.PermissionException;
-import org.sakaiproject.grading.api.GradingService;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.webapi.mcp.assessment.McpAssessmentService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,11 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** Read-only grading context, roster, submission and grade queries. */
+/** Retained grading context and its scoped roster dependencies. */
 @Service
 public class McpGradingQueryService {
     private final AssignmentService assignments;
-    private final GradingService grading;
     private final McpGradingStore store;
     private final SiteService sites;
     private final ServerConfigurationService config;
@@ -57,7 +45,6 @@ public class McpGradingQueryService {
 
     public McpGradingQueryService(
             AssignmentService assignments,
-            @Qualifier("org.sakaiproject.grading.api.GradingService") GradingService grading,
             McpGradingStore store,
             SiteService sites,
             ServerConfigurationService config,
@@ -66,7 +53,6 @@ public class McpGradingQueryService {
             McpGradingEvidence evidence,
             McpGradebookProjection gradebook) {
         this.assignments = assignments;
-        this.grading = grading;
         this.store = store;
         this.sites = sites;
         this.config = config;
@@ -312,205 +298,4 @@ public class McpGradingQueryService {
         }
     }
 
-    public Map<String, Object> list(String site, String id, String cursor, Integer limit) {
-        Assignment a = authorization.assignment(site, id);
-        var rows = roster(a);
-        String revision =
-                hash(
-                        obj(
-                                "actor",
-                                authorization.actor(),
-                                "site",
-                                site,
-                                "assignment",
-                                id,
-                                "rows",
-                                rows));
-        int offset = 0, size = limit == null ? 50 : limit;
-        if (size < 1 || size > 100) throw failure(HttpStatus.BAD_REQUEST);
-        if (cursor != null) {
-            String[] parts = cursor.split(":");
-            if (parts.length != 2 || !revision.equals(parts[0])) throw failure(HttpStatus.CONFLICT);
-            try {
-                offset = Integer.parseInt(parts[1]);
-            } catch (RuntimeException e) {
-                throw failure(HttpStatus.BAD_REQUEST);
-            }
-            if (offset < 0 || offset > rows.size()) throw failure(HttpStatus.BAD_REQUEST);
-        }
-        int end = Math.min(rows.size(), offset + size);
-        return obj(
-                "items",
-                rows.subList(offset, end),
-                "next_cursor",
-                end < rows.size() ? revision + ":" + end : null,
-                "snapshot_revision",
-                revision,
-                "observed_at",
-                stamp(Instant.now()),
-                "completeness",
-                completeness(a),
-                "warnings",
-                List.of());
-    }
-
-    public Map<String, Object> detail(String site, String id, String sid) {
-        Assignment a = authorization.assignment(site, id);
-        authorization.identityRead(a);
-        AssignmentSubmission s = authorization.submission(a, sid);
-        return obj(
-                "submission",
-                evidence.entry(
-                        a,
-                        evidence.submitters(s).size() == 1 ? evidence.submitters(s).get(0) : null,
-                        s,
-                        false),
-                "inline_text",
-                s.getSubmittedText(),
-                "inline_content_type",
-                s.getSubmittedText() == null ? null : "text/html",
-                "feedback_comment",
-                s.getFeedbackComment(),
-                "feedback_sha256",
-                s.getFeedbackComment() == null ? null : digest(s.getFeedbackComment()),
-                "observed_at",
-                stamp(Instant.now()),
-                "warnings",
-                List.of());
-    }
-
-    public Map<String, Object> listAssignments(String site, String cursor, Integer limit) {
-        if (!config.getBoolean("mcp.assignment.grading.enabled", false))
-            throw failure(HttpStatus.NOT_FOUND);
-        authorization.actor();
-        try {
-            if (!"course".equals(sites.getSiteVisit(site).getType()))
-                throw failure(HttpStatus.NOT_FOUND);
-        } catch (PermissionException e) {
-            throw failure(HttpStatus.FORBIDDEN);
-        } catch (IdUnusedException e) {
-            throw failure(HttpStatus.NOT_FOUND);
-        }
-        var available = assignments.getAssignmentsForContext(site);
-        if (available.size() > 5000) throw failure(HttpStatus.BAD_REQUEST);
-        List<Map<String, Object>> items =
-                available.stream()
-                        .filter(
-                                a ->
-                                        site.equals(a.getContext())
-                                                && !Boolean.TRUE.equals(a.getDraft())
-                                                && !Boolean.TRUE.equals(a.getDeleted())
-                                                && assignments.allowGradeSubmission(
-                                                        assignmentRef(a)))
-                        .sorted(Comparator.comparing(Assignment::getId))
-                        .map(
-                                a -> {
-                                    // Hydrate grading evidence before hashing lazy
-                                    // groups/attachments/properties.
-                                    Assignment hydrated = authorization.assignment(site, a.getId());
-                                    return obj(
-                                            "assignment_id",
-                                            hydrated.getId(),
-                                            "title",
-                                            hydrated.getTitle(),
-                                            "configuration_revision",
-                                            metadata.revision(hydrated));
-                                })
-                        .toList();
-        String revision = hash(obj("actor", authorization.actor(), "site", site, "items", items));
-        int size = limit == null ? 50 : limit, offset = 0;
-        if (size < 1 || size > 100) throw failure(HttpStatus.BAD_REQUEST);
-        if (cursor != null) {
-            String[] parts = cursor.split(":");
-            if (parts.length != 2 || !revision.equals(parts[0])) throw failure(HttpStatus.CONFLICT);
-            try {
-                offset = Integer.parseInt(parts[1]);
-            } catch (NumberFormatException e) {
-                throw failure(HttpStatus.BAD_REQUEST);
-            }
-        }
-        if (offset < 0 || offset > items.size()) throw failure(HttpStatus.BAD_REQUEST);
-        int end = Math.min(items.size(), offset + size);
-        return obj(
-                "items",
-                items.subList(offset, end),
-                "next_cursor",
-                end < items.size() ? revision + ":" + end : null,
-                "snapshot_revision",
-                revision);
-    }
-
-    public Map<String, Object> grades(String site, String id, Map<String, Object> request) {
-        fields(request, "rows");
-        Assignment a = authorization.assignment(site, id);
-        authorization.identityRead(a);
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (var row : rows(request, "rows")) {
-            fields(row, "submission_id", "sakai_user_id");
-            AssignmentSubmission s = authorization.submission(a, string(row, "submission_id"));
-            gradebook.target(a, s, row);
-            String uid = string(row, "sakai_user_id");
-            String gbScore = null, comment = null, state = "not_linked", reason = null;
-            try {
-                var item = gradebook.linked(a);
-                if (item != null) {
-                    gbScore = grading.getAssignmentScoreString(site, site, item.getId(), uid);
-                    var definition = grading.getAssignmentScoreComment(site, item.getId(), uid);
-                    comment = definition == null ? null : definition.getCommentText();
-                    state = "available";
-                } else if (a.getProperties()
-                                .get(
-                                        AssignmentConstants
-                                                .PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT)
-                        != null) {
-                    state = "unavailable";
-                    reason = "missing_link";
-                }
-            } catch (Exception e) {
-                state = "unavailable";
-                reason = "projection_unavailable";
-            }
-            result.add(
-                    obj(
-                            "submission_id",
-                            s.getId(),
-                            "sakai_user_id",
-                            uid,
-                            "content_revision",
-                            evidence.contentRevision(s),
-                            "grade_revision",
-                            evidence.gradeRevision(s),
-                            "score",
-                            decimal(s.getGrade(), a.getScaleFactor()),
-                            "feedback_sha256",
-                            s.getFeedbackComment() == null ? null : digest(s.getFeedbackComment()),
-                            "flags",
-                            evidence.flags(s),
-                            "returned_at",
-                            stamp(s.getDateReturned()),
-                            "gradebook_score",
-                            gbScore == null || gbScore.isBlank()
-                                    ? null
-                                    : new BigDecimal(gbScore).stripTrailingZeros().toPlainString(),
-                            "gradebook_comment_sha256",
-                            comment == null ? null : digest(comment),
-                            "gradebook_state",
-                            state,
-                            "reason",
-                            reason));
-        }
-        return obj(
-                "observed_at",
-                stamp(Instant.now()),
-                "assignment_revision",
-                metadata.revision(a),
-                "gradebook",
-                gradebook.link(a),
-                "rows",
-                result,
-                "completeness",
-                completeness(a),
-                "warnings",
-                List.of());
-    }
 }

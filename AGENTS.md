@@ -1,5 +1,9 @@
 # Repository guide
 
+The user-authorized [development worktree separation](docs/DEVELOPMENT_WORKTREES.md) assigns auth and tool work to distinct checkouts. This original checkout is retained as the mixed recovery source; preserve its files and use the recorded development directories for new implementation.
+
+The [canonical existing-HTTP migration plan](docs/mcp/existing-api-migration/implementation-plan.md) governs current migration work. Historical native business/lock/storage descriptions below document transition dependencies, not authorization to extend or retain them indefinitely. Only delegated authentication/session integration may be added in Sakai; replacement, focused retirement and data preservation follow the plan.
+
 This repository owns the Sakai development environment's Azure infrastructure, operations, and project services. Sakai application source lives under `apps/sakai/`.
 
 ## Where to work
@@ -9,7 +13,7 @@ This repository owns the Sakai development environment's Azure infrastructure, o
 - `services/mcp/` — project-owned Python MCP service, tests, and container source; follow its README and scoped `AGENTS.md`. All public tool definitions are in `src/sakai_mcp/mcp/tools.py`; the README maps the implementation layers.
 - `docs/` — architecture, access instructions, runbooks, and deployment history.
 - `skills/` — repository-owned agent Skill definitions; the [assignment setup Skill](skills/sakai-assignment-setup/SKILL.md) has a separately authorized opt-in development release; see [release evidence](docs/evidence/mcp/assignment-setup-release.md).
-- `apps/sakai/` — tracked Sakai application source and project changes.
+- `apps/sakai/` — tracked Sakai application source and project changes; `mcp-auth/` is the shared authentication/session-only extension with its own guide.
 
 ## MCP integration boundary
 

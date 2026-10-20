@@ -1,0 +1,35 @@
+{
+  "format_version": 1,
+  "date": "2026-10-19",
+  "scope": "Local source organization only; no deployment or data/runtime change",
+  "baseline_commit": "208d69ac624910a29a7529934ddcc18bbac853e8",
+  "migration_source_commit": "d447ec4ef8c3e9efb0a768d693c568927eec7044",
+  "migration_branch": "codex/replace-custom-sakai-api",
+  "migration_worktree": "/Users/burhanahmadkhan/Desktop/sakai-mcp",
+  "custom_branch": "codex/sakai-custom-native-api",
+  "custom_worktree": "/Users/burhanahmadkhan/Desktop/sakai-mcp-custom-native",
+  "commits": {
+    "preexisting_support": "062b2845d532136f85eeca0a92571b252687ac65",
+    "archived_preimplementation": "b168e8cfff28bfb178c0a6a06373b31bc7245576",
+    "current_migration": "d447ec4ef8c3e9efb0a768d693c568927eec7044"
+  },
+  "post_checkpoint_metadata_paths": [
+    "docs/mcp/existing-api-migration/check_scope.py",
+    "docs/mcp/existing-api-migration/README.md",
+    "docs/mcp/existing-api-migration/git-organization.json",
+    "docs/mcp/existing-api-migration/git-worktrees.md"
+  ],
+  "immutable_manifests": {
+    "baseline.json": "7b2454c7246db197407bb710eaae3303f1d82bd893856fc207cbdc08a9b9bfb8",
+    "implementation-start.json": "9e1e8f4961411029c2244d6b7dc48f701a7c95d2ffe6e6100b69cfcb8a35f77e"
+  },
+  "private_preservation": {
+    "directory": "/Users/burhanahmadkhan/Downloads/Sakai-Git-Organization-2026-10-19",
+    "files_manifest_sha256": "87a1c6cedd2fea5c744489e442026e6b7ac944b6e65101872e89b68f435cd9dd",
+    "archive_sha256": "2dbc905b8d170211f7229980f199c6a180d2843bf8c6a190cb89aa63541522d4",
+    "files": 30887,
+    "bytes": 962080032,
+    "archive_verified": true,
+    "note": "Contains credentials/private/runtime/editor/build files; owner-only local artifact, never commit. Source bytes preserved in place; checks may regenerate ignored caches/build outputs, whose originals remain archived."
+  }
+}

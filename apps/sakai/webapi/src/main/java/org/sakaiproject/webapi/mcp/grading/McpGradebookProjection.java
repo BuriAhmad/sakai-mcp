@@ -4,16 +4,11 @@ package org.sakaiproject.webapi.mcp.grading;
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.assignmentRef;
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.failure;
 import static org.sakaiproject.webapi.mcp.contracts.McpContractSupport.obj;
-import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.string;
 
 import org.sakaiproject.assignment.api.AssignmentConstants;
-import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.assignment.api.model.Assignment;
-import org.sakaiproject.assignment.api.model.AssignmentSubmission;
-import org.sakaiproject.grading.api.GradingAuthz;
 import org.sakaiproject.grading.api.GradingService;
 import org.sakaiproject.grading.api.SortType;
-import org.sakaiproject.site.api.SiteService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,29 +17,17 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-/** Permission-aware owned Gradebook links and target eligibility. */
+/** Retained context Gradebook links and capability policy. */
 @Service
 public class McpGradebookProjection {
-    private final AssignmentService assignments;
     private final GradingService grading;
-    private final SiteService sites;
-    private final GradingAuthz authz;
     private final McpGradingAuthorization authorization;
-    private final McpGradingEvidence evidence;
 
     public McpGradebookProjection(
-            AssignmentService assignments,
             @Qualifier("org.sakaiproject.grading.api.GradingService") GradingService grading,
-            SiteService sites,
-            @Qualifier("org.sakaiproject.grading.api.GradingAuthz") GradingAuthz authz,
-            McpGradingAuthorization authorization,
-            McpGradingEvidence evidence) {
-        this.assignments = assignments;
+            McpGradingAuthorization authorization) {
         this.grading = grading;
-        this.sites = sites;
-        this.authz = authz;
         this.authorization = authorization;
-        this.evidence = evidence;
     }
 
     org.sakaiproject.grading.api.Assignment linked(Assignment a) {
@@ -150,27 +133,4 @@ public class McpGradebookProjection {
                                 != 0)) throw failure(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    void writeTarget(Assignment a, AssignmentSubmission s, Map<String, Object> row) {
-        target(a, s, row);
-        String uid = string(row, "sakai_user_id");
-        try {
-            if (!sites.getSiteVisit(a.getContext()).getUsers().contains(uid)
-                    || assignments.allowAddSubmissionUsers(assignmentRef(a)).stream()
-                            .noneMatch(u -> uid.equals(u.getId())))
-                throw failure(HttpStatus.FORBIDDEN);
-        } catch (Exception e) {
-            throw failure(HttpStatus.FORBIDDEN);
-        }
-    }
-
-    void target(Assignment a, AssignmentSubmission s, Map<String, Object> row) {
-        if (evidence.submitters(s).size() != 1
-                || !evidence.submitters(s).get(0).equals(string(row, "sakai_user_id")))
-            throw failure(HttpStatus.CONFLICT);
-        var item = linked(a);
-        if (item != null
-                && !authz.isUserAbleToGradeItemForStudent(
-                        a.getContext(), a.getContext(), item.getId(), string(row, "sakai_user_id")))
-            throw failure(HttpStatus.FORBIDDEN);
-    }
 }

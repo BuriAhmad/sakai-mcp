@@ -1,0 +1,101 @@
+{
+  "format_version": 2,
+  "date": "2026-10-20",
+  "head": "0f9f44a76f34777b52f56ae03634ffd3a0b3bc6c",
+  "branch": "codex/replace-custom-sakai-api",
+  "previous_record": "continuation-2026-10-20-evidence-review.json",
+  "previous_record_sha256": "76596c77162f78c47ac3c7b88fbe96e2b5b7bda8e657719b22a85b0eab026382",
+  "scope": "Native content-handler characterization, actual blocked facade/credential gates and Roster2/realm research; no production implementation/default/route adoption, no runtime change.",
+  "private_checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Attachment-Proof-2026-10-20",
+  "private_hashes": {
+    "source-before.tar.gz": "11df01774debb24471182b3d00cc3824c86c42499388fec5965b46ae44fc67c6",
+    "manifest.json": "5d34e73767ec6123e627480598ade3813181ffefb5796f52fc24e300261a13a6"
+  },
+  "evidence": "docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md",
+  "files": [
+    {
+      "path": "apps/sakai/mcp-auth/README.md",
+      "before_sha256": "2051bf42a2a85db9c23931851f23c0c9c28fcc4a98ef2dad8ee5940f86e90b98",
+      "after_sha256": "7ec976d29022bbc925f5366cc0874cdf39737932afe798f6101049fc8dab220c",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/pom.xml",
+      "before_sha256": "57ea1d8a967949e5d118229e1d52bbf2fe3bc89d12d23132cea021160f95007f",
+      "after_sha256": "d1b20da6079ac44255c017757dac8e1f6f9e861ef8ee983ddee435c9bf48084e",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/content/impl/ExistingContentAccessTest.java",
+      "before_sha256": null,
+      "after_sha256": "5f675fb648d8630714290d90ae79514e548334c7f88cdd92ceb8a48758f3fd20",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedChainTest.java",
+      "before_sha256": "6a4932531ca8b8e15c3cf0511525cade0b6544cd8101f57b3f67c717177a8712",
+      "after_sha256": "3d44daa47d7e1eb1f4f6c3c27a6ef4b3e018dcb25586d91b4e47f406f8d0072a",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/SAKAI_INTEGRATION_GUIDE.md",
+      "before_sha256": "4c2becd306df237839ba94f949127ab5625549488ff5946214a4d007df22cf32",
+      "after_sha256": "083daea64f7c8dbb8a932d9bd57bf56edd9efd1697c5bc07b9843854a9f8b5ab",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/README.md",
+      "before_sha256": "9aa449f3a6159f22a0db7181b50ae6ac86de6160c651afd3d76c1e436247ba5e",
+      "after_sha256": "0d0661f902667a22674d3c046c1d4123864f3251066b7a47a9d119bf725a5cf6",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md",
+      "before_sha256": null,
+      "after_sha256": "494136b45cfe7f6983d942b3828e91f091745baa4e30700d757da9862e4b65ce",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/browser-flows.json",
+      "before_sha256": "1b4617a373a6b5648322f487680810cab061cc664fbadb8a068ac1266bf88ba5",
+      "after_sha256": "bafbc57044b959e6fda7afd8b5f66d6be5dd41ddf54edb41b8fc028864c00be1",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/coverage.json",
+      "before_sha256": "e2265292daff172801aac51b03d0f9a800c57598eb19539b07fc883b2ed96497",
+      "after_sha256": "e30c96af3330479fc12bc2c7c74e6de7b1dce9fd14d7cd6931a3b395b35f05f8",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/implementation-plan.md",
+      "before_sha256": "04568cea3ccdafc61e76c7b8190031f0add1de7afcbba678aa8a6d4d44ca02cb",
+      "after_sha256": "8fccabf1cedfb8ee1a006548ee1335b5e880b3e51bc171c379cf888edf972fd4",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/native-change-ledger.json",
+      "before_sha256": "15a9598a0ba30d627ff0531ae0676d2b70e9ea52e5b5d14d6e7e89675ed9e247",
+      "after_sha256": "dc2e1b426eb03749b16e66a18f2804b495abf78bbcb7f38ee4c2603580fff25e",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/progress.json",
+      "before_sha256": "7b7b238a20561f06758063f87c477a81d5b980cb101fc6463e1aa3d8119f0e5b",
+      "after_sha256": "25854f277d6b26ad6b3cae422cb4db4ff9ce54eac0b92417286ba6a8b24a809b",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/tool-limitations.md",
+      "before_sha256": "911c82915845a49e8a27c3536c1e3a0d52f7b1c4312bcd203a69ade7a85faa33",
+      "after_sha256": "456b5b5501c32d85aa97553b6fd2bb542b7b95f7853819f74733a5d21060da44",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_attachment_gate.py",
+      "before_sha256": null,
+      "after_sha256": "b2f62f2be3b4b995c214f55e539e7f5ff16ec2ae746318b9f7f9fbbc2d29493b",
+      "after_mode": "0o644"
+    }
+  ]
+}
