@@ -190,15 +190,24 @@ def validate(verify_working_tree=False, verify_progress=False):
     coverage, baseline = load("coverage.json"), load("baseline.json")
     catalog_path = ROOT / "services/mcp/tests/contracts/catalog.json"
     catalog = json.loads(catalog_path.read_text())
+    amendment_path = ROOT / "services/mcp/tests/contracts/local-assessment-catalog-v2.json"
+    amendment = json.loads(amendment_path.read_text())
+    need(sha(catalog_path) == amendment["historical_catalog_sha256"], "Amended catalog historical pin differs")
+    removed = set(amendment["removed_tools"])
+    need(removed == {"prepare_assignment_mcq_grades"}, "Review authorized catalog removal")
+    current_catalog = {
+        key: {**catalog[key], "tools": [name for name in catalog[key]["tools"] if name not in removed]}
+        for key in ("00", "10", "01", "11")
+    }
     for record in baseline["contracts"]:
         need(sha(ROOT / record["path"]) == record["sha256"], "Frozen contract changed")
     need(
         coverage["plan_sha256"] == baseline["plan"]["current_sha256"],
         "Plan provenance mismatch",
     )
-    for key, expected in (("00", 5), ("10", 8), ("01", 19), ("11", 22)):
-        need(coverage["catalogs"][key] == catalog[key], f"Catalog differs: {key}")
-        need(len(catalog[key]["tools"]) == expected, f"Tool count differs: {key}")
+    for key, expected in (("00", 5), ("10", 8), ("01", 18), ("11", 21)):
+        need(coverage["catalogs"][key] == current_catalog[key], f"Catalog differs: {key}")
+        need(len(current_catalog[key]["tools"]) == expected, f"Tool count differs: {key}")
         need(
             len(catalog[key]["templates"]) == (5 if key[1] == "1" else 0),
             f"Resource count differs: {key}",
@@ -212,9 +221,9 @@ def validate(verify_working_tree=False, verify_progress=False):
         "Browser flow plan provenance differs",
     )
     tools = coverage["tools"]
-    need(len(tools) == 22, "Tool coverage must have 22 distinct entries")
+    need(len(tools) == 21, "Tool coverage must have 21 distinct entries")
     need(
-        {t["name"] for t in tools} == set(catalog["11"]["tools"]),
+        {t["name"] for t in tools} == set(current_catalog["11"]["tools"]),
         "Tool inventory mismatch",
     )
     resources = coverage["resources"]
@@ -256,6 +265,16 @@ def validate(verify_working_tree=False, verify_progress=False):
         need(not set(item["legacy_route_ids"]) & retired, "Active caller of retired route")
         need(historical <= retired, "Historical dependency is still active")
         consumed.update(item["legacy_route_ids"])
+        consumed.update(historical)
+    retired_tools = coverage.get("retired_public_tools", [])
+    need({item["name"] for item in retired_tools} == removed, "Retired public inventory differs")
+    for item in retired_tools:
+        need(not item["legacy_route_ids"], "Retired tool still has active dependencies")
+        historical = set(item["historical_legacy_route_ids"])
+        need(historical <= {r["id"] for r in routes if r["state"] == "retired-local"}, "Retired tool depends on active route")
+        need((ROOT / item["retirement_evidence"]).is_file(), "Missing tool retirement evidence")
+        tree = ast.parse((ROOT / item["registration"]).read_text())
+        need(not any(isinstance(n, ast.AsyncFunctionDef) and n.name == item["name"] for n in ast.walk(tree)), "Retired public tool remains registered")
         consumed.update(historical)
     # A replaced caller can leave its native route intentionally retained while
     # regression/compatibility gates are open. Record that state explicitly;
@@ -310,7 +329,7 @@ def validate(verify_working_tree=False, verify_progress=False):
         archive = Path(baseline["checkpoint"]["location"])
         need(sha(archive) == baseline["checkpoint"]["sha256"], "Checkpoint changed")
     print(
-        f"Scope verified: 22 tools, 5 resources, {len(current_routes())} active native routes "
+        f"Scope verified: {len(tools)} tools (1 intentionally retired), 5 resources, {len(current_routes())} active native routes "
         f"({len(routes)} historical, 15 grading), "
         "4 catalogs, 8 decisions. No runtime or migration-completion claim."
     )

@@ -2,6 +2,7 @@
 
 import asyncio
 import base64
+import json
 from pathlib import Path
 
 import httpx
@@ -18,7 +19,7 @@ from sakai_mcp.errors import ErrorCode, SakaiError
 from sakai_mcp.grading.serialization import digest, payload_hash
 from sakai_mcp.mcp.server import create_server
 from sakai_mcp.sakai.client import SakaiClient
-from sakai_mcp.workflows.resources import parse_uri
+from sakai_mcp.workflows.resources import parse_uri, resource_root
 from tests.fixtures import grading_data as f
 from tests.fixtures.authentication import settings
 from tests.fixtures.sakai import FakeClient, FakeOBO, principal
@@ -202,7 +203,7 @@ def test_authenticated_sdk_resource_roundtrip(mode, data, mime):
 
 
 @pytest.mark.parametrize("mode", ["legacy", "2026-07-28"])
-def test_complete_proposal_workflow_and_tools_only_host(mode):
+def test_legacy_proposal_read_and_explicit_payload_tools_only_host(mode):
     backend = GradingClient()
     server = create_server(
         settings(assignment_grading_enabled=True), backend, Verifier()
@@ -225,21 +226,27 @@ def test_complete_proposal_workflow_and_tools_only_host(mode):
                 mode=mode,
             ) as host,
         ):
-            args = {
-                "course_id": f.COURSE,
-                "assignment_id": f.ASSIGNMENT,
-                "export_id": f.EXPORT,
-                "proposal_id": f.PROPOSAL,
-                "config": f.config().model_dump(),
+            assert "prepare_assignment_mcq_grades" not in {
+                t.name for t in (await host.list_tools()).tools
             }
-            prepared = await host.call_tool("prepare_assignment_mcq_grades", args)
-            assert not prepared.is_error, prepared
-            assert prepared.structured_content["proposed"] == 1
-            again = await host.call_tool("prepare_assignment_mcq_grades", args)
-            assert (
-                not again.is_error
-                and backend.private_writes == 1
-                and backend.downloads == 1
+            # Existing immutable record, not newly generated assessment.
+            backend.record = proposals.ProposalRecord(
+                proposal_id=f.PROPOSAL,
+                export_id=f.EXPORT,
+                request_sha256="b" * 64,
+                expires_at="2026-10-15T00:00:00Z",
+                payload=proposals.ProposalPayload(
+                    config=f.config(),
+                    rows=[
+                        proposals.ProposalRow.model_validate(
+                            json.loads(
+                                (
+                                    Path(__file__).parents[1] / "contracts/grading.json"
+                                ).read_text()
+                            )["rows"][0]
+                        )
+                    ],
+                ),
             )
             page = await host.call_tool(
                 "get_assignment_grading_proposal",
@@ -250,7 +257,10 @@ def test_complete_proposal_workflow_and_tools_only_host(mode):
                 },
             )
             assert page.structured_content["rows"][0]["score"] == "5"
-            uri = prepared.structured_content["resources"][1]["uri"]
+            uri = (
+                resource_root(f.COURSE, f.ASSIGNMENT)
+                + f"/proposals/{f.PROPOSAL}/reports/marks"
+            )
             report = await host.read_resource(uri)
             assert (
                 isinstance(report.contents[0], TextResourceContents)
@@ -290,9 +300,7 @@ def test_complete_proposal_workflow_and_tools_only_host(mode):
                 and len(backend.validated) == 1
             )
             assert backend.writes == 0
-            args["config"]["grading"]["key"][0] = "B"
-            changed = await host.call_tool("prepare_assignment_mcq_grades", args)
-            assert changed.is_error and "CONFLICT" in changed.content[0].text
+            assert backend.private_writes == 0
 
     asyncio.run(run())
 

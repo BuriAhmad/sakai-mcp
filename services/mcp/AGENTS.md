@@ -13,7 +13,7 @@ The [canonical existing-HTTP migration plan](../../docs/mcp/existing-api-migrati
 
 ## Existing workflow and release requirements
 
-The [MCP-only grading migration](../../docs/SAKAI_GRADING_MCP_RESOURCES.md) replaces the local importer with SDK resources and server proposal/report tools. Native resource/proposal endpoints preserve delegated permissions and existing grading gates; use the [two-stage grading release procedure](../../docs/GRADING_MCP_RESOURCE_RELEASE.md) before deployment.
+The [MCP-only grading migration](../../docs/SAKAI_GRADING_MCP_RESOURCES.md) uses SDK resources for evidence and existing tools for approved grade save/return; assessment belongs in the client Skill. Historical native resource/proposal endpoints and locks are not the migrated architecture; use the [two-stage grading release procedure](../../docs/GRADING_MCP_RESOURCE_RELEASE.md) before deployment.
 The project-owned Python MCP service and its tests belong under this directory. Follow [`docs/MCP_IMPLEMENTATION_RUNBOOK.md`](../../docs/MCP_IMPLEMENTATION_RUNBOOK.md) in phase order and keep its gate statuses and `docs/evidence/mcp/` reports accurate.
 
 The next-phase [assignment setup design](../../docs/SAKAI_ASSIGNMENT_SETUP.md) contains next-phase contracts, source research and implementation gates. The user-authorized implementation is separately gated; it does not widen the default V1 release. See [release evidence](../../docs/evidence/mcp/assignment-setup-release.md) for the enabled development deployment and remaining acceptance limits.

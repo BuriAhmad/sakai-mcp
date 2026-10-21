@@ -92,7 +92,7 @@ The shared check command runs lint/import ordering, formatting, typed function d
 
 The exact source of `evaluate_mcq` contributes to stored grading provenance. Its module is deliberately excluded from automatic formatting; tests verify its pre-refactor fingerprint and grading/report bytes. Any later engine change requires a separate provenance/version decision.
 
-The native integration remains in `apps/sakai/webapi/` with packages for security, courses, announcements, assessment, shared contracts, and grading. See [the native source map](../../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md). Its permission/session/lock rules remain authoritative.
+The native integration remains in `apps/sakai/webapi/` with packages for security, courses, announcements, assessment, shared contracts, and grading. See [the native source map](../../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md). Historical native permission/session/lock descriptions do not establish migrated writer guarantees.
 
 ## Catalog and feature gates
 
@@ -100,16 +100,16 @@ The native integration remains in `apps/sakai/webapi/` with packages for securit
 | --- | --- | --- | --- |
 | false | false | 5 | 0 |
 | true | false | 8 | 0 |
-| false | true | 19 | 5 |
-| true | true | 22 | 5 |
+| false | true | 18 | 5 |
+| true | true | 21 | 5 |
 
 The default tools are `list_my_courses`, `get_my_grades`, `get_course_announcements`, `get_course_submissions`, and `create_course_announcement`. Announcement creation is the only default write.
 
 `ASSIGNMENT_SETUP_ENABLED=false` independently gates `get_course_assessment_context`, `create_assignment`, and `publish_assignment`. The matching native property is `mcp.assignment.setup.enabled`.
 
-`ASSIGNMENT_GRADING_ENABLED=false` independently gates the fourteen grading tools and five resource templates. The matching native property is `mcp.assignment.grading.enabled`. Proposal/export preparation can write private durable records; official grade save and return remain separate approved operations. Ambiguous and partial mutations are reconciled rather than automatically replayed.
+`ASSIGNMENT_GRADING_ENABLED=false` independently gates the thirteen grading tools and five resource templates. The matching native property is `mcp.assignment.grading.enabled`. Export preparation can write private durable records; server MCQ preparation is removed and legacy proposals/reports are read-only compatibility access; official grade save and return remain separate approved operations. Ambiguous and partial mutations are reconciled rather than automatically replayed.
 
-Native grading also requires `ASN_SUBMISSION.LOCK_VERSION` and canonical owner-only storage configured through `mcp.assignment.grading.storage`. The refactor preserves existing records, paths, expiry, locking and wire formats; it introduces no schema migration or feature activation.
+Migrated captures and grading operation journals use configured external private conditional storage. Observation revisions are not native CAS or transactions. Current writes support one submitted individual, integral points, English forms and no Gradebook link. No records/schema cleanup or feature activation is included. See the [current assessment architecture](../../docs/SAKAI_GRADING_MCP_RESOURCES.md).
 
 These counts describe local source. Dated release evidence and fresh discovery determine what a deployed endpoint actually exposes.
 

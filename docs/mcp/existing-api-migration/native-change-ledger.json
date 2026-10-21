@@ -844,7 +844,8 @@
   },
   "current_proof_review": {
     "date": "2026-10-21",
-    "evidence": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md",
-    "result": "No native business implementation modified or retired. A14 caller requires separate compatible auth integration. grading-context mapping remains active with no production Python caller; retirement deferred after17 full-suite failures."
+    "evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md",
+    "native_changes": "None;22/23 retired locally; context route retained pending compatibility.",
+    "storage": "No records/schema removed or migrated. Legacy proposal reader retained with existing authorization/expiry."
   }
 }

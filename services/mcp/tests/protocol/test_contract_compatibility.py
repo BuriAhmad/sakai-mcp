@@ -33,7 +33,15 @@ def test_discovered_catalog_and_schemas_match_baseline(setup, grading):
     tools = asyncio.run(server.list_tools())
     templates = asyncio.run(server.list_resource_templates())
     expected = baseline[f"{int(setup)}{int(grading)}"]
-    assert [t.name for t in tools] == expected["tools"]
+    amendment = json.loads((CONTRACTS / "local-assessment-catalog-v2.json").read_text())
+    assert (
+        digest((CONTRACTS / "catalog.json").read_bytes())
+        == amendment["historical_catalog_sha256"]
+    )
+    assert [t.name for t in tools] == [
+        name for name in expected["tools"] if name not in amendment["removed_tools"]
+    ]
+    assert len(tools) == amendment["catalog_counts"][f"{int(setup)}{int(grading)}"]
     assert [
         t.model_dump(mode="json", by_alias=True, exclude_none=True) for t in templates
     ] == expected["templates"]

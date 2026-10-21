@@ -1,4 +1,6 @@
 Git organization (19 October): the migration source is now committed on
+
+**Current user-directed correction, 21 October:** MCQ preparation is removed;21 current facades use existing HTTP/external records. Catalog5/8/18/21, five resources including legacy proposal readers. Native retirement22/23 unchanged. Fresh suite583 passed/2 old count assertions failed without repair. [Current evidence and gates](local-assessment-correction-2026-10-21.md) supersede the earlier status descriptions below.
 `codex/replace-custom-sakai-api`; `codex/sakai-custom-native-api` has its own
 worktree at the original `208d69ac` baseline. See [worktree usage and verification](git-worktrees.md)
 and [the separate organization record](git-organization.json). Original baseline,
@@ -35,7 +37,7 @@ Phase 0 adds only this evidence directory and the count correction in the separa
 | File | Contents | Limits |
 |---|---|---|
 | [baseline.json](baseline.json) | Exact HEAD/import/tree IDs; all 188 expanded dirty entries, classifications, hashes and modes; fixture hashes; private checkpoint and plan provenance | Not a reviewed commit, deployed revision or runtime/data backup. Editor files fingerprinted only. |
-| [coverage.json](coverage.json) | 22 tools, five resource templates, four gate combinations, registrations/functions, native dependencies, research cards, owners, phases, gates, per-tool replacement matrix rows and D1–D8 | Eight defaults use existing HTTP with disclosed limits; nine routes retired locally. Fourteen tools and five resource families still need completion; live acceptance remains open. |
+| [coverage.json](coverage.json) | 21 current tools plus one historical retirement, five resource templates, four gate combinations, registrations/functions, native dependencies, research cards, owners, phases, gates, per-tool replacement matrix rows and D1–D8 | Eight defaults use existing HTTP with disclosed limits; nine routes retired locally. Fourteen tools and five resource families still need completion; live acceptance remains open. |
 | [native-change-ledger.json](native-change-ledger.json) | 57 native changed/added/deleted paths versus import; grouped actions, replacements, dependencies, risks and tests; private-store/cleanup wiring | Deleted flat paths reflect restructuring, not retirement. Preserve native data and unrelated changes. |
 | [route-references.json](route-references.json) | 109 repository files with reference locations/categories; ignored-consumer summary; separate installed-skill references | Reference inventory is not runtime reachability proof. No bodies, credentials or student content copied. |
 | [check_scope.py](check_scope.py) | Read-only comparison of coverage with frozen catalogs, actual registrations/functions and native mappings | Checks inventory integrity, not final architecture/live acceptance. |
@@ -63,7 +65,7 @@ python3 docs/mcp/existing-api-migration/check_scope.py --verify-working-tree
 
 The second command is **Phase 0 only**: it verifies original path presence/bytes, unchanged HEAD and the private archive hash. Future intentional implementation will naturally invalidate this preservation check. Keep the original baseline immutable and record new reviewed revisions/diffs rather than rewriting hashes to hide changes.
 
-The normal scope check verifies 22 tools, five resources, 23 routes (15 grading), all four catalogs, D1–D8, functions and complete native-route dependency coverage. Missing coverage, unknown mappings/dependencies and changed frozen contracts fail. New Spring mapping syntax requires review rather than silent omission. It does not scan every possible future replacement endpoint or prove final runtime behavior; implement the broader architecture gates in plan section 12 before cutover.
+The normal scope check verifies 21 current tools plus one intentional public retirement, five resources, 23 routes (15 grading), all four catalogs, D1–D8, functions and complete native-route dependency coverage. Missing coverage, unknown mappings/dependencies and changed frozen contracts fail. New Spring mapping syntax requires review rather than silent omission. It does not scan every possible future replacement endpoint or prove final runtime behavior; implement the broader architecture gates in plan section 12 before cutover.
 
 Freshly passed:
 

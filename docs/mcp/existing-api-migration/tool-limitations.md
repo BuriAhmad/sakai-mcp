@@ -7,11 +7,7 @@ governs implementation; [coverage](coverage.json) and [progress](progress.json)
 record migration state. Update this reference whenever a limit is discovered,
 changed or resolved, and link the implementation and verification evidence.
 
-**Twenty preceding replacements have local regression evidence. T09 is now wired to existing HTTP, but the full suite fails17 cases; it is not accepted. T20 remains incomplete.** This establishes neither full functional parity nor live acceptance, and
-none of the five resource families is fully migrated. Local tests and package
-builds do not prove deployed configuration, actual rendered native views, all
-Sakai roles, notification delivery or production performance. Nothing in this
-reference authorizes deployment, feature activation or academic writes.
+**Current amendment:** server MCQ preparation is intentionally removed; client assessment can use optional workspace scripts or other appropriate methods. All21 remaining facades use existing HTTP/external records, with20 earlier locally validated replacements and T09 still awaiting the full regression/compatibility gate. Fresh suite583 passed/2 failed (old catalog counts), recorded without repair. No live acceptance follows. Legacy proposal/report readers remain; no new server proposal creation. See [current correction and evidence](local-assessment-correction-2026-10-21.md). Native retirement remains22/23, and resource-family acceptance remains incomplete.
 
 ## How to interpret results
 
@@ -748,3 +744,9 @@ Thus21 facades are wired, but only the preceding20 replacements have their prior
 regression status. T09 is unaccepted; T20 is still incomplete;22/23 native routes
 remain retired. The last native route is retained without a current Python caller.
 See [exact evidence and failure categories](remaining-tools-2026-10-21.md).
+
+## User-directed MCQ retirement — 21 October 2026
+
+T20 is retired from the public catalog, not completed or accepted. Its earlier complete-roster/content requirements remain historical gates for the discontinued server workflow. Client assessment still requires complete, verified selected evidence and cannot infer class absence from incomplete listings. No attachments, extraction accuracy or filesystem delivery were accepted by this correction. The frozen evaluator/report implementation remains only for historical provenance verification; no runtime workflow imports the evaluator. Legacy proposal/report readers preserve existing expiry, authorization and stored records.
+
+The retained payload helper does not grade; save/return use explicit approved scores with no required proposal ID. Current single-individual/integer/unlinked/English-form restrictions and non-CAS observation semantics remain. The service publishes broad historical schemas, so discovery alone does not establish bulk or decimal capability.

@@ -5,7 +5,7 @@ from mcp.server.auth.provider import AccessToken
 from sakai_mcp.contracts import grading_native as native
 from sakai_mcp.contracts.assignments import assignment_summaries, observation_revision
 from sakai_mcp.contracts.existing_api import user_permissions
-from sakai_mcp.contracts.grading_proposals import ProposalPayload, ProposalRecord
+from sakai_mcp.contracts.grading_proposals import ProposalRecord
 from sakai_mcp.contracts.grading_public import AssignmentListResult
 from sakai_mcp.errors import ErrorCode, SakaiError
 from sakai_mcp.sakai.existing_transport import ExistingApiTransport
@@ -197,18 +197,4 @@ class GradingOperations:
         self._enabled()
         return await self.captures.proposal(
             principal, course_id, assignment_id, proposal_id
-        )
-
-    async def create_proposal(
-        self,
-        principal: AccessToken,
-        course_id: str,
-        assignment_id: str,
-        proposal_id: str,
-        payload: ProposalPayload,
-        export_id: str,
-    ) -> ProposalRecord:
-        self._enabled()
-        return await self.captures.create_proposal(
-            principal, course_id, assignment_id, proposal_id, payload, export_id
         )

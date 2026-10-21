@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-21",
+  "starting_head": "3c572178edfd78a3f25ac156afc64384c73fa75a",
+  "evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md",
+  "regression": {
+    "passed": 583,
+    "failed": 2,
+    "failed_cases": [
+      "test_independent_catalog_gates[False-True-19]",
+      "test_independent_catalog_gates[True-True-22]"
+    ],
+    "cause": "Unchanged catalog expectations19/22; intentional actual18/21",
+    "post_failure_repairs": false
+  },
+  "skill_validator": {
+    "status": "harness-import-error",
+    "error": "ModuleNotFoundError: No module named yaml",
+    "checks_executed": false
+  },
+  "catalogs": {
+    "00": 5,
+    "10": 8,
+    "01": 18,
+    "11": 21
+  },
+  "resources": 5,
+  "native_routes_retired": 22,
+  "native_routes_historical": 23,
+  "runtime_auth_changes": false,
+  "deployed": false,
+  "acceptance": "No delegated/native servlet/real-role/host-filesystem acceptance",
+  "private_log_sha256": "b73576f6bd61337726c8d07d355c238d79479f8ff61c702a4c5f7087b7e2a594"
+}

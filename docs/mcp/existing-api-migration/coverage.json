@@ -1,6 +1,6 @@
 {
   "format_version": 1,
-  "scope": "Inventory, not a routing configuration or authorization. A-card candidates are not automatically safe/approved operations.",
+  "scope": "21 current public tools; 1 intentionally retired MCQ tool; 5 resources including legacy proposal read compatibility. Historical native route inventory remains23.",
   "plan_sha256": "ed07da7540b98b6748ad47312886ee9cb2e5006f3005df2f3f231c7cb49ea23b",
   "catalog_flag_key": "setup,grading (00/10/01/11)",
   "catalogs": {
@@ -72,7 +72,6 @@
         "get_assignment_grading_operation",
         "prepare_assignment_grade_payload",
         "list_assignments",
-        "prepare_assignment_mcq_grades",
         "get_assignment_grading_proposal",
         "read_assignment_grading_resource"
       ]
@@ -125,7 +124,6 @@
         "get_assignment_grading_operation",
         "prepare_assignment_grade_payload",
         "list_assignments",
-        "prepare_assignment_mcq_grades",
         "get_assignment_grading_proposal",
         "read_assignment_grading_resource"
       ]
@@ -1066,58 +1064,6 @@
       "limitations_reference": "docs/mcp/existing-api-migration/tool-limitations.md"
     },
     {
-      "name": "prepare_assignment_mcq_grades",
-      "registration": "services/mcp/src/sakai_mcp/mcp/tools.py",
-      "registration_function": "prepare_assignment_mcq_grades",
-      "registration_line": 651,
-      "catalogs": [
-        "01",
-        "11"
-      ],
-      "implementation": "services/mcp/src/sakai_mcp/workflows/grading.py",
-      "function": "GradingWorkflow.prepare_mcq",
-      "owner_module": "services/mcp/src/sakai_mcp/workflows/grading.py",
-      "legacy_route_ids": [],
-      "research_cards": [
-        "A0",
-        "A4",
-        "A5",
-        "A6",
-        "A9"
-      ],
-      "product_decisions": [
-        "D4",
-        "D6"
-      ],
-      "integration_gates": [
-        "D5",
-        "D8",
-        "D6"
-      ],
-      "implementation_phase": 4,
-      "state": "existing-http-only-dependencies; complete-source-blocked; successful-preparation-not-accepted",
-      "evidence": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md",
-      "migration_matrix_row": "| `prepare_assignment_mcq_grades` \u2192 `GradingWorkflow.prepare_mcq/_prepare_mcq`, `grading/evaluator.py` | Reads native context/roster/exports/files; `POST A/grading-proposals` | B10 immutable export/current scope, existing pure evaluator/reports and external conditional proposal record. Ordered T20. | No official grade mutation; complete approved inputs, source hashes/expiry/provenance retained; no native proposal service required. |",
-      "browser_http_flow": {
-        "id": "T20",
-        "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
-        "anchor": "t20",
-        "cards": [],
-        "status": "existing-http-only-dependencies; complete-source-blocked; successful-preparation-not-accepted",
-        "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
-      },
-      "historical_api_only_matrix_row": "| `prepare_assignment_mcq_grades` \u2192 `GradingWorkflow.prepare_mcq/_prepare_mcq`, `grading/evaluator.py` | Reads native context/roster/exports/files; `POST A/grading-proposals` | Retain pure deterministic evaluator; replace all evidence reads with A4/A5/A6/A9 and persist proposal externally | Complete scoped evidence/key config required. Preserve source fingerprint/report bytes where feasible; changing revision/provenance is explicit engine/input-version migration. Never official save. I; external persistence can be idempotent. |",
-      "historical_legacy_route_ids": [
-        "export-file",
-        "export-read",
-        "grading-submissions",
-        "proposal-create",
-        "proposal-read"
-      ],
-      "remaining_gate": "Complete site-scope manifest and complete stable roster remain mandatory. Later metadata observation/edit checks replace T09; successful current-source preparation not demonstrated. Two fake-client host tests fail before evaluation; preserve failures.",
-      "latest_content_roster_evidence": "docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md; native handler-only characterization; no content route activation or complete input claim"
-    },
-    {
       "name": "get_assignment_grading_proposal",
       "registration": "services/mcp/src/sakai_mcp/mcp/tools.py",
       "registration_function": "get_assignment_grading_proposal",
@@ -1760,12 +1706,19 @@
       "sha256": "417f812e45da1cda33383ed25c7beab8b23880cf95c899d119b2d947a6350e79",
       "previous_sha256": "9828366ee9823583bbea2fbda613bde313fd5dd239d7d5fdf2a96038c549edba",
       "delivery_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md"
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "User-directed removal of MCQ tool and client assessment correction",
+      "path": "docs/mcp/existing-api-migration/implementation-plan.md",
+      "sha256": "d16918b6b22bc0ea51cd82ca56b64af7e4723df41a649c8489ba7b717039a6b8",
+      "evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md"
     }
   ],
   "canonical_plan": {
     "repository_path": "docs/mcp/existing-api-migration/implementation-plan.md",
     "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp-tool-migration-development/docs/mcp/existing-api-migration/implementation-plan.md",
-    "sha256": "ea5123d662bf5d23a6cf68549b6755fc68906f1d21c6310b58e915366544a5a4",
+    "sha256": "d16918b6b22bc0ea51cd82ca56b64af7e4723df41a649c8489ba7b717039a6b8",
     "delivery_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md",
     "updated_date": "2026-10-21",
     "delivery_copy_status": "Historical external copy; not refreshed because this pass writes only in the tool-development worktree."
@@ -1776,5 +1729,61 @@
       "reason": "No current production Python caller after T09/T20 change; full regression failed17 cases. Native retirement and old-client compatibility deferred. No replacement count implies acceptance.",
       "evidence": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md"
     }
-  ]
+  ],
+  "retired_public_tools": [
+    {
+      "name": "prepare_assignment_mcq_grades",
+      "registration": "services/mcp/src/sakai_mcp/mcp/tools.py",
+      "registration_function": "prepare_assignment_mcq_grades",
+      "registration_line": 651,
+      "catalogs": [
+        "01",
+        "11"
+      ],
+      "implementation": "services/mcp/src/sakai_mcp/workflows/grading.py",
+      "function": "GradingWorkflow.prepare_mcq",
+      "owner_module": "services/mcp/src/sakai_mcp/workflows/grading.py",
+      "legacy_route_ids": [],
+      "research_cards": [
+        "A0",
+        "A4",
+        "A5",
+        "A6",
+        "A9"
+      ],
+      "product_decisions": [
+        "D4",
+        "D6"
+      ],
+      "integration_gates": [
+        "D5",
+        "D8",
+        "D6"
+      ],
+      "implementation_phase": 4,
+      "state": "retired-public-by-user-direction; no-server-assessment",
+      "evidence": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md",
+      "migration_matrix_row": "| `prepare_assignment_mcq_grades` \u2192 `GradingWorkflow.prepare_mcq/_prepare_mcq`, `grading/evaluator.py` | Reads native context/roster/exports/files; `POST A/grading-proposals` | B10 immutable export/current scope, existing pure evaluator/reports and external conditional proposal record. Ordered T20. | No official grade mutation; complete approved inputs, source hashes/expiry/provenance retained; no native proposal service required. |",
+      "browser_http_flow": {
+        "id": "T20",
+        "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
+        "anchor": "t20",
+        "cards": [],
+        "status": "existing-http-only-dependencies; complete-source-blocked; successful-preparation-not-accepted",
+        "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
+      },
+      "historical_api_only_matrix_row": "| `prepare_assignment_mcq_grades` \u2192 `GradingWorkflow.prepare_mcq/_prepare_mcq`, `grading/evaluator.py` | Reads native context/roster/exports/files; `POST A/grading-proposals` | Retain pure deterministic evaluator; replace all evidence reads with A4/A5/A6/A9 and persist proposal externally | Complete scoped evidence/key config required. Preserve source fingerprint/report bytes where feasible; changing revision/provenance is explicit engine/input-version migration. Never official save. I; external persistence can be idempotent. |",
+      "historical_legacy_route_ids": [
+        "export-file",
+        "export-read",
+        "grading-submissions",
+        "proposal-create",
+        "proposal-read"
+      ],
+      "remaining_gate": "Complete site-scope manifest and complete stable roster remain mandatory. Later metadata observation/edit checks replace T09; successful current-source preparation not demonstrated. Two fake-client host tests fail before evaluation; preserve failures.",
+      "latest_content_roster_evidence": "docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md; native handler-only characterization; no content route activation or complete input claim",
+      "retirement_evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md"
+    }
+  ],
+  "catalog_amendment": "services/mcp/tests/contracts/local-assessment-catalog-v2.json"
 }

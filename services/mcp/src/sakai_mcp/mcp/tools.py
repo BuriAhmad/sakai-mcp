@@ -37,7 +37,6 @@ from sakai_mcp.mcp.presenters import (
     present_announcement,
     present_resource,
     present_submission,
-    receipt,
     tool_result,
 )
 from sakai_mcp.sakai.client import SakaiClient
@@ -57,7 +56,6 @@ WRITE_HINTS = ToolAnnotations(
     open_world_hint=False,
 )
 READ = READ_HINTS
-PREPARE = WRITE_HINTS
 
 
 def register_tools(server: MCPServer, settings: Settings, client: SakaiClient) -> None:
@@ -667,35 +665,6 @@ def register_proposal_tools(server: MCPServer, client: SakaiClient) -> None:
                 return await client.grading.list_assignments(
                     principal(), course_id, cursor, limit
                 )
-            except SakaiError as error:
-                raise ToolError(error.code.value) from None
-
-    @server.tool(
-        description="Prepare deterministic MCQ proposals from an existing immutable export using an explicitly approved key/configuration. No official grades are saved or returned. Reports are MCP resources. Use get_assignment_grading_proposal to reconcile the same proposal ID after an uncertain outcome.",
-        annotations=PREPARE,
-    )
-    async def prepare_assignment_mcq_grades(
-        course_id: public.Id,
-        assignment_id: public.Id,
-        export_id: public.UUIDString,
-        proposal_id: public.UUIDString,
-        config: proposals.MCQConfig,
-    ) -> Annotated[CallToolResult, proposals.ProposalResult]:
-        async with audit_call(
-            "prepare_assignment_mcq_grades", "write", course_id, assignment_id
-        ):
-            try:
-                record = await workflow.prepare_mcq(
-                    principal(),
-                    course_id,
-                    assignment_id,
-                    export_id,
-                    proposal_id,
-                    config,
-                )
-                return receipt(record, course_id, assignment_id)
-            except ValueError:
-                raise ToolError(ErrorCode.VALIDATION_ERROR.value) from None
             except SakaiError as error:
                 raise ToolError(error.code.value) from None
 

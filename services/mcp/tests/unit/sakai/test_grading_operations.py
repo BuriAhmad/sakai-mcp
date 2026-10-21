@@ -26,36 +26,25 @@ def fixture():
     posts = []
     response = receipt(req)
 
-    def handler(request):
-        if request.url.path.endswith(("/grading-save", "/grading-release")):
-            posts.append(request)
-            return httpx.Response(200, json=response.model_dump())
-        return wire(request)
-
     client = SakaiClient(
         settings(assignment_grading_enabled=True),
         FakeOBO(),
-        httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        httpx.AsyncClient(transport=httpx.MockTransport(wire)),
         private_records=PrivateRecords(store),
     )
     from types import SimpleNamespace
 
+    # Journal component seam: no legacy HTTP endpoint or business sender.
+    async def synthetic_send(request):
+        posts.append(request)
+        return response
+
     async def journal_sender(principal, request, kind):
         return await client.grading.operations.commit(
-            principal,
-            request,
-            kind,
-            lambda: client.grading._send(
-                principal,
-                request,
-                "POST",
-                "/grading-save" if kind == "save" else "/grading-release",
-                native.OperationReceipt,
-                mutation=True,
-            ),
+            principal, request, kind, lambda: client.grading.writes.send(request)
         )
 
-    client.grading.writes = SimpleNamespace(execute=journal_sender)
+    client.grading.writes = SimpleNamespace(execute=journal_sender, send=synthetic_send)
     return wire, store, client, req, posts, response
 
 
@@ -96,7 +85,7 @@ async def test_lost_reply_has_durable_unknown_and_no_replay():
         posts.append("lost")
         raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME)
 
-    c.grading._send = lost
+    c.grading.writes.send = lost
     with pytest.raises(SakaiError, match="AMBIGUOUS_WRITE_OUTCOME"):
         await c.grading.save_assignment_grades(principal(), req)
     read = await c.grading.get_assignment_grading_operation(

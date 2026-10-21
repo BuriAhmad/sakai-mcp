@@ -1,0 +1,20 @@
+{
+  "format_version": 1,
+  "date": "2026-10-21",
+  "authorization": "User requested removal of server MCQ grading; assessment methods belong to the client skill.",
+  "historical_catalog": "catalog.json",
+  "historical_catalog_sha256": "99431348e6884723ad2839477e29f5c0ede11a553443e986cf48418cdafc1cbe",
+  "removed_tools": [
+    "prepare_assignment_mcq_grades"
+  ],
+  "retained_legacy_readers": [
+    "get_assignment_grading_proposal"
+  ],
+  "catalog_counts": {
+    "00": 5,
+    "10": 8,
+    "01": 18,
+    "11": 21
+  },
+  "resource_count": 5
+}

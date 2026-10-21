@@ -2,7 +2,7 @@
 
 **Current migration boundary:** follow the [canonical existing-HTTP plan](mcp/existing-api-migration/implementation-plan.md). Python must replace custom Sakai business endpoints/services with existing HTTP APIs and researched native browser forms/AJAX. Only delegated authentication/session integration may remain as a native extension. Historical endpoint recommendations and release descriptions below are evidence, not permission to add business handlers or retain the old architecture. See [current local replacement evidence](mcp/existing-api-migration/external-capture-cutover-2026-10-19.md) and [limits](mcp/existing-api-migration/tool-limitations.md).
 
-The [MCP-only grading migration](SAKAI_GRADING_MCP_RESOURCES.md) replaces the local importer with SDK resources and server proposal/report tools. Native resource/proposal endpoints preserve delegated permissions and existing grading gates; see its release requirements before deployment.
+The [MCP-only grading migration](SAKAI_GRADING_MCP_RESOURCES.md) uses SDK resources for evidence and existing tools for approved grade save/return; assessment belongs in the client Skill. Historical native resource/proposal endpoints and locks are not the migrated architecture; see its release requirements before deployment.
 ## Purpose
 
 This is a durable engineering reference for **programmatically interacting with this repository's Sakai installation**. Consult it before implementing or modifying MCP tools, Sakai adapter code, custom Sakai-side endpoints, provisioning or automation scripts, and agent skills that depend on those capabilities.

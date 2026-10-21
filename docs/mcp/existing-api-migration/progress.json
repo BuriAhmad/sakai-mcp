@@ -3,11 +3,11 @@
   "date": "2026-10-21",
   "branch": "codex/tool-migration-development",
   "base_sha": "208d69ac624910a29a7529934ddcc18bbac853e8",
-  "scope": "Remaining-tool implementation attempt:21 actual facades wired to existing HTTP/external records; T09 full regression gate failed; T20 complete-source functionality unproven.20 earlier validated replacements unchanged.",
+  "scope": "User-directed local assessment correction:21 current tool facades, all wired to existing HTTP/external records; MCQ preparation retired by product decision, not marked migrated or accepted.",
   "phase_0": "reviewed-checkpoint-and-branch-complete",
   "phase_1": "bounded conventional/browser parsers and transports locally tested; live fixtures/helpers/multipart pending",
   "phase_2": "Historical mixed auth proofs only; new framework/wiring excluded here. Matching separate auth integration and actual handler/role acceptance required.",
-  "public_routing": "T09 now uses existing list/detail/edit/A14 through GradingContextReads. T20 removes native context call and uses evaluator-only existing observations after complete manifest/roster gates. No production /api/mcp/v1 caller remains in Python. The active grading-context route is retained pending regression/compatibility; no native retirement in this pass.",
+  "public_routing": "No Python /api/mcp/v1 business caller. Explicit approved score payload/save/return retained. MCQ registration/evaluation/proposal creation removed. Legacy proposal/report readers retained. Native retirement22/23 unchanged.",
   "scaffolds": {
     "sakai/operations.py": "retained/revised; accepted narrow current-user/sites/site-permission descriptors, unsafe candidates blocked",
     "contracts/existing_api.py": "retained/revised; default course facade supports actual native DTO masking",
@@ -182,19 +182,16 @@
     "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/AttachmentReachProof.java"
   ],
   "verification": {
-    "source": "Pre-edit source/role/scope checks pass; new verified207-file checkpoint and failed-run fingerprints. Final reviewed source anchor and preservation record distinguish wire replacement from acceptance.",
-    "repository": "Initial source/role/scope passed. No layouts changed; final guidance/whitespace/source/role/scope checks recorded in current proof preservation record. Historical originals remain unchanged.",
-    "python": "Lint/format137 files and mypy76 source files pass. Focused21 tests pass. Full suite567 passes17 failures:15 receipt-fixture _send AttributeErrors and2 host fake-client missing submissions. No fixes after failed run.",
-    "native": "Actual existing raw Assignment/JSONTranscoder proof1 test passes; shape-capture rerun1 pass. Initial commentary no-test inference corrected from final-module XML/log. Native auth/live/role acceptance unproven.",
-    "proofs": "Full failures preserved. Prior readiness collection error and historical delegated403 remain unchanged, not rerun or repaired this pass.",
-    "deployment": "None; no runtime/configuration/academic/schema/data operation."
+    "command": "cd services/mcp && ../../scripts/check-mcp.sh",
+    "python_passed": 583,
+    "python_failed": 2,
+    "failure_kind": "Catalog expectations retain19/22, actual18/21; record without post-run assertion repair.",
+    "lint": "passed",
+    "format": "137 files passed",
+    "types": "76 files passed",
+    "proof_evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md"
   },
-  "next_gate": [
-    "Separate corrective step: adapt obsolete receipt/host test doubles to changed internal interfaces and rerun full regression; do not claim this failed pass accepted.",
-    "T09: actual A14 provider/role/relationship/serializer/delegated acceptance and broader required-state coverage; narrow instructor subset only.",
-    "T20: complete eligible roster/content and successful end-to-end proposal preparation; current partial sources still rejected.",
-    "Native grading-context retirement deferred pending regression/compatibility. Auth reach/filter/protocol changes remain separate; attachment ACL/MIME/byte/source/identity and D3/D6/D7/D8 gates remain."
-  ],
+  "next_gate": "Separate approved correction of two recorded catalog-count tests; then compatible auth integration/real-role and actual CLI byte-preserving file delivery acceptance. Broader grading writes/attachments remain unsupported.",
   "uncertainties": [
     "No actual native tool rendered form/Wicket callback/live OAuth/Basic or multi-node-affinity acceptance",
     "No fresh native/config/schema/private-store inventory; no data import/provisioning",
@@ -536,5 +533,13 @@
     "preservation": "Fresh verified private76-path manifest/72-file source archive and4 editor fingerprints; exact failed audit logs/JUnit XML privately preserved. Prior continuation pinned; original records/archives untouched, empty index/custom worktree/refs preserved.",
     "repository": "Required scope/progress/preservation, guidance and whitespace checks pass. Counts unchanged20/22 actual defaults,1 active of23 historical routes. Full attachment proof NOT accepted; failures deliberately preserved."
   },
-  "current_proof_record": "docs/mcp/development-lines/remaining-tools-2026-10-21.json"
+  "current_proof_record": "docs/mcp/development-lines/local-assessment-correction-2026-10-21.json",
+  "previous_verification_before_local_assessment_correction": {
+    "source": "Pre-edit source/role/scope checks pass; new verified207-file checkpoint and failed-run fingerprints. Final reviewed source anchor and preservation record distinguish wire replacement from acceptance.",
+    "repository": "Initial source/role/scope passed. No layouts changed; final guidance/whitespace/source/role/scope checks recorded in current proof preservation record. Historical originals remain unchanged.",
+    "python": "Lint/format137 files and mypy76 source files pass. Focused21 tests pass. Full suite567 passes17 failures:15 receipt-fixture _send AttributeErrors and2 host fake-client missing submissions. No fixes after failed run.",
+    "native": "Actual existing raw Assignment/JSONTranscoder proof1 test passes; shape-capture rerun1 pass. Initial commentary no-test inference corrected from final-module XML/log. Native auth/live/role acceptance unproven.",
+    "proofs": "Full failures preserved. Prior readiness collection error and historical delegated403 remain unchanged, not rerun or repaired this pass.",
+    "deployment": "None; no runtime/configuration/academic/schema/data operation."
+  }
 }

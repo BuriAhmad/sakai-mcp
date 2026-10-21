@@ -382,17 +382,13 @@ async def test_proposal_receipt_integrity_and_source_lifetime(failure):
         await c.grading.get_proposal(principal(), f.COURSE, f.ASSIGNMENT, f.PROPOSAL)
 
 
-@pytest.mark.asyncio
-async def test_mcq_blocker_before_legacy_context_and_no_proposal_persistence():
-    w = FiveToolHTTP()
-    c = w.client()
-    await c.grading.export_assignment_submissions(principal(), await request(c))
-    with pytest.raises(SakaiError, match="CONFLICT"):
-        await GradingWorkflow(c).prepare_mcq(
-            principal(), f.COURSE, f.ASSIGNMENT, f.EXPORT, f.PROPOSAL, f.config()
-        )
-    assert all("/api/mcp/" not in str(r.url) and r.method == "GET" for r in w.calls)
-    assert len(c.grading.captures.store().store._objects) == 2
+def test_no_proposal_creation_or_assessment_api_remains():
+    from sakai_mcp.sakai.grading import GradingOperations
+    from sakai_mcp.workflows.captures import Captures
+
+    assert not hasattr(GradingWorkflow, "prepare_mcq")
+    assert not hasattr(GradingOperations, "create_proposal")
+    assert not hasattr(Captures, "create_proposal")
 
 
 @pytest.mark.asyncio

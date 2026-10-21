@@ -10,7 +10,7 @@ from pydantic import ValidationError
 
 from sakai_mcp.contracts import grading_native as native
 from sakai_mcp.contracts.assignments import AssignmentMetadata, observation_revision
-from sakai_mcp.contracts.grading_proposals import ProposalPayload, ProposalRecord
+from sakai_mcp.contracts.grading_proposals import ProposalRecord
 from sakai_mcp.contracts.submissions import (
     REASONS,
     AssignmentEvidence,
@@ -404,41 +404,3 @@ class Captures:
         ):
             raise SakaiError(ErrorCode.CONFLICT)
         return result
-
-    async def create_proposal(
-        self,
-        token: AccessToken,
-        course: str,
-        assignment: str,
-        proposal: str,
-        payload: ProposalPayload,
-        export: str,
-    ) -> ProposalRecord:
-        identifier(proposal)
-        owner, manifest = await self.manifest(token, course, assignment, export)
-        # Do not manufacture proposals from today's incomplete native source.
-        if not manifest.completeness.complete or manifest.status != "ready":
-            raise SakaiError(ErrorCode.CONFLICT)
-        body = {
-            "proposal_id": proposal,
-            "export_id": export,
-            "payload": payload.model_dump(),
-        }
-        request_hash = digest(canonical(body))
-        result = ProposalRecord(
-            proposal_id=proposal,
-            export_id=export,
-            request_sha256=request_hash,
-            expires_at=manifest.expires_at,
-            payload=payload,
-        )
-        await self.store().create(
-            owner,
-            RecordKind.PROPOSAL,
-            proposal,
-            request_hash,
-            {"proposal": result.model_dump()},
-            expires_at=datetime.fromisoformat(manifest.expires_at),
-            now=datetime.now(UTC),
-        )
-        return await self.proposal(token, course, assignment, proposal)
