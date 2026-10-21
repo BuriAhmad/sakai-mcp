@@ -9,7 +9,7 @@
   },
   "plan": {
     "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp-tool-migration-development/docs/mcp/existing-api-migration/implementation-plan.md",
-    "sha256": "71330d5c945da16ec622143e909edc23df7938825500553affc6070986c7b362",
+    "sha256": "ea5123d662bf5d23a6cf68549b6755fc68906f1d21c6310b58e915366544a5a4",
     "previous_sha256": "ed07da7540b98b6748ad47312886ee9cb2e5006f3005df2f3f231c7cb49ea23b",
     "previous_private_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Migration-Baseline-2026-10-17/plan-before-browser-research.md",
     "prior_delivery_path": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md",
@@ -167,8 +167,8 @@
     {
       "id": "T09",
       "tool": "get_assignment_grading_context",
-      "status": "Not migrated; strict scale/release state and role/representation gates remain. Current HTTP writers no longer consume this native context revision.",
-      "event_sequence_and_checks": "Validate grader and Assignment/site relationship\u2192B3 native grading-accessible metadata/view (instructor edit form only if independently permitted)\u2192B7 native grade/list state and current scope\u2192B6 linked Gradebook metadata and selected score-read capability where authorized\u2192A12 rubric association only after native scope validation\u2192assemble observed fields, supported variant flags and coverage\u2192return revisioned context. Preserve grade-only TA support independently of setup permissions. Raw release/configuration/version not exposed by the active view stays unknown; use B7 rendered release state where available. Do not force legacy-grader preferences or invent raw native version fields. Current save/release use HTTP observations independently. The later T20 context/evaluator path still requires a truthful compatible configuration revision and prepare capability. Do not fabricate required context flags.",
+      "status": "Actual existing HTTP facade wired; focused21 tests pass; full regression failed17, not accepted",
+      "event_sequence_and_checks": "Fresh actor/site/asn.grade+asn.new+asn.revise+item-edit authority -> positive individual native list/detail -> supported edit form -> fixed existing A14 without messageId -> strict raw state/identity/scale/max checks -> incomplete public context with unknown roster/Gradebook and httpctx1 revision. No custom fallback. Actual native roles/auth/lazy over-fetch remain unproven.",
       "browser_cards": [
         "B3",
         "B6",
@@ -179,7 +179,7 @@
         "01",
         "11"
       ],
-      "latest_gate_review": "docs/mcp/existing-api-migration/tool-proof-2026-10-21.md"
+      "latest_gate_review": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md"
     },
     {
       "id": "T10",
@@ -335,15 +335,15 @@
     {
       "id": "T20",
       "tool": "prepare_assignment_mcq_grades",
-      "status": "Not migrated; fresh actual SDK partial-input rejection passes, successful complete preparation unproven",
-      "event_sequence_and_checks": "First reconcile owner-bound existing proposal ID/configuration\u2192T13 export authorization/immutable manifest\u2192T09/T10 current context/eligible scope\u2192read captured bytes via external store, checking manifest digests\u2192run the existing deterministic evaluator with the approved key/config\u2192generate canonical rows/CSV/review reports in Python\u2192conditionally persist proposal tied to original export/source expiry\u2192return MCP links. No new native operation, announcement, Assignment grade save or student return occurs. Missing/changed/ambiguous evidence becomes review-required/conflict according to the accepted contract, never invented marks or guessed answer-key content.",
+      "status": "Native context dependency removed; complete-source-gated preparation incomplete; full regression failed",
+      "event_sequence_and_checks": "Owner-bound proposal reconciliation -> complete site-scope manifest -> immutable artifact checks -> complete site-scope stable roster -> fresh existing source/content consistency and supported edit form -> evaluator-only observed metadata -> unchanged evaluator and external proposal persistence. No public/native T09 call. Current partial sources reject before downstream stages; complete preparation unproven.",
       "browser_cards": [],
       "plan_anchor": "t20",
       "current_catalogs": [
         "01",
         "11"
       ],
-      "latest_gate_review": "docs/mcp/existing-api-migration/tool-proof-2026-10-21.md"
+      "latest_gate_review": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md"
     },
     {
       "id": "T21",
@@ -1364,7 +1364,8 @@
     "Membership pagination, omitted user records, Assignment-reference realm eligibility and strict context raw-scale/release representability: evidence-review-2026-10-20.md",
     "B8 actual native handler characterization in attachment-proof-2026-10-20.md; delegated AccessServlet/native-role/source-bound stream acceptance remains open. Roster2 filtered totals are not eligibility proof.",
     "attachment-audit-2026-10-20.md: actual servlet/content component cases pass; positive delegated chain fails403 before native target; positive Python harness collection error; no repairs per user instruction.",
-    "2026-10-21: unchanged readiness collection errors with zero probes; five SDK gate cases pass; later T20 context prepare capability/provenance gate remains. docs/mcp/existing-api-migration/tool-proof-2026-10-21.md"
+    "2026-10-21: unchanged readiness collection errors with zero probes; five SDK gate cases pass; later T20 context prepare capability/provenance gate remains. docs/mcp/existing-api-migration/tool-proof-2026-10-21.md",
+    "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md: T09 wired but full regression failed17 cases; T20 external/context separation implemented without weakening completeness; native retirement deferred."
   ],
-  "implementation_checkpoint": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md; 20/22 actual defaults, 22/23 historical routes retired locally; no live acceptance"
+  "implementation_checkpoint": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md;21 default facades wired,20 preceding validated replacements; full regression fails;22/23 native routes retired; no acceptance/deployment"
 }

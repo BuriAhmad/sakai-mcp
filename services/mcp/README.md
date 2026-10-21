@@ -5,10 +5,9 @@ This package exposes a delegated Sakai MCP interface using the pinned MCP Python
 The [existing-HTTP migration](../../docs/mcp/existing-api-migration/implementation-plan.md)
 is in progress. `sakai/operations.py`, `existing_transport.py`, `webapi.py`,
 `entitybroker.py`, `cxf.py` and `contracts/existing_api.py` contain
-source-derived clients/contracts. Twenty defaults now use existing HTTP/external records;
+source-derived clients/contracts. Twenty preceding replacements have local regression evidence; the new T09 HTTP facade remains unaccepted after the latest full-suite failure;
 [five-tool cutover evidence](../../docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md)
-records role, completeness and precision limits. Two tools still need
-replacement. See `tests/fixtures/existing_http/README.md`
+records role, completeness and precision limits. T09 needs regression/role acceptance and T20 still needs complete-source preparation proof. See `tests/fixtures/existing_http/README.md`
 for unexercised fixture provenance and specific scope/serializer gaps. Auth remains
 Entra/OBO; browser conversation integration is a separate local proof gate.
 
@@ -273,3 +272,15 @@ and the limitations reference before adopting this subset. T09 and T20 remain.
 ## Separate auth dependency
 
 This tool-development line excludes the new native auth framework and servlet wiring. The Python client/flow protocol is retained unchanged and pinned in `docs/mcp/development-lines/role.json`; native auth compatibility/acceptance must be assembled separately. Do not repair the recorded attachment proof failures or change server auth here. See `docs/DEVELOPMENT_WORKTREES.md` for ownership.
+
+
+### Remaining-tool attempt — 21 October 2026
+
+`workflows/grading_context.py` and strict raw-model contracts now drive the T09
+facade through existing HTTP for an instructor/edit-authorized subset. The A14
+caller needs separately matched native auth and actual role/serializer acceptance;
+no auth behavior or protocol is changed here. T20 uses separate evaluator metadata
+after complete manifest/roster gates, rather than the native context route.
+The full suite currently fails17 cases (567 pass); preserve these failures and
+see [the exact results and limits](../../docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md).
+No release or native retirement is accepted by this implementation attempt.

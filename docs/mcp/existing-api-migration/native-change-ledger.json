@@ -797,6 +797,14 @@
       "state": "transferred-to-auth-development; not business retirement",
       "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
       "transferred_source_commit": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e"
+    },
+    {
+      "path": "apps/sakai/assignment/tool/src/test/org/sakaiproject/assignment/entityproviders/ExistingRawContextProof.java",
+      "group": "existing-handler-tests",
+      "present_in_working_tree": true,
+      "sha256": "b7e8f08c557555771da6b8aea277aface2cf018486a376889928a9a72a430693",
+      "state": "actual-native-model-json-codec-component-proof; one test pass, no provider-role/auth acceptance",
+      "local_evidence": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md"
     }
   ],
   "storage_configuration_paths": [
@@ -836,7 +844,7 @@
   },
   "current_proof_review": {
     "date": "2026-10-21",
-    "evidence": "docs/mcp/existing-api-migration/tool-proof-2026-10-21.md",
-    "result": "No new native retirement or source change. Only grading-context active; retained consumers T09 and later T20. T14/T15/T18 use external HTTP observations. Auth framework remains excluded; all native data/store/domain gates preserved."
+    "evidence": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md",
+    "result": "No native business implementation modified or retired. A14 caller requires separate compatible auth integration. grading-context mapping remains active with no production Python caller; retirement deferred after17 full-suite failures."
   }
 }

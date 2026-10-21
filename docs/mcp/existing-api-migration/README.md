@@ -7,7 +7,7 @@ about an uncommitted tree or fixed HEAD describe their dated checkpoints;
 `--verify-progress` verifies the saved migration source, explicit organization
 metadata paths and hash-chained dated continuation records after that commit.
 
-Current local status (21 October): 20/22 actual defaults use existing HTTP/external records; 22/23 historical routes are retired locally. T09/T20 and full resource/legacy/live acceptance remain. Fresh verification: 566 Python and 30 focused Java tests pass; unchanged attachment readiness errors during collection with zero probes executed. See [current proof evidence](tool-proof-2026-10-21.md).
+Current local status (21 October, later attempt):21 facades wired to existing HTTP/external records, with T09 full regression gate OPEN. Full suite567 passed/17 failed; no failure repair. T20 complete-source preparation remains unproven. Native retirement stays22/23. See [remaining-tool evidence](remaining-tools-2026-10-21.md).
 
 
 [Known tool limitations](tool-limitations.md) is the consolidated current reference for per-tool restrictions, caps, errors, evidence gaps and resolution gates.

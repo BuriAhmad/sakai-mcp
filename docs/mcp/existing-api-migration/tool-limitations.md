@@ -7,8 +7,7 @@ governs implementation; [coverage](coverage.json) and [progress](progress.json)
 record migration state. Update this reference whenever a limit is discovered,
 changed or resolved, and link the implementation and verification evidence.
 
-**Twenty tools have local default existing-HTTP/external-record replacements. This does not establish full
-functional parity or live acceptance.** Two tools still need migration, and
+**Twenty preceding replacements have local regression evidence. T09 is now wired to existing HTTP, but the full suite fails17 cases; it is not accepted. T20 remains incomplete.** This establishes neither full functional parity nor live acceptance, and
 none of the five resource families is fully migrated. Local tests and package
 builds do not prove deployed configuration, actual rendered native views, all
 Sakai roles, notification delivery or production performance. Nothing in this
@@ -720,3 +719,32 @@ D3 concurrency, D6 durable backend/legacy ownership and D7 ordinary UI retiremen
 remain open. Nothing is deployed, activated or live by these checks. See
 [proof results and next gates](tool-proof-2026-10-21.md) and the new development-line
 preservation record; old baselines, archives and continuation records are unchanged.
+
+
+## Remaining-tool implementation attempt — 21 October 2026
+
+T09 now has an actual existing-HTTP facade for a narrow instructor/edit-authorized
+individual nonanonymous points subset, including a required explicit raw scale
+(power of10, at most1e9), release flag, fields/properties and recognized edit form.
+Raw Assignment attachments/groups/deleted/draft/peer/content-review variants and
+missing required fields fail. It requires asn.grade, asn.new, asn.revise and
+Gradebook item-edit authority; grade-only or group-only TAs cannot use this subset.
+A14 raw relationships are bounded authorized instructor over-fetch, with actual
+native entitlement/lazy serialization/delegated acceptance still open. Public
+httpctx1 revisions are observations and incompatible with write preconditions.
+Roster counts remain null; completeness and prepare/save/release false; independent
+Gradebook link unknown. No full-context/role parity is claimed.
+
+T20 now has no native context dependency; its evaluator metadata is separate from
+the strict T09 response. Complete site-scope captures and complete stable roster
+pages, content revisions, exact ID coverage, fresh existing source metadata and a
+supported edit form precede evaluation. Current captures/rosters remain incomplete;
+no successful current-source MCQ preparation or attachment acceptance is claimed.
+
+The full suite has567 passes and17 failures. These are preserved without repair:
+15 receipt fixtures reference removed _send,2 host tests lack the new submissions
+client dependency. Focused21 tests pass; actual raw-model codec1 test passes.
+Thus21 facades are wired, but only the preceding20 replacements have their prior
+regression status. T09 is unaccepted; T20 is still incomplete;22/23 native routes
+remain retired. The last native route is retained without a current Python caller.
+See [exact evidence and failure categories](remaining-tools-2026-10-21.md).

@@ -2948,3 +2948,62 @@ D3 concurrency, D6 durable backend/legacy ownership and D7 ordinary UI retiremen
 remain open. Nothing is deployed, activated or live by these checks. See
 [proof results and next gates](tool-proof-2026-10-21.md) and the new development-line
 preservation record; old baselines, archives and continuation records are unchanged.
+
+
+## Remaining-tool implementation attempt — 21 October 2026
+
+This continuation starts at tool-development `36716ee1`, with the prior proof
+record/checkpoint preserved. Changes are local and **not accepted for release**.
+The current frozen-source/failed-run record is
+`docs/mcp/development-lines/remaining-tools-2026-10-21.json`.
+
+T09 now routes through existing native list/detail/edit views and A14 raw Assignment
+HTTP, with no legacy fallback. Before A14, require fresh site-wide asn.grade,
+asn.new, asn.revise and gradebook.editAssignments, native individual identity/list
+proof and a supported edit form. Raw source relationships are bounded instructor
+over-fetch, not a safe grade-only/group-TA shortcut. No helper query/messageId is
+sent; no native advisor or permission code changed. The actual existing JSON codec
+preserves scaleFactor/releaseGrades/property fields; enums serialize as declaringClass
+objects and are not treated as enum values. Native Instant serializes epochSecond
+and nano. Required null/missing flags fail. Public config uses observed raw fields,
+exact decimal scale subset and a distinct httpctx1 revision; required roster
+counts remain null, completeness and supported preparation/save/release false,
+Gradebook link unknown. Nonempty Assignment attachments, alternate roles/modes,
+null or non-power-of-ten scale and other unsupported forms fail explicitly.
+
+T20 no longer calls T09 or the custom context route. It retains complete site-scope
+manifest and stable complete roster gates, current content/revision checks and the
+unchanged evaluator. After those gates it reads existing selected source metadata
+and a supported edit form, building only evaluator metadata, without inventing raw
+scale/release state or claiming a full public T09 context. No current capture is
+made complete; successful full-source preparation remains unproven/unavailable.
+
+Fresh focused context checks:21 Python tests pass. Actual native model/JSON codec
+proof:one test passes, rerun only to capture synthetic wire shape (also passes).
+The earlier commentary inference that it did not execute was wrong; final-module
+Surefire output/XML establishes execution. No native harness repair occurred.
+
+The broad regression run has **567 passes and17 failures**; lint/format137 files
+and mypy76 source files pass. Fifteen receipt tests fail in fixtures that still
+reference removed private _send; two host-proposal cases use a fake client without
+the new submissions dependency. Preserve exact failures and sources, no fixes,
+rerun-to-green, import changes or assertion relaxation after the failed run.
+Focused tests passed before the broad run; they do not erase its failures.
+
+Actual routing now has21 default facades wired to existing HTTP/external records,
+but T09's full regression gate is open. The previously validated20 replacements
+are not relabelled as21 accepted completions. T20 remains incomplete. There are
+still22/23 retired historical routes and one active grading-context route. It has
+no current production Python caller, but retirement is deferred pending regression
+and compatibility review. Inventory this retained compatibility route explicitly;
+do not invent a current caller or weaken the complete-input gates to fit counts.
+
+The new A14 caller requires a separately reviewed compatible native auth integration;
+no filter/allowlist/protocol/auth source is changed here. Actual delegated A14/native
+role safety, lazy relationship serialization, raw over-fetch entitlement and live
+configuration are unproven. Attachment readiness/error/failure history is unchanged.
+Next separate corrective step: update the receipt and host test doubles for the new
+interfaces, then rerun the complete suite; no correction is performed in this proof
+pass. Next migration/acceptance gates remain strict context role/field fidelity,
+complete eligible roster/content and actual delegated byte/source/MIME/ACL integrity.
+Nothing is pushed, deployed, activated or written to live academic records.

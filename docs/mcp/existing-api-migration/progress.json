@@ -3,11 +3,11 @@
   "date": "2026-10-21",
   "branch": "codex/tool-migration-development",
   "base_sha": "208d69ac624910a29a7529934ddcc18bbac853e8",
-  "scope": "Whole custom business API replacement; twenty actual defaults locally replaced with disclosed partial functionality; two tools remain.",
+  "scope": "Remaining-tool implementation attempt:21 actual facades wired to existing HTTP/external records; T09 full regression gate failed; T20 complete-source functionality unproven.20 earlier validated replacements unchanged.",
   "phase_0": "reviewed-checkpoint-and-branch-complete",
   "phase_1": "bounded conventional/browser parsers and transports locally tested; live fixtures/helpers/multipart pending",
   "phase_2": "Historical mixed auth proofs only; new framework/wiring excluded here. Matching separate auth integration and actual handler/role acceptance required.",
-  "public_routing": "T01/T02/T03/T04/T05/T06/T07/T08/T10/T11/T12/T13/T14/T15/T16/T17/T18/T19/T21/T22 actual defaults use existing HTTP/external records. Twenty-two native routes retired locally; only grading-context remains. Save/release/preparation support one individual integer-score unlinked Assignment row with partial readback and durable no-replay receipts.",
+  "public_routing": "T09 now uses existing list/detail/edit/A14 through GradingContextReads. T20 removes native context call and uses evaluator-only existing observations after complete manifest/roster gates. No production /api/mcp/v1 caller remains in Python. The active grading-context route is retained pending regression/compatibility; no native retirement in this pass.",
   "scaffolds": {
     "sakai/operations.py": "retained/revised; accepted narrow current-user/sites/site-permission descriptors, unsafe candidates blocked",
     "contracts/existing_api.py": "retained/revised; default course facade supports actual native DTO masking",
@@ -182,19 +182,18 @@
     "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/AttachmentReachProof.java"
   ],
   "verification": {
-    "source": "Initial scope/source-role checks passed. Reviewed test-only source commit with immutable extraction anchor; new development-line preservation record. No implementation/auth/protocol change.",
+    "source": "Pre-edit source/role/scope checks pass; new verified207-file checkpoint and failed-run fingerprints. Final reviewed source anchor and preservation record distinguish wire replacement from acceptance.",
     "repository": "Initial source/role/scope passed. No layouts changed; final guidance/whitespace/source/role/scope checks recorded in current proof preservation record. Historical originals remain unchanged.",
-    "python": "Fresh locked sync; initial561/final566 tests; Ruff lint/format131 files and mypy73 files pass. Five new actual SDK gate cases; frozen baselines unchanged.",
-    "native": "Fresh Java17 focused reactor:30 tests in12 suites pass. New auth framework excluded; no package/runtime acceptance.",
-    "proofs": "Unchanged readiness invocation errors during collection: No module named tests; zero probes. Five new SDK gate cases pass with synthetic dependencies. Historical delegated403 preserved; auth-owned Java proofs not rerun.",
+    "python": "Lint/format137 files and mypy76 source files pass. Focused21 tests pass. Full suite567 passes17 failures:15 receipt-fixture _send AttributeErrors and2 host fake-client missing submissions. No fixes after failed run.",
+    "native": "Actual existing raw Assignment/JSONTranscoder proof1 test passes; shape-capture rerun1 pass. Initial commentary no-test inference corrected from final-module XML/log. Native auth/live/role acceptance unproven.",
+    "proofs": "Full failures preserved. Prior readiness collection error and historical delegated403 remain unchanged, not rerun or repaired this pass.",
     "deployment": "None; no runtime/configuration/academic/schema/data operation."
   },
   "next_gate": [
-    "T09: certify strict required native scale/release/configuration fields through a safe existing HTTP view for the supported role; retained native context is not migrated.",
-    "T20: complete authorized stable roster/content; then compatible configuration revision and supported.prepare=true context without weakening the evaluator. Fresh partial-input SDK proof passes; successful preparation unproven.",
-    "Separate auth workstream: historical positive delegated content request failed403 before RequestFilter/binder/AccessServlet; matching integration absent here. No authentication correction authorized in tool line.",
-    "Readiness harness: unchanged invocation still errors importing tests; zero probes. Collection correction is a separate future step, not performed.",
-    "Actual delegated native-role/source-binding/MIME/byte-integrity/concurrent-isolation plus D3/D6/D7/D8 acceptance remain open."
+    "Separate corrective step: adapt obsolete receipt/host test doubles to changed internal interfaces and rerun full regression; do not claim this failed pass accepted.",
+    "T09: actual A14 provider/role/relationship/serializer/delegated acceptance and broader required-state coverage; narrow instructor subset only.",
+    "T20: complete eligible roster/content and successful end-to-end proposal preparation; current partial sources still rejected.",
+    "Native grading-context retirement deferred pending regression/compatibility. Auth reach/filter/protocol changes remain separate; attachment ACL/MIME/byte/source/identity and D3/D6/D7/D8 gates remain."
   ],
   "uncertainties": [
     "No actual native tool rendered form/Wicket callback/live OAuth/Basic or multi-node-affinity acceptance",
@@ -238,7 +237,7 @@
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/WebAppConfiguration.java",
     "services/mcp/uv.lock"
   ],
-  "evidence": "docs/mcp/existing-api-migration/tool-proof-2026-10-21.md",
+  "evidence": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md",
   "branch_history": [
     "codex/sakai-existing-http-migration",
     "codex/sakai-python-http-native-auth-only",
@@ -537,5 +536,5 @@
     "preservation": "Fresh verified private76-path manifest/72-file source archive and4 editor fingerprints; exact failed audit logs/JUnit XML privately preserved. Prior continuation pinned; original records/archives untouched, empty index/custom worktree/refs preserved.",
     "repository": "Required scope/progress/preservation, guidance and whitespace checks pass. Counts unchanged20/22 actual defaults,1 active of23 historical routes. Full attachment proof NOT accepted; failures deliberately preserved."
   },
-  "current_proof_record": "docs/mcp/development-lines/tool-proof-2026-10-21.json"
+  "current_proof_record": "docs/mcp/development-lines/remaining-tools-2026-10-21.json"
 }

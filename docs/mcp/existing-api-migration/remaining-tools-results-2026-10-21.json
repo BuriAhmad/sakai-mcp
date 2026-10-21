@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-21",
+  "starting_head": "36716ee198001d9ab98c679958b6efe3fc90bce3",
+  "scope": "Local migration attempt, failed full regression retained without repairs",
+  "cases": [
+    {
+      "id": "raw-model-native-codec",
+      "status": "pass",
+      "tests": 1,
+      "limits": "Synthetic model/actual JSONTranscoder; not provider/role/auth acceptance"
+    },
+    {
+      "id": "context-focused-python",
+      "status": "pass",
+      "tests": 21,
+      "limits": "Synthetic HTTP/OBO/principal and actual facade/SDK"
+    },
+    {
+      "id": "full-python",
+      "status": "fail",
+      "passed": 567,
+      "failed": 17,
+      "expected": "Full suite passes",
+      "actual": "15 _send fixture AttributeErrors;2 host fake-client missing submissions",
+      "failures": [
+        "FAILED tests/protocol/test_grading_resources.py::test_complete_proposal_workflow_and_tools_only_host[legacy]",
+        "FAILED tests/protocol/test_grading_resources.py::test_complete_proposal_workflow_and_tools_only_host[2026-07-28]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_confirmed_partial_is_external_and_repeat_never_sends",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_receipt_failures_never_read_legacy_or_write[no-store]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_receipt_failures_never_read_legacy_or_write[permission]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_receipt_failures_never_read_legacy_or_write[identity]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_receipt_failures_never_read_legacy_or_write[target]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_receipt_failures_never_read_legacy_or_write[corrupt]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_receipt_failures_never_read_legacy_or_write[hash]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_receipt_failures_never_read_legacy_or_write[missing]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_request_id_collision_and_persistence_failure_never_send",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_two_workers_only_send_once_and_receipt_reply_failure_stays_unknown",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_release_uses_same_journal_and_no_store_commit_has_no_http",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_record_binding_expiry_and_warning_contract_fail_closed[expired]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_record_binding_expiry_and_warning_contract_fail_closed[owner]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_record_binding_expiry_and_warning_contract_fail_closed[provenance]",
+        "FAILED tests/unit/sakai/test_grading_operations.py::test_record_binding_expiry_and_warning_contract_fail_closed[warning-budget]"
+      ],
+      "failures_fixed": false
+    },
+    {
+      "id": "lint-format-types",
+      "status": "pass",
+      "format_files": 137,
+      "mypy_files": 76
+    },
+    {
+      "id": "complete-source-mcq",
+      "status": "unproven",
+      "reason": "Actual manifests and rosters remain incomplete; no positive full preparation proof"
+    },
+    {
+      "id": "native-auth-role-acceptance",
+      "status": "unproven",
+      "owner": "Separate auth integration and native-role/tool acceptance",
+      "reason": "No matching native auth assembled or live calls performed"
+    }
+  ],
+  "default_facades_wired": 21,
+  "previous_validated_replacements": 20,
+  "migration_acceptance": "Open, full suite failed",
+  "native_routes_retired": 22,
+  "native_routes_active": 1,
+  "failures_fixed": false,
+  "deployment": "None",
+  "evidence": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md",
+  "source_sha256": {
+    "apps/sakai/assignment/tool/src/test/org/sakaiproject/assignment/entityproviders/ExistingRawContextProof.java": "b7e8f08c557555771da6b8aea277aface2cf018486a376889928a9a72a430693",
+    "services/mcp/src/sakai_mcp/contracts/grading_context_candidate.py": "599948f95cfed1a15caa0fa9f61b65c8ace90027ca2f52141b3951f7d5ec1951",
+    "services/mcp/src/sakai_mcp/contracts/mcq_observation.py": "afc76afd549d351b616a7cf8234d863283066de19894e66a4109560fa1d6f57a",
+    "services/mcp/src/sakai_mcp/workflows/grading_context.py": "4374db45d9185666a4e91f614284209375ae24d3fda016bf919b831ed386a090",
+    "services/mcp/tests/fixtures/context_http.py": "2397978e9260042af6cab7f5c53e091491632c1a55ed54f7bbcaf3270a28ee08",
+    "services/mcp/tests/unit/contracts/test_mcq_observation.py": "15516fb647de630dfbd03760e8f323f662d1e949d14cb13234924ac8bdcc256f",
+    "services/mcp/tests/unit/sakai/test_http_context.py": "d81bda788f18a48e3bb9d2f529ea2b15ed9b87206e1243e64ef9bfdb481202d7",
+    "services/mcp/src/sakai_mcp/sakai/grading.py": "ed22c4621d6c06e7d5ccdb301bf5168ec025eb79c73a14b897f1f460b5c23c79",
+    "services/mcp/src/sakai_mcp/sakai/operations.py": "0af7c4968cc3c368edb84b5195098a516bcfa3fecbf049415dc6ba05e36678fb",
+    "services/mcp/src/sakai_mcp/workflows/grading.py": "9f9a75433310eb1ebbdb31b83749ee7f52e561bfa4a85e0ef36cf29f431706eb"
+  },
+  "log_sha256": {
+    "raw-context-proof.log": "7a391dee7ab4b6f13eddb651f047eb6997091e84cd06c9328f5ae7d423572610",
+    "context-python.log": "bed51f88446a11404de77cbfd3ebd59abbfcfdaacbd48c97232c8c0fc92307c1",
+    "python-regression.log": "50d518369aac2cf20a323a5c36345873655067acc3085a82d62b42804f36844a",
+    "raw-context-shape.log": "dda0788ff69f117ec437ea26363ed66eb7d064d8c4785866c982a29e06852d29"
+  },
+  "reviewed_source_commit": "a4d628bb328373ff7757b3208363d85c8dddfd5c"
+}
