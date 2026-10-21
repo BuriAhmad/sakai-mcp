@@ -3,7 +3,7 @@
   "date": "2026-10-21",
   "kind": "tool-migration-development",
   "branch": "codex/tool-migration-development",
-  "source_anchor": "a4d628bb328373ff7757b3208363d85c8dddfd5c",
+  "source_anchor": "3518e5ea87715f0de08dc5fcf2d0930de41f1712",
   "original_baseline": "208d69ac624910a29a7529934ddcc18bbac853e8",
   "mixed_source": "98364680e73489addf649685bb79511e8febf917",
   "auth_core_commit": "98a4ca7de32e9ebbeec743c244a2c6193351829a",
@@ -36,7 +36,10 @@
     "docs/mcp/development-lines/tool-proof-2026-10-21.json",
     "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md",
     "docs/mcp/existing-api-migration/remaining-tools-results-2026-10-21.json",
-    "docs/mcp/development-lines/remaining-tools-2026-10-21.json"
+    "docs/mcp/development-lines/remaining-tools-2026-10-21.json",
+    "docs/mcp/development-lines/local-assessment-correction-2026-10-21.json",
+    "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md",
+    "docs/mcp/existing-api-migration/local-assessment-correction-results-2026-10-21.json"
   ],
   "restored_native_wiring": [
     "apps/sakai/pom.xml",
@@ -60,12 +63,12 @@
     "auth_reference_path": "docs/mcp/development-lines/protocol/sakai_flow.py",
     "status": "Unchanged client protocol dependency, not server auth implementation"
   },
-  "runtime_acceptance": "Not established; remaining-tool attempt has17 full-suite failures. No deployment/activation. Attachment failure/error history preserved.",
+  "runtime_acceptance": "Not established. Current suite583 passed/2 unchanged catalog-count failures; skill validator import error. No deployment/activation or auth changes. Historical failures preserved.",
   "required_native_auth": "Auth development source pinned at b5100547aaee02e7cd33adaa5e7bf86a38d01c1e with separate future matching native/Python integration acceptance.",
   "extraction_anchor": "0cb3f331cb23ac2e3aaae14420bdc152dc3d7603",
   "legacy_client_auth_paths": [],
   "legacy_native_auth_paths": [],
-  "current_proof_record": "docs/mcp/development-lines/remaining-tools-2026-10-21.json",
+  "current_proof_record": "docs/mcp/development-lines/local-assessment-correction-2026-10-21.json",
   "additional_tool_auth_requirements": {
     "route": "GET /direct/assignment/annc/{site}/{assignment}.json without query",
     "owner": "Separate auth development/integration; no behavior or protocol change made here",

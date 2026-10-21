@@ -1,0 +1,223 @@
+{
+  "format_version": 1,
+  "date": "2026-10-21",
+  "kind": "user-directed-client-assessment-correction",
+  "branch": "codex/tool-migration-development",
+  "starting_head": "3c572178edfd78a3f25ac156afc64384c73fa75a",
+  "reviewed_source_commit": "3518e5ea87715f0de08dc5fcf2d0930de41f1712",
+  "source_acceptance": "Reviewed preservation;583pass/2catalogfail; no post-failure source/test repair or live acceptance",
+  "immutable_extraction_anchor": "0cb3f331cb23ac2e3aaae14420bdc152dc3d7603",
+  "previous_record": "docs/mcp/development-lines/remaining-tools-2026-10-21.json",
+  "previous_record_sha256": "13e7e82793006553ce6621919d60bc48b19a04b7dc1ff392dfef1e4bfb093654",
+  "private_checkpoint": "/Users/burhanahmadkhan/Desktop/sakai-mcp-tool-migration-development/deployment/artifacts/local-grading-correction-2026-10-21",
+  "private_hashes": {
+    "source-before.tar.gz": "b7a555d5b0fa745deee51823d7cb44ab4b89d5134aa41d813709b49b3543dd61",
+    "skill-validation.log": "69fd631c1f6c8a97457460a172e8fe5960c9774d74802d211250fa2d8a11fc5d",
+    "check-mcp.log": "b73576f6bd61337726c8d07d355c238d79479f8ff61c702a4c5f7087b7e2a594",
+    "manifest.json": "81afbfe297e2194b659729a3e3d7592e3fae5ff9c64cc0161049350d74a670c3",
+    "preservation-setup-error.log": "df4ff6b3fbb0aa52dbf7a79b9e9aed36d37839a28fd17e63c684c067776bc66b",
+    "failed-run-snapshot.json": "e4bed0465add0b1692f4e74ce1d04135d7abbf2480cb463c9de07ada0550e624"
+  },
+  "reviewed_files": [
+    {
+      "path": "AGENTS.md",
+      "before_sha256": "08c1682d15ea4c447ead4102907ba6f47287bb703b8c4aacefdfdcf29c8b6670",
+      "after_sha256": "ae3d07c361c0d5931beb33aa29d920ab0d1e20c7a3dc909cb7cd9497245183e7",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/SAKAI_ASSIGNMENT_GRADING.md",
+      "before_sha256": "8fcacfbde04af31c79133e4f66dba8248e08daa2d0578b910c57df8a27d94b5e",
+      "after_sha256": "ef8c9dee727d83429cd7a3d5ee688e186e801ead039ebda3425e8f80c7d2064d",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/SAKAI_GRADING_MCP_RESOURCES.md",
+      "before_sha256": "b1290765c7d6df5d5c91b3249f4a993aedd6247a03ba828b1a1a5d2c74bd1d83",
+      "after_sha256": "fef8a4fd36bab787631ff83e4092c1748fa5b18a9a5bd33605e7b7cb611d2708",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/SAKAI_INTEGRATION_GUIDE.md",
+      "before_sha256": "083daea64f7c8dbb8a932d9bd57bf56edd9efd1697c5bc07b9843854a9f8b5ab",
+      "after_sha256": "09ee7dd9d20d262d086dbc3228fa7d84365ef02b8add810542459618ff230a45",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/assignment-grading-contracts.json",
+      "before_sha256": "a211f67c7ecedf0f3338141ae136ddb0b5ab7a716dabd3c94b6dfd77020ce231",
+      "after_sha256": "f4bf12e8f9cb1f2e6aed98162e323f217a5d2378ce54e5cd2ae6461b9de0386b",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/README.md",
+      "before_sha256": "3a1ac72133d78cc4e9e353f9991f4fd802b76fadfdc16353731aae09bc786818",
+      "after_sha256": "bdfb6d86bb55318271b6bd12cc05c17b86fe2298adec303779e9df84acf7d5d5",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/browser-flows.json",
+      "before_sha256": "512413dfdd779a4233d19103b43c429127e9a9463b3e801d4100a95159ef3d6f",
+      "after_sha256": "69c008ffb669dc801c11d56e10e441a7207b4aca60bec8247a97e53182a5d9e5",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/check_scope.py",
+      "before_sha256": "b18d386714d80eb76c283e1abda837cd11414aa1f2301047701468b6ddee83a4",
+      "after_sha256": "28bd2ba252e7392360d4454cb4e2ca2ab913efe93a05f30b45278e2e435c31b6",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/coverage.json",
+      "before_sha256": "ccb0acfc9418dc240d23311665b2479572b3604a6071d97cc2e8f8c26273e53a",
+      "after_sha256": "912bb20d814f365df0c4327b41624519be5deabbf32837437936dd07363be794",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/implementation-plan.md",
+      "before_sha256": "ea5123d662bf5d23a6cf68549b6755fc68906f1d21c6310b58e915366544a5a4",
+      "after_sha256": "d16918b6b22bc0ea51cd82ca56b64af7e4723df41a649c8489ba7b717039a6b8",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md",
+      "before_sha256": null,
+      "after_sha256": "bbd5f520c10d926f3e404a100685ae8ebd00861f785ecc18cca1e007be93e9b1",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/local-assessment-correction-results-2026-10-21.json",
+      "before_sha256": null,
+      "after_sha256": "b5cfe8a047b687f3d5207570a9674182057dbc4fd683db19db6fa3727ee3de61",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/native-change-ledger.json",
+      "before_sha256": "29392a68273ed853f385e784ffa68f2484ffe2fea2fab98894ef2cb9e3341cea",
+      "after_sha256": "c964a2e88eaa11559370530f100651d4f595396c44807fcc979c5d8c0a6184b9",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/progress.json",
+      "before_sha256": "c738eb829bee4ec3d8c399fc10731e7a32855047d96953d855e77dd088fb461f",
+      "after_sha256": "4f9625dea4b4f19fd6147f5b627046119527375bd43240cd0f58dbd1a6bf66a8",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/tool-limitations.md",
+      "before_sha256": "bb68c301401681d9a60e63f0bfbb89df370ed64aca0c495a095308eeeaeeace1",
+      "after_sha256": "1ae8c999c1736c8af25f0deb162fab566cfb9f7bf921e87ff700ee72ed1f6643",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/AGENTS.md",
+      "before_sha256": "f2c201abec215eb001c3f7a74b8decdfd7969e8bb98a7b54c4fd3c5b55f1312d",
+      "after_sha256": "4b67c5e56132ce26c6f241aff04aeb0343ad13fb362ac1819c35e0eea8044ddd",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/README.md",
+      "before_sha256": "e66db8eab9a3d0d4199ba4e0a41d46fedd746fc4339928c0c69261072b0fbb19",
+      "after_sha256": "61cb11b208049e8c9a09a15c121c21e1bb32f4628c31dcec03988d7ce8e9531d",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/tools.py",
+      "before_sha256": "8317b9b5f06affc6a56fb9607c4be3e15b093088d5b2516339d2cda44887f3fb",
+      "after_sha256": "ecd1e8cd8419a0563c081b1250eb13cc1fc8017517f598bc258b3f6f1437a5c7",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/grading.py",
+      "before_sha256": "ed22c4621d6c06e7d5ccdb301bf5168ec025eb79c73a14b897f1f460b5c23c79",
+      "after_sha256": "031812e96b81b773ed7685ccd2be9c0c30b540bec4df7cb5fa9061982b6209ff",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/captures.py",
+      "before_sha256": "bf7cbc66a0f9d88067d7fc04c6817bd27e99e719157ab18ab419043211a0bd18",
+      "after_sha256": "2d25a37324ccc27c4540e90988e33a3dd0a4eed690285e2a6e102f860ec9a536",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/grading.py",
+      "before_sha256": "9f9a75433310eb1ebbdb31b83749ee7f52e561bfa4a85e0ef36cf29f431706eb",
+      "after_sha256": "c0b7fd92e32826a1436fa8a236ea188789499f6d74f9d884dc518c507d5a54b9",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/contracts/local-assessment-catalog-v2.json",
+      "before_sha256": null,
+      "after_sha256": "b556f7118af340a5cd06df8838776d267b470990e60397b411662a7425673a9b",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/integration/test_remaining_migration_gates.py",
+      "before_sha256": "038e76e167fccf3e99f7b848a77434abe1b4c2f76e03c6b184616c07b2f15cf4",
+      "after_sha256": "b9ab2304c460943ec8dcd4be8db7a7e2f4e96a279c345d4eaf89e26043dc42fd",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/protocol/test_contract_compatibility.py",
+      "before_sha256": "b91d1aba12d402068820f2c54ea78c666664ed5a3a13d4bbcff1d323ba129240",
+      "after_sha256": "7fd157cef545a27b1b8eb7e20eb6c640e427f82dc950b59cdf295542fd371ad3",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/protocol/test_grading_resources.py",
+      "before_sha256": "888258c52aeb62e13b4da26b446bc1cb6618ea3ac9f0bcb7ac305c3001b00702",
+      "after_sha256": "59246bcdc1c3db235a98ccbf1bf256d81c59cc97e918f247e7e3abd582c70dd5",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_grading_operations.py",
+      "before_sha256": "96bb6fb12d32fb48f7dcca119421b32073c124f36ebc3ae539bf01994312230a",
+      "after_sha256": "dfe88e6d2cc61d6b3f1080eb13d272cab0541d4de03070df5976d0b300b58e8d",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_proposals.py",
+      "before_sha256": "a36b76718f67c3f54f297b9c8d3e61a177f778e4d6cb6f6952d60cc46bb4cdd8",
+      "after_sha256": "55d1282a96fac680de83c7fb116109052089c5a97ab59ddd26f726510904740f",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "skills/sakai-assignment-grading/SKILL.md",
+      "before_sha256": "dd8d55e2470e63b06e9950c045e84804d4e1de4d7cc0c96d5ebdeb89852cf5f0",
+      "after_sha256": "5df169960295ccea6e43b4416068c13578f475d8081ade25da428659ce03d7e5",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "skills/sakai-assignment-grading/references/client-constraints.md",
+      "before_sha256": "2fe9c71d0cbf2f628733ea57e01d19f10c04dda351f8f9a19c2ae265d94dc552",
+      "after_sha256": "52c983f307b14865bf8f889d6bedbf33586f1468f0e745b1e894a951bc037e99",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "skills/sakai-assignment-grading/references/workspace.md",
+      "before_sha256": "dcbe6a198762beafb102837e4f4c7e83d5a295885a4f22867d170eeb6e89c8a3",
+      "after_sha256": "2a651e35cd94d06772fe6dc2faca23d4e5fbf518297b8d79abd6303b0f26c4c4",
+      "after_mode": "0o644"
+    }
+  ],
+  "installed_skill": "Three authorized files synchronized; before bytes privately archived; installed/repository equality verified.",
+  "auth_protocol_sha256": "d5f8d01f58d56be77a06647f09ecf9be00a5188addd0916a80307012eb765aa0",
+  "proof_results": "docs/mcp/existing-api-migration/local-assessment-correction-results-2026-10-21.json",
+  "failed_checks": {
+    "python": {
+      "passed": 583,
+      "failed": 2,
+      "post_failure_repairs": false
+    },
+    "skill_validation": "Harness import yaml failed; zero checks",
+    "initial_final_verification": "Rejected uncommitted role metadata after checkpoint-path setup error; private preservation-setup-error.log retained. No implementation/test repair."
+  },
+  "final_commands": [
+    "python3 docs/mcp/existing-api-migration/check_scope.py --verify-progress",
+    "python3 docs/mcp/development-lines/verify_arrangement.py --current",
+    "./scripts/check-repo-context.sh",
+    "git diff --check"
+  ],
+  "final_log": "deployment/artifacts/local-grading-correction-2026-10-21/final-verification.log",
+  "preservation": "No historical records/manifests/archives rewritten. No other worktree or native/auth/business/wiring/schema/runtime changes."
+}
