@@ -10,7 +10,7 @@ from tests.fixtures.sakai import FakeClient, principal
 
 @pytest.mark.parametrize(
     "setup,grading,count",
-    [(False, False, 5), (True, False, 8), (False, True, 19), (True, True, 22)],
+    [(False, False, 5), (True, False, 8), (False, True, 18), (True, True, 21)],
 )
 def test_independent_catalog_gates(setup, grading, count):
     config = settings(
