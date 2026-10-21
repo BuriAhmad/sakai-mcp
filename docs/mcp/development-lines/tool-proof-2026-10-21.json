@@ -1,0 +1,144 @@
+{
+  "format_version": 1,
+  "date": "2026-10-21",
+  "kind": "tool-development-proof-preservation",
+  "branch": "codex/tool-migration-development",
+  "starting_head": "833e7c4dc3844e0ddc545d47e92989e87fdc7140",
+  "reviewed_source_commit": "68d8de2f93351dc7574f7d58a67e88b0a5464316",
+  "immutable_extraction_anchor": "0cb3f331cb23ac2e3aaae14420bdc152dc3d7603",
+  "previous_record": "docs/mcp/existing-api-migration/continuation-2026-10-20-worktree-separation.json",
+  "previous_record_sha256": "3055e88f7cc6fca96a048cfce7f89ba8339a67b08b88729c9c1a115ad300ccdd",
+  "private_checkpoint": "/Users/burhanahmadkhan/Desktop/sakai-mcp-tool-migration-development/deployment/artifacts/tool-proof-2026-10-21",
+  "private_hashes": {
+    "source-before.tar.gz": "a51284807ebadd23101c7090102bd7eddec62397f3152fef18a66fdab86e0608",
+    "manifest.json": "6fcfca4d94ace710aafb437e3edbc51e9143de16966dc71e1abcc9cda414f23c",
+    "python-regression.log": "9d42b9e1c2b221ffb94962f8cb11356b942f07762e87d6c6252bff6ab48a8d37",
+    "java-regression.log": "7535537d8aecf12281bd19ff3e67a1cb6951a05ddd152d508c31191d537253ae",
+    "public-gates.xml": "ad39402d6a917bc173f2f2605541cf17309c4b464b52eb004bc81b94e18665f9"
+  },
+  "historical_records_verified": [
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-worktree-separation.json",
+      "sha256": "3055e88f7cc6fca96a048cfce7f89ba8339a67b08b88729c9c1a115ad300ccdd"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-attachment-audit.json",
+      "sha256": "c3fc42f64492b1b408f7fcbde0ab15e9991696697dc1368f435e16e39b939a67"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-attachment-proof.json",
+      "sha256": "596f5ce8df914560daaee564cadf85bedbd6348feadffbd7dbf508321f39c66e"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-evidence-review.json",
+      "sha256": "76596c77162f78c47ac3c7b88fbe96e2b5b7bda8e657719b22a85b0eab026382"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-grading-write.json",
+      "sha256": "a52e4216133f7a25a23f838e0f0a826cdda4505a4e38fb1561744446c57e12d4"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-operation-read.json",
+      "sha256": "c8e59a8d14b4efa75da01abb775347acfe03c8eb1486a7ad2310bc9242c30c06"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-grading-context.json",
+      "sha256": "d65d50f5bd4ebac851b530830dba0711f69cdf4e5c64f00e1b9429c990599572"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-setup.json",
+      "sha256": "8b22da938a9d890371393685eab86b344d57ce3fcc8b49b4012e3c0242fa945d"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20.json",
+      "sha256": "bc05c70ee28bdc17094e849b8ac4909e311522d1c5b52535ca95d1c409f72870"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-19.json",
+      "sha256": "4f3d415ed7b69f02860fd37996b95aa5e97170b1ac270c8d4097b1783e3023df"
+    }
+  ],
+  "new_source": [
+    {
+      "path": "services/mcp/tests/integration/test_remaining_migration_gates.py",
+      "before_sha256": null,
+      "after_sha256": "e1a8669da77657fb3e4d7e1c8a891b25dc89affa30779286a57b16b50ca5b624"
+    }
+  ],
+  "reviewed_metadata": [
+    {
+      "path": "docs/mcp/development-lines/role.json",
+      "before_sha256": "fc24ddb84f7860d19ecfa7c35f6a17df79e43ee4521a6c011e22e7f746e69e0f",
+      "after_sha256": "61d29942106dd137a4dbf1f634a1a2b803b121e0cd664734b99c306818096e1c",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/README.md",
+      "before_sha256": "9632b03b8b37d176340cbdcccfce0a8a29087334d0c533a5d1f0d0b34c5eda92",
+      "after_sha256": "c64399dc890051f215e16bc7ef97a6ae44ffa894b1248e41636d43c8cd794154",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/browser-flows.json",
+      "before_sha256": "3eb98fb564ca6bc8af4fad1734dd10861bed7f8da58468707e53910113a0e5d7",
+      "after_sha256": "8939532ab37ee700513a368bf34d8b4c20658324c1ba53ecc65248da9b025dd7",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/coverage.json",
+      "before_sha256": "cd4b7d9bf1374262161ae60abca9bc17e7ea29154a82b7180236e15c0423a3d4",
+      "after_sha256": "a31b56cdcab8cfef8aef019fa8d2c62b74d941c25f96a4678732d95c514d6921",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/implementation-plan.md",
+      "before_sha256": "db7029e9ec4021f8afe3dad6c534b5b16a8f7c4ce5c4a9f624b15894ce6ec978",
+      "after_sha256": "71330d5c945da16ec622143e909edc23df7938825500553affc6070986c7b362",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/native-change-ledger.json",
+      "before_sha256": "def3fac1193dc4e296b568c05462ce2702d0f087aa5a9767beb479b627cf95a6",
+      "after_sha256": "4a85c4b227b746ff85ec59bb1e69b1e616af54d81e5e60a1f0a3407fc4f120e2",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/progress.json",
+      "before_sha256": "95806970c976e8abf741e2ca55aff88bfe279855bbf9dc5733f7c782433ed867",
+      "after_sha256": "99342812d430b0f053fba9b477d2e92a217f0e4c552aa20feb7cb74e336ab479",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/tool-limitations.md",
+      "before_sha256": "56d0688734becd4106a17e0bcc9b8bc644fd2c1c2621be7468def062a539d0d7",
+      "after_sha256": "444ecff529a56ee1c1745a698009daf552bdc609a563d7f0076147cfd86c4dc2",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/tool-proof-2026-10-21.md",
+      "before_sha256": null,
+      "after_sha256": "7aba654bcf3d5b2a7403e7f783acfb5b71f4efea3fdfe2d655d629773fe0751b",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/tool-proof-results-2026-10-21.json",
+      "before_sha256": null,
+      "after_sha256": "05889181d4b094039aa94585ca9ec90b11e52445fe50e9bee1a8265f7c1913f8",
+      "after_mode": "0o644"
+    }
+  ],
+  "checks": {
+    "initial_source_role_and_scope": "pass",
+    "python": "566 pass; Ruff lint/format131 and mypy73 pass",
+    "java": "30 tests12 suites pass, no failures/errors/skips",
+    "readiness": "collection error, exit2, zero tests; not fixed",
+    "final_commands": [
+      "python3 docs/mcp/existing-api-migration/check_scope.py --verify-progress",
+      "python3 docs/mcp/development-lines/verify_arrangement.py --current",
+      "./scripts/check-repo-context.sh",
+      "git diff --check"
+    ],
+    "final_result_log": "deployment/artifacts/tool-proof-2026-10-21/final-verification.log"
+  },
+  "scope": "Five new synthetic SDK proof cases and current evidence/dependency corrections only. No production/auth/protocol/native source edits, runtime changes or deployment. No old baseline/archive/manifest/continuation rewritten. Generated readiness __pycache__ left untracked; no cleanup."
+}

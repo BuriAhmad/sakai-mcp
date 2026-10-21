@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-21",
+  "initial_head": "833e7c4dc3844e0ddc545d47e92989e87fdc7140",
+  "proof_source_commit": "68d8de2f93351dc7574f7d58a67e88b0a5464316",
+  "branch": "codex/tool-migration-development",
+  "implementation_modified": false,
+  "failures_fixed": false,
+  "public_defaults_replaced": 20,
+  "public_defaults_total": 22,
+  "historical_routes_retired": 22,
+  "historical_routes_total": 23,
+  "cases": [
+    {
+      "id": "sdk-mcq-partial-gate",
+      "status": "pass",
+      "expected": "CONFLICT before context/evaluation/proposal persistence",
+      "actual": "CONFLICT; sentinels untouched; unchanged store; only existing GETs",
+      "owner": "tool-migration",
+      "scope": "Actual SDK facade; synthetic HTTP/OBO/principal/memory storage"
+    },
+    {
+      "id": "sdk-context-native-dependency",
+      "status": "pass",
+      "expected": "one retained native GET and prepare/save/release=false",
+      "actual": "one retained native GET; all three false",
+      "owner": "tool-migration",
+      "scope": "Synthetic HTTP200; not existing-HTTP cutover"
+    },
+    {
+      "id": "sdk-context-denial",
+      "status": "pass",
+      "expected": "FORBIDDEN no fallback",
+      "actual": "FORBIDDEN; exactly one mocked GET",
+      "owner": "tool-migration",
+      "scope": "Simulated HTTP403, not a native ACL decision"
+    },
+    {
+      "id": "sdk-context-required-state",
+      "status": "pass",
+      "tests": 2,
+      "expected": "missing required scale/release rejected",
+      "actual": "INTERNAL_ERROR; no guessed fields",
+      "owner": "tool-migration",
+      "scope": "Synthetic response/strict validation"
+    },
+    {
+      "id": "attachment-python-readiness",
+      "status": "error",
+      "expected": "three readiness tests execute and pass",
+      "actual": "ModuleNotFoundError: No module named 'tests' during collection",
+      "tests_executed": 0,
+      "exit_code": 2,
+      "command": "cd services/mcp && uv run --no-sync pytest ../../docs/mcp/existing-api-migration/attachment_readiness_proof.py -q",
+      "owner": "tool-proof-harness; correction deferred",
+      "repaired": false
+    },
+    {
+      "id": "historical-delegated-content",
+      "status": "historical-fail-not-rerun",
+      "expected": "HTTP200 and native chain reached",
+      "actual": "historical HTTP403, reached=false before RequestFilter/binder/AccessServlet",
+      "owner": "auth-development",
+      "source": "attachment-audit-results-2026-10-20.json"
+    },
+    {
+      "id": "real-role-source-integrity-isolation",
+      "status": "unproven",
+      "owner": "separate auth integration plus tool/native-role acceptance",
+      "actual": "No end-to-end or live acceptance in this pass"
+    }
+  ],
+  "regression": {
+    "initial_python": 561,
+    "final_python": 566,
+    "new_public_facade_cases": 5,
+    "java_tests": 30,
+    "java_suites": 12,
+    "native_framework_in_scope": false
+  },
+  "evidence": "docs/mcp/existing-api-migration/tool-proof-2026-10-21.md",
+  "source_sha256": {
+    "services/mcp/tests/integration/test_remaining_migration_gates.py": "e1a8669da77657fb3e4d7e1c8a891b25dc89affa30779286a57b16b50ca5b624",
+    "docs/mcp/existing-api-migration/attachment_readiness_proof.py": "c3e4c6439f92185cb1188b53c5f94d9b194881b2b05af6c5eabc6b9f1a5b4210",
+    "services/mcp/src/sakai_mcp/workflows/grading.py": "3336040ba3bb1a72c821ede59a9605b871a1d1b9ec033efaf1da4fbcc88e6707",
+    "services/mcp/src/sakai_mcp/sakai/grading.py": "59ef63ec76cb01a308eb419a88469960f1664659ad07d1dc38d89c67dfbfdfa5",
+    "services/mcp/src/sakai_mcp/grading/evaluator.py": "f5178096999a5b8f5160c1c4f9d29725d81d91b8d8b7d81c0255027ce83fca4d"
+  },
+  "local_log_sha256": {
+    "deployment/artifacts/tool-proof-2026-10-21/python-regression.log": "9d42b9e1c2b221ffb94962f8cb11356b942f07762e87d6c6252bff6ab48a8d37",
+    "deployment/artifacts/tool-proof-2026-10-21/java-regression.log": "7535537d8aecf12281bd19ff3e67a1cb6951a05ddd152d508c31191d537253ae",
+    "deployment/artifacts/tool-proof-2026-10-21/public-gates.xml": "ad39402d6a917bc173f2f2605541cf17309c4b464b52eb004bc81b94e18665f9"
+  },
+  "deployment": "None"
+}

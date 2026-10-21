@@ -7,7 +7,7 @@ about an uncommitted tree or fixed HEAD describe their dated checkpoints;
 `--verify-progress` verifies the saved migration source, explicit organization
 metadata paths and hash-chained dated continuation records after that commit.
 
-Current local status (20 October): seventeen actual defaults use existing HTTP/external records; twenty routes are retired locally and three remain. Five tools and full resource/legacy/live acceptance remain. See [operation-read evidence](operation-read-2026-10-20.md), current coverage/progress/limitations.
+Current local status (21 October): 20/22 actual defaults use existing HTTP/external records; 22/23 historical routes are retired locally. T09/T20 and full resource/legacy/live acceptance remain. Fresh verification: 566 Python and 30 focused Java tests pass; unchanged attachment readiness errors during collection with zero probes executed. See [current proof evidence](tool-proof-2026-10-21.md).
 
 
 [Known tool limitations](tool-limitations.md) is the consolidated current reference for per-tool restrictions, caps, errors, evidence gaps and resolution gates.
@@ -193,4 +193,4 @@ resource facades. Content/roster routes remain unaccepted; no default count chan
 
 ## Development line separation — 20 October 2026
 
-The [maintained worktree guide](../../DEVELOPMENT_WORKTREES.md) separates original baseline, auth development and tool migration development. This checkout and its original continuation checks remain the mixed recovery source; they do not define the new worktrees' active auth scope. No failed proof is repaired by organization.
+The [maintained worktree guide](../../DEVELOPMENT_WORKTREES.md) separates original baseline, auth development and tool migration development. The original `sakai-mcp` checkout and its continuation checks remain the mixed recovery source. This tool-development checkout uses its role/source-anchor verifier and the separate auth dependency. No failed proof is repaired by organization.

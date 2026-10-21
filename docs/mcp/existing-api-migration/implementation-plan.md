@@ -2904,3 +2904,47 @@ Every current tool/resource now has an ordered existing-HTTP/Python event flow. 
 ## Independent development line — 20 October 2026
 
 This is the separated tool-migration source, reconstructed from the preserved mixed snapshot. Native auth module/build/filter wiring and auth-specific tests were transferred to auth development. Python tool implementation and frozen business/evaluator/contract bytes are unchanged. Its flow client remains an explicitly pinned protocol dependency on a separately assembled matching server-auth integration; this native tree alone is not deployable for those calls. Original continuation preservation remains authoritative in the inactive mixed recovery checkout. The local role/source-anchor verifier handles extraction integrity. See `docs/DEVELOPMENT_WORKTREES.md`. No failed attachment proof is repaired or newly accepted.
+
+
+## Tool development proof continuation — 21 October 2026
+
+Fresh source context is the separated `codex/tool-migration-development` line,
+starting at `833e7c4dc3844e0ddc545d47e92989e87fdc7140`. Follow
+`docs/DEVELOPMENT_WORKTREES.md` and the current role record; server authentication,
+filter reach/order and the pinned client protocol belong to auth development.
+This worktree cannot supply matching new server authentication by itself.
+
+Five new actual SDK facade checks establish partial MCQ capture rejection before
+context/evaluation/proposal persistence, the retained T09 native GET, sanitized
+simulated403 without fallback, and rejection of missing raw scale/release fields.
+They use synthetic HTTP, OBO/principal and memory-store fixtures. They establish
+Python routing/contract gates, not token validation, servlet reach or native ACLs.
+Fresh checks pass 566 Python tests, lint/format/types and 30 focused Java tests.
+The unchanged positive attachment-readiness invocation again errors at collection
+(`ModuleNotFoundError: No module named 'tests'`), exit2, zero executed probes.
+No failed test, fixture, import or implementation was repaired. The historical
+positive delegated403 remains a failure before RequestFilter/AccessServlet;
+its auth-owned Java source is absent here and was not rerun or copied back.
+
+Current dependency correction: T14/T15/T18 now use HTTP observation preconditions,
+not T09's semantic revision. The remaining runtime context consumers are the public
+T09 facade and the later T20 context read. Earlier revision-consumer descriptions
+in dated reviews describe their checkpoint. After capture and roster gates, T20
+also requires the evaluator's unchanged context `supported.prepare=true` and
+matching configuration revision; the retained T09 facade forces prepare false.
+This later gate is source-traced, not exercised with fabricated complete input.
+A coordinated truthful context/provenance transition is still required.
+
+A14's existing `assignment/annc` helper returns a raw Assignment containing
+scaleFactor/releaseGrades/properties in the model, but temporarily grants an
+asn.new advisor and has unproven relationship serialization/scope. It remains an
+unadopted source candidate, not evidence that all HTTP fields are impossible or
+that grade-only TA safety is established. No credential reach was broadened.
+
+Counts remain **20/22 local actual defaults, 22/23 historical routes retired**;
+T09 and T20 remain, no resource family is fully migrated, no new retirement.
+Complete roster/content gates, unsupported attachment ACL/MIME/byte/source binding,
+D3 concurrency, D6 durable backend/legacy ownership and D7 ordinary UI retirement
+remain open. Nothing is deployed, activated or live by these checks. See
+[proof results and next gates](tool-proof-2026-10-21.md) and the new development-line
+preservation record; old baselines, archives and continuation records are unchanged.

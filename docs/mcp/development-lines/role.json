@@ -3,7 +3,7 @@
   "date": "2026-10-20",
   "kind": "tool-migration-development",
   "branch": "codex/tool-migration-development",
-  "source_anchor": "0cb3f331cb23ac2e3aaae14420bdc152dc3d7603",
+  "source_anchor": "68d8de2f93351dc7574f7d58a67e88b0a5464316",
   "original_baseline": "208d69ac624910a29a7529934ddcc18bbac853e8",
   "mixed_source": "98364680e73489addf649685bb79511e8febf917",
   "auth_core_commit": "98a4ca7de32e9ebbeec743c244a2c6193351829a",
@@ -30,7 +30,10 @@
     "docs/mcp/existing-api-migration/native-change-ledger.json",
     "docs/mcp/existing-api-migration/implementation-plan.md",
     "docs/mcp/existing-api-migration/tool-limitations.md",
-    "docs/mcp/existing-api-migration/README.md"
+    "docs/mcp/existing-api-migration/README.md",
+    "docs/mcp/existing-api-migration/tool-proof-2026-10-21.md",
+    "docs/mcp/existing-api-migration/tool-proof-results-2026-10-21.json",
+    "docs/mcp/development-lines/tool-proof-2026-10-21.json"
   ],
   "restored_native_wiring": [
     "apps/sakai/pom.xml",
@@ -58,5 +61,6 @@
   "required_native_auth": "Auth development source pinned at b5100547aaee02e7cd33adaa5e7bf86a38d01c1e with separate future matching native/Python integration acceptance.",
   "extraction_anchor": "0cb3f331cb23ac2e3aaae14420bdc152dc3d7603",
   "legacy_client_auth_paths": [],
-  "legacy_native_auth_paths": []
+  "legacy_native_auth_paths": [],
+  "current_proof_record": "docs/mcp/development-lines/tool-proof-2026-10-21.json"
 }

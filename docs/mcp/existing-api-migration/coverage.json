@@ -561,7 +561,7 @@
       ],
       "implementation_phase": 3,
       "state": "not-migrated",
-      "evidence": "source-reviewed 2026-10-20; frozen strict fields and native revision consumer prevent safe actual-default replacement from presently verified HTTP projections",
+      "evidence": "docs/mcp/existing-api-migration/tool-proof-2026-10-21.md",
       "migration_matrix_row": "| `get_assignment_grading_context` \u2192 `GradingOperations.get_assignment_grading_context` | `GET A/grading-context`; Query/Authorization/Evidence/Projection | B3 grading-accessible metadata + B7 current scoped state + B6 linked Gradebook + safely authorized A12. Ordered T09. | Preserve grade-only TA and setup independence; modern/legacy field availability and supported Assignment variants explicit. No fabricated raw lock/release/version state. |",
       "browser_http_flow": {
         "id": "T09",
@@ -572,11 +572,11 @@
           "B6",
           "B7"
         ],
-        "status": "source-reviewed; not safely cut over: required frozen state and compatible revision inputs unavailable in verified existing-HTTP projections",
+        "status": "not migrated; fresh SDK native-dependency/required-field checks; no current native writer coupling",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
       "historical_api_only_matrix_row": "| `get_assignment_grading_context` \u2192 `GradingOperations.get_assignment_grading_context` | `GET A/grading-context`; Query/Authorization/Evidence/Projection | A0/A4/A5/A6/A2/A12; Python capability and context computation | Use A12 to detect a rubric association where safely authorized; cannot invent release flags, exact revision, other setting availability or full roster. Mark incomplete/unsupported capabilities. SC/I; D4. |",
-      "dependency_note": "T09 configuration_revision feeds current native T14/T15 preflight. McpAssessmentService.revision hashes persisted flags, attachment refs and the full property map; existing Assignment metadata/setup form do not provide every input, and http1 observation revisions are incompatible. Preserve until coordinated compatible revision migration.",
+      "dependency_note": "Current T14/T15/T18 use HTTP observation preconditions, not T09 semantic revisions. Only public T09 and the later T20 context path consume this retained context. Frozen scale/release fields remain unproven in safe existing views; no cutover.",
       "remaining_gate": "Frozen required native release flag/raw scale and full state cannot be certified by researched existing DTO/forms. Keep native default; no fabricated unknowns or nominal replacement. docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
     },
     {
@@ -1100,14 +1100,14 @@
       ],
       "implementation_phase": 4,
       "state": "not-migrated; complete-source-context-roster-blocker; external proposal/export dependencies replaced",
-      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md; no completed-tool claim; incomplete export rejected before residual native context read",
+      "evidence": "docs/mcp/existing-api-migration/tool-proof-2026-10-21.md",
       "migration_matrix_row": "| `prepare_assignment_mcq_grades` \u2192 `GradingWorkflow.prepare_mcq/_prepare_mcq`, `grading/evaluator.py` | Reads native context/roster/exports/files; `POST A/grading-proposals` | B10 immutable export/current scope, existing pure evaluator/reports and external conditional proposal record. Ordered T20. | No official grade mutation; complete approved inputs, source hashes/expiry/provenance retained; no native proposal service required. |",
       "browser_http_flow": {
         "id": "T20",
         "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
         "anchor": "t20",
         "cards": [],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "not migrated; fresh SDK partial-input rejection verified; complete preparation unproven",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
       "historical_api_only_matrix_row": "| `prepare_assignment_mcq_grades` \u2192 `GradingWorkflow.prepare_mcq/_prepare_mcq`, `grading/evaluator.py` | Reads native context/roster/exports/files; `POST A/grading-proposals` | Retain pure deterministic evaluator; replace all evidence reads with A4/A5/A6/A9 and persist proposal externally | Complete scoped evidence/key config required. Preserve source fingerprint/report bytes where feasible; changing revision/provenance is explicit engine/input-version migration. Never official save. I; external persistence can be idempotent. |",
@@ -1118,7 +1118,7 @@
         "proposal-create",
         "proposal-read"
       ],
-      "remaining_gate": "Current captures remain partial. Modern grader stored-row enumeration and generic memberships/role metadata do not prove complete eligible roster; no native context/evaluator/persistence after partial capture. docs/mcp/existing-api-migration/evidence-review-2026-10-20.md",
+      "remaining_gate": "Current partial capture rejected through actual SDK before context/evaluation/persistence. Complete roster/content plus later compatible context revision and supported.prepare=true remain required. docs/mcp/existing-api-migration/tool-proof-2026-10-21.md",
       "latest_content_roster_evidence": "docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md; native handler-only characterization; no content route activation or complete input claim"
     },
     {
@@ -1769,8 +1769,9 @@
   "canonical_plan": {
     "repository_path": "docs/mcp/existing-api-migration/implementation-plan.md",
     "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp-tool-migration-development/docs/mcp/existing-api-migration/implementation-plan.md",
-    "sha256": "db7029e9ec4021f8afe3dad6c534b5b16a8f7c4ce5c4a9f624b15894ce6ec978",
+    "sha256": "71330d5c945da16ec622143e909edc23df7938825500553affc6070986c7b362",
     "delivery_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md",
-    "updated_date": "2026-10-20"
+    "updated_date": "2026-10-21",
+    "delivery_copy_status": "Historical external copy; not refreshed because this pass writes only in the tool-development worktree."
   }
 }
