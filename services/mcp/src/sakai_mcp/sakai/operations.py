@@ -274,7 +274,9 @@ RAW_ASSIGNMENT = Operation(
     ASSIGNMENT,
     "getAssignDataForAnnouncement",
     "A14",
-    blocked_reason="D4: advisor, raw relationship serialization and authorization require investigation",
+    # Only GradingContextReads: existing grade/list/edit proof, site-wide grade,
+    # add/revise/item-edit authority, individual nonanonymous supported form.
+    # Raw relationships are an explicitly bounded authorized instructor over-fetch.
 )
 
 OPERATIONS = MappingProxyType(

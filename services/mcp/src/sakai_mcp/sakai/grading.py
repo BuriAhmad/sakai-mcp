@@ -1,11 +1,6 @@
 """Typed native grading operations; no MCP tool-name dispatch."""
 
-import json
-from typing import TypeVar
-from urllib.parse import urlencode
-
 from mcp.server.auth.provider import AccessToken
-from pydantic import ValidationError
 
 from sakai_mcp.contracts import grading_native as native
 from sakai_mcp.contracts.assignments import assignment_summaries, observation_revision
@@ -15,16 +10,14 @@ from sakai_mcp.contracts.grading_public import AssignmentListResult
 from sakai_mcp.errors import ErrorCode, SakaiError
 from sakai_mcp.sakai.existing_transport import ExistingApiTransport
 from sakai_mcp.sakai.operations import ASSIGNMENTS, USER_PERMISSIONS
-from sakai_mcp.sakai.paths import segment
 from sakai_mcp.sakai.transport import SakaiTransport
 from sakai_mcp.workflows.access import AccessObservations
 from sakai_mcp.workflows.captures import Captures
+from sakai_mcp.workflows.grading_context import GradingContextReads
 from sakai_mcp.workflows.grading_operations import GradingOperationsJournal
 from sakai_mcp.workflows.grading_writes import GradingWrites
 from sakai_mcp.workflows.selected_grades import selected_grades
 from sakai_mcp.workflows.submissions import SubmissionReads
-
-Result = TypeVar("Result", bound=native.GradingModel)
 
 
 class GradingOperations:
@@ -47,69 +40,8 @@ class GradingOperations:
     async def get_assignment_grading_context(
         self, principal: AccessToken, request: native.GetAssignmentGradingContextRequest
     ) -> native.GetAssignmentGradingContextResult:
-        result = await self._send(
-            principal,
-            request,
-            "GET",
-            "/grading-context",
-            native.GetAssignmentGradingContextResult,
-            mutation=False,
-        )
-        result = result.model_copy(
-            update={
-                "supported": result.supported.model_copy(
-                    update={
-                        "prepare": False,
-                        "save": False,
-                        "release": False,
-                        "reasons": list(
-                            dict.fromkeys(
-                                [
-                                    *result.supported.reasons,
-                                    "legacy_context_revision_not_http_write_projection",
-                                ]
-                            )
-                        ),
-                    }
-                ),
-                "warnings": list(
-                    dict.fromkeys(
-                        [
-                            *result.warnings,
-                            "grading_writes_require_http_metadata_and_submission_revisions",
-                        ]
-                    )
-                ),
-            }
-        )
-        # This context still uses its transitional native query. Do not advertise
-        # file URIs after the last native file consumer has been retired.
-        if result.assignment.attachments:
-            result = result.model_copy(
-                update={
-                    "assignment": result.assignment.model_copy(
-                        update={
-                            "attachments": [
-                                a.model_copy(
-                                    update={
-                                        "readable": False,
-                                        "resource_revision": None,
-                                    }
-                                )
-                                for a in result.assignment.attachments
-                            ]
-                        }
-                    ),
-                    "warnings": list(
-                        dict.fromkeys(
-                            [*result.warnings, "current_assignment_files_unsupported"]
-                        )
-                    ),
-                }
-            )
-        if len(result.warnings) > 30 or len(result.supported.reasons) > 30:
-            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
-        return result
+        self._enabled()
+        return await GradingContextReads(self.submissions).read(principal, request)
 
     async def list_assignment_submissions(
         self, principal: AccessToken, request: native.ListAssignmentSubmissionsRequest
@@ -168,55 +100,6 @@ class GradingOperations:
     ) -> native.GetAssignmentGradingOperationResult:
         self._enabled()
         return await self.operations.read(principal, request)
-
-    async def _send(
-        self,
-        principal: AccessToken,
-        request: native.GradingModel,
-        method: str,
-        suffix: str,
-        result_type: type[Result],
-        *,
-        mutation: bool,
-    ) -> Result:
-        payload = request.model_dump()
-        course, assignment = payload.pop("course_id"), payload.pop("assignment_id")
-        root = self.grading_root(course, assignment)
-        if (
-            method == "POST"
-            and len(json.dumps(payload, ensure_ascii=False).encode()) > 60_000
-        ):
-            raise SakaiError(ErrorCode.VALIDATION_ERROR)
-        if method == "GET":
-            query = {
-                k: v
-                for k, v in payload.items()
-                if k in {"cursor", "limit"} and v is not None
-            }
-            if query:
-                suffix += "?" + urlencode(query)
-        value = await self.transport.request(
-            method,
-            root + suffix,
-            principal,
-            payload if method == "POST" else None,
-            unsupported=True,
-        )
-        try:
-            return result_type.model_validate(value)
-        except ValidationError:
-            raise SakaiError(
-                ErrorCode.AMBIGUOUS_WRITE_OUTCOME
-                if mutation
-                else ErrorCode.INTERNAL_ERROR
-            ) from None
-
-    def grading_root(self, course: str, assignment: str) -> str:
-        if not self.settings.assignment_grading_enabled:
-            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
-        return (
-            f"/api/mcp/v1/courses/{segment(course)}/assignments/{segment(assignment)}"
-        )
 
     async def read_grading_file(
         self,

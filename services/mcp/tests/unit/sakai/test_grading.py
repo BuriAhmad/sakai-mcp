@@ -70,39 +70,19 @@ def test_expired_export_maps_to_missing_evidence():
     assert error.value.code == ErrorCode.NOT_FOUND
 
 
-def test_remaining_context_does_not_advertise_retired_assignment_file_links():
-    from tests.fixtures.grading_data import context
+def test_context_with_assignment_attachments_stays_unsupported():
+    from tests.fixtures.context_http import ContextHTTP
 
-    value = context().model_dump()
-    value["assignment"]["attachments"] = [
-        {
-            "artifact_key": "a" * 64,
-            "original_name": "brief.txt",
-            "content_type": "text/plain",
-            "size_bytes": 5,
-            "resource_revision": "b" * 64,
-            "kind": "file",
-            "readable": True,
-        }
-    ]
-
-    def handler(request):
-        assert request.url.path.endswith("/grading-context")
-        return httpx.Response(200, json=value)
-
-    client = SakaiClient(
-        settings(assignment_grading_enabled=True),
-        FakeOBO(),
-        httpx.AsyncClient(transport=httpx.MockTransport(handler)),
-    )
-    result = asyncio.run(
-        client.grading.get_assignment_grading_context(
-            principal(),
-            GetAssignmentGradingContextRequest(
-                course_id="course-a", assignment_id="assignment-a"
-            ),
+    wire = ContextHTTP()
+    wire.raw["attachments"] = ["/content/attachment/opaque/brief.txt"]
+    with pytest.raises(SakaiError) as error:
+        asyncio.run(
+            wire.client().grading.get_assignment_grading_context(
+                principal(),
+                GetAssignmentGradingContextRequest(
+                    course_id="course-a", assignment_id="assignment-a"
+                ),
+            )
         )
-    )
-    assert result.assignment.attachments[0].readable is False
-    assert result.assignment.attachments[0].resource_revision is None
-    assert "current_assignment_files_unsupported" in result.warnings
+    assert error.value.code == ErrorCode.UNSUPPORTED_CAPABILITY
+    assert all("/api/mcp/" not in r.url.path for r in wire.calls)

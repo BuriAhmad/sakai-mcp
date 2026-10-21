@@ -7,10 +7,15 @@ from mcp.server.auth.provider import AccessToken
 
 from sakai_mcp.contracts import grading_native as native
 from sakai_mcp.contracts import grading_proposals as proposals
+from sakai_mcp.contracts.mcq_observation import mcq_observation
+from sakai_mcp.contracts.setup_forms import core_supported
+from sakai_mcp.contracts.submissions import entry
 from sakai_mcp.errors import ErrorCode, SakaiError
 from sakai_mcp.grading.evaluator import evaluate_mcq
 from sakai_mcp.grading.serialization import canonical, payload_hash
 from sakai_mcp.sakai.client import SakaiClient
+from sakai_mcp.workflows.assignment_setup import AssignmentSetup
+from sakai_mcp.workflows.captures import assignment_revision
 from sakai_mcp.workflows.resources import export_manifest
 
 
@@ -64,7 +69,7 @@ class GradingWorkflow:
         manifest = await export_manifest(
             client, token, course_id, assignment_id, export_id
         )
-        if not manifest.completeness.complete:
+        if not manifest.completeness.complete or manifest.completeness.scope != "site":
             raise SakaiError(ErrorCode.CONFLICT)
         files: dict[str, bytes] = {}
         for artifact in manifest.artifacts:
@@ -86,12 +91,6 @@ class GradingWorkflow:
                 }:
                     raise
                 continue
-        context = await client.grading.get_assignment_grading_context(
-            token,
-            native.GetAssignmentGradingContextRequest(
-                course_id=course_id, assignment_id=assignment_id
-            ),
-        )
         roster: list[dict[str, Any]] = []
         seen: set[str] = set()
         cursor, revision = None, None
@@ -105,10 +104,15 @@ class GradingWorkflow:
                     limit=100,
                 ),
             )
-            if not page.completeness.complete or revision not in {
-                None,
-                page.snapshot_revision,
-            }:
+            if (
+                not page.completeness.complete
+                or page.completeness.scope != "site"
+                or revision
+                not in {
+                    None,
+                    page.snapshot_revision,
+                }
+            ):
                 raise SakaiError(ErrorCode.CONFLICT)
             revision = page.snapshot_revision
             roster.extend(r.model_dump() for r in page.items)
@@ -120,15 +124,40 @@ class GradingWorkflow:
             if cursor in seen:
                 raise SakaiError(ErrorCode.CONFLICT)
             seen.add(cursor)
+        # Only after complete capture and roster gates: fresh existing HTTP
+        # metadata, never the legacy full-context route or its native revision.
+        _, assignment, current = await client.submissions.source(
+            token, course_id, assignment_id
+        )
+        observed = {row.id: row for row in current}
+        for row in roster:
+            sid = row["submission_id"]
+            if sid is None:
+                continue
+            current_row = observed.get(sid)
+            if current_row is None:
+                raise SakaiError(ErrorCode.CONFLICT)
+            if (
+                entry(current_row, assignment).content_revision
+                != row["content_revision"]
+            ):
+                raise SakaiError(ErrorCode.CONFLICT)
+        if set(observed) != {
+            row["submission_id"] for row in roster if row["submission_id"] is not None
+        }:
+            raise SakaiError(ErrorCode.CONFLICT)
+        form = await AssignmentSetup(client.submissions, None).edit_observation(
+            token, course_id, assignment_id
+        )
+        core_supported(form)
+        context = mcq_observation(assignment, assignment_revision(assignment), config)
         evidence = manifest.model_dump()
         evidence.update(course_id=course_id, assignment_id=assignment_id)
         # Path descriptors are legacy native DTO details, never required by this evaluator.
         for artifact in evidence["artifacts"]:
             artifact.pop("download_path")
             artifact.pop("relative_path")
-        rows = evaluate_mcq(
-            config.model_dump(), context.model_dump(), roster, evidence, files
-        )
+        rows = evaluate_mcq(config.model_dump(), context, roster, evidence, files)
         payload = proposals.ProposalPayload(
             config=config, rows=[proposals.ProposalRow.model_validate(r) for r in rows]
         )

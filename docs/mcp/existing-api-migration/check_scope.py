@@ -257,7 +257,19 @@ def validate(verify_working_tree=False, verify_progress=False):
         need(historical <= retired, "Historical dependency is still active")
         consumed.update(item["legacy_route_ids"])
         consumed.update(historical)
-    need(consumed == ids, f"Unmapped native routes: {ids - consumed}")
+    # A replaced caller can leave its native route intentionally retained while
+    # regression/compatibility gates are open. Record that state explicitly;
+    # never invent a current Python caller or equate retention with retirement.
+    retained = coverage.get("retained_compatibility_routes", [])
+    retained_ids = {item["id"] for item in retained}
+    need(len(retained_ids) == len(retained), "Duplicate compatibility retention")
+    active = {r["id"] for r in routes if r["state"] != "retired-local"}
+    need(retained_ids <= active, "Compatibility retention must name active source routes")
+    need(not retained_ids & consumed, "Retained route still declares a caller")
+    for item in retained:
+        need(bool(item["reason"]), "Missing compatibility retention reason")
+        need((ROOT / item["evidence"]).is_file(), "Missing retention evidence")
+    need(consumed | retained_ids == ids, f"Unmapped native routes: {ids - consumed - retained_ids}")
     for item in tools:
         tree = ast.parse((ROOT / item["registration"]).read_text())
         need(
