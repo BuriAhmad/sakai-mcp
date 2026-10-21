@@ -556,8 +556,8 @@
         "D8"
       ],
       "implementation_phase": 3,
-      "state": "default-existing-http-wired; narrow-instructor-subset; focused-pass; full-regression-failed-not-accepted",
-      "evidence": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md",
+      "state": "default-existing-http-wired; narrow-instructor-subset; normal-regression-pass; native-role-acceptance-open",
+      "evidence": "docs/mcp/existing-api-migration/proof-refresh-2026-10-21.md",
       "migration_matrix_row": "| `get_assignment_grading_context` \u2192 `GradingOperations.get_assignment_grading_context` | `GET A/grading-context`; Query/Authorization/Evidence/Projection | B3 grading-accessible metadata + B7 current scoped state + B6 linked Gradebook + safely authorized A12. Ordered T09. | Preserve grade-only TA and setup independence; modern/legacy field availability and supported Assignment variants explicit. No fabricated raw lock/release/version state. |",
       "browser_http_flow": {
         "id": "T09",
@@ -568,12 +568,12 @@
           "B6",
           "B7"
         ],
-        "status": "default-existing-http-wired; narrow-instructor-subset; focused-pass; full-regression-failed-not-accepted",
+        "status": "default-existing-http-wired; narrow-instructor-subset; normal-regression-pass; native-role-acceptance-open",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
       "historical_api_only_matrix_row": "| `get_assignment_grading_context` \u2192 `GradingOperations.get_assignment_grading_context` | `GET A/grading-context`; Query/Authorization/Evidence/Projection | A0/A4/A5/A6/A2/A12; Python capability and context computation | Use A12 to detect a rubric association where safely authorized; cannot invent release flags, exact revision, other setting availability or full roster. Mark incomplete/unsupported capabilities. SC/I; D4. |",
-      "dependency_note": "Current production facade uses existing grading/list/edit plus A14. No native context caller remains; native route retained pending regression/compatibility gate, not a live fallback.",
-      "remaining_gate": "Full suite has17 failures; actual delegated A14/role/relationship serialization acceptance and broader context coverage remain open."
+      "dependency_note": "Existing grading/list/edit/A14; no custom context caller. Native route retained pending independent old-client/native compatibility and focused retirement review; not a fallback.",
+      "remaining_gate": "Local585-test normal regression passed. Actual delegated A14/role/raw relationship serialization and broader context coverage remain unproven."
     },
     {
       "name": "list_assignment_submissions",
@@ -1713,12 +1713,18 @@
       "path": "docs/mcp/existing-api-migration/implementation-plan.md",
       "sha256": "d16918b6b22bc0ea51cd82ca56b64af7e4723df41a649c8489ba7b717039a6b8",
       "evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md"
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "Authorized two count corrections and proof refresh; no repairs after failing proofs",
+      "sha256": "2088604e74ee1b901136e58c1c80d93fe95b9bef3784f10924d075f265f22599",
+      "evidence": "docs/mcp/existing-api-migration/proof-refresh-2026-10-21.md"
     }
   ],
   "canonical_plan": {
     "repository_path": "docs/mcp/existing-api-migration/implementation-plan.md",
     "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp-tool-migration-development/docs/mcp/existing-api-migration/implementation-plan.md",
-    "sha256": "d16918b6b22bc0ea51cd82ca56b64af7e4723df41a649c8489ba7b717039a6b8",
+    "sha256": "2088604e74ee1b901136e58c1c80d93fe95b9bef3784f10924d075f265f22599",
     "delivery_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md",
     "updated_date": "2026-10-21",
     "delivery_copy_status": "Historical external copy; not refreshed because this pass writes only in the tool-development worktree."
@@ -1726,8 +1732,8 @@
   "retained_compatibility_routes": [
     {
       "id": "grading-context",
-      "reason": "No current production Python caller after T09/T20 change; full regression failed17 cases. Native retirement and old-client compatibility deferred. No replacement count implies acceptance.",
-      "evidence": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md"
+      "reason": "No current production Python caller. Local585-test regression now passes; old-client/native compatibility and focused native retirement review remain separate. No new native retirement in proof-only pass.",
+      "evidence": "docs/mcp/existing-api-migration/proof-refresh-2026-10-21.md"
     }
   ],
   "retired_public_tools": [
@@ -1785,5 +1791,6 @@
       "retirement_evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md"
     }
   ],
-  "catalog_amendment": "services/mcp/tests/contracts/local-assessment-catalog-v2.json"
+  "catalog_amendment": "services/mcp/tests/contracts/local-assessment-catalog-v2.json",
+  "latest_proof_results": "docs/mcp/existing-api-migration/proof-refresh-results-2026-10-21.json"
 }

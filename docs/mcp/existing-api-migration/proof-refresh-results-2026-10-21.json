@@ -1,0 +1,175 @@
+{
+  "format_version": 1,
+  "date": "2026-10-21",
+  "source": {
+    "commit": "7cfa3204fdc1dd5e68e637ba9ada400059d013fa",
+    "branch": "codex/tool-migration-development",
+    "starting_head": "de7158bf4e97d3e10f3cdef220a7783cd07849a4"
+  },
+  "authorized_change": "Two catalog-count expectations19\u219218 and22\u219221 only; no production/auth/Skill changes",
+  "cases": [
+    {
+      "id": "python-regression",
+      "status": "pass",
+      "expected": "All normal tests pass",
+      "actual": {
+        "passed": 585,
+        "failed": 0
+      },
+      "command": "cd services/mcp && ../../scripts/check-mcp.sh",
+      "exit_code": 0,
+      "owner": "tool-development",
+      "reached": "Actual SDK/Python facade/workflows; synthetic HTTP/OBO/storage",
+      "limits": "No actual native servlet/delegation/real-role/host filesystem acceptance"
+    },
+    {
+      "id": "lint-format-types",
+      "status": "pass",
+      "format_files": 137,
+      "mypy_files": 76,
+      "command": "cd services/mcp && ../../scripts/check-mcp.sh",
+      "owner": "tool-development",
+      "reached": "Static source checks"
+    },
+    {
+      "id": "native-focused",
+      "status": "pass",
+      "expected": "Selected native suites pass",
+      "actual": {
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": 13
+      },
+      "command": "JAVA_HOME=/opt/homebrew/opt/openjdk@17 mvn -f apps/sakai/pom.xml -pl webapi,announcement/announcement-tool/tool,entitybroker/core-providers,assignment/tool -am '-Dtest=Mcp*Test,Existing*Test,LoginControllerTests,ExistingRawContextProof' -Dsurefire.failIfNoSpecifiedTests=false test",
+      "exit_code": 0,
+      "owner": "tool/native compatibility",
+      "reached": [
+        "org.sakaiproject.announcement.entityprovider.ExistingAnnouncementActionTest",
+        "org.sakaiproject.assignment.entityproviders.ExistingRawContextProof",
+        "org.sakaiproject.entitybroker.providers.ExistingPagesActionTest",
+        "org.sakaiproject.entitybroker.providers.ExistingSiteVisibilityTest",
+        "org.sakaiproject.webapi.test.LoginControllerTests",
+        "org.sakaiproject.webapi.mcp.grading.McpGradingServicesTest",
+        "org.sakaiproject.webapi.mcp.grading.McpGradingWiringTest",
+        "org.sakaiproject.webapi.mcp.security.McpJwtVerifierTest",
+        "org.sakaiproject.webapi.mcp.security.McpBearerFilterTest",
+        "org.sakaiproject.webapi.mcp.announcements.McpAnnouncementWriteControllerTest",
+        "org.sakaiproject.webapi.mcp.courses.McpGradesControllerTest",
+        "org.sakaiproject.webapi.mcp.courses.McpSubmissionsControllerTest",
+        "org.sakaiproject.webapi.mcp.courses.McpCourseControllerTest"
+      ],
+      "limits": "Local existing/legacy components with synthetic collaborators; not excluded auth/Access chain or live acceptance"
+    },
+    {
+      "id": "attachment-readiness",
+      "status": "error",
+      "expected": "3 positive probes execute and pass",
+      "actual": "ModuleNotFoundError: No module named 'tests' during collection",
+      "tests_executed": 0,
+      "command": "cd services/mcp && uv run --no-sync pytest ../../docs/mcp/existing-api-migration/attachment_readiness_proof.py -q --junitxml=../../deployment/artifacts/proof-refresh-2026-10-21/attachment-readiness.xml",
+      "exit_code": 2,
+      "owner": "tool-proof-harness",
+      "reached": "Imports only; no probe body executed",
+      "repaired": false
+    },
+    {
+      "id": "skill-validator",
+      "status": "error",
+      "expected": "Validator checks execute",
+      "actual": "ModuleNotFoundError: No module named 'yaml'",
+      "checks_executed": 0,
+      "command": "python3 /Users/burhanahmadkhan/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/sakai-assignment-grading",
+      "exit_code": 1,
+      "owner": "skill-validation-harness",
+      "reached": "import yaml only",
+      "repaired": false
+    },
+    {
+      "id": "delegated-access-chain",
+      "status": "not-rerun-source-excluded",
+      "expected": "200 and RequestFilter/binder/AccessServlet reached",
+      "actual": "Auth module and both Java proof classes intentionally absent from this worktree",
+      "historical_result": "FAIL403 reached=false before native RequestFilter/binder/AccessServlet",
+      "historical_results": "docs/mcp/existing-api-migration/attachment-audit-results-2026-10-20.json",
+      "owner": "separate-auth-development/integration",
+      "reached": "No fresh delegated chain executed"
+    },
+    {
+      "id": "access-filter-prerequisite",
+      "status": "missing-source-prerequisite",
+      "actual": [
+        "oauth.pre",
+        "sakai.request",
+        "oauth.post"
+      ],
+      "owner": "separate-auth-integration",
+      "reached": "Read-only XML source inspection; not readiness probe or ACL calculation"
+    },
+    {
+      "id": "intended-cli-workspace-bytes",
+      "status": "unproven-not-exercised",
+      "owner": "host/tool-acceptance",
+      "actual": "SDK resource roundtrips pass; actual intended CLI original-byte materialization has no acceptance proof here",
+      "reached": "No intended client filesystem path"
+    },
+    {
+      "id": "native-role-source-integrity-isolation",
+      "status": "unproven-environment-blocked",
+      "owner": "auth-integration plus tool/native-role acceptance",
+      "actual": "No matching integrated auth/native-role/host acceptance environment used",
+      "reached": "No fresh delegated end-to-end or real-role matrix"
+    }
+  ],
+  "catalogs": {
+    "00": 5,
+    "10": 8,
+    "01": 18,
+    "11": 21
+  },
+  "resources": 5,
+  "public_facades_existing_http_external_records": 21,
+  "native_routes_retired": 22,
+  "native_routes_historical": 23,
+  "failures_fixed_after_proof_run": false,
+  "runtime_changes": false,
+  "deployed": false,
+  "evidence": "docs/mcp/existing-api-migration/proof-refresh-2026-10-21.md",
+  "private_checkpoint": "/Users/burhanahmadkhan/Desktop/sakai-mcp-tool-migration-development/deployment/artifacts/proof-refresh-2026-10-21",
+  "artifacts": {
+    "source-before.tar.gz": "7bc62ec377540ee9e39f05149bf64cf8df2b0a3e14e78a36bcca183e57609476",
+    "java-summary.json": "aec944058024331d049522a6ee3b3178485f6a8b407bd9d28905fff510ec63d5",
+    "java-focused.log": "f75c75852b7c3df6a61dcea05dded865e9eaf29382f442a704251657c68ebb9d",
+    "attachment-readiness.log": "526ddcdcd523726a395e0e4ba64757f8dca14ddd227dd76068017a70b98e5ce7",
+    "skill-validator.log": "69fd631c1f6c8a97457460a172e8fe5960c9774d74802d211250fa2d8a11fc5d",
+    "check-mcp.log": "98981e34f388714550acfb5972175619caa9d2e733bbb5f7596352cdea353c36",
+    "locked-sync.log": "a204981ee37b7758137a3a110d79acb116731db4c36237d6159a6bb4f26dc1cf",
+    "attachment-readiness.xml": "c3047130cab203bbf8a1b4dab4e1c41b07e1608679ccfbbfedae4304c825beca",
+    "source-prerequisites.json": "a744788bfa9e4c838caf5555555fffee41c838119c6342fc1f347278c23d9b85",
+    "manifest.json": "a82653a9673c1a618757fd2ba37709021559be8c527c4c4ec4fb6ae4031fd410",
+    "java-xml/TEST-org.sakaiproject.webapi.mcp.announcements.McpAnnouncementWriteControllerTest.xml": "1f96ec5255f20a67466df90447bffa4aeaa874ba4781059afcd28179492c1e26",
+    "java-xml/TEST-org.sakaiproject.webapi.mcp.grading.McpGradingServicesTest.xml": "f143a9d8528a29b5de1db088a6e9d9d00baf64e162fd2449b3bd36a0d6b4279b",
+    "java-xml/TEST-org.sakaiproject.webapi.test.LoginControllerTests.xml": "0f7fc040707d45c65d7af5028ed0222c84062a5671ff5aa2584ddd13258767ea",
+    "java-xml/TEST-org.sakaiproject.webapi.mcp.courses.McpSubmissionsControllerTest.xml": "de5de5a6ab215adea5da8dd56beff86c8cf189818ee6370f1d2eda543cf981af",
+    "java-xml/TEST-org.sakaiproject.assignment.entityproviders.ExistingRawContextProof.xml": "bf35bdf37055dffa3968dd205d362e9a29ca7da77c78a2e717035d04f379d5ca",
+    "java-xml/TEST-org.sakaiproject.entitybroker.providers.ExistingSiteVisibilityTest.xml": "6a33dbdc46f81b907be7d0bcea8cd6fe4fe9aa2fedf98ba01e4fc2a9cafbe294",
+    "java-xml/TEST-org.sakaiproject.webapi.mcp.grading.McpGradingWiringTest.xml": "821159ca31af57496cebe51d0163f396841380a27ef4ab31f27fef097fb05624",
+    "java-xml/TEST-org.sakaiproject.webapi.mcp.courses.McpCourseControllerTest.xml": "4f773565606f32198490c0ee53db7f830895e23e521aac443669bfc466211f92",
+    "java-xml/TEST-org.sakaiproject.webapi.mcp.security.McpJwtVerifierTest.xml": "fe7048c5e233e162ecf91ceb18a69e6958a69500087500bf51d6eb6fb66b02dd",
+    "java-xml/TEST-org.sakaiproject.entitybroker.providers.ExistingPagesActionTest.xml": "83eab1f57dc6ba52e47b6b9b56de6f110bcfcda31364acaf5a160052ca660568",
+    "java-xml/TEST-org.sakaiproject.announcement.entityprovider.ExistingAnnouncementActionTest.xml": "8cddfcf201939c3238075312e5079b48f1b51cb7dd8b1d9032646ef8e3cb8392",
+    "java-xml/TEST-org.sakaiproject.webapi.mcp.courses.McpGradesControllerTest.xml": "0ae68748f7524e545c8263f9553e6c05bc018669394e3178bb2a44b4968904f5",
+    "java-xml/TEST-org.sakaiproject.webapi.mcp.security.McpBearerFilterTest.xml": "e3bb30af0081d0b5781fb92706fc6d3f0b90ac1c23fff1afd7ca556573a2c9e8"
+  },
+  "source_sha256": {
+    "services/mcp/tests/protocol/test_grading_tools.py": "4dbcb11cad9826be142c7dbd791e4aeca5eabfba5ddaeece1649a236bf43d8d8",
+    "docs/mcp/existing-api-migration/attachment_readiness_proof.py": "c3e4c6439f92185cb1188b53c5f94d9b194881b2b05af6c5eabc6b9f1a5b4210",
+    "services/mcp/tests/integration/test_remaining_migration_gates.py": "b9ab2304c460943ec8dcd4be8db7a7e2f4e96a279c345d4eaf89e26043dc42fd",
+    "services/mcp/src/sakai_mcp/workflows/grading.py": "c0b7fd92e32826a1436fa8a236ea188789499f6d74f9d884dc518c507d5a54b9",
+    "services/mcp/src/sakai_mcp/sakai/grading.py": "031812e96b81b773ed7685ccd2be9c0c30b540bec4df7cb5fa9061982b6209ff",
+    "services/mcp/src/sakai_mcp/sakai/existing_transport.py": "4bf32d62c82891533aa86a146f33aac66b735add6e3ade5d2683bf60014a8861",
+    "services/mcp/src/sakai_mcp/security/sakai_flow.py": "d5f8d01f58d56be77a06647f09ecf9be00a5188addd0916a80307012eb765aa0",
+    "apps/sakai/assignment/tool/src/test/org/sakaiproject/assignment/entityproviders/ExistingRawContextProof.java": "b7e8f08c557555771da6b8aea277aface2cf018486a376889928a9a72a430693"
+  }
+}

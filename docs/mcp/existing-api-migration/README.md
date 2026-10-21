@@ -1,5 +1,7 @@
 Git organization (19 October): the migration source is now committed on
 
+**Latest proof refresh, 21 October:** the two catalog assertions are corrected;585 Python and31 focused Java tests passed. Separate attachment readiness (`tests`) and Skill validator (`yaml`) import errors remain; zero checks executed in those commands. Delegated/role/file-delivery acceptance remains unproven. [Fresh results](proof-refresh-results-2026-10-21.json) and [report/proposed fixes](proof-refresh-2026-10-21.md) supersede older current-status statements below while preserving their historical results. Catalog5/8/18/21;21 facades routed; native retirement22/23 unchanged.
+
 **Current user-directed correction, 21 October:** MCQ preparation is removed;21 current facades use existing HTTP/external records. Catalog5/8/18/21, five resources including legacy proposal readers. Native retirement22/23 unchanged. Fresh suite583 passed/2 old count assertions failed without repair. [Current evidence and gates](local-assessment-correction-2026-10-21.md) supersede the earlier status descriptions below.
 `codex/replace-custom-sakai-api`; `codex/sakai-custom-native-api` has its own
 worktree at the original `208d69ac` baseline. See [worktree usage and verification](git-worktrees.md)

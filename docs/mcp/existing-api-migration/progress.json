@@ -3,7 +3,7 @@
   "date": "2026-10-21",
   "branch": "codex/tool-migration-development",
   "base_sha": "208d69ac624910a29a7529934ddcc18bbac853e8",
-  "scope": "User-directed local assessment correction:21 current tool facades, all wired to existing HTTP/external records; MCQ preparation retired by product decision, not marked migrated or accepted.",
+  "scope": "21 current facades use existing HTTP/external records; MCQ preparation intentionally retired. Current normal regression585 passed; focused native31 passed. No delegated/native-role/host-file acceptance.",
   "phase_0": "reviewed-checkpoint-and-branch-complete",
   "phase_1": "bounded conventional/browser parsers and transports locally tested; live fixtures/helpers/multipart pending",
   "phase_2": "Historical mixed auth proofs only; new framework/wiring excluded here. Matching separate auth integration and actual handler/role acceptance required.",
@@ -183,15 +183,22 @@
   ],
   "verification": {
     "command": "cd services/mcp && ../../scripts/check-mcp.sh",
-    "python_passed": 583,
-    "python_failed": 2,
-    "failure_kind": "Catalog expectations retain19/22, actual18/21; record without post-run assertion repair.",
+    "python_passed": 585,
+    "python_failed": 0,
+    "java_tests": 31,
+    "java_suites": 13,
+    "java_failures": 0,
+    "java_errors": 0,
+    "java_skips": 0,
     "lint": "passed",
     "format": "137 files passed",
     "types": "76 files passed",
-    "proof_evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md"
+    "attachment_readiness": "Collection import error tests; zero probes",
+    "skill_validator": "Import error yaml; zero checks",
+    "delegated_access_chain": "Not rerun: auth/proof source excluded; historical403 preserved",
+    "proof_evidence": "docs/mcp/existing-api-migration/proof-refresh-2026-10-21.md"
   },
-  "next_gate": "Separate approved correction of two recorded catalog-count tests; then compatible auth integration/real-role and actual CLI byte-preserving file delivery acceptance. Broader grading writes/attachments remain unsupported.",
+  "next_gate": "Separate harness corrections for tests/PyYAML, compatible auth integration and actual delegated/native-role/CLI byte-preserving file delivery acceptance; unsupported attachment/write variants remain blocked. Native context route compatibility/retirement is independent.",
   "uncertainties": [
     "No actual native tool rendered form/Wicket callback/live OAuth/Basic or multi-node-affinity acceptance",
     "No fresh native/config/schema/private-store inventory; no data import/provisioning",
@@ -533,7 +540,7 @@
     "preservation": "Fresh verified private76-path manifest/72-file source archive and4 editor fingerprints; exact failed audit logs/JUnit XML privately preserved. Prior continuation pinned; original records/archives untouched, empty index/custom worktree/refs preserved.",
     "repository": "Required scope/progress/preservation, guidance and whitespace checks pass. Counts unchanged20/22 actual defaults,1 active of23 historical routes. Full attachment proof NOT accepted; failures deliberately preserved."
   },
-  "current_proof_record": "docs/mcp/development-lines/local-assessment-correction-2026-10-21.json",
+  "current_proof_record": "docs/mcp/development-lines/proof-refresh-2026-10-21.json",
   "previous_verification_before_local_assessment_correction": {
     "source": "Pre-edit source/role/scope checks pass; new verified207-file checkpoint and failed-run fingerprints. Final reviewed source anchor and preservation record distinguish wire replacement from acceptance.",
     "repository": "Initial source/role/scope passed. No layouts changed; final guidance/whitespace/source/role/scope checks recorded in current proof preservation record. Historical originals remain unchanged.",
@@ -541,5 +548,15 @@
     "native": "Actual existing raw Assignment/JSONTranscoder proof1 test passes; shape-capture rerun1 pass. Initial commentary no-test inference corrected from final-module XML/log. Native auth/live/role acceptance unproven.",
     "proofs": "Full failures preserved. Prior readiness collection error and historical delegated403 remain unchanged, not rerun or repaired this pass.",
     "deployment": "None; no runtime/configuration/academic/schema/data operation."
+  },
+  "previous_verification_before_proof_refresh": {
+    "command": "cd services/mcp && ../../scripts/check-mcp.sh",
+    "python_passed": 583,
+    "python_failed": 2,
+    "failure_kind": "Catalog expectations retain19/22, actual18/21; record without post-run assertion repair.",
+    "lint": "passed",
+    "format": "137 files passed",
+    "types": "76 files passed",
+    "proof_evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md"
   }
 }

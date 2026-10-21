@@ -844,8 +844,9 @@
   },
   "current_proof_review": {
     "date": "2026-10-21",
-    "evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md",
-    "native_changes": "None;22/23 retired locally; context route retained pending compatibility.",
-    "storage": "No records/schema removed or migrated. Legacy proposal reader retained with existing authorization/expiry."
+    "evidence": "docs/mcp/existing-api-migration/proof-refresh-2026-10-21.md",
+    "native_changes": "None;31 focused native tests pass.22/23 retired; grading-context route retained pending compatibility/focused retirement.",
+    "storage": "No stored records/schema modified, moved or deleted.",
+    "auth": "Excluded native auth/proofs not copied or built from another worktree; integration acceptance remains separate."
   }
 }

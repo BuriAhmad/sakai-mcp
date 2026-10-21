@@ -9,7 +9,7 @@
   },
   "plan": {
     "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp-tool-migration-development/docs/mcp/existing-api-migration/implementation-plan.md",
-    "sha256": "d16918b6b22bc0ea51cd82ca56b64af7e4723df41a649c8489ba7b717039a6b8",
+    "sha256": "2088604e74ee1b901136e58c1c80d93fe95b9bef3784f10924d075f265f22599",
     "previous_sha256": "ed07da7540b98b6748ad47312886ee9cb2e5006f3005df2f3f231c7cb49ea23b",
     "previous_private_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Migration-Baseline-2026-10-17/plan-before-browser-research.md",
     "prior_delivery_path": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md",
@@ -167,7 +167,7 @@
     {
       "id": "T09",
       "tool": "get_assignment_grading_context",
-      "status": "Actual existing HTTP facade wired; focused21 tests pass; full regression failed17, not accepted",
+      "status": "Existing HTTP facade; local normal regression passed; delegated A14/role/relationship acceptance open",
       "event_sequence_and_checks": "Fresh actor/site/asn.grade+asn.new+asn.revise+item-edit authority -> positive individual native list/detail -> supported edit form -> fixed existing A14 without messageId -> strict raw state/identity/scale/max checks -> incomplete public context with unknown roster/Gradebook and httpctx1 revision. No custom fallback. Actual native roles/auth/lazy over-fetch remain unproven.",
       "browser_cards": [
         "B3",
@@ -179,7 +179,7 @@
         "01",
         "11"
       ],
-      "latest_gate_review": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md"
+      "latest_gate_review": "docs/mcp/existing-api-migration/proof-refresh-2026-10-21.md"
     },
     {
       "id": "T10",
@@ -1366,12 +1366,17 @@
     "2026-10-21: unchanged readiness collection errors with zero probes; five SDK gate cases pass; later T20 context prepare capability/provenance gate remains. docs/mcp/existing-api-migration/tool-proof-2026-10-21.md",
     "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md: T09 wired but full regression failed17 cases; T20 external/context separation implemented without weakening completeness; native retirement deferred."
   ],
-  "implementation_checkpoint": "docs/mcp/existing-api-migration/remaining-tools-2026-10-21.md;21 default facades wired,20 preceding validated replacements; full regression fails;22/23 native routes retired; no acceptance/deployment",
+  "implementation_checkpoint": "docs/mcp/existing-api-migration/proof-refresh-2026-10-21.md;585 Python normal tests,31 focused Java tests pass; readiness/validator import errors; no delegated/live acceptance;21 facades routed,22/23 native routes retired.",
   "current_product_amendment": {
     "date": "2026-10-21",
     "evidence": "docs/mcp/existing-api-migration/local-assessment-correction-2026-10-21.md",
     "removed_tool": "prepare_assignment_mcq_grades",
     "assessment": "Client chooses direct checks, supplied tests, optional workspace scripts, permitted rubric AI or human review.",
     "acceptance": "No new live/attachment/host-file acceptance."
+  },
+  "latest_proof_refresh": {
+    "evidence": "docs/mcp/existing-api-migration/proof-refresh-2026-10-21.md",
+    "results": "docs/mcp/existing-api-migration/proof-refresh-results-2026-10-21.json",
+    "no_post_failure_repairs": true
   }
 }
