@@ -62,6 +62,8 @@ time).
 - **Branch:** `codex/auth-development`.
 - **Before revision:** `94b2c166` (parent of the cleanup code commit).
 - **Code commit:** `7da57f49d92303637c966fe83d4ca60e1fa4971d`.
+- **Related documentation/practice commit:** `ade17277` introduces this log,
+  the root AGENTS.md requirement and the reviewed source-anchor record.
 - **Why:** address the code review's four findings: mixed Mockito versions,
   suppressed internal failure categories, inconsistent XML/POM formatting and
   unnecessarily dense production helpers.
