@@ -47,7 +47,7 @@
     "auth_reference_path": "docs/mcp/development-lines/protocol/sakai_flow.py",
     "status": "Unchanged client protocol dependency, not server auth implementation"
   },
-  "runtime_acceptance": "107 focused Java tests and 145 Python tests passed locally. No deployed/SAML/host acceptance; attachment proof failures preserved.",
+  "runtime_acceptance": "Auth development release healthy. Real connected MCP course-list and announcement reads passed for one principal; full browser/SAML, cross-role and flow acceptance remain. Historical attachment proof failures preserved.",
   "required_native_auth": "One shared Spring Security 5.7.14 Resource Server pipeline serves original business host and selected existing handlers. Existing independent gates remain disabled by default; no legacy verifier remains.",
   "extraction_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
   "legacy_client_auth_paths": [
@@ -71,7 +71,7 @@
     "spring_configuration": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedBearerAuthentication.java",
     "localized_mvc_wiring": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/DelegatedStreamingConfiguration.java",
     "protocol_change": false,
-    "deployment": false,
+    "deployment": true,
     "note": "legacy_native_auth_paths remains the ownership allowlist for deliberate deletions against original_baseline; it does not name active implementations.",
     "verification": {
       "focused_java_tests": 107,
@@ -80,7 +80,14 @@
       "aggregate_modules": 455,
       "aggregate_result": "passed with one unchanged-source resume after browser startup timeout",
       "preservation_checker": "unchanged; passed",
-      "deployment": false
+      "deployment": true
+    },
+    "development_release": {
+      "commit": "2844430a44cf5cf0896ca05c522f7fe4f04c16bd",
+      "release_id": "20261024T163517Z-2844430a44cf",
+      "evidence": "docs/evidence/mcp/auth-branch-release-2026-10-24.md",
+      "status": "healthy",
+      "main_advanced": false
     }
   }
 }
