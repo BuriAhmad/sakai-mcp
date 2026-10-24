@@ -47,7 +47,7 @@
     "auth_reference_path": "docs/mcp/development-lines/protocol/sakai_flow.py",
     "status": "Unchanged client protocol dependency, not server auth implementation"
   },
-  "runtime_acceptance": "Auth development release healthy. Real connected MCP course-list and announcement reads passed for one principal; full browser/SAML, cross-role and flow acceptance remain. Historical attachment proof failures preserved.",
+  "runtime_acceptance": "Auth development release healthy. Real connected MCP course-list and announcement reads passed for one principal; full regular password browser login, cross-role and flow acceptance remain. SAML is not configured. Historical attachment proof failures preserved.",
   "required_native_auth": "One shared Spring Security 5.7.14 Resource Server pipeline serves original business host and selected existing handlers. Existing independent gates remain disabled by default; no legacy verifier remains.",
   "extraction_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
   "legacy_client_auth_paths": [
