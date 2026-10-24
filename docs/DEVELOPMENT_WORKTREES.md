@@ -228,3 +228,14 @@ course-list and announcement reads passed. See [release evidence](evidence/mcp/a
 for build/rollback details, the interrupted-SSH recovery and remaining regular browser login,
 cross-role and flow acceptance. This does not combine the tool migration line or
 repair historical attachment proofs.
+
+
+## Auth cleanup development release — 25 October 2026
+
+The same auth branch now runs commit `0c876798` in release
+`20261024T192919Z-0c8767980ce8`, including the convention/diagnostics cleanup and
+durable VM release launcher. Full build and focused tests passed; four-principal
+live tests passed 89/93 checks, with four unchanged upstream wrong-password API
+status failures. See [current release evidence](evidence/mcp/auth-cleanup-release-2026-10-25.md).
+Main remains at baseline; the original and tool migration checkouts are untouched.
+This supersedes the previous runtime revision above, not the ownership boundaries.

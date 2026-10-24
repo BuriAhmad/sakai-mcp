@@ -49,7 +49,7 @@
     "auth_reference_path": "docs/mcp/development-lines/protocol/sakai_flow.py",
     "status": "Unchanged client protocol dependency, not server auth implementation"
   },
-  "runtime_acceptance": "Deployed auth release healthy. Four synthetic principals passed native HTML/password login/logout, genuine bearer/OBO own and foreign-course/role read checks, mixed-credential rejection, and 16 interleaved A/B isolation exercises. Four wrong-password API status checks returned pre-existing 500; no authenticated identity resulted. Existing-HTTP/flow and attachment acceptance remain outstanding. SAML is not configured.",
+  "runtime_acceptance": "Auth cleanup release healthy. Four synthetic principals: 89/93 live checks passed; four unchanged upstream wrong-password API HTTP 500 failures, with no authenticated identity. Native HTML/password login/logout, real bearer/OBO permission and mixed-credential checks, and 16 interleaved user-isolation reads passed. Existing-HTTP/flow and attachment acceptance remain outstanding. SAML is not configured.",
   "required_native_auth": "One shared Spring Security 5.7.14 Resource Server pipeline serves original business host and selected existing handlers. Existing independent gates remain disabled by default; no legacy verifier remains.",
   "extraction_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
   "legacy_client_auth_paths": [
@@ -80,26 +80,27 @@
       "python_tests": 145,
       "webcomponent_browser_tests": 203,
       "aggregate_modules": 455,
-      "aggregate_result": "passed with one unchanged-source resume after browser startup timeout",
+      "aggregate_result": "455-module VM release build passed; CI attempt 2 passed after artifact-fetch failure; 203 browser tests passed",
       "preservation_checker": "unchanged; passed",
       "deployment": true
     },
     "development_release": {
-      "commit": "2844430a44cf5cf0896ca05c522f7fe4f04c16bd",
-      "release_id": "20261024T163517Z-2844430a44cf",
-      "evidence": "docs/evidence/mcp/auth-branch-release-2026-10-24.md",
+      "commit": "0c8767980ce8a9af210d9b41b51c5c1959542451",
+      "release_id": "20261024T192919Z-0c8767980ce8",
+      "evidence": "docs/evidence/mcp/auth-cleanup-release-2026-10-25.md",
       "status": "healthy",
       "main_advanced": false,
-      "acceptance": "Four-principal live read/form/isolation checks passed; wrong-password API HTTP 500 remains a baseline limitation. See release evidence for counts and exclusions."
+      "acceptance": "Four-principal live HTTPS checks: 89 passed, 4 unchanged upstream wrong-password API status failures (500); no identity created. Existing-HTTP/flow and attachment acceptance remain outstanding."
     },
     "local_cleanup": {
       "commit": "7da57f49d92303637c966fe83d4ca60e1fa4971d",
       "date": "2026-10-25",
       "refactor_log": "docs/REFACTOR_LOG.md",
-      "deployed": false,
+      "deployed": true,
       "focused_java_tests": 107,
       "source_boundary_tests": 8,
-      "focused_package": "passed"
+      "focused_package": "passed",
+      "release_commit": "0c8767980ce8a9af210d9b41b51c5c1959542451"
     }
   }
 }

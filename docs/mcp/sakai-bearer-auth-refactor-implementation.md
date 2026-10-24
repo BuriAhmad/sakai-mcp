@@ -191,5 +191,14 @@ Mockito alignment, safe diagnostics, XML/POM presentation and helper readability
 findings. See the before/after and verification entry in
 [the repository refactor log](../REFACTOR_LOG.md#2026-10-25--align-auth-implementation-with-sakai-conventions).
 The focused 107-test Java suite, eight boundary tests and focused package build
-passed. This source cleanup is not deployed; the development runtime remains at
-`2844430a`. The prior live acceptance results describe that deployed revision.
+passed before deployment. The subsequent user-authorized release deployed commit
+`0c876798` as `20261024T192919Z-0c8767980ce8`; the new cleanup helpers and single
+production authentication path were verified in installed artifacts. The full
+455-module VM build, 107 post-deployment Java tests and eight boundary tests passed.
+Live tests passed 89/93 assertions across four principals; the four failures are
+unchanged upstream wrong-password API HTTP 500 status checks, with no authenticated
+identity created. Native HTML login/logout and bearer permission/isolation checks
+passed. See [25 October release evidence](../evidence/mcp/auth-cleanup-release-2026-10-25.md)
+for exact commits, commands and acceptance limits. Earlier local-candidate wording
+records the original implementation stage; it is superseded by this release record.
+Existing-HTTP/flow and attachment acceptance remain outstanding.

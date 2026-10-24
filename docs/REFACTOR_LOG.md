@@ -168,3 +168,24 @@ and permits the required systemd-run command. No Sakai Java, dependency, API,
 configuration or database change is included in this commit. Release execution
 and live results are recorded separately in
 [cleanup release evidence](evidence/mcp/auth-cleanup-release-2026-10-25.md).
+
+
+## 2026-10-25 — Auth cleanup deployment and verification follow-up
+
+The earlier cleanup entry's "not deployed" state describes its recording time.
+The user subsequently authorized release and tests. Cleanup code `7da57f49` and
+durable release launcher `c1f6712a` are now included in deployed commit
+`0c8767980ce8a9af210d9b41b51c5c1959542451`, release
+`20261024T192919Z-0c8767980ce8` from `codex/auth-development`.
+Main remains at baseline. The complete VM build and automatic restart/health
+checks succeeded without manual recovery, despite a read-only SSH monitor timeout.
+
+CI passed after retrying a Maven artifact-fetch failure. Post-deployment checks
+passed 107 Java tests and eight boundary tests. Four-principal live HTTPS checks
+passed 89/93 assertions; all four failures are the unchanged upstream wrong-password
+API status mapping (500), with anonymous identity verified after rejection. The
+actual cleanup helpers, pinned shared dependencies and absence of old verifier/
+filter classes were verified in the installed artifacts. See
+[the dated release evidence](evidence/mcp/auth-cleanup-release-2026-10-25.md)
+for commands, hashes, coverage and remaining acceptance limits. This follow-up
+changes documentation only; no login error mapping or attachment proof was changed.
