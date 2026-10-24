@@ -21,7 +21,12 @@ def test_auth_jar_has_only_identity_session_framework_dependencies_and_no_endpoi
         "sakai-kernel-api",
         "sakai-component-manager",
         "sakai-kernel-util",
-        "nimbus-jose-jwt",
+        "spring-security-core",
+        "spring-security-web",
+        "spring-security-oauth2-core",
+        "spring-security-oauth2-resource-server",
+        "spring-security-oauth2-jose",
+        "spring-web",
         "slf4j-api",
     }
     root = ET.parse(module / "pom.xml").getroot()
@@ -100,3 +105,38 @@ def test_context_filters_are_scoped_to_existing_named_servlets_and_ordered(
             < mappings.index("oauth.post")
             < mappings.index("mcp.session")
         )
+
+
+def test_only_standard_spring_jwt_pipeline_remains():
+    auth = NATIVE / "mcp-auth/src/main/java/org/sakaiproject/mcpauth"
+    legacy = NATIVE / "webapi/src/main/java/org/sakaiproject/webapi/mcp"
+    assert not (auth / "DelegatedJwtVerifier.java").exists()
+    assert not (legacy / "McpJwtVerifier.java").exists()
+    assert not (legacy / "McpBearerFilter.java").exists()
+    java = "\n".join(p.read_text() for p in auth.glob("*.java"))
+    for removed in [
+        "com.nimbusds",
+        "DefaultJWTProcessor",
+        "RemoteJWKSet",
+        "JWSVerificationKeySelector",
+    ]:
+        assert removed not in java
+    for standard in [
+        "new BearerTokenAuthenticationFilter",
+        "new ProviderManager",
+        "new JwtAuthenticationProvider",
+        "NimbusJwtDecoder.withJwkSetUri",
+        "new SecurityContextHolderFilter",
+        "new NullSecurityContextRepository",
+    ]:
+        assert java.count(standard) == 1, standard
+    initializer = (
+        NATIVE / "webapi/src/main/java/org/sakaiproject/webapi/WebAppConfiguration.java"
+    ).read_text()
+    assert "mcpBearerFilter" not in initializer
+    assert "DelegatingFilterProxy" not in initializer
+    assert (
+        initializer.index('"sakai.delegated.credentials"')
+        < initializer.index('"sakai.request"')
+        < initializer.index('"sakai.delegated.session"')
+    )

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 /** Covers RequestFilter postprocessing as well as the handler. */
 final class DelegatedResponse extends HttpServletResponseWrapper {
-    private static final int LIMIT = 1_000_000;
+    private final int limit;
     private final String sessionId;
     private final ByteArrayOutputStream body = new ByteArrayOutputStream();
     private PrintWriter writer;
@@ -33,7 +33,7 @@ final class DelegatedResponse extends HttpServletResponseWrapper {
 
                 @Override
                 public void write(int value) throws IOException {
-                    if (body.size() >= LIMIT) {
+                    if (body.size() >= limit) {
                         overflow = true;
                         throw new IOException("Delegated response limit");
                     }
@@ -42,7 +42,7 @@ final class DelegatedResponse extends HttpServletResponseWrapper {
 
                 @Override
                 public void write(byte[] bytes, int offset, int length) throws IOException {
-                    if (length > LIMIT - body.size()) {
+                    if (length > limit - body.size()) {
                         overflow = true;
                         throw new IOException("Delegated response limit");
                     }
@@ -56,7 +56,13 @@ final class DelegatedResponse extends HttpServletResponseWrapper {
             };
 
     DelegatedResponse(HttpServletResponse response, String sessionId) {
+        this(response, sessionId, 1_000_000);
+    }
+
+    DelegatedResponse(HttpServletResponse response, String sessionId, int limit) {
         super(response);
+        if (limit <= 0 || limit > 10 * 1024 * 1024) throw new IllegalArgumentException();
+        this.limit = limit;
         if (sessionId == null || sessionId.isEmpty()) throw new IllegalArgumentException();
         this.sessionId = sessionId;
     }

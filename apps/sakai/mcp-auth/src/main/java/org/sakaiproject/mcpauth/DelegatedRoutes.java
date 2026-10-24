@@ -21,6 +21,31 @@ final class DelegatedRoutes {
         return request.getRequestURI().startsWith("/api/mcp/v1/");
     }
 
+    static boolean legacyAllows(HttpServletRequest request) {
+        return legacy(request)
+                && "/api".equals(request.getContextPath())
+                && request.getDispatcherType() == DispatcherType.REQUEST;
+    }
+
+    static boolean legacyArtifact(HttpServletRequest request) {
+        return legacyAllows(request)
+                && "GET".equals(request.getMethod())
+                && request.getRequestURI()
+                        .matches(
+                                "/api/mcp/v1/courses/[^/]+/assignments/[^/]+/grading-exports/[^/]+/artifacts/[^/]+");
+    }
+
+    static int responseLimit(HttpServletRequest request) {
+        boolean file =
+                legacyAllows(request)
+                        && "GET".equals(request.getMethod())
+                        && request.getRequestURI()
+                                .matches(
+                                        "/api/mcp/v1/courses/[^/]+/assignments/[^/]+/(grading-files/[^/]+|grading-submissions/[^/]+/files/[^/]+)");
+        // Matches the unchanged legacy per-file/capture cap, never the aggregate export budget.
+        return file || legacyArtifact(request) ? 10 * 1024 * 1024 : 1_000_000;
+    }
+
     static boolean allows(HttpServletRequest request) {
         String path = request.getRequestURI();
         if ("/direct/assignment/setGrade.json".equals(path) && "POST".equals(request.getMethod()))
@@ -72,24 +97,51 @@ final class DelegatedRoutes {
         if (!"/direct".equals(request.getContextPath())
                 || request.getDispatcherType() != DispatcherType.REQUEST
                 || request.getQueryString() != null
-                || request.getContentLengthLong() <= 0 || request.getContentLengthLong() > 60000
+                || request.getContentLengthLong() <= 0
+                || request.getContentLengthLong() > 60000
                 || request.getHeader("Transfer-Encoding") != null
                 || request.getContentType() == null
-                || !request.getContentType().split(";", 2)[0].trim().toLowerCase(java.util.Locale.ROOT)
+                || !request.getContentType()
+                        .split(";", 2)[0]
+                        .trim()
+                        .toLowerCase(java.util.Locale.ROOT)
                         .equals("application/x-www-form-urlencoded")) return false;
-        Set<String> allowed = Set.of("courseId", "siteId", "gradableId", "studentId", "submissionId",
-                "grade", "gradeOption", "feedbackText", "feedbackComment", "privateNotes",
-                "resubmitNumber", "resubmitDate", "extensionDate");
-        if (!request.getParameterMap().keySet().containsAll(Set.of(
-                "courseId", "siteId", "gradableId", "studentId", "submissionId", "grade", "gradeOption"))
+        Set<String> allowed =
+                Set.of(
+                        "courseId",
+                        "siteId",
+                        "gradableId",
+                        "studentId",
+                        "submissionId",
+                        "grade",
+                        "gradeOption",
+                        "feedbackText",
+                        "feedbackComment",
+                        "privateNotes",
+                        "resubmitNumber",
+                        "resubmitDate",
+                        "extensionDate");
+        if (!request.getParameterMap()
+                        .keySet()
+                        .containsAll(
+                                Set.of(
+                                        "courseId",
+                                        "siteId",
+                                        "gradableId",
+                                        "studentId",
+                                        "submissionId",
+                                        "grade",
+                                        "gradeOption"))
                 || !request.getParameterMap().entrySet().stream()
-                        .allMatch(e -> allowed.contains(e.getKey()) && e.getValue().length == 1)) return false;
+                        .allMatch(e -> allowed.contains(e.getKey()) && e.getValue().length == 1))
+            return false;
         return Set.of("save", "return").contains(request.getParameter("gradeOption"));
     }
 
     private static boolean assignmentItemRead(String path) {
         String prefix = "/direct/assignment/item/";
-        return path.startsWith(prefix) && path.endsWith(".json")
+        return path.startsWith(prefix)
+                && path.endsWith(".json")
                 && canonicalId(path.substring(prefix.length(), path.length() - 5));
     }
 
@@ -104,7 +156,8 @@ final class DelegatedRoutes {
 
     private static boolean assignmentSiteRead(String path) {
         String prefix = "/direct/assignment/site/";
-        return path.startsWith(prefix) && path.endsWith(".json")
+        return path.startsWith(prefix)
+                && path.endsWith(".json")
                 && canonicalId(path.substring(prefix.length(), path.length() - 5));
     }
 
@@ -114,7 +167,8 @@ final class DelegatedRoutes {
                 path.endsWith("/userPerms.json")
                         ? "/userPerms.json"
                         : path.endsWith("/pages.json") ? "/pages.json" : ".json";
-        if (!path.endsWith(suffix) || path.length() <= "/direct/site/".length() + suffix.length()) return false;
+        if (!path.endsWith(suffix) || path.length() <= "/direct/site/".length() + suffix.length())
+            return false;
         String raw = path.substring("/direct/site/".length(), path.length() - suffix.length());
         return canonicalId(raw);
     }

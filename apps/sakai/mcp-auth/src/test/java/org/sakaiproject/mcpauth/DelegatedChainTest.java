@@ -16,6 +16,10 @@ import org.sakaiproject.user.api.AuthenticationManager;
 import org.sakaiproject.util.Authentication;
 import org.sakaiproject.util.RequestFilter;
 import org.springframework.mock.web.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.BadJwtException;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -26,12 +30,21 @@ import javax.servlet.http.*;
 
 /** Actual upstream RequestFilter chain; no custom test business endpoint. */
 public class DelegatedChainTest {
+    private static Jwt jwt(String eid, String tenant, String oid) {
+        return Jwt.withTokenValue("fixture")
+                .header("alg", "RS256")
+                .claim("extn.SakaiEid", List.of(eid))
+                .claim("tid", tenant)
+                .claim("oid", oid)
+                .build();
+    }
+
     private ServerConfigurationService configuration;
     private SessionManager sessions;
     private ThreadLocalManager threads;
     private AuthenticationManager authentication;
     private UsageSessionService usage;
-    private DelegatedJwtVerifier verifier;
+    private JwtDecoder decoder;
     private DelegatedCredentialGuard guard;
     private DelegatedSessionFilter binder;
     private final ThreadLocal<Map<String, Object>> state = ThreadLocal.withInitial(HashMap::new);
@@ -43,6 +56,8 @@ public class DelegatedChainTest {
     @Before
     public void setup() throws Exception {
         configuration = mock(ServerConfigurationService.class);
+        when(configuration.getString("mcp.integration.identityClaim", "extn.SakaiEid"))
+                .thenReturn("extn.SakaiEid");
         when(configuration.getBoolean(anyString(), anyBoolean())).thenAnswer(i -> i.getArgument(1));
         when(configuration.getBoolean("mcp.integration.existingHttp.enabled", false))
                 .thenReturn(true);
@@ -98,13 +113,270 @@ public class DelegatedChainTest {
                             s.setUserEid(i.getArgument(1));
                             return true;
                         });
-        verifier = mock(DelegatedJwtVerifier.class);
-        when(verifier.verify("token-a"))
-                .thenReturn(new DelegatedJwtVerifier.Identity("eid-a", "tenant", "oid-a"));
+        decoder = mock(JwtDecoder.class);
+        when(decoder.decode("token-a")).thenReturn(jwt("eid-a", "tenant", "oid-a"));
         guard =
                 new DelegatedCredentialGuard(
-                        configuration, authentication, sessions, usage, threads, verifier);
+                        configuration, authentication, sessions, usage, threads, decoder);
         binder = new DelegatedSessionFilter(sessions, threads);
+    }
+
+    @Test
+    public void legacyUsesTheSameSpringAndNativeChainWithIndependentFlagsAndAuditAttributes()
+            throws Exception {
+        when(configuration.getBoolean("mcp.integration.enabled", false)).thenReturn(true);
+        when(configuration.getBoolean("mcp.integration.existingHttp.enabled", false))
+                .thenReturn(false);
+        RequestFilter nativeFilter = nativeFilter("/api");
+        var request = request("/api/mcp/v1/courses");
+        request.addHeader("X-User", "forged-user");
+        var response = new MockHttpServletResponse();
+        guard.doFilter(
+                request,
+                response,
+                (r, out) ->
+                        nativeFilter.doFilter(
+                                r,
+                                out,
+                                (n, o) ->
+                                        binder.doFilter(
+                                                n,
+                                                o,
+                                                (a, b) -> {
+                                                    assertEquals(
+                                                            "uid-a",
+                                                            sessions.getCurrentSession()
+                                                                    .getUserId());
+                                                    assertSame(
+                                                            sessions.getCurrentSession(),
+                                                            a.getAttribute(
+                                                                    RequestFilter.ATTR_SESSION));
+                                                    assertEquals(
+                                                            "eid-a",
+                                                            ((HttpServletRequest) a)
+                                                                    .getRemoteUser());
+                                                    assertEquals(
+                                                            "oid-a",
+                                                            a.getAttribute("mcp.externalObjectId"));
+                                                    assertEquals(
+                                                            "tenant",
+                                                            a.getAttribute("mcp.externalTenantId"));
+                                                    assertNotNull(
+                                                            SecurityContextHolder.getContext()
+                                                                    .getAuthentication());
+                                                })));
+        assertEquals(200, response.getStatus());
+        assertTrue(registry.isEmpty());
+        assertNull(request.getAttribute("mcp.externalObjectId"));
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+        verify(decoder).decode("token-a");
+        var noToken = request("/api/mcp/v1/courses");
+        noToken.removeHeader("Authorization");
+        var denied = new MockHttpServletResponse();
+        guard.doFilter(noToken, denied, (a, b) -> fail());
+        assertEquals(401, denied.getStatus());
+        when(configuration.getBoolean("mcp.integration.enabled", false)).thenReturn(false);
+        denied = new MockHttpServletResponse();
+        guard.doFilter(request("/api/mcp/v1/courses"), denied, (a, b) -> fail());
+        assertEquals(404, denied.getStatus());
+    }
+
+    @Test
+    public void normalBrowserAndSamlContextPassThroughWhileBearerCannotBorrowIt() throws Exception {
+        var normal = request("/api/login");
+        normal.removeHeader("Authorization");
+        normal.setCookies(new Cookie("JSESSIONID", "browser"));
+        normal.addParameter("access_token", "one", "two");
+        var browser =
+                new org.springframework.security.authentication.TestingAuthenticationToken(
+                        "saml-user", "none");
+        SecurityContextHolder.getContext().setAuthentication(browser);
+        try {
+            guard.doFilter(
+                    normal,
+                    new MockHttpServletResponse(),
+                    (r, out) -> {
+                        assertSame(normal, r);
+                        assertSame(browser, SecurityContextHolder.getContext().getAuthentication());
+                    });
+            verifyNoInteractions(decoder, authentication, usage);
+            var invalid = request("/direct/user/current.json");
+            invalid.addHeader("Authorization", "Basic mixed");
+            var response = new MockHttpServletResponse();
+            guard.doFilter(invalid, response, (r, out) -> fail());
+            assertEquals(401, response.getStatus());
+            assertNull(SecurityContextHolder.getContext().getAuthentication());
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    public void mixedOAuthSessionAndTokenParametersNeverReachNativeAuthorization()
+            throws Exception {
+        when(configuration.getBoolean("mcp.integration.enabled", false)).thenReturn(true);
+        for (String parameter :
+                List.of(
+                        "oauth_token",
+                        "oauth_signature",
+                        "oauth_consumer_key",
+                        "access_token",
+                        "sakai.session",
+                        "jsessionid",
+                        "sessionid")) {
+            var request = request("/api/mcp/v1/courses");
+            request.addParameter(parameter, "borrowed");
+            var response = new MockHttpServletResponse();
+            guard.doFilter(request, response, (a, b) -> fail());
+            assertEquals(403, response.getStatus());
+        }
+        verifyNoInteractions(decoder, usage);
+    }
+
+    @Test
+    public void nativeAuthenticationManagerRejectsDisabledUnknownAndRemappedUsers()
+            throws Exception {
+        var directory =
+                mock(org.sakaiproject.user.impl.BaseUserDirectoryService.class, CALLS_REAL_METHODS);
+        var account = mock(org.sakaiproject.user.api.User.class);
+        var properties = mock(org.sakaiproject.entity.api.ResourceProperties.class);
+        when(account.getProperties()).thenReturn(properties);
+        when(account.getId()).thenReturn("uid-a");
+        when(account.getEid()).thenReturn("eid-a");
+        doReturn(account).when(directory).getUserByEid("eid-a");
+        var manager =
+                new org.sakaiproject.user.impl.UserAuthnComponent() {
+                    protected org.sakaiproject.user.api.UserDirectoryService
+                            userDirectoryService() {
+                        return directory;
+                    }
+
+                    protected org.sakaiproject.user.impl.AuthenticationCache authenticationCache() {
+                        return null;
+                    }
+                };
+        var realGuard =
+                new DelegatedCredentialGuard(
+                        configuration, manager, sessions, usage, threads, decoder);
+        var response = new MockHttpServletResponse();
+        realGuard.doFilter(
+                request("/direct/user/current.json"),
+                response,
+                (a, b) -> assertEquals("uid-a", sessions.getCurrentSession().getUserId()));
+        assertEquals(200, response.getStatus());
+        verify(directory).getUserByEid("eid-a"); // actual getUserByAid EID fallback
+        when(properties.getProperty("disabled")).thenReturn("true");
+        response = new MockHttpServletResponse();
+        realGuard.doFilter(request("/direct/user/current.json"), response, (a, b) -> fail());
+        assertEquals(403, response.getStatus());
+        when(properties.getProperty("disabled")).thenReturn(null);
+        when(account.getEid()).thenReturn("other");
+        response = new MockHttpServletResponse();
+        realGuard.doFilter(request("/direct/user/current.json"), response, (a, b) -> fail());
+        assertEquals(403, response.getStatus());
+        doThrow(new org.sakaiproject.user.api.UserNotDefinedException("synthetic"))
+                .when(directory)
+                .getUserByEid("eid-a");
+        response = new MockHttpServletResponse();
+        realGuard.doFilter(request("/direct/user/current.json"), response, (a, b) -> fail());
+        assertEquals(403, response.getStatus());
+        assertTrue(registry.isEmpty());
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+    }
+
+    @Test
+    public void cleanupFailureWithholdsBodyAndStillRestoresBothContexts() throws Exception {
+        var previous = newSession();
+        sessions.setCurrentSession(previous);
+        var response = new MockHttpServletResponse();
+        var request = request("/direct/user/current.json");
+        guard.doFilter(
+                request,
+                response,
+                (r, out) -> {
+                    Session owned = sessions.getCurrentSession();
+                    doThrow(new IllegalStateException("private-session-diagnostic"))
+                            .when(owned)
+                            .invalidate();
+                    ((HttpServletResponse) out).getWriter().write("must remain buffered");
+                });
+        assertEquals(502, response.getStatus());
+        assertEquals("", response.getContentAsString());
+        assertSame(previous, sessions.getCurrentSession());
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+        assertNull(request.getAttribute(DelegatedCredentialGuard.MARKER));
+    }
+
+    @Test
+    public void reusedThreadKeepsNormalBrowserSessionAfterDelegatedAndRejectedRequests()
+            throws Exception {
+        RequestFilter nativeFilter = nativeFilter("/direct");
+        FilterChain actual =
+                (r, out) ->
+                        nativeFilter.doFilter(
+                                r, out, (n, o) -> binder.doFilter(n, o, (a, b) -> {}));
+        guard.doFilter(request("/direct/user/current.json"), new MockHttpServletResponse(), actual);
+        when(decoder.decode("token-a")).thenThrow(new BadJwtException("synthetic"));
+        guard.doFilter(
+                request("/direct/user/current.json"),
+                new MockHttpServletResponse(),
+                (r, out) -> fail());
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+        Session browser = newSession();
+        browser.setUserId("browser-uid");
+        browser.setUserEid("browser-eid");
+        var normal = request("/direct/user/current.json");
+        normal.removeHeader("Authorization");
+        normal.setCookies(new Cookie("JSESSIONID", browser.getId() + ".sakai"));
+        guard.doFilter(
+                normal,
+                new MockHttpServletResponse(),
+                (r, out) ->
+                        nativeFilter.doFilter(
+                                r,
+                                out,
+                                (n, o) ->
+                                        binder.doFilter(
+                                                n,
+                                                o,
+                                                (a, b) -> {
+                                                    assertSame(
+                                                            browser, sessions.getCurrentSession());
+                                                    assertSame(
+                                                            browser,
+                                                            a.getAttribute(
+                                                                    RequestFilter.ATTR_SESSION));
+                                                    assertEquals(
+                                                            "browser-eid",
+                                                            ((HttpServletRequest) a)
+                                                                    .getRemoteUser());
+                                                    assertNull(
+                                                            SecurityContextHolder.getContext()
+                                                                    .getAuthentication());
+                                                })));
+        verify(browser, never()).invalidate();
+        assertSame(browser, registry.get(browser.getId()));
+        assertNull(sessions.getCurrentSession());
+    }
+
+    @Test
+    public void legacyStillRequiresContainerHttpsEvenWhenNativeForceSecureIsSet() throws Exception {
+        String before = System.getProperty("sakai.force.url.secure");
+        System.setProperty("sakai.force.url.secure", "443");
+        try {
+            when(configuration.getBoolean("mcp.integration.enabled", false)).thenReturn(true);
+            var request = request("/api/mcp/v1/courses");
+            request.setSecure(false);
+            request.setScheme("http");
+            request.setServerPort(80);
+            var response = new MockHttpServletResponse();
+            guard.doFilter(request, response, (a, b) -> fail());
+            assertEquals(403, response.getStatus());
+            verifyNoInteractions(decoder, usage);
+        } finally {
+            if (before == null) System.clearProperty("sakai.force.url.secure");
+            else System.setProperty("sakai.force.url.secure", before);
+        }
     }
 
     private Session newSession() {
@@ -176,8 +448,10 @@ public class DelegatedChainTest {
 
     @Test
     public void unacceptedContentContextCannotBindDelegatedCredentials() throws Exception {
-        for (String path : List.of("/access/content/attachment/course-a/answers.txt",
-                "/access/content/group/course-a/answers.txt")) {
+        for (String path :
+                List.of(
+                        "/access/content/attachment/course-a/answers.txt",
+                        "/access/content/group/course-a/answers.txt")) {
             var request = request(path);
             request.setContextPath("/access");
             request.setServletPath("");
@@ -185,7 +459,7 @@ public class DelegatedChainTest {
             var response = new MockHttpServletResponse();
             guard.doFilter(request, response, (r, s) -> fail("unaccepted content context"));
             assertEquals(403, response.getStatus());
-            verifyNoInteractions(verifier, authentication);
+            verifyNoInteractions(decoder, authentication);
             assertNull(sessions.getCurrentSession());
         }
     }
@@ -295,10 +569,16 @@ public class DelegatedChainTest {
 
     @Test
     public void ownGradeReachRejectsStudentSelectionAndMutation() throws Exception {
-        for (String path : List.of("/api/sites/course-a/grades/7/student-a", "/api/users/other/grades",
-                "/api/sites/course-a/grading/other-data", "/api/sites/grades", "/api/sites/grading/item-data")) {
+        for (String path :
+                List.of(
+                        "/api/sites/course-a/grades/7/student-a",
+                        "/api/users/other/grades",
+                        "/api/sites/course-a/grading/other-data",
+                        "/api/sites/grades",
+                        "/api/sites/grading/item-data")) {
             var response = new MockHttpServletResponse();
-            guard.doFilter(request(path), response, (r, s) -> fail("unselected grade route accepted"));
+            guard.doFilter(
+                    request(path), response, (r, s) -> fail("unselected grade route accepted"));
             assertEquals(403, response.getStatus());
         }
         var query = request("/api/sites/course-a/grades");
@@ -316,13 +596,28 @@ public class DelegatedChainTest {
 
     @Test
     public void selectedGradingPostHasNarrowCredentialReach() throws Exception {
-        for (String failure : List.of("none", "query", "field", "action", "duplicate", "multipart", "oversize", "badtype")) {
+        for (String failure :
+                List.of(
+                        "none",
+                        "query",
+                        "field",
+                        "action",
+                        "duplicate",
+                        "multipart",
+                        "oversize",
+                        "badtype")) {
             var request = request("/direct/assignment/setGrade.json");
             request.setMethod("POST");
             request.setContentType("application/x-www-form-urlencoded; charset=UTF-8");
             request.setContent("synthetic=body".getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            for (String name : List.of("courseId", "siteId", "gradableId", "studentId", "submissionId", "grade"))
-                request.addParameter(name, "synthetic");
+            for (String name :
+                    List.of(
+                            "courseId",
+                            "siteId",
+                            "gradableId",
+                            "studentId",
+                            "submissionId",
+                            "grade")) request.addParameter(name, "synthetic");
             request.addParameter("gradeOption", "save");
             if (failure.equals("query")) request.setQueryString("extra=1");
             if (failure.equals("field")) request.addParameter("sessionid", "forbidden");
@@ -330,7 +625,8 @@ public class DelegatedChainTest {
             if (failure.equals("duplicate")) request.addParameter("grade", "other");
             if (failure.equals("multipart")) request.setContentType("multipart/form-data");
             if (failure.equals("oversize")) request.setContent(new byte[60001]);
-            if (failure.equals("badtype")) request.setContentType("application/x-www-form-urlencoded-evil");
+            if (failure.equals("badtype"))
+                request.setContentType("application/x-www-form-urlencoded-evil");
             assertEquals(failure, failure.equals("none"), DelegatedRoutes.allows(request));
         }
     }
@@ -341,8 +637,11 @@ public class DelegatedChainTest {
         AtomicBoolean reached = new AtomicBoolean();
         guard.doFilter(allowed, new MockHttpServletResponse(), (r, s) -> reached.set(true));
         assertTrue(reached.get());
-        for (String path : List.of("/direct/assignment/unknown/assignment-a.json",
-                "/direct/assignment/setGrade.json", "/direct/assignment/site/course-a/other.json")) {
+        for (String path :
+                List.of(
+                        "/direct/assignment/unknown/assignment-a.json",
+                        "/direct/assignment/setGrade.json",
+                        "/direct/assignment/site/course-a/other.json")) {
             var response = new MockHttpServletResponse();
             guard.doFilter(request(path), response, (r, s) -> fail("unselected route accepted"));
             assertEquals(403, response.getStatus());
@@ -393,11 +692,10 @@ public class DelegatedChainTest {
     }
 
     @Test
-    public void ordinaryRequestsRemainUnchangedAndLegacyStillReachesOldChain() throws Exception {
-        for (String path : List.of("/api/login", "/direct/session", "/api/mcp/v1/courses")) {
+    public void ordinaryRequestsRemainUnchanged() throws Exception {
+        for (String path : List.of("/api/login", "/direct/session")) {
             MockHttpServletRequest r = request(path);
             r.removeHeader("Authorization");
-            if (path.contains("mcp/v1")) r.addHeader("Authorization", "Bearer token-a");
             MockHttpServletResponse s = new MockHttpServletResponse();
             AtomicBoolean called = new AtomicBoolean();
             guard.doFilter(
@@ -410,7 +708,7 @@ public class DelegatedChainTest {
                     });
             assertTrue(called.get());
         }
-        verifyNoInteractions(verifier, authentication, usage);
+        verifyNoInteractions(decoder, authentication, usage);
     }
 
     @Test
@@ -479,8 +777,7 @@ public class DelegatedChainTest {
         guard.doFilter(request("/direct/user/current.json"), mismatch, (r, s) -> fail());
         assertEquals(403, mismatch.getStatus());
         assertTrue(registry.isEmpty());
-        when(verifier.verify("token-a"))
-                .thenThrow(new DelegatedJwtVerifier.InvalidTokenException());
+        when(decoder.decode("token-a")).thenThrow(new BadJwtException("invalid fixture"));
         MockHttpServletResponse invalid = new MockHttpServletResponse();
         guard.doFilter(request("/direct/user/current.json"), invalid, (r, s) -> fail());
         assertEquals(401, invalid.getStatus());
@@ -489,8 +786,7 @@ public class DelegatedChainTest {
 
     @Test
     public void twoUsersInterleaveWithoutIdentityOrSessionLeakage() throws Exception {
-        when(verifier.verify("token-b"))
-                .thenReturn(new DelegatedJwtVerifier.Identity("eid-b", "tenant", "oid-b"));
+        when(decoder.decode("token-b")).thenReturn(jwt("eid-b", "tenant", "oid-b"));
         when(authentication.authenticate(any()))
                 .thenAnswer(
                         i -> {
@@ -527,6 +823,23 @@ public class DelegatedChainTest {
                                                                                 o,
                                                                                 (request,
                                                                                         response) -> {
+                                                                                    assertEquals(
+                                                                                            "oid-"
+                                                                                                    + who,
+                                                                                            ((org
+                                                                                                                    .springframework
+                                                                                                                    .security
+                                                                                                                    .oauth2
+                                                                                                                    .server
+                                                                                                                    .resource
+                                                                                                                    .authentication
+                                                                                                                    .JwtAuthenticationToken)
+                                                                                                            SecurityContextHolder
+                                                                                                                    .getContext()
+                                                                                                                    .getAuthentication())
+                                                                                                    .getToken()
+                                                                                                    .getClaimAsString(
+                                                                                                            "oid"));
                                                                                     Session
                                                                                             selected =
                                                                                                     sessions
@@ -563,6 +876,9 @@ public class DelegatedChainTest {
                                                                                                     .getCurrentSession());
                                                                                 })));
                                         assertNull(sessions.getCurrentSession());
+                                        assertNull(
+                                                SecurityContextHolder.getContext()
+                                                        .getAuthentication());
                                         assertNull(threads.get(RequestFilter.CURRENT_HTTP_REQUEST));
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
@@ -638,8 +954,7 @@ public class DelegatedChainTest {
         first.addHeader("X-MCP-Flow", "a".repeat(64));
         guard.doFilter(first, new MockHttpServletResponse(), (a, b) -> {});
         Session original = registry.values().iterator().next();
-        when(verifier.verify("token-b"))
-                .thenReturn(new DelegatedJwtVerifier.Identity("eid-b", "tenant", "oid-b"));
+        when(decoder.decode("token-b")).thenReturn(jwt("eid-b", "tenant", "oid-b"));
         when(authentication.authenticate(any())).thenReturn(new Authentication("uid-b", "eid-b"));
         MockHttpServletRequest other = request("/direct/user/current.json");
         other.removeHeader("Authorization");

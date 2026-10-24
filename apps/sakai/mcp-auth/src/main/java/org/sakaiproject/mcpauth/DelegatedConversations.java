@@ -70,7 +70,7 @@ final class DelegatedConversations {
             SessionManager sessions,
             UsageSessionService usage,
             Authentication account,
-            DelegatedJwtVerifier.Identity identity,
+            DelegatedCredentialGuard.ExternalIdentity identity,
             String nonce,
             boolean end,
             String remote,

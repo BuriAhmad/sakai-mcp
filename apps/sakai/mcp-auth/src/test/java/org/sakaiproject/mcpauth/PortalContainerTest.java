@@ -23,6 +23,8 @@ import org.sakaiproject.tool.impl.ActiveToolComponent;
 import org.sakaiproject.user.api.AuthenticationManager;
 import org.sakaiproject.util.Authentication;
 import org.sakaiproject.util.RequestFilter;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -41,6 +43,15 @@ import javax.servlet.http.*;
  * state probe receives the dispatch; no academic tool operation is run.
  */
 public class PortalContainerTest {
+    private static Jwt jwt(String eid, String tenant, String oid) {
+        return Jwt.withTokenValue("fixture")
+                .header("alg", "RS256")
+                .claim("extn.SakaiEid", List.of(eid))
+                .claim("tid", tenant)
+                .claim("oid", oid)
+                .build();
+    }
+
     @Test
     public void actualPortalDispatchKeepsIsolatedNativeToolSessionAcrossRequests()
             throws Exception {
@@ -145,6 +156,8 @@ public class PortalContainerTest {
                             return s;
                         });
         ServerConfigurationService config = mock(ServerConfigurationService.class);
+        when(config.getString("mcp.integration.identityClaim", "extn.SakaiEid"))
+                .thenReturn("extn.SakaiEid");
         when(config.getBoolean(anyString(), anyBoolean())).thenAnswer(i -> i.getArgument(1));
         when(config.getBoolean("mcp.integration.existingHttp.enabled", false)).thenReturn(true);
         when(config.getBoolean("mcp.integration.conversations.enabled", false)).thenReturn(true);
@@ -164,9 +177,8 @@ public class PortalContainerTest {
                             s.setUserEid(i.getArgument(1));
                             return true;
                         });
-        DelegatedJwtVerifier verifier = mock(DelegatedJwtVerifier.class);
-        when(verifier.verify("synthetic"))
-                .thenReturn(new DelegatedJwtVerifier.Identity("eid-a", "tenant", "oid-a"));
+        JwtDecoder decoder = mock(JwtDecoder.class);
+        when(decoder.decode("synthetic")).thenReturn(jwt("eid-a", "tenant", "oid-a"));
         SiteService sites = mock(SiteService.class);
         SecurityService security = mock(SecurityService.class);
         FunctionManager functions = mock(FunctionManager.class);
@@ -237,14 +249,14 @@ public class PortalContainerTest {
             install(
                     portalContext,
                     new DelegatedCredentialGuard(
-                            config, accounts, sessions, usage, threads, verifier),
+                            config, accounts, sessions, usage, threads, decoder),
                     new RequestFilter(),
                     new DelegatedSessionFilter(sessions, threads),
                     "REQUEST");
             install(
                     targetContext,
                     new DelegatedCredentialGuard(
-                            config, accounts, sessions, usage, threads, verifier),
+                            config, accounts, sessions, usage, threads, decoder),
                     new RequestFilter(),
                     new DelegatedSessionFilter(sessions, threads),
                     "FORWARD");

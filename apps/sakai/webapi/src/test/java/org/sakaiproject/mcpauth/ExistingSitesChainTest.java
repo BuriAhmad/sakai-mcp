@@ -22,6 +22,8 @@ import org.sakaiproject.util.Authentication;
 import org.sakaiproject.util.RequestFilter;
 import org.sakaiproject.webapi.controllers.SitesController;
 import org.springframework.mock.web.*;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -33,6 +35,15 @@ import javax.servlet.http.HttpSession;
 
 /** Real WebAPI controller and native filter; domain services are synthetic doubles. */
 public class ExistingSitesChainTest {
+    private static Jwt jwt(String eid, String tenant, String oid) {
+        return Jwt.withTokenValue("fixture")
+                .header("alg", "RS256")
+                .claim("extn.SakaiEid", List.of(eid))
+                .claim("tid", tenant)
+                .claim("oid", oid)
+                .build();
+    }
+
     @Test
     public void delegatedRequestRunsExistingSitesControllerAndOrdinaryAnonymousStillDenied()
             throws Exception {
@@ -89,6 +100,8 @@ public class ExistingSitesChainTest {
         when(sessions.startSession()).thenReturn(session);
         when(sessions.getSession("isolated")).thenReturn(session);
         ServerConfigurationService config = mock(ServerConfigurationService.class);
+        when(config.getString("mcp.integration.identityClaim", "extn.SakaiEid"))
+                .thenReturn("extn.SakaiEid");
         when(config.getBoolean(anyString(), anyBoolean())).thenAnswer(i -> i.getArgument(1));
         when(config.getBoolean("mcp.integration.existingHttp.enabled", false)).thenReturn(true);
         when(config.getString(anyString(), anyString())).thenAnswer(i -> i.getArgument(1));
@@ -102,11 +115,10 @@ public class ExistingSitesChainTest {
                             session.setUserEid(i.getArgument(1));
                             return true;
                         });
-        DelegatedJwtVerifier verifier = mock(DelegatedJwtVerifier.class);
-        when(verifier.verify("synthetic"))
-                .thenReturn(new DelegatedJwtVerifier.Identity("eid-a", "tenant", "oid-a"));
+        JwtDecoder decoder = mock(JwtDecoder.class);
+        when(decoder.decode("synthetic")).thenReturn(jwt("eid-a", "tenant", "oid-a"));
         DelegatedCredentialGuard guard =
-                new DelegatedCredentialGuard(config, accounts, sessions, usage, threads, verifier);
+                new DelegatedCredentialGuard(config, accounts, sessions, usage, threads, decoder);
         DelegatedSessionFilter binder = new DelegatedSessionFilter(sessions, threads);
         RequestFilter nativeFilter;
         try (MockedStatic<ComponentManager> cm = mockStatic(ComponentManager.class)) {

@@ -6,11 +6,17 @@
   <name>Sakai delegated request authentication</name>
   <properties><deploy.target>shared</deploy.target></properties>
   <dependencies>
+    <dependency><groupId>org.springframework.security</groupId><artifactId>spring-security-web</artifactId></dependency>
+    <dependency><groupId>org.springframework.security</groupId><artifactId>spring-security-oauth2-core</artifactId></dependency>
+    <dependency><groupId>org.springframework.security</groupId><artifactId>spring-security-oauth2-resource-server</artifactId></dependency>
+    <dependency><groupId>org.springframework.security</groupId><artifactId>spring-security-oauth2-jose</artifactId></dependency>
+    <dependency><groupId>org.springframework.security</groupId><artifactId>spring-security-core</artifactId></dependency>
+
     <dependency><groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId></dependency>
     <dependency><groupId>org.sakaiproject.kernel</groupId><artifactId>sakai-kernel-api</artifactId></dependency>
     <dependency><groupId>org.sakaiproject.kernel</groupId><artifactId>sakai-component-manager</artifactId></dependency>
     <dependency><groupId>org.sakaiproject.kernel</groupId><artifactId>sakai-kernel-util</artifactId></dependency>
-    <dependency><groupId>com.nimbusds</groupId><artifactId>nimbus-jose-jwt</artifactId></dependency>
+    <dependency><groupId>com.nimbusds</groupId><artifactId>nimbus-jose-jwt</artifactId><scope>test</scope></dependency>
     <dependency><groupId>org.sakaiproject</groupId><artifactId>sakai-access-impl</artifactId><version>${project.version}</version><scope>test</scope></dependency>
     <dependency><groupId>org.sakaiproject.velocity</groupId><artifactId>sakai-velocity-tool</artifactId><scope>test</scope></dependency>
     <dependency><groupId>org.sakaiproject.velocity</groupId><artifactId>sakai-velocity-tool-api</artifactId><scope>test</scope></dependency>
@@ -26,7 +32,7 @@
     <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><scope>provided</scope></dependency>
     <dependency><groupId>org.mockito</groupId><artifactId>mockito-core</artifactId><scope>test</scope></dependency>
     <dependency><groupId>org.mockito</groupId><artifactId>mockito-inline</artifactId><version>5.2.0</version><scope>test</scope></dependency>
-    <dependency><groupId>org.springframework</groupId><artifactId>spring-web</artifactId><scope>test</scope></dependency>
+    <dependency><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></dependency>
     <dependency><groupId>org.springframework</groupId><artifactId>spring-test</artifactId><scope>test</scope></dependency>
   </dependencies>
   <build><sourceDirectory>src/main/java</sourceDirectory><testSourceDirectory>src/test/java</testSourceDirectory></build>

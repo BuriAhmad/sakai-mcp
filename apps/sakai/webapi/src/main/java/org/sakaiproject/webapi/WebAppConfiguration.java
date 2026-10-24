@@ -13,6 +13,15 @@
  ******************************************************************************/
 package org.sakaiproject.webapi;
 
+import org.sakaiproject.mcpauth.DelegatedCredentialGuard;
+import org.sakaiproject.mcpauth.DelegatedSessionFilter;
+import org.sakaiproject.util.RequestFilter;
+import org.sakaiproject.util.SakaiContextLoaderListener;
+import org.sakaiproject.util.ToolListener;
+import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
+
 import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
@@ -20,21 +29,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-import org.sakaiproject.util.RequestFilter;
-import org.sakaiproject.mcpauth.DelegatedCredentialGuard;
-import org.sakaiproject.mcpauth.DelegatedSessionFilter;
-import org.sakaiproject.util.SakaiContextLoaderListener;
-import org.sakaiproject.util.ToolListener;
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.filter.DelegatingFilterProxy;
-import org.springframework.web.servlet.DispatcherServlet;
-
 public class WebAppConfiguration implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
+        AnnotationConfigWebApplicationContext rootContext =
+                new AnnotationConfigWebApplicationContext();
         rootContext.setServletContext(servletContext);
         rootContext.register(WebMvcConfiguration.class);
 
@@ -42,24 +42,26 @@ public class WebAppConfiguration implements WebApplicationInitializer {
         servletContext.addListener(new SakaiContextLoaderListener(rootContext));
 
         // Select isolated delegated session before RequestFilter captures it.
-        servletContext.addFilter("sakai.delegated.credentials", DelegatedCredentialGuard.class)
+        servletContext
+                .addFilter("sakai.delegated.credentials", DelegatedCredentialGuard.class)
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 
-        servletContext.addFilter("sakai.request", RequestFilter.class)
+        servletContext
+                .addFilter("sakai.request", RequestFilter.class)
                 .addMappingForUrlPatterns(
-                        EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE),
+                        EnumSet.of(
+                                DispatcherType.REQUEST,
+                                DispatcherType.FORWARD,
+                                DispatcherType.INCLUDE),
                         true,
                         "/*");
 
-        servletContext.addFilter("sakai.delegated.session", DelegatedSessionFilter.class)
+        servletContext
+                .addFilter("sakai.delegated.session", DelegatedSessionFilter.class)
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 
-        // RequestFilter establishes Sakai's outer request context first. The MCP
-        // adapter then replaces it with a short-lived, token-bound user context.
-        servletContext.addFilter("sakai.mcp.bearer", new DelegatingFilterProxy("mcpBearerFilter", rootContext))
-                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/mcp/v1/*");
-
-        ServletRegistration.Dynamic servlet = servletContext.addServlet("sakai.webapi", new DispatcherServlet(rootContext));
+        ServletRegistration.Dynamic servlet =
+                servletContext.addServlet("sakai.webapi", new DispatcherServlet(rootContext));
         servlet.setAsyncSupported(true);
         servlet.addMapping("/");
         servlet.setLoadOnStartup(1);
