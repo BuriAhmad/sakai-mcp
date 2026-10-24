@@ -39,3 +39,16 @@ runtime dependency inventory and acceptance results after access is restored.
 - Main remains `208d69ac`; no release has been installed.
 - The branch-release change is reviewed separately from auth code; the source
   anchor advances to that reviewed commit without allowing scripts as metadata.
+
+## Access restored; release preflight
+
+The exact narrow-IP SSH rule update succeeded using a token explicitly requested
+for the Azure management resource. SSH is working. The previous release is
+`20261013T172837Z-d54bcc13fcc8`, commit
+`d54bcc13fcc85a5ef8510ac1e2c8514fad5c356b`. The VM reports only 4.7 GiB
+free, below the release script's 12 GiB requirement. No safeguard was reduced.
+
+GitHub run `40108875653` failed at frontend execution with
+`Playwright does not support chromium on ubuntu26.04-x64`. CI is pinned to
+Ubuntu 22.04 for the bundled browser tooling, and the focused Java step now
+explicitly includes the shared module and consolidated auth tests.
