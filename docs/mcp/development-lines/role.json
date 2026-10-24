@@ -3,7 +3,7 @@
   "date": "2026-10-24",
   "kind": "auth-development",
   "branch": "codex/auth-development",
-  "source_anchor": "73db1f7e27342fa4072d07295d9430b6f3fa6520",
+  "source_anchor": "d2b2da22599ab8ab1b8f1a6ada089efd5eb3fe77",
   "original_baseline": "208d69ac624910a29a7529934ddcc18bbac853e8",
   "mixed_source": "98364680e73489addf649685bb79511e8febf917",
   "auth_core_commit": "98a4ca7de32e9ebbeec743c244a2c6193351829a",
