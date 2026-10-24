@@ -107,8 +107,49 @@ remote_dir="$(ssh "${ssh_options[@]}" "$remote" 'mktemp -d /var/tmp/sakai-releas
 scp "${ssh_options[@]}" "$temp_dir/source.tar.gz" \
   "$ROOT_DIR/deployment/release-sakai-vm.sh" "$remote:$remote_dir/"
 echo 'Building and deploying on the VM. Build log is kept under /opt/sakai-releases/.'
+# A transient VM-owned unit keeps the guarded release alive if this SSH client drops.
+unit_name="sakai-release-$release_id.service"
 ssh "${ssh_options[@]}" "$remote" \
-  "sudo -n bash '$remote_dir/release-sakai-vm.sh' deploy '$commit' '$archive_sha256' '$remote_dir/source.tar.gz' '$release_id'"
+  "sudo -n systemd-run --no-block --unit='$unit_name' --property=Type=oneshot --property=RemainAfterExit=yes /bin/bash '$remote_dir/release-sakai-vm.sh' deploy '$commit' '$archive_sha256' '$remote_dir/source.tar.gz' '$release_id'"
+echo "VM release unit: $unit_name"
+echo "Monitor: ./sakai shell 'sudo journalctl -u $unit_name --no-pager -n 30'"
+
+release_ok=0
+previous_state=''
+for _ in {1..240}; do
+  if remote_state="$(ssh "${ssh_options[@]}" "$remote" \
+    "systemctl show '$unit_name' --property=ActiveState --property=Result" \
+    2>"$temp_dir/monitor-error")"; then
+    if [[ "$remote_state" != "$previous_state" ]]; then
+      echo "$remote_state"
+      previous_state="$remote_state"
+    fi
+    case "$remote_state" in
+      *ActiveState=active*)
+        if [[ "$remote_state" == *Result=success* ]]; then
+          release_ok=1
+          break
+        fi
+        ;;
+      *ActiveState=failed*|*ActiveState=inactive*)
+        ssh "${ssh_options[@]}" "$remote" \
+          "sudo -n journalctl -u '$unit_name' --no-pager -n 50" || true
+        sakai_die "VM release failed. Inspect $unit_name and /opt/sakai-releases/$release_id."
+        ;;
+    esac
+  else
+    if [[ "$previous_state" != disconnected ]]; then
+      echo 'Release monitor disconnected; the guarded VM job continues. Reconnecting...'
+      previous_state=disconnected
+    fi
+  fi
+  sleep 15
+done
+[[ "$release_ok" -eq 1 ]] || \
+  sakai_die "Timed out monitoring $unit_name; the VM job may still be running. Inspect it before starting another release."
+remote_status="$(ssh "${ssh_options[@]}" "$remote" \
+  "sudo -n cat '/opt/sakai-releases/$release_id/status'")"
+[[ "$remote_status" == healthy ]] || sakai_die "VM release did not record healthy: $remote_status"
 
 echo 'Checking the public HTTPS portal from this Mac...'
 public_ok=0
