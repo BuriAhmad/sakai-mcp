@@ -1018,11 +1018,16 @@ public class DelegatedChainTest {
         RequestFilter.isSecure(
                 request("/direct/user/current.json")); // initialize existing logger before the
         // static test double
+        org.slf4j.Logger diagnosticsLogger =
+                org.slf4j.LoggerFactory.getLogger(DelegatedDiagnostics.class);
         org.slf4j.Logger logger = mock(org.slf4j.Logger.class);
         when(logger.isDebugEnabled()).thenReturn(true);
         try (MockedStatic<org.slf4j.LoggerFactory> factory =
                 mockStatic(org.slf4j.LoggerFactory.class)) {
             factory.when(() -> org.slf4j.LoggerFactory.getLogger(anyString())).thenReturn(logger);
+            // Only native framework debug loggers are simulated; keep diagnostics real.
+            factory.when(() -> org.slf4j.LoggerFactory.getLogger(DelegatedDiagnostics.class))
+                    .thenReturn(diagnosticsLogger);
             MockHttpServletResponse response = new MockHttpServletResponse();
             guard.doFilter(request("/direct/user/current.json"), response, (r, s) -> fail());
             assertEquals(503, response.getStatus());

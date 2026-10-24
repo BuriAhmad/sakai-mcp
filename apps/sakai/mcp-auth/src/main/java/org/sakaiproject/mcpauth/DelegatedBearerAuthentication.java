@@ -1,12 +1,24 @@
-/* Copyright (c) 2026 The Apereo Foundation. Licensed under ECL-2.0. */
+/*
+ * Copyright (c) 2026 The Apereo Foundation
+ *
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *             http://opensource.org/licenses/ecl2
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.sakaiproject.mcpauth;
 
 import org.sakaiproject.component.api.ServerConfigurationService;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
@@ -26,9 +38,7 @@ import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
@@ -44,6 +54,8 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Configures the standard Spring Resource Server pipeline; owns no JWT processor or key client. */
 final class DelegatedBearerAuthentication {
+    private static final int KEY_HTTP_TIMEOUT_MILLIS = 2_000;
+
     private final SecurityContextHolderFilter context;
     private final BearerTokenAuthenticationFilter bearer;
     final String identityClaim;
@@ -84,6 +96,7 @@ final class DelegatedBearerAuthentication {
         bearer.setAuthenticationFailureHandler(
                 (request, response, failure) -> {
                     if (failure instanceof AuthenticationServiceException) {
+                        DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.TOKEN_SERVICE);
                         response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                     } else {
                         unauthorized(request, response);
@@ -103,8 +116,7 @@ final class DelegatedBearerAuthentication {
                 .commence(
                         request,
                         response,
-                        new org.springframework.security.authentication.BadCredentialsException(
-                                "Invalid bearer credential"));
+                        new BadCredentialsException("Invalid bearer credential"));
     }
 
     static String identityClaim(ServerConfigurationService configuration) {
@@ -194,73 +206,13 @@ final class DelegatedBearerAuthentication {
 
     static RestTemplate keyHttp() {
         SimpleClientHttpRequestFactory requests = new SimpleClientHttpRequestFactory();
-        requests.setConnectTimeout(2_000);
-        requests.setReadTimeout(2_000);
+        requests.setConnectTimeout(KEY_HTTP_TIMEOUT_MILLIS);
+        requests.setReadTimeout(KEY_HTTP_TIMEOUT_MILLIS);
         RestTemplate http = new RestTemplate(requests);
         http.setInterceptors(
                 List.of(
-                        (request, body, execution) -> {
-                            ClientHttpResponse response = execution.execute(request, body);
-                            return new ClientHttpResponse() {
-                                private InputStream stream;
-
-                                public HttpStatus getStatusCode() throws IOException {
-                                    return response.getStatusCode();
-                                }
-
-                                public int getRawStatusCode() throws IOException {
-                                    return response.getRawStatusCode();
-                                }
-
-                                public String getStatusText() throws IOException {
-                                    return response.getStatusText();
-                                }
-
-                                public HttpHeaders getHeaders() {
-                                    return response.getHeaders();
-                                }
-
-                                public void close() {
-                                    response.close();
-                                }
-
-                                public InputStream getBody() throws IOException {
-                                    if (stream == null)
-                                        stream =
-                                                new FilterInputStream(response.getBody()) {
-                                                    private int remaining = 1_000_000;
-
-                                                    public int read() throws IOException {
-                                                        int value = in.read();
-                                                        if (value != -1 && --remaining < 0)
-                                                            throw new IOException(
-                                                                    "Key response limit");
-                                                        return value;
-                                                    }
-
-                                                    public int read(
-                                                            byte[] bytes, int offset, int length)
-                                                            throws IOException {
-                                                        int count =
-                                                                in.read(
-                                                                        bytes,
-                                                                        offset,
-                                                                        Math.min(
-                                                                                length,
-                                                                                Math.max(
-                                                                                        1,
-                                                                                        remaining
-                                                                                                + 1)));
-                                                        if (count > 0 && (remaining -= count) < 0)
-                                                            throw new IOException(
-                                                                    "Key response limit");
-                                                        return count;
-                                                    }
-                                                };
-                                    return stream;
-                                }
-                            };
-                        }));
+                        (request, body, execution) ->
+                                new BoundedJwkSetResponse(execution.execute(request, body))));
         return http;
     }
 }

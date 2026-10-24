@@ -16,8 +16,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.sakaiproject</groupId><artifactId>sakai-mcp-auth</artifactId>
-            <version>${project.version}</version><scope>provided</scope>
+            <groupId>org.sakaiproject</groupId>
+            <artifactId>sakai-mcp-auth</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- internal dependencies -->
         <dependency>

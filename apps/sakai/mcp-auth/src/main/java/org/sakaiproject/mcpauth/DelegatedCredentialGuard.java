@@ -1,4 +1,18 @@
-/* Copyright (c) 2026 The Apereo Foundation. Licensed under ECL-2.0. */
+/*
+ * Copyright (c) 2026 The Apereo Foundation
+ *
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *             http://opensource.org/licenses/ecl2
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.sakaiproject.mcpauth;
 
 import org.sakaiproject.component.api.ServerConfigurationService;
@@ -22,14 +36,50 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import java.io.IOException;
 import java.security.Principal;
 import java.time.Clock;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 
 /** Validates credentials before native wrappers capture an isolated session. */
 public final class DelegatedCredentialGuard implements Filter {
     static final String MARKER = DelegatedCredentialGuard.class.getName() + ".identity";
+    private static final int MAX_BEARER_HEADER_LENGTH = 16_391;
+    private static final Set<String> INTERNAL_TOOLS =
+            Set.of(
+                    "sakai.assignment.grades",
+                    "sakai.assignment",
+                    "sakai.announcements",
+                    "sakai.gradebookng",
+                    "sakai.filepicker");
+    private static final Set<String> CREDENTIAL_PARAMETERS =
+            Set.of(
+                    "sessionid",
+                    "sakai.session",
+                    "jsessionid",
+                    "oauth_token",
+                    "oauth_signature",
+                    "oauth_consumer_key",
+                    "authorization",
+                    "access_token");
     private static final String CURRENT_SESSION = "org.sakaiproject.api.kernel.session.current";
     private static final String CURRENT_TOOL = CURRENT_SESSION + ".tool";
     private static final List<String> THREAD_KEYS =
@@ -112,23 +162,7 @@ public final class DelegatedCredentialGuard implements Filter {
         HttpServletResponse response = (HttpServletResponse) output;
         Object internal = request.getAttribute(MARKER);
         if (internal instanceof BoundIdentity bound) {
-            ToolManager tools = ComponentManager.get(ToolManager.class);
-            if (!bound.conversation()
-                    || (request.getDispatcherType() != DispatcherType.REQUEST
-                            && request.getDispatcherType() != DispatcherType.FORWARD
-                            && request.getDispatcherType() != DispatcherType.INCLUDE)
-                    || sessions.getCurrentSession() != bound.session()
-                    || tools == null
-                    || tools.getCurrentPlacement() == null
-                    || !Objects.equals(bound.placement(), tools.getCurrentPlacement().getId())
-                    || tools.getCurrentTool() == null
-                    || !Set.of(
-                                    "sakai.assignment.grades",
-                                    "sakai.assignment",
-                                    "sakai.announcements",
-                                    "sakai.gradebookng",
-                                    "sakai.filepicker")
-                            .contains(tools.getCurrentTool().getId())) {
+            if (!allowsInternalDispatch(request, bound)) {
                 response.sendError(403);
                 return;
             }
@@ -165,7 +199,7 @@ public final class DelegatedCredentialGuard implements Filter {
             }
             request.setCharacterEncoding("UTF-8");
             response.setHeader("Cache-Control", "no-store");
-            if (headers.size() != 1 || headers.get(0).length() > 16_391) {
+            if (headers.size() != 1 || headers.get(0).length() > MAX_BEARER_HEADER_LENGTH) {
                 DelegatedBearerAuthentication.unauthorized(request, response);
                 return;
             }
@@ -181,34 +215,7 @@ public final class DelegatedCredentialGuard implements Filter {
                 response.sendError(404);
                 return;
             }
-            if (request.getHeader("Cookie") != null
-                    || (request.getCookies() != null && request.getCookies().length > 0)
-                    || request.getUserPrincipal() != null
-                    || request.getRemoteUser() != null
-                    || request.getHeader("X-Sakai-Session") != null
-                    || request.getParameterMap().keySet().stream()
-                            .anyMatch(
-                                    k ->
-                                            Set.of(
-                                                            "sessionid",
-                                                            "sakai.session",
-                                                            "jsessionid",
-                                                            "oauth_token",
-                                                            "oauth_signature",
-                                                            "oauth_consumer_key",
-                                                            "authorization",
-                                                            "access_token")
-                                                    .contains(k.toLowerCase(Locale.ROOT)))
-                    || (legacy
-                            && (request.getHeader("X-MCP-Flow") != null
-                                    || request.getHeader("X-MCP-Flow-End") != null))
-                    || Collections.list(request.getHeaders("X-MCP-Flow")).size() > 1
-                    || Collections.list(request.getHeaders("X-MCP-Flow-End")).size() > 1
-                    || (request.getHeader("X-MCP-Flow-End") != null
-                            && (!"1".equals(request.getHeader("X-MCP-Flow-End"))
-                                    || request.getHeader("X-MCP-Flow") == null
-                                    || !"/direct/user/current.json"
-                                            .equals(request.getRequestURI())))) {
+            if (hasMixedCredentials(request) || hasInvalidFlowHeaders(request, legacy)) {
                 response.sendError(403);
                 return;
             }
@@ -221,6 +228,7 @@ public final class DelegatedCredentialGuard implements Filter {
                             "org.sakaiproject.tool.impl.SessionComponent",
                             "org.sakaiproject.tool.impl.MySession")) {
                 if (LoggerFactory.getLogger(category).isDebugEnabled()) {
+                    DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.LOGGING_POLICY);
                     response.sendError(503);
                     return;
                 }
@@ -229,6 +237,7 @@ public final class DelegatedCredentialGuard implements Filter {
             try {
                 spring = bearerAuthentication();
             } catch (IllegalArgumentException e) {
+                DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.CONFIGURATION);
                 response.sendError(503);
                 return;
             }
@@ -261,6 +270,42 @@ public final class DelegatedCredentialGuard implements Filter {
             // Also cover policy/configuration failures before the standard Spring chain starts.
             SecurityContextHolder.clearContext();
         }
+    }
+
+    private boolean allowsInternalDispatch(HttpServletRequest request, BoundIdentity bound) {
+        ToolManager tools = ComponentManager.get(ToolManager.class);
+        return bound.conversation()
+                && (request.getDispatcherType() == DispatcherType.REQUEST
+                        || request.getDispatcherType() == DispatcherType.FORWARD
+                        || request.getDispatcherType() == DispatcherType.INCLUDE)
+                && sessions.getCurrentSession() == bound.session()
+                && tools != null
+                && tools.getCurrentPlacement() != null
+                && Objects.equals(bound.placement(), tools.getCurrentPlacement().getId())
+                && tools.getCurrentTool() != null
+                && INTERNAL_TOOLS.contains(tools.getCurrentTool().getId());
+    }
+
+    private static boolean hasMixedCredentials(HttpServletRequest request) {
+        return request.getHeader("Cookie") != null
+                || (request.getCookies() != null && request.getCookies().length > 0)
+                || request.getUserPrincipal() != null
+                || request.getRemoteUser() != null
+                || request.getHeader("X-Sakai-Session") != null
+                || request.getParameterMap().keySet().stream()
+                        .anyMatch(k -> CREDENTIAL_PARAMETERS.contains(k.toLowerCase(Locale.ROOT)));
+    }
+
+    private static boolean hasInvalidFlowHeaders(HttpServletRequest request, boolean legacy) {
+        return (legacy
+                        && (request.getHeader("X-MCP-Flow") != null
+                                || request.getHeader("X-MCP-Flow-End") != null))
+                || Collections.list(request.getHeaders("X-MCP-Flow")).size() > 1
+                || Collections.list(request.getHeaders("X-MCP-Flow-End")).size() > 1
+                || (request.getHeader("X-MCP-Flow-End") != null
+                        && (!"1".equals(request.getHeader("X-MCP-Flow-End"))
+                                || request.getHeader("X-MCP-Flow") == null
+                                || !"/direct/user/current.json".equals(request.getRequestURI())));
     }
 
     private void bind(
@@ -305,6 +350,9 @@ public final class DelegatedCredentialGuard implements Filter {
                                 request.getRemoteAddr(),
                                 Clock.systemUTC());
             } catch (DelegatedConversations.Denied denied) {
+                if (denied.status == 503) {
+                    DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.NATIVE_SESSION);
+                }
                 response.sendError(denied.status);
                 return;
             }
@@ -327,19 +375,24 @@ public final class DelegatedCredentialGuard implements Filter {
                 chain.doFilter(new NativeSessionRequest(request, delegated), guardedResponse);
             } catch (IOException | ServletException | RuntimeException e) {
                 // No authenticated diagnostic or partial body reaches the container.
+                DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.HANDLER);
                 guardedResponse = null;
                 badGateway(response);
             }
         } finally {
             try {
-                if (lease != null) lease.close();
+                if (lease != null) {
+                    lease.close();
+                }
             } catch (RuntimeException failure) {
+                DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.SESSION_CLEANUP);
                 guardedResponse = null;
                 badGateway(response);
             } finally {
                 try {
                     restore(request, beforeThreads, beforeAttributes);
                 } catch (RuntimeException failure) {
+                    DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.CONTEXT_RESTORE);
                     guardedResponse = null;
                     badGateway(response);
                 }
@@ -350,6 +403,7 @@ public final class DelegatedCredentialGuard implements Filter {
                 // Emit only once owned session cleanup and native restoration have completed.
                 guardedResponse.finish();
             } catch (IOException | RuntimeException failure) {
+                DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.RESPONSE_COMPLETION);
                 badGateway(response);
             }
         }
@@ -370,8 +424,11 @@ public final class DelegatedCredentialGuard implements Filter {
                 (key, value) ->
                         actions.add(
                                 () -> {
-                                    if (value == null) request.removeAttribute(key);
-                                    else request.setAttribute(key, value);
+                                    if (value == null) {
+                                        request.removeAttribute(key);
+                                    } else {
+                                        request.setAttribute(key, value);
+                                    }
                                 }));
         RuntimeException failed = null;
         for (Runnable action : actions) {
@@ -381,7 +438,9 @@ public final class DelegatedCredentialGuard implements Filter {
                 failed = failure;
             }
         }
-        if (failed != null) throw failed;
+        if (failed != null) {
+            throw failed;
+        }
     }
 
     private static void badGateway(HttpServletResponse response) {
@@ -394,7 +453,7 @@ public final class DelegatedCredentialGuard implements Filter {
 
     private DelegatedBearerAuthentication bearerAuthentication() {
         DelegatedBearerAuthentication result = bearerAuthentication;
-        if (result == null)
+        if (result == null) {
             synchronized (this) {
                 result = bearerAuthentication;
                 if (result == null) {
@@ -402,6 +461,7 @@ public final class DelegatedCredentialGuard implements Filter {
                     bearerAuthentication = result;
                 }
             }
+        }
         return result;
     }
 
@@ -412,7 +472,9 @@ public final class DelegatedCredentialGuard implements Filter {
             super(request);
             String name = System.getProperty(RequestFilter.SAKAI_COOKIE_PROP, "JSESSIONID");
             String suffix = System.getProperty(RequestFilter.SAKAI_SERVERID, "sakai");
-            if (suffix.isEmpty()) suffix = "sakai";
+            if (suffix.isEmpty()) {
+                suffix = "sakai";
+            }
             cookie = new Cookie(name, session.getId() + "." + suffix);
         }
 
@@ -433,16 +495,23 @@ public final class DelegatedCredentialGuard implements Filter {
 
         @Override
         public String getHeader(String name) {
-            if ("Authorization".equalsIgnoreCase(name)) return null;
-            if ("Cookie".equalsIgnoreCase(name)) return cookie.getName() + "=" + cookie.getValue();
+            if ("Authorization".equalsIgnoreCase(name)) {
+                return null;
+            }
+            if ("Cookie".equalsIgnoreCase(name)) {
+                return cookie.getName() + "=" + cookie.getValue();
+            }
             return super.getHeader(name);
         }
 
         @Override
         public Enumeration<String> getHeaders(String name) {
-            if ("Authorization".equalsIgnoreCase(name)) return Collections.emptyEnumeration();
-            if ("Cookie".equalsIgnoreCase(name))
+            if ("Authorization".equalsIgnoreCase(name)) {
+                return Collections.emptyEnumeration();
+            }
+            if ("Cookie".equalsIgnoreCase(name)) {
                 return Collections.enumeration(List.of(getHeader(name)));
+            }
             return super.getHeaders(name);
         }
 

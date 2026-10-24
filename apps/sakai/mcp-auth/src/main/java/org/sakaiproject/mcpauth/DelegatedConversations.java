@@ -1,4 +1,18 @@
-/* Copyright (c) 2026 The Apereo Foundation. Licensed under ECL-2.0. */
+/*
+ * Copyright (c) 2026 The Apereo Foundation
+ *
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *             http://opensource.org/licenses/ecl2
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.sakaiproject.mcpauth;
 
 import org.sakaiproject.component.api.ServerConfigurationService;
@@ -9,7 +23,9 @@ import org.sakaiproject.user.api.Authentication;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HexFormat;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.crypto.Mac;
@@ -60,7 +76,9 @@ final class DelegatedConversations {
                     session.invalidate();
                 }
             } finally {
-                if (lock != null) lock.unlock();
+                if (lock != null) {
+                    lock.unlock();
+                }
             }
         }
     }
@@ -76,16 +94,23 @@ final class DelegatedConversations {
             String remote,
             Clock clock)
             throws Denied {
-        if (nonce == null) return create(sessions, usage, account, null, null, false, remote);
-        if (!nonce.matches("[a-f0-9]{64}")) throw new Denied(403);
-        if (!configuration.getBoolean("mcp.integration.conversations.enabled", false))
+        if (nonce == null) {
+            return create(sessions, usage, account, null, null, false, remote);
+        }
+        if (!nonce.matches("[a-f0-9]{64}")) {
+            throw new Denied(403);
+        }
+        if (!configuration.getBoolean("mcp.integration.conversations.enabled", false)) {
             throw new Denied(404);
+        }
         String id;
         try {
             byte[] secret =
                     Base64.getDecoder()
                             .decode(configuration.getString("mcp.integration.flowSecret", ""));
-            if (secret.length < 32 || secret.length > 64) throw new IllegalArgumentException();
+            if (secret.length < 32 || secret.length > 64) {
+                throw new IllegalArgumentException();
+            }
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(secret, "HmacSHA256"));
             id =
@@ -108,22 +133,30 @@ final class DelegatedConversations {
             throw new Denied(503);
         }
         ReentrantLock lock = LOCKS[Math.floorMod(id.hashCode(), LOCKS.length)];
-        if (!lock.tryLock()) throw new Denied(409);
+        if (!lock.tryLock()) {
+            throw new Denied(409);
+        }
         try {
             synchronized (CREATION) {
                 Session s = sessions.getSession(id);
                 if (s == null) {
-                    if (end) throw new Denied(410);
+                    if (end) {
+                        throw new Denied(410);
+                    }
                     long total = 0, owned = 0;
                     for (Session existing : sessions.getSessions()) {
                         Object saved = existing.getAttribute(STATE);
                         if (saved instanceof Owner owner) {
                             total++;
                             if (owner.tenant().equals(identity.tenantId())
-                                    && owner.object().equals(identity.objectId())) owned++;
+                                    && owner.object().equals(identity.objectId())) {
+                                owned++;
+                            }
                         }
                     }
-                    if (total >= 256 || owned >= 4) throw new Denied(503);
+                    if (total >= 256 || owned >= 4) {
+                        throw new Denied(503);
+                    }
                     Lease lease = create(sessions, usage, account, id, lock, true, remote);
                     try {
                         lease.session.setAttribute(
@@ -148,7 +181,9 @@ final class DelegatedConversations {
                         || !owner.uid().equals(account.getUid())
                         || !owner.eid().equals(account.getEid())
                         || !account.getUid().equals(s.getUserId())
-                        || !account.getEid().equals(s.getUserEid())) throw new Denied(403);
+                        || !account.getEid().equals(s.getUserEid())) {
+                    throw new Denied(403);
+                }
                 if (clock.millis() >= owner.deadline()) {
                     sessions.setCurrentSession(s);
                     s.invalidate();
@@ -158,8 +193,12 @@ final class DelegatedConversations {
             }
         } catch (Denied | RuntimeException e) {
             // create() may already have released its lease on failed login.
-            if (lock.isHeldByCurrentThread()) lock.unlock();
-            if (e instanceof Denied denied) throw denied;
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+            if (e instanceof Denied denied) {
+                throw denied;
+            }
             throw new Denied(503);
         }
     }
@@ -174,7 +213,9 @@ final class DelegatedConversations {
             String remote)
             throws Denied {
         Session session = id == null ? sessions.startSession() : sessions.startSession(id);
-        if (session == null) throw new Denied(503);
+        if (session == null) {
+            throw new Denied(503);
+        }
         Lease lease = new Lease(session, sessions, lock, retain);
         try {
             sessions.setCurrentSession(session);
@@ -186,12 +227,16 @@ final class DelegatedConversations {
                             "MCP existing HTTP delegated context",
                             UsageSessionService.EVENT_LOGIN_WS)
                     || !account.getUid().equals(session.getUserId())
-                    || !account.getEid().equals(session.getUserEid())) throw new Denied(503);
+                    || !account.getEid().equals(session.getUserEid())) {
+                throw new Denied(503);
+            }
             return lease;
         } catch (Denied | RuntimeException e) {
             lease.abort();
             lease.close();
-            if (e instanceof Denied denied) throw denied;
+            if (e instanceof Denied denied) {
+                throw denied;
+            }
             throw new Denied(503);
         }
     }

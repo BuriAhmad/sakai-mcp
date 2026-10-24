@@ -53,6 +53,8 @@ rejects mixed cookies/container/session/OAuth1 credentials and applies explicit
 route/placement limits. Key HTTP reads retain 2-second connection/read timeouts
 and a 1 MB actual-stream limit, including chunked bodies. Failures return sanitized
 401/challenge, 403 account/policy denial, or 503 dependency/configuration failure.
+`BoundedJwkSetResponse` implements only the bounded HTTP response stream; Spring
+still owns JWT decoding and JWKS retrieval.
 
 ## Native lifecycle and output
 
@@ -73,6 +75,20 @@ WebAPI's narrowly scoped `DelegatedStreamingConfiguration` executes only a bound
 legacy artifact `StreamingResponseBody` synchronously under this same guard.
 Other MVC streaming behavior is delegated to Spring unchanged. No upstream
 controller or async security-context propagation is introduced.
+
+## Failure diagnostics and maintenance
+
+`DelegatedDiagnostics` emits a fixed stage name for internal configuration,
+key-service, session, handler, cleanup, restoration and response failures. It
+accepts only a closed enum: no request, identity, token, session ID, exception
+message/stack or response body is passed to the logger. Ordinary credential and
+permission denials retain their existing response behavior. The diagnostics
+logger remains available when sensitive native DEBUG logging causes a bearer
+request to be refused.
+
+Test Mockito Core and Inline both use Sakai's managed `${sakai.mockito.version}`;
+production Spring/Nimbus versions and shared-library scopes are unchanged. Record
+future refactors in [the repository log](../../../docs/REFACTOR_LOG.md).
 
 ## Verification and release boundary
 

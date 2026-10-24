@@ -1,4 +1,18 @@
-/* Copyright (c) 2026 The Apereo Foundation. Licensed under ECL-2.0. */
+/*
+ * Copyright (c) 2026 The Apereo Foundation
+ *
+ * Licensed under the Educational Community License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *             http://opensource.org/licenses/ecl2
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.sakaiproject.mcpauth;
 
 import org.sakaiproject.component.api.ServerConfigurationService;
@@ -9,6 +23,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.DispatcherType;
@@ -48,14 +63,17 @@ final class DelegatedRoutes {
 
     static boolean allows(HttpServletRequest request) {
         String path = request.getRequestURI();
-        if ("/direct/assignment/setGrade.json".equals(path) && "POST".equals(request.getMethod()))
+        if ("/direct/assignment/setGrade.json".equals(path) && "POST".equals(request.getMethod())) {
             return gradingSubmit(request);
+        }
         if (!("/api".equals(request.getContextPath()) || "/direct".equals(request.getContextPath()))
                 || !path.startsWith(request.getContextPath() + "/")
                 || request.getDispatcherType() != DispatcherType.REQUEST
                 || !"GET".equals(request.getMethod())
                 || request.getContentLengthLong() > 0
-                || request.getHeader("Transfer-Encoding") != null) return false;
+                || request.getHeader("Transfer-Encoding") != null) {
+            return false;
+        }
         if ("/direct/site.json".equals(path)) {
             return "access".equals(request.getParameter("select"))
                     && request.getQueryString() != null
@@ -82,7 +100,9 @@ final class DelegatedRoutes {
                                                     && e.getValue().length == 1
                                                     && e.getValue()[0].matches("[0-9]{1,10}"));
         }
-        if (request.getQueryString() != null || !request.getParameterMap().isEmpty()) return false;
+        if (request.getQueryString() != null || !request.getParameterMap().isEmpty()) {
+            return false;
+        }
         // Canonical opaque site IDs. No encoded slash, matrix
         // parameters, alternate endpoint/action or caller-selected actor.
         return "/api/users/me/sites".equals(path)
@@ -104,8 +124,10 @@ final class DelegatedRoutes {
                 || !request.getContentType()
                         .split(";", 2)[0]
                         .trim()
-                        .toLowerCase(java.util.Locale.ROOT)
-                        .equals("application/x-www-form-urlencoded")) return false;
+                        .toLowerCase(Locale.ROOT)
+                        .equals("application/x-www-form-urlencoded")) {
+            return false;
+        }
         Set<String> allowed =
                 Set.of(
                         "courseId",
@@ -133,8 +155,9 @@ final class DelegatedRoutes {
                                         "grade",
                                         "gradeOption"))
                 || !request.getParameterMap().entrySet().stream()
-                        .allMatch(e -> allowed.contains(e.getKey()) && e.getValue().length == 1))
+                        .allMatch(e -> allowed.contains(e.getKey()) && e.getValue().length == 1)) {
             return false;
+        }
         return Set.of("save", "return").contains(request.getParameter("gradeOption"));
     }
 
@@ -147,7 +170,9 @@ final class DelegatedRoutes {
 
     private static boolean ownGradeRead(String path) {
         String prefix = "/api/sites/";
-        if (!path.startsWith(prefix)) return false;
+        if (!path.startsWith(prefix)) {
+            return false;
+        }
         String suffix = path.endsWith("/grading/item-data") ? "/grading/item-data" : "/grades";
         return path.endsWith(suffix)
                 && path.length() > prefix.length() + suffix.length()
@@ -162,19 +187,24 @@ final class DelegatedRoutes {
     }
 
     private static boolean siteRead(String path) {
-        if (!path.startsWith("/direct/site/")) return false;
+        if (!path.startsWith("/direct/site/")) {
+            return false;
+        }
         String suffix =
                 path.endsWith("/userPerms.json")
                         ? "/userPerms.json"
                         : path.endsWith("/pages.json") ? "/pages.json" : ".json";
-        if (!path.endsWith(suffix) || path.length() <= "/direct/site/".length() + suffix.length())
+        if (!path.endsWith(suffix) || path.length() <= "/direct/site/".length() + suffix.length()) {
             return false;
+        }
         String raw = path.substring("/direct/site/".length(), path.length() - suffix.length());
         return canonicalId(raw);
     }
 
     private static boolean canonicalId(String raw) {
-        if (raw.length() > 2048) return false;
+        if (raw.length() > 2048) {
+            return false;
+        }
         try {
             String id = decode(raw);
             return !id.isEmpty()
@@ -193,15 +223,21 @@ final class DelegatedRoutes {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         for (int i = 0; i < raw.length(); ) {
             if (raw.charAt(i) == '%') {
-                if (i + 2 >= raw.length()) throw new IllegalArgumentException();
+                if (i + 2 >= raw.length()) {
+                    throw new IllegalArgumentException();
+                }
                 int hi = Character.digit(raw.charAt(i + 1), 16),
                         lo = Character.digit(raw.charAt(i + 2), 16);
-                if (hi < 0 || lo < 0) throw new IllegalArgumentException();
+                if (hi < 0 || lo < 0) {
+                    throw new IllegalArgumentException();
+                }
                 bytes.write((hi << 4) | lo);
                 i += 3;
             } else {
                 int cp = raw.codePointAt(i);
-                if (cp >= 0xD800 && cp <= 0xDFFF) throw new IllegalArgumentException();
+                if (cp >= 0xD800 && cp <= 0xDFFF) {
+                    throw new IllegalArgumentException();
+                }
                 bytes.writeBytes(
                         new String(Character.toChars(cp)).getBytes(StandardCharsets.UTF_8));
                 i += Character.charCount(cp);
@@ -217,8 +253,9 @@ final class DelegatedRoutes {
 
     static String placement(HttpServletRequest request, ServerConfigurationService configuration) {
         String path = request.getRequestURI();
-        if (!"/portal".equals(request.getContextPath()) || !path.startsWith("/portal/tool/"))
+        if (!"/portal".equals(request.getContextPath()) || !path.startsWith("/portal/tool/")) {
             return null;
+        }
         String tail = path.substring("/portal/tool/".length());
         String id = tail.split("/", 2)[0];
         if (!id.matches("[A-Za-z0-9_-]{1,255}")
@@ -226,7 +263,9 @@ final class DelegatedRoutes {
                 || path.contains("%")
                 || path.contains(";")
                 || path.contains("\\")
-                || path.contains("//")) return null;
+                || path.contains("//")) {
+            return null;
+        }
         String[] configured = configuration.getStrings("mcp.integration.placements");
         return configured != null && Arrays.asList(configured).contains(id) ? id : null;
     }
@@ -234,19 +273,30 @@ final class DelegatedRoutes {
     static boolean conversationAllows(
             HttpServletRequest request, ServerConfigurationService configuration) {
         if (request.getDispatcherType() != DispatcherType.REQUEST
-                || request.getHeader("X-MCP-Flow") == null) return false;
-        if (request.getHeader("X-MCP-Flow-End") != null)
+                || request.getHeader("X-MCP-Flow") == null) {
+            return false;
+        }
+        if (request.getHeader("X-MCP-Flow-End") != null) {
             return "/direct/user/current.json".equals(request.getRequestURI()) && allows(request);
-        if (allows(request)) return true;
+        }
+        if (allows(request)) {
+            return true;
+        }
         if (placement(request, configuration) == null
-                || !Set.of("GET", "POST").contains(request.getMethod())) return false;
+                || !Set.of("GET", "POST").contains(request.getMethod())) {
+            return false;
+        }
         if (request.getContentLengthLong() > 262144
-                || request.getHeader("Transfer-Encoding") != null) return false;
+                || request.getHeader("Transfer-Encoding") != null) {
+            return false;
+        }
         if ("POST".equals(request.getMethod())
                 && (request.getContentType() == null
                         || !request.getContentType()
-                                .toLowerCase(java.util.Locale.ROOT)
-                                .startsWith("application/x-www-form-urlencoded"))) return false;
+                                .toLowerCase(Locale.ROOT)
+                                .startsWith("application/x-www-form-urlencoded"))) {
+            return false;
+        }
         // Only credential-shaped fields are inspected. Native forms/CSRF and
         // permission checks retain all business input interpretation.
         return request.getParameterMap().keySet().stream()
@@ -258,7 +308,7 @@ final class DelegatedRoutes {
                                                 "jsessionid",
                                                 "oauth_token",
                                                 "authorization")
-                                        .contains(k.toLowerCase(java.util.Locale.ROOT)));
+                                        .contains(k.toLowerCase(Locale.ROOT)));
     }
 
     private DelegatedRoutes() {}

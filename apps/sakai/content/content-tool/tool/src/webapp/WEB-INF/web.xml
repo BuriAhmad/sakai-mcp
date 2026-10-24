@@ -21,20 +21,20 @@
         <filter-class>org.sakaiproject.util.RequestFilter</filter-class>
     </filter>
 
-       <filter-mapping>
+    <filter-mapping>
         <filter-name>mcp.credentials</filter-name>
         <servlet-name>sakai.filepicker</servlet-name>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
-<filter-mapping>
-       <filter-name>sakai.request</filter-name>
-       <servlet-name>sakai.filepicker</servlet-name>
-       <dispatcher>REQUEST</dispatcher>
-       <dispatcher>FORWARD</dispatcher>
-       <dispatcher>INCLUDE</dispatcher>
-   </filter-mapping>
+    <filter-mapping>
+        <filter-name>sakai.request</filter-name>
+        <servlet-name>sakai.filepicker</servlet-name>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>mcp.session</filter-name>
         <servlet-name>sakai.filepicker</servlet-name>
@@ -60,7 +60,7 @@
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
 
-   <filter-mapping>
+    <filter-mapping>
         <filter-name>sakai.request</filter-name>
         <servlet-name>sakai.resource.type.helper</servlet-name>
         <dispatcher>REQUEST</dispatcher>
