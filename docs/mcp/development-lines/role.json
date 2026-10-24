@@ -32,7 +32,8 @@
     "docs/mcp/existing-api-migration/tool-limitations.md",
     "docs/mcp/existing-api-migration/README.md",
     "docs/mcp/sakai-bearer-auth-refactor-plan.md",
-    "docs/mcp/sakai-bearer-auth-refactor-implementation.md"
+    "docs/mcp/sakai-bearer-auth-refactor-implementation.md",
+    "docs/mcp/sakai-adapter.md"
   ],
   "restored_native_wiring": [],
   "client_protocol": {
