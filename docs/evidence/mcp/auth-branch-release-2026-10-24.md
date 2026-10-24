@@ -52,3 +52,18 @@ GitHub run `40108875653` failed at frontend execution with
 `Playwright does not support chromium on ubuntu26.04-x64`. CI is pinned to
 Ubuntu 22.04 for the bundled browser tooling, and the focused Java step now
 explicitly includes the shared module and consolidated auth tests.
+
+## Approved cleanup and dependency preflight
+
+The user approved removal of the ten old release directories through
+`20261013T122832Z-10b1561ed92f`, preserving the current and immediately previous
+release and backups. Cleanup was started under the release lock.
+
+Runtime inventory found the legacy bearer gate already enabled, with tenant
+6831cfbb-6904-4f1a-8dba-0ab09b803a9c, v1 sts issuer and the existing
+Sakai audience/scope/JWKS. No flags or metadata are changed by this release.
+The existing shared directory contains Nimbus 9.37.2 and 9.37.4. The release
+script now removes the known obsolete 9.37.2 JAR from staging only, requires
+managed 9.37.4 and the five shared Spring Security 5.7.14 modules, and rejects
+duplicate versions before switching directories. Original libraries remain in
+the rollback backup.

@@ -153,6 +153,24 @@ case "$1" in
       sed -i 's#<bean id="org.sakaiproject.coursemanagement.impl.CourseManagementSampleDataLoader"#<bean depends-on="org.sakaiproject.user.api.UserDirectoryService" id="org.sakaiproject.coursemanagement.impl.CourseManagementSampleDataLoader"#' "$demo_component"
     fi
 
+    # Auth migration replaces a previously retained Nimbus copy. Clean staging
+    # only; the installed library directory remains intact for rollback.
+    if [[ -f "$release/source/mcp-auth/pom.xml" ]]; then
+      [[ -f "$release/staged-tomcat/lib/nimbus-jose-jwt-9.37.4.jar" ]] || \
+        die 'Auth release is missing managed Nimbus 9.37.4.'
+      rm -f -- "$release/staged-tomcat/lib/nimbus-jose-jwt-9.37.2.jar"
+      for artifact in spring-security-core spring-security-web spring-security-oauth2-core \
+        spring-security-oauth2-resource-server spring-security-oauth2-jose; do
+        [[ -f "$release/staged-tomcat/lib/$artifact-5.7.14.jar" ]] || \
+          die "Auth release is missing $artifact 5.7.14."
+      done
+      for artifact in nimbus-jose-jwt spring-security-core spring-security-web \
+        spring-security-oauth2-core spring-security-oauth2-resource-server spring-security-oauth2-jose; do
+        count="$(find "$release/staged-tomcat/lib" -maxdepth 1 -name "$artifact-*.jar" | wc -l)"
+        [[ "$count" -eq 1 ]] || die "Staged auth dependency has multiple versions: $artifact"
+      done
+    fi
+
     printf '%s\n' built > "$release/status"
     echo 'Build succeeded. Switching Tomcat application directories...'
     for name in "${ARTIFACT_DIRS[@]}"; do
