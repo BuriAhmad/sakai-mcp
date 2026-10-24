@@ -1,9 +1,9 @@
 {
   "format_version": 1,
-  "date": "2026-10-20",
+  "date": "2026-10-24",
   "kind": "auth-development",
   "branch": "codex/auth-development",
-  "source_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
+  "source_anchor": "8a795a7b32501c130c67c19f0a08d166f8e9cbf1",
   "original_baseline": "208d69ac624910a29a7529934ddcc18bbac853e8",
   "mixed_source": "98364680e73489addf649685bb79511e8febf917",
   "auth_core_commit": "98a4ca7de32e9ebbeec743c244a2c6193351829a",
@@ -30,7 +30,9 @@
     "docs/mcp/existing-api-migration/native-change-ledger.json",
     "docs/mcp/existing-api-migration/implementation-plan.md",
     "docs/mcp/existing-api-migration/tool-limitations.md",
-    "docs/mcp/existing-api-migration/README.md"
+    "docs/mcp/existing-api-migration/README.md",
+    "docs/mcp/sakai-bearer-auth-refactor-plan.md",
+    "docs/mcp/sakai-bearer-auth-refactor-implementation.md"
   ],
   "restored_native_wiring": [],
   "client_protocol": {
@@ -39,8 +41,8 @@
     "auth_reference_path": "docs/mcp/development-lines/protocol/sakai_flow.py",
     "status": "Unchanged client protocol dependency, not server auth implementation"
   },
-  "runtime_acceptance": "Not established; no deployment or feature activation. Attachment audit failure preserved.",
-  "required_native_auth": "Original host retains baseline legacy auth. Shared integration gates remain disabled by default.",
+  "runtime_acceptance": "107 focused Java tests and 145 Python tests passed locally. No deployed/SAML/host acceptance; attachment proof failures preserved.",
+  "required_native_auth": "One shared Spring Security 5.7.14 Resource Server pipeline serves original business host and selected existing handlers. Existing independent gates remain disabled by default; no legacy verifier remains.",
   "extraction_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
   "legacy_client_auth_paths": [
     "services/mcp/src/sakai_mcp/auth.py",
@@ -49,5 +51,21 @@
   "legacy_native_auth_paths": [
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpBearerFilter.java",
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpJwtVerifier.java"
-  ]
+  ],
+  "retired_legacy_native_auth_paths": [
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpBearerFilter.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpJwtVerifier.java"
+  ],
+  "auth_refactor": {
+    "implementation_report": "docs/mcp/sakai-bearer-auth-refactor-implementation.md",
+    "specification": "docs/mcp/sakai-bearer-auth-refactor-plan.md",
+    "framework": "5.3.39",
+    "spring_security": "5.7.14",
+    "nimbus": "9.37.4",
+    "spring_configuration": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedBearerAuthentication.java",
+    "localized_mvc_wiring": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/DelegatedStreamingConfiguration.java",
+    "protocol_change": false,
+    "deployment": false,
+    "note": "legacy_native_auth_paths remains the ownership allowlist for deliberate deletions against original_baseline; it does not name active implementations."
+  }
 }

@@ -209,3 +209,12 @@ against that reviewed anchor; documentation commits may follow it. Update curren
 coverage/pins/evidence as appropriate. Auth ownership explicitly includes original
 Python auth/OBO and legacy native bearer/JWT files; original business host changes
 remain forbidden. The initial separation changed none of those legacy auth bodies.
+
+## Auth refactor candidate — 24 October 2026
+
+The auth tree now contains the user-authorized Spring Resource Server refactor.
+See [implementation report](mcp/sakai-bearer-auth-refactor-implementation.md) for
+current local changes/results and outstanding release gates. Initial extraction
+anchors above remain historical and immutable. Original business handlers remain
+preserved; legacy bearer/JWT classes are retired in the auth tree. The code is a
+local candidate, not a deployed release or a repair of attachment proofs.
