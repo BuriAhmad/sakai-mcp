@@ -49,10 +49,10 @@ Paths below are relative to the worktree. The shared Java package is
 | `DelegatedResponse.java` | Keeps credential protection; 1 MB ordinary / 10 MiB legacy file cap |
 | `apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/WebAppConfiguration.java` | Removes legacy proxy registration/import; preserves guard → RequestFilter → binder |
 | `apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/DelegatedStreamingConfiguration.java` | Auth-specific MVC adapter keeps only bound legacy artifact streams synchronous inside the guard; other streams use the original Spring handler |
-| `apps/sakai/master/pom.xml`, `deploy/pom.xml`, `mcp-auth/pom.xml`, `webapi/pom.xml` | Managed/shared Resource Server dependencies and explicit WebAPI test dependencies; removes direct production Nimbus ownership from project verifiers |
+| `apps/sakai/master/pom.xml`, `apps/sakai/deploy/pom.xml`, `apps/sakai/mcp-auth/pom.xml`, `apps/sakai/webapi/pom.xml` | Managed/shared Resource Server dependencies and explicit WebAPI test dependencies; removes direct production Nimbus ownership from project verifiers |
 | Shared verifier/chain/Portal tests; WebAPI Sites/registration/streaming tests | Consolidated real Spring/JWK, native lifecycle, mapping, concurrency and MVC regression coverage |
 | `services/mcp/tests/security/test_native_auth_boundary.py` | Admits only planned framework dependencies and proves retired classes/processors/registration are absent; retains no-business/no-advisor and ordering restrictions |
-| Module README/AGENTS, `docs/DEVELOPMENT_WORKTREES.md`, adapter guide, role metadata | Current implementation and ownership/release boundary |
+| Module README/AGENTS, worktree/adapter/assignment-setup/integration guides, role metadata | Current implementation and ownership/release boundary |
 
 Deleted production files:
 
@@ -117,7 +117,10 @@ preserved under `/tmp/sakai-auth-focused-reports/` before aggregate clean builds
   proxy still extends shared Spring Web 5.3.39. This is not a live Tomcat/SAML test.
 - `mvn -f apps/sakai/master/pom.xml -DskipTests clean install`: passed; local Maven parent installation only.
 - Affected WAR aggregate: `mvn -f apps/sakai/pom.xml -pl mcp-auth,webapi,portal/portal-charon/charon,entitybroker/tool,assignment/tool,announcement/announcement-tool/tool,gradebookng/tool,content/content-tool/tool,login/login-tool/tool -am -DskipTests package`: passed.
-- Full aggregate build: running at this checkpoint; no completed full-build acceptance is claimed. Maven is resolving inherited frontend WebJar ranges. Final result will be recorded below..
+- To accelerate inherited UI version-range resolution, checksum-verified public
+  WebJar POMs were prefetched from Maven Central into the local Maven cache; no
+  dependency constraint/version or repository configuration changed.
+- Full aggregate build: completed successfully across the 455-module reactor via an unchanged-source resume. The first `mvn -f apps/sakai/pom.xml -DskipTests clean install` reached module 448, then the existing web-components browser runner exited on a startup timeout/navigation error (197 passing assertions, zero failing assertions, incomplete file startup). One `mvn -f apps/sakai/pom.xml -rf :webcomponents -DskipTests install` retry with the downloaded browser cached passed the remaining eight modules, including **203 browser tests in all 66 files**. No source/test changes or skips were added for the retry. The frontend `npm run test` runs despite Maven's Java `-DskipTests` flag..
 - `uv sync --locked`, `uv run --no-sync ruff check .`, `uv run --no-sync mypy src`,
   `uv run --no-sync pytest -q` from `services/mcp`: passed; **145 tests**, type checks
   pass for 17 original runtime files.
@@ -125,7 +128,7 @@ preserved under `/tmp/sakai-auth-focused-reports/` before aggregate clean builds
   source-audit test is formatted and lint passes; no unrelated host/evaluator
   formatting was performed to conceal this inherited baseline issue.
 - `./scripts/check-repo-context.sh`, POM XML parsing and `git diff --check`: passed.
-- Source/preservation and final archive inspection: protected source, original business handlers, Python runtime and pinned flow hash match their preserved anchors; 8 source-boundary tests pass. The unmodified worktree verifier is run after recording the reviewed source anchor..
+- Source/preservation and final archive inspection (all rebuilt auth/affected WARs contain no retired verifier/filter classes; bearer framework libraries remain shared): protected source, original business handlers, Python runtime and pinned flow hash match their preserved anchors; 8 source-boundary tests pass. The unmodified worktree verifier passes against the reviewed source anchor; the updated adapter/setup/integration guides and plan/report were explicitly declared as metadata. No business/code preservation restriction was relaxed..
 
 The first attempts exposed and fixed an accidental POM insertion into plugin
 metadata, missing explicit caller test dependencies, the HTTP size-test's actual

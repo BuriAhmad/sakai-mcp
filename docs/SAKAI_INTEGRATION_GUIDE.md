@@ -91,7 +91,7 @@ A skill cannot supply a missing backend capability. A future `create_grade_item(
 - [AbstractWebService.java](../apps/sakai/webservices/cxf/src/java/org/sakaiproject/webservices/AbstractWebService.java): `establishSession` and service context.
 - [HostFilter.java](../apps/sakai/webservices/cxf/src/java/org/sakaiproject/rest/HostFilter.java): webservice host restrictions.
 - [BaseUserDirectoryService.java](../apps/sakai/kernel/kernel-impl/src/main/java/org/sakaiproject/user/impl/BaseUserDirectoryService.java): `cleanEid` lowercases, trims and strips specified characters.
-- [McpBearerFilter.java](../apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpBearerFilter.java): verified external evidence, exact EID comparison and request isolation.
+- [DelegatedCredentialGuard.java](../apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedCredentialGuard.java): shared Spring-authenticated trusted-evidence bridge, exact EID comparison and pre-RequestFilter session selection; see the [refactor report](mcp/sakai-bearer-auth-refactor-implementation.md). The old WebAPI bearer filter/verifier are retired in this auth tree.
 - [Python Sakai client](../services/mcp/src/sakai_mcp/sakai_client.py): fixed-origin V1 transport; [OBO provider](../services/mcp/src/sakai_mcp/obo.py): delegated token exchange.
 
 **Future MCP implication:** retain the delegated boundary. Evaluate native transports behind a safely authenticated Sakai-side adapter; do not assume the V1 token will authenticate legacy SOAP or `/direct/` calls.

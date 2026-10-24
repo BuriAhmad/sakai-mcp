@@ -33,7 +33,9 @@
     "docs/mcp/existing-api-migration/README.md",
     "docs/mcp/sakai-bearer-auth-refactor-plan.md",
     "docs/mcp/sakai-bearer-auth-refactor-implementation.md",
-    "docs/mcp/sakai-adapter.md"
+    "docs/mcp/sakai-adapter.md",
+    "docs/SAKAI_ASSIGNMENT_SETUP.md",
+    "docs/SAKAI_INTEGRATION_GUIDE.md"
   ],
   "restored_native_wiring": [],
   "client_protocol": {
@@ -67,6 +69,15 @@
     "localized_mvc_wiring": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/DelegatedStreamingConfiguration.java",
     "protocol_change": false,
     "deployment": false,
-    "note": "legacy_native_auth_paths remains the ownership allowlist for deliberate deletions against original_baseline; it does not name active implementations."
+    "note": "legacy_native_auth_paths remains the ownership allowlist for deliberate deletions against original_baseline; it does not name active implementations.",
+    "verification": {
+      "focused_java_tests": 107,
+      "python_tests": 145,
+      "webcomponent_browser_tests": 203,
+      "aggregate_modules": 455,
+      "aggregate_result": "passed with one unchanged-source resume after browser startup timeout",
+      "preservation_checker": "unchanged; passed",
+      "deployment": false
+    }
   }
 }
