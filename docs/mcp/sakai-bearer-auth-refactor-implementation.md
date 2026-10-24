@@ -11,7 +11,9 @@ The user subsequently authorized deployment and resource startup. The auth branc
 was deployed as `2844430a` in release `20261024T163517Z-2844430a44cf`.
 Builds, installed artifacts, successful real MCP reads, rollback and remaining
 acceptance limits are recorded in [release evidence](../evidence/mcp/auth-branch-release-2026-10-24.md).
-The implementation-only statements below describe the original implementation
+The deployed environment uses regular username/password login. Read-only checks
+found no active SAML configuration; a SAML round trip is not a current acceptance
+gate. The implementation-only statements below describe the original implementation
 phase; they do not imply that the later authorized release was skipped.
 
 ## Implementation

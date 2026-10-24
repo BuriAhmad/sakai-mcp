@@ -153,10 +153,22 @@ runtime property changes were made by this release.
 
 ### Remaining final-testing gates
 
-A complete browser/SAML IdP sign-in round trip, the student/instructor cross-course
-permission matrix, and tool-specific session/flow acceptance remain. Existing-HTTP
+A complete regular username/password browser sign-in/logout check, the
+student/instructor cross-course permission matrix, and tool-specific session/flow
+acceptance remain. Existing-HTTP
 reach was not enabled during deployment. Historical failed attachment proofs are
 still unaccepted. The unsupported-GET 500 above is an existing API error-mapping
 limitation; its source was not changed in this authentication release. The
 repository's pre-existing dependency vulnerability backlog remains outside this
 refactor and must be reviewed before production use.
+
+### Login configuration clarification
+
+Read-only deployed checks after the user's question confirmed no active imports
+in the login WAR's applicationContext.xml, no SAML login/authentication runtime
+property keys or SAML XML overrides under Sakai home, and no SAML profile mention
+in setenv.sh. This environment uses ordinary username/password login; bundled
+SAML classes/libraries are unused capability, not evidence of enabled SAML login.
+The earlier unconditional SAML acceptance wording was overly broad. A SAML IdP
+round trip is required only if SAML is configured in a future environment. MCP's
+Entra delegated OAuth bearer flow is separate from ordinary browser login.

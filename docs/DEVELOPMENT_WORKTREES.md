@@ -225,6 +225,6 @@ The user authorized a development release directly from `codex/auth-development`
 while preserving main at the baseline. Commit `2844430a` is deployed in release
 `20261024T163517Z-2844430a44cf`. The environment is running; real connected MCP
 course-list and announcement reads passed. See [release evidence](evidence/mcp/auth-branch-release-2026-10-24.md)
-for build/rollback details, the interrupted-SSH recovery and remaining browser/SAML,
+for build/rollback details, the interrupted-SSH recovery and remaining regular browser login,
 cross-role and flow acceptance. This does not combine the tool migration line or
 repair historical attachment proofs.
