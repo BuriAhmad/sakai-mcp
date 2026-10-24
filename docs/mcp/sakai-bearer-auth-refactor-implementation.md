@@ -5,6 +5,15 @@ Date: 24 October 2026. Worktree: `sakai-mcp-auth-development`, branch
 Reviewed implementation source anchor: `8a795a7b32501c130c67c19f0a08d166f8e9cbf1`.
 Specification: [approved plan](sakai-bearer-auth-refactor-plan.md).
 
+## Subsequent authorized development release
+
+The user subsequently authorized deployment and resource startup. The auth branch
+was deployed as `2844430a` in release `20261024T163517Z-2844430a44cf`.
+Builds, installed artifacts, successful real MCP reads, rollback and remaining
+acceptance limits are recorded in [release evidence](../evidence/mcp/auth-branch-release-2026-10-24.md).
+The implementation-only statements below describe the original implementation
+phase; they do not imply that the later authorized release was skipped.
+
 ## Implementation
 
 The Sakai-side delegated bearer integration now has **one production JWT

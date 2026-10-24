@@ -218,3 +218,13 @@ current local changes/results and outstanding release gates. Initial extraction
 anchors above remain historical and immutable. Original business handlers remain
 preserved; legacy bearer/JWT classes are retired in the auth tree. The code is a
 local candidate, not a deployed release or a repair of attachment proofs.
+
+## Subsequent auth development release — 24 October 2026
+
+The user authorized a development release directly from `codex/auth-development`
+while preserving main at the baseline. Commit `2844430a` is deployed in release
+`20261024T163517Z-2844430a44cf`. The environment is running; real connected MCP
+course-list and announcement reads passed. See [release evidence](evidence/mcp/auth-branch-release-2026-10-24.md)
+for build/rollback details, the interrupted-SSH recovery and remaining browser/SAML,
+cross-role and flow acceptance. This does not combine the tool migration line or
+repair historical attachment proofs.
