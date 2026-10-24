@@ -30,3 +30,12 @@ authentication flag, Entra registration or database change was made.
 
 This record will be updated with the actual release revision, rollback ID,
 runtime dependency inventory and acceptance results after access is restored.
+
+## Latest observed state
+
+- Azure reports MySQL Ready and VM running.
+- Portal HTTPS requests are timing out; startup has not been certified healthy.
+- Branch-release check-only passed for pushed commit `c5f59984`.
+- Main remains `208d69ac`; no release has been installed.
+- The branch-release change is reviewed separately from auth code; the source
+  anchor advances to that reviewed commit without allowing scripts as metadata.

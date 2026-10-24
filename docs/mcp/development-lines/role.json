@@ -3,7 +3,7 @@
   "date": "2026-10-24",
   "kind": "auth-development",
   "branch": "codex/auth-development",
-  "source_anchor": "8a795a7b32501c130c67c19f0a08d166f8e9cbf1",
+  "source_anchor": "c5f59984d4258bd766fd1ea13bbe664e81cf576a",
   "original_baseline": "208d69ac624910a29a7529934ddcc18bbac853e8",
   "mixed_source": "98364680e73489addf649685bb79511e8febf917",
   "auth_core_commit": "98a4ca7de32e9ebbeec743c244a2c6193351829a",
@@ -36,8 +36,6 @@
     "docs/mcp/sakai-adapter.md",
     "docs/SAKAI_ASSIGNMENT_SETUP.md",
     "docs/SAKAI_INTEGRATION_GUIDE.md",
-    "sakai",
-    "scripts/deploy-sakai-release.sh",
     "deployment/README.md",
     "docs/SAKAI_RELEASES.md",
     "docs/evidence/mcp/auth-branch-release-2026-10-24.md"
