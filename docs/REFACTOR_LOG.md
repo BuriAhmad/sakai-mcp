@@ -135,3 +135,36 @@ this new source commit. Existing-HTTP/flow and attachment limits, the baseline
 wrong-password API status issue, and the previously documented SSH release
 connection-lifetime limitation remain separate open items. No runtime, Entra,
 Azure, data or configuration change was made during this cleanup.
+
+## 2026-10-25 — Make the guarded VM release independent of SSH
+
+- **Branch:** `codex/auth-development`.
+- **Code commit:** `c1f6712a0b679bc214fa8629f44bef372857284c`.
+- **Before revision:** `fce55272` (same release-launch behavior as deployed `2844430a`).
+- **Why:** the previous release's SSH interruption left a completed staged build
+  with Tomcat stopped, requiring guarded manual completion. The user authorized
+  deployment of the auth cleanup and post-deployment testing.
+- **Files:** `scripts/deploy-sakai-release.sh`; procedures in `docs/SAKAI_RELEASES.md`.
+
+| Before | After |
+| --- | --- |
+| VM release process ran directly on the SSH command's standard streams | The same guarded script runs in a transient systemd oneshot unit with VM-owned journal output |
+| Client disconnection could terminate the release process before switching/restart | VM job continues independently; CLI reconnects to monitor unit state |
+| SSH completion was the signal to start public health checks | CLI requires successful completed unit plus recorded `healthy` state, then runs the existing public HTTPS check |
+| No durable job handle in CLI output | Named unit and journal inspection commands are printed |
+
+The source archive checksum, selected pushed branch, clean-source checks, VM
+release lock, 12 GiB preflight, staging, backup, automatic rollback and local
+portal checks are retained. The transient unit starts with `--no-block`; the CLI
+polls for up to 240 intervals of 15 seconds (connection latency is additional).
+Transport errors are retried. Timeout reports that the job may still be running;
+it does not start a competing job or declare deployment successful. An explicitly
+failed/inactive unit or missing healthy release status fails the command.
+
+**Verification:** Bash syntax and ShellCheck error checks passed. A simulated SSH
+monitor exercised success, reconnect, failed unit, inactive unit, bad release
+status and timeout; all six expected outcomes passed. The VM reports systemd 255
+and permits the required systemd-run command. No Sakai Java, dependency, API,
+configuration or database change is included in this commit. Release execution
+and live results are recorded separately in
+[cleanup release evidence](evidence/mcp/auth-cleanup-release-2026-10-25.md).

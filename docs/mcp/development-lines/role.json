@@ -3,7 +3,7 @@
   "date": "2026-10-25",
   "kind": "auth-development",
   "branch": "codex/auth-development",
-  "source_anchor": "7da57f49d92303637c966fe83d4ca60e1fa4971d",
+  "source_anchor": "c1f6712a0b679bc214fa8629f44bef372857284c",
   "original_baseline": "208d69ac624910a29a7529934ddcc18bbac853e8",
   "mixed_source": "98364680e73489addf649685bb79511e8febf917",
   "auth_core_commit": "98a4ca7de32e9ebbeec743c244a2c6193351829a",
@@ -39,7 +39,8 @@
     "deployment/README.md",
     "docs/SAKAI_RELEASES.md",
     "docs/evidence/mcp/auth-branch-release-2026-10-24.md",
-    "docs/REFACTOR_LOG.md"
+    "docs/REFACTOR_LOG.md",
+    "docs/evidence/mcp/auth-cleanup-release-2026-10-25.md"
   ],
   "restored_native_wiring": [],
   "client_protocol": {
