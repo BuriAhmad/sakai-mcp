@@ -1,9 +1,9 @@
 {
   "format_version": 1,
-  "date": "2026-10-24",
+  "date": "2026-10-25",
   "kind": "auth-development",
   "branch": "codex/auth-development",
-  "source_anchor": "d2b2da22599ab8ab1b8f1a6ada089efd5eb3fe77",
+  "source_anchor": "7da57f49d92303637c966fe83d4ca60e1fa4971d",
   "original_baseline": "208d69ac624910a29a7529934ddcc18bbac853e8",
   "mixed_source": "98364680e73489addf649685bb79511e8febf917",
   "auth_core_commit": "98a4ca7de32e9ebbeec743c244a2c6193351829a",
@@ -38,7 +38,8 @@
     "docs/SAKAI_INTEGRATION_GUIDE.md",
     "deployment/README.md",
     "docs/SAKAI_RELEASES.md",
-    "docs/evidence/mcp/auth-branch-release-2026-10-24.md"
+    "docs/evidence/mcp/auth-branch-release-2026-10-24.md",
+    "docs/REFACTOR_LOG.md"
   ],
   "restored_native_wiring": [],
   "client_protocol": {
@@ -89,6 +90,15 @@
       "status": "healthy",
       "main_advanced": false,
       "acceptance": "Four-principal live read/form/isolation checks passed; wrong-password API HTTP 500 remains a baseline limitation. See release evidence for counts and exclusions."
+    },
+    "local_cleanup": {
+      "commit": "7da57f49d92303637c966fe83d4ca60e1fa4971d",
+      "date": "2026-10-25",
+      "refactor_log": "docs/REFACTOR_LOG.md",
+      "deployed": false,
+      "focused_java_tests": 107,
+      "source_boundary_tests": 8,
+      "focused_package": "passed"
     }
   }
 }

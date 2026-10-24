@@ -183,3 +183,13 @@ Before a separate authorized release:
 
 This is a local authentication candidate for separate release review. It is not
 permission to deploy or a claim that all live acceptance gates have passed.
+
+## Local convention and diagnostics cleanup — 25 October 2026
+
+Commit `7da57f49d92303637c966fe83d4ca60e1fa4971d` addresses the subsequent review's
+Mockito alignment, safe diagnostics, XML/POM presentation and helper readability
+findings. See the before/after and verification entry in
+[the repository refactor log](../REFACTOR_LOG.md#2026-10-25--align-auth-implementation-with-sakai-conventions).
+The focused 107-test Java suite, eight boundary tests and focused package build
+passed. This source cleanup is not deployed; the development runtime remains at
+`2844430a`. The prior live acceptance results describe that deployed revision.
