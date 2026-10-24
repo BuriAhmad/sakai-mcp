@@ -35,7 +35,12 @@
     "docs/mcp/sakai-bearer-auth-refactor-implementation.md",
     "docs/mcp/sakai-adapter.md",
     "docs/SAKAI_ASSIGNMENT_SETUP.md",
-    "docs/SAKAI_INTEGRATION_GUIDE.md"
+    "docs/SAKAI_INTEGRATION_GUIDE.md",
+    "sakai",
+    "scripts/deploy-sakai-release.sh",
+    "deployment/README.md",
+    "docs/SAKAI_RELEASES.md",
+    "docs/evidence/mcp/auth-branch-release-2026-10-24.md"
   ],
   "restored_native_wiring": [],
   "client_protocol": {

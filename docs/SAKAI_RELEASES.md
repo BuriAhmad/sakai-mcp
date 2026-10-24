@@ -1,6 +1,6 @@
 # Releasing Sakai to the development VM
 
-This procedure targets only `rg-sakai-mcp-dev/vm-sakai-dev`. A Git push runs checks but **does not deploy**. A release is an explicit choice of one commit on `origin/main`.
+This procedure targets only `rg-sakai-mcp-dev/vm-sakai-dev`. A Git push runs checks but **does not deploy**. A release is an explicit choice of one pushed commit. The default source is `origin/main`; an explicitly authorized development branch can be selected with `--branch BRANCH`.
 
 ## First release checklist
 
@@ -17,7 +17,7 @@ From the repo root on a Mac:
 ./sakai deploy HEAD
 ```
 
-The deploy command accepts `HEAD` or a commit SHA. It refuses commits not pushed to `origin/main` and refuses uncommitted Sakai/deployment changes. It opens SSH only to the current public IPv4 `/32`, sends an archive of the chosen commit, then builds it on the VM. The VM does not need a GitHub key or a Git clone for this path.
+The deploy command accepts `HEAD` or a commit SHA. It refuses commits not pushed to the selected remote branch (default `origin/main`) and refuses uncommitted Sakai/deployment changes. It opens SSH only to the current public IPv4 `/32`, sends an archive of the chosen commit, then builds it on the VM. The VM does not need a GitHub key or a Git clone for this path.
 
 The VM stops Tomcat during the build because its 8 GiB RAM is insufficient to safely run Tomcat and the full Maven build together. It copies the current `webapps`, `components`, and `lib` directories into a staging Tomcat layout, deploys the new Maven output there, retains the original directories for rollback, and starts Tomcat. The command waits for the local portal and then checks public HTTPS. A failure after Tomcat is stopped triggers automatic code-file rollback and restart.
 
@@ -49,3 +49,18 @@ The [Deploy Sakai to development VM](https://github.com/BuriAhmad/sakai-mcp/acti
 GitHub's Azure identity has Reader access to this resource group, VM Contributor access to this one VM, and Network Contributor access to this one NSG. It does not receive your Mac's personal SSH key. The VM key can be revoked by removing the `sakai-mcp-github-deploy` entry from `/home/sakaiadmin/.ssh/authorized_keys` and deleting the `SAKAI_DEPLOY_SSH_KEY` environment secret.
 
 The workflow does not automatically start MySQL, run database migrations, or deploy on every push. This is deliberately a manual dev-VM release; do not treat a 200 response at `/portal` as proof that every Sakai feature is healthy. Exercise the affected feature, login, and uploads after each meaningful change.
+
+## Explicit development branch release
+
+For an authorized auth candidate without advancing main:
+
+```bash
+./sakai deploy HEAD --branch codex/auth-development --check-only
+./sakai deploy HEAD --branch codex/auth-development
+```
+
+The command fetches the exact branch and verifies the selected commit belongs to
+it. All clean-source, checksum, Azure scope, staging, health and rollback checks
+still apply. This option does not change main, enable authentication gates, or
+change the main-only GitHub deployment environment. Record the exact commit and
+release ID in release evidence.
