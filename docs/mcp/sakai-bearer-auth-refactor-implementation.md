@@ -11,6 +11,12 @@ The user subsequently authorized deployment and resource startup. The auth branc
 was deployed as `2844430a` in release `20261024T163517Z-2844430a44cf`.
 Builds, installed artifacts, successful real MCP reads, rollback and remaining
 acceptance limits are recorded in [release evidence](../evidence/mcp/auth-branch-release-2026-10-24.md).
+Subsequent live tests passed native HTML/password login/logout for four synthetic
+principals, own/foreign-course and role read checks, and concurrent A/B isolation.
+The existing password API returns 500 for invalid credentials (authentication
+remains denied); this remains documented rather than hidden by test changes.
+Existing-HTTP/flow and attachment acceptance remain outstanding.
+
 The deployed environment uses regular username/password login. Read-only checks
 found no active SAML configuration; a SAML round trip is not a current acceptance
 gate. The implementation-only statements below describe the original implementation

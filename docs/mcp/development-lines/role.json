@@ -47,7 +47,7 @@
     "auth_reference_path": "docs/mcp/development-lines/protocol/sakai_flow.py",
     "status": "Unchanged client protocol dependency, not server auth implementation"
   },
-  "runtime_acceptance": "Auth development release healthy. Real connected MCP course-list and announcement reads passed for one principal; full regular password browser login, cross-role and flow acceptance remain. SAML is not configured. Historical attachment proof failures preserved.",
+  "runtime_acceptance": "Deployed auth release healthy. Four synthetic principals passed native HTML/password login/logout, genuine bearer/OBO own and foreign-course/role read checks, mixed-credential rejection, and 16 interleaved A/B isolation exercises. Four wrong-password API status checks returned pre-existing 500; no authenticated identity resulted. Existing-HTTP/flow and attachment acceptance remain outstanding. SAML is not configured.",
   "required_native_auth": "One shared Spring Security 5.7.14 Resource Server pipeline serves original business host and selected existing handlers. Existing independent gates remain disabled by default; no legacy verifier remains.",
   "extraction_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
   "legacy_client_auth_paths": [
@@ -87,7 +87,8 @@
       "release_id": "20261024T163517Z-2844430a44cf",
       "evidence": "docs/evidence/mcp/auth-branch-release-2026-10-24.md",
       "status": "healthy",
-      "main_advanced": false
+      "main_advanced": false,
+      "acceptance": "Four-principal live read/form/isolation checks passed; wrong-password API HTTP 500 remains a baseline limitation. See release evidence for counts and exclusions."
     }
   }
 }

@@ -172,3 +172,82 @@ SAML classes/libraries are unused capability, not evidence of enabled SAML login
 The earlier unconditional SAML acceptance wording was overly broad. A SAML IdP
 round trip is required only if SAML is configured in a future environment. MCP's
 Entra delegated OAuth bearer flow is separate from ordinary browser login.
+
+## Subsequent live authentication acceptance — 24 October 2026
+
+At the user's explicit request, read-only acceptance was run against deployed
+native commit `2844430a`. Existing private synthetic fixtures supplied two
+students and two instructors in two separate course contexts. Credentials were
+read only by temporary local harnesses; no identifier, password, token, grade,
+submission or announcement content is retained here. Existing token acquisition
+and certificate-backed OBO setup was reused without running the old smoke
+script's write tests or changing Entra configuration. Tokens remained in memory.
+
+### Results
+
+| Exercise | Result |
+| --- | --- |
+| Fresh genuine upstream token and downstream OBO acquisition for four actors | All passed |
+| Password API login, exact current EID, own course portal navigation, logout | All four actors passed |
+| Actual native HTML form POST to `/portal/xlogin`, exact current EID, logout | All four actors passed |
+| Wrong password through the native HTML form | Returned login page; current user remained anonymous |
+| Wrong password through POST `/api/login` | Four unexpected HTTP 500 responses; recorded as failed status checks |
+| Identity after failed password API requests | All four remained unauthenticated |
+| Cookie-only access to protected legacy bearer route | All four denied with 401 |
+| Browser cookie plus genuine bearer | All four denied with specified 403; original browser identity preserved |
+| Bearer own site visible and foreign fixture site absent | All four passed |
+| Own announcements / foreign course announcements | All four own reads passed; all foreign reads denied with 403 |
+| Submission role boundary | Instructor A allowed Course A; both students and unrelated Instructor B denied |
+| Student own released grades | Both reads passed; results distinct |
+| Genuine upstream token used against downstream resource | All four denied with 401 (genuine wrong audience) |
+| Tampered EID claim with original signature | All four denied with 401 (integrity test, not an independent claim-validator test) |
+| Spoofed caller identity header | All four retained their own site visibility |
+| Bearer response cookies and next unauthenticated request | No session cookie emitted; follow-up requests denied with 401 |
+| 16 interleaved/concurrent A/B grade reads, four workers | Every result matched its own principal's baseline; surrounding invalid-token and no-token requests denied |
+
+The main matrix had 68 assertions: 64 passed and four failed status assertions
+for wrong-password API responses. The final form/mixed-credential matrix had
+17 assertions, all passed. Four additional anonymous-current-user checks after
+failed API login passed. Across those selected non-superseded assertions:
+**85 passed, four failed**. Concurrent exercise contains multiple HTTP requests
+per assertion; these are assertion counts, not HTTP request counts.
+
+Two harness issues were corrected before final reporting: an initial helper
+function was not imported and no token requests ran in that first setup; it was
+corrected and genuine acquisition passed for all four actors. A mixed-credential
+assertion initially expected 401; source/specification require 403. It was
+corrected to exactly 403 and rerun for all actors. Production code and existing
+repository tests were unchanged. These setup/expectation failures were not
+relabeled as product passes; the final corrected runs are the evidence above.
+
+### Wrong-password API limitation
+
+Runtime logs show native `AuthenticationException: Invalid Login` reaching the
+existing generic GlobalExceptionHandler, which maps it to HTTP 500. Both that
+handler and LoginController are byte-unchanged from the original baseline to the
+deployed commit. Authentication fails before session creation; follow-up current
+user checks confirmed no authenticated identity. The native HTML login form
+handles a wrong password without that API error. This is an existing API status
+mapping limitation, not evidence of successful password authentication or bearer
+identity leakage. It remains open; the tests were not weakened and the ordinary
+login/API implementation was not changed during this test-only request.
+
+### Fresh local checks and coverage limits
+
+The focused Maven authentication/login command was rerun after deployment and
+passed: **107 Java tests**, zero failures/errors/skips. Synthetic signed-token
+unit/integration tests cover expiration, not-before, issuer/tenant/scope/identity
+validation and failure cleanup beyond the genuine-token live cases above.
+
+This establishes positive live behavior for four fixture identities, native
+password form/session preservation, read authorization and bounded concurrent
+isolation on the enabled legacy routes. It does not certify all native tools,
+group-specific grader restrictions, key rotation/outage in the live tenant,
+long-duration resource leakage, or every deployment topology. Authentic expired,
+wrong-tenant and missing-scope tokens were not newly issued for live testing;
+those semantic validator cases remain locally tested. No grade, announcement,
+assignment, membership or other academic write was performed. Download/export
+workflows were not newly exercised here. Existing-HTTP/flow reach remains disabled;
+its live acceptance and historical attachment failures remain outstanding. No
+additional deployment, property change or infrastructure change was made for
+these acceptance tests.
