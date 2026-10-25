@@ -3,7 +3,7 @@
   "date": "2026-10-25",
   "kind": "auth-development",
   "branch": "codex/auth-development",
-  "source_anchor": "c1f6712a0b679bc214fa8629f44bef372857284c",
+  "source_anchor": "d7756ee233affe2a9679e81ff53f2d20611b588d",
   "original_baseline": "208d69ac624910a29a7529934ddcc18bbac853e8",
   "mixed_source": "98364680e73489addf649685bb79511e8febf917",
   "auth_core_commit": "98a4ca7de32e9ebbeec743c244a2c6193351829a",
@@ -101,6 +101,15 @@
       "source_boundary_tests": 8,
       "focused_package": "passed",
       "release_commit": "0c8767980ce8a9af210d9b41b51c5c1959542451"
+    },
+    "readability_cleanup": {
+      "commit": "d7756ee233affe2a9679e81ff53f2d20611b588d",
+      "date": "2026-10-25",
+      "refactor_log": "docs/REFACTOR_LOG.md",
+      "deployed": false,
+      "focused_java_tests": 107,
+      "source_boundary_tests": 8,
+      "behavior_change": false
     }
   }
 }

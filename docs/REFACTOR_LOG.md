@@ -194,7 +194,7 @@ changes documentation only; no login error mapping or attachment proof was chang
 ## 2026-10-25 — Make the delegated authentication flow easier to read
 
 - **Branch:** `codex/auth-development`.
-- **Code commit:** pending; record the actual hash after committing.
+- **Code commit:** `d7756ee233affe2a9679e81ff53f2d20611b588d`.
 - **Before revision:** `f5693c8b`.
 - **Why:** the user requested clearer names, organization and plain-English
   comments after walking through the authentication code.

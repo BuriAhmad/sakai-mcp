@@ -202,3 +202,18 @@ passed. See [25 October release evidence](../evidence/mcp/auth-cleanup-release-2
 for exact commits, commands and acceptance limits. Earlier local-candidate wording
 records the original implementation stage; it is superseded by this release record.
 Existing-HTTP/flow and attachment acceptance remain outstanding.
+
+
+## Readability follow-up — 25 October 2026
+
+Commit `d7756ee233affe2a9679e81ff53f2d20611b588d` gives custom-endpoint route checks explicit
+names and separates the main guard's successful JWT authentication step into
+`authenticateBearerAndContinue`. `executeWithDelegatedSession` owns native account
+resolution, session selection, downstream processing and cleanup;
+`restorePreviousContext` restores the caller's thread/request values. Plain-English
+comments explain the ordering and why response output is buffered. The module
+README provides a reading guide. See [the refactor log](../REFACTOR_LOG.md).
+
+Existing route/configuration/session behavior and all test assertions are retained.
+The existing 107 Java tests and eight boundary checks passed. This source-only
+readability change is not deployed; the development VM remains at `0c876798`.
