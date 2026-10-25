@@ -59,7 +59,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
-/** Validates credentials before native wrappers capture an isolated session. */
+/**
+ * Authenticates bearer requests and selects their Sakai session before RequestFilter runs.
+ * Ordinary browser requests continue through Sakai's normal authentication.
+ */
 public final class DelegatedCredentialGuard implements Filter {
     static final String MARKER = DelegatedCredentialGuard.class.getName() + ".identity";
     private static final int MAX_BEARER_HEADER_LENGTH = 16_391;
@@ -149,73 +152,82 @@ public final class DelegatedCredentialGuard implements Filter {
 
     record ExternalIdentity(String sakaiEid, String tenantId, String objectId) {}
 
-    /** Only a server-created binding can request synchronous legacy artifact output. */
+    /** Only an authenticated custom MCP artifact request uses synchronous streaming. */
     public static boolean isDelegatedArtifactRequest(HttpServletRequest request) {
         return request.getAttribute(MARKER) instanceof BoundIdentity
-                && DelegatedRoutes.legacyArtifact(request);
+                && DelegatedRoutes.isCustomMcpArtifactRequest(request);
     }
 
     @Override
-    public void doFilter(ServletRequest raw, ServletResponse output, FilterChain chain)
+    public void doFilter(
+            ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) raw;
-        HttpServletResponse response = (HttpServletResponse) output;
-        Object internal = request.getAttribute(MARKER);
-        if (internal instanceof BoundIdentity bound) {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        // A native tool forward may revisit this filter after we have already authenticated it.
+        Object sessionBinding = request.getAttribute(MARKER);
+        if (sessionBinding instanceof BoundIdentity bound) {
             if (!allowsInternalDispatch(request, bound)) {
                 response.sendError(403);
                 return;
             }
-            chain.doFilter(raw, output);
+            chain.doFilter(servletRequest, servletResponse);
             return;
         }
-        if (internal != null) {
+        if (sessionBinding != null) {
             response.sendError(403);
             return;
         }
-        boolean legacy = DelegatedRoutes.legacy(request);
-        List<String> headers = Collections.list(request.getHeaders("Authorization"));
-        boolean bearer = headers.stream().anyMatch(h -> h.regionMatches(true, 0, "Bearer", 0, 6));
-        if (!bearer) {
-            if (legacy && !configuration.getBoolean("mcp.integration.enabled", false)) {
+        // Custom MCP endpoints always require bearer authentication. Ordinary browser requests
+        // without a bearer header continue unchanged, unless they try to use the flow protocol.
+        boolean customMcpEndpoint = DelegatedRoutes.isCustomMcpEndpoint(request);
+        List<String> authorizationHeaders = Collections.list(request.getHeaders("Authorization"));
+        boolean hasBearerHeader =
+                authorizationHeaders.stream()
+                        .anyMatch(header -> header.regionMatches(true, 0, "Bearer", 0, 6));
+        if (!hasBearerHeader) {
+            if (customMcpEndpoint && !configuration.getBoolean("mcp.integration.enabled", false)) {
                 response.setHeader("Cache-Control", "no-store");
                 response.sendError(404);
                 return;
             }
-            if (legacy
+            if (customMcpEndpoint
                     || request.getHeader("X-MCP-Flow") != null
                     || request.getHeader("X-MCP-Flow-End") != null) {
                 DelegatedBearerAuthentication.unauthorized(request, response);
                 return;
             }
-            chain.doFilter(raw, output);
+            chain.doFilter(servletRequest, servletResponse);
             return;
         }
         try {
-            if (legacy && !configuration.getBoolean("mcp.integration.enabled", false)) {
+            if (customMcpEndpoint && !configuration.getBoolean("mcp.integration.enabled", false)) {
                 response.setHeader("Cache-Control", "no-store");
                 response.sendError(404);
                 return;
             }
             request.setCharacterEncoding("UTF-8");
             response.setHeader("Cache-Control", "no-store");
-            if (headers.size() != 1 || headers.get(0).length() > MAX_BEARER_HEADER_LENGTH) {
+            if (authorizationHeaders.size() != 1
+                    || authorizationHeaders.get(0).length() > MAX_BEARER_HEADER_LENGTH) {
                 DelegatedBearerAuthentication.unauthorized(request, response);
                 return;
             }
-            if (!(legacy ? request.isSecure() : RequestFilter.isSecure(request))
-                    || !(DelegatedRoutes.legacyAllows(request)
-                            || DelegatedRoutes.allows(request)
-                            || DelegatedRoutes.conversationAllows(request, configuration))) {
+            // A mapped filter can see more routes than it accepts. These checks control where
+            // bearer credentials may be used; each endpoint still checks Sakai permissions.
+            if (!(customMcpEndpoint ? request.isSecure() : RequestFilter.isSecure(request))
+                    || !(DelegatedRoutes.allowsCustomMcpEndpoint(request)
+                            || DelegatedRoutes.allowsExistingHttpEndpoint(request)
+                            || DelegatedRoutes.allowsToolSessionRequest(request, configuration))) {
                 response.sendError(403);
                 return;
             }
-            if (!legacy
+            if (!customMcpEndpoint
                     && !configuration.getBoolean("mcp.integration.existingHttp.enabled", false)) {
                 response.sendError(404);
                 return;
             }
-            if (hasMixedCredentials(request) || hasInvalidFlowHeaders(request, legacy)) {
+            if (hasMixedCredentials(request) || hasInvalidFlowHeaders(request, customMcpEndpoint)) {
                 response.sendError(403);
                 return;
             }
@@ -233,43 +245,57 @@ public final class DelegatedCredentialGuard implements Filter {
                     return;
                 }
             }
-            DelegatedBearerAuthentication spring;
-            try {
-                spring = bearerAuthentication();
-            } catch (IllegalArgumentException e) {
-                DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.CONFIGURATION);
-                response.sendError(503);
-                return;
-            }
-            spring.doFilter(
-                    request,
-                    response,
-                    (r, out) -> {
-                        var principal = SecurityContextHolder.getContext().getAuthentication();
-                        if (!(principal instanceof JwtAuthenticationToken jwt)
-                                || !jwt.isAuthenticated()) {
-                            DelegatedBearerAuthentication.unauthorized(
-                                    (HttpServletRequest) r, (HttpServletResponse) out);
-                            return;
-                        }
-                        Object claim = jwt.getToken().getClaims().get(spring.identityClaim);
-                        if (!(claim instanceof List<?> values)
-                                || values.size() != 1
-                                || !(values.get(0) instanceof String eid)) {
-                            ((HttpServletResponse) out).sendError(403);
-                            return;
-                        }
-                        ExternalIdentity identity =
-                                new ExternalIdentity(
-                                        eid,
-                                        jwt.getToken().getClaimAsString("tid"),
-                                        jwt.getToken().getClaimAsString("oid"));
-                        bind((HttpServletRequest) r, (HttpServletResponse) out, chain, identity);
-                    });
+            authenticateBearerAndContinue(request, response, chain);
         } finally {
             // Also cover policy/configuration failures before the standard Spring chain starts.
             SecurityContextHolder.clearContext();
         }
+    }
+
+    /** Spring verifies the JWT before this callback can resolve a Sakai user. */
+    private void authenticateBearerAndContinue(
+            HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        DelegatedBearerAuthentication springAuthentication;
+        try {
+            springAuthentication = bearerAuthentication();
+        } catch (IllegalArgumentException e) {
+            DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.CONFIGURATION);
+            response.sendError(503);
+            return;
+        }
+        springAuthentication.doFilter(
+                request,
+                response,
+                (authenticatedRequest, authenticatedResponse) -> {
+                    var authenticatedPrincipal =
+                            SecurityContextHolder.getContext().getAuthentication();
+                    if (!(authenticatedPrincipal instanceof JwtAuthenticationToken jwtAuthentication)
+                            || !jwtAuthentication.isAuthenticated()) {
+                        DelegatedBearerAuthentication.unauthorized(
+                                (HttpServletRequest) authenticatedRequest,
+                                (HttpServletResponse) authenticatedResponse);
+                        return;
+                    }
+                    Object identityClaimValue =
+                            jwtAuthentication.getToken().getClaims().get(springAuthentication.identityClaim);
+                    if (!(identityClaimValue instanceof List<?> identityValues)
+                            || identityValues.size() != 1
+                            || !(identityValues.get(0) instanceof String sakaiEid)) {
+                        ((HttpServletResponse) authenticatedResponse).sendError(403);
+                        return;
+                    }
+                    ExternalIdentity identity =
+                            new ExternalIdentity(
+                                    sakaiEid,
+                                    jwtAuthentication.getToken().getClaimAsString("tid"),
+                                    jwtAuthentication.getToken().getClaimAsString("oid"));
+                    executeWithDelegatedSession(
+                            (HttpServletRequest) authenticatedRequest,
+                            (HttpServletResponse) authenticatedResponse,
+                            chain,
+                            identity);
+                });
     }
 
     private boolean allowsInternalDispatch(HttpServletRequest request, BoundIdentity bound) {
@@ -296,8 +322,9 @@ public final class DelegatedCredentialGuard implements Filter {
                         .anyMatch(k -> CREDENTIAL_PARAMETERS.contains(k.toLowerCase(Locale.ROOT)));
     }
 
-    private static boolean hasInvalidFlowHeaders(HttpServletRequest request, boolean legacy) {
-        return (legacy
+    private static boolean hasInvalidFlowHeaders(
+            HttpServletRequest request, boolean customMcpEndpoint) {
+        return (customMcpEndpoint
                         && (request.getHeader("X-MCP-Flow") != null
                                 || request.getHeader("X-MCP-Flow-End") != null))
                 || Collections.list(request.getHeaders("X-MCP-Flow")).size() > 1
@@ -308,42 +335,46 @@ public final class DelegatedCredentialGuard implements Filter {
                                 || !"/direct/user/current.json".equals(request.getRequestURI())));
     }
 
-    private void bind(
+    /** Runs the remaining filters and endpoint with the verified user's native Sakai session. */
+    private void executeWithDelegatedSession(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain chain,
             ExternalIdentity identity)
             throws IOException, ServletException {
-        Authentication account;
+        // JWT verification established the external identity. Sakai now resolves its own account.
+        Authentication sakaiAccount;
         try {
-            account = authentication.authenticate(new ExternalTrustedEvidence(identity.sakaiEid()));
+            sakaiAccount = authentication.authenticate(new ExternalTrustedEvidence(identity.sakaiEid()));
         } catch (AuthenticationException e) {
             response.sendError(403);
             return;
         }
-        if (account == null
-                || account.getUid() == null
-                || account.getUid().isBlank()
-                || !identity.sakaiEid().equals(account.getEid())) {
+        if (sakaiAccount == null
+                || sakaiAccount.getUid() == null
+                || sakaiAccount.getUid().isBlank()
+                || !identity.sakaiEid().equals(sakaiAccount.getEid())) {
             response.sendError(403);
             return;
         }
 
-        Map<String, Object> beforeThreads = new HashMap<>();
-        Map<String, Object> beforeAttributes = new HashMap<>();
-        THREAD_KEYS.forEach(k -> beforeThreads.put(k, threads.get(k)));
-        ATTRIBUTES.forEach(k -> beforeAttributes.put(k, request.getAttribute(k)));
-        DelegatedConversations.Lease lease = null;
-        DelegatedResponse guardedResponse = null;
+        // Save the caller's context so nested requests can restore it, including after failures.
+        Map<String, Object> previousThreadValues = new HashMap<>();
+        Map<String, Object> previousRequestAttributes = new HashMap<>();
+        THREAD_KEYS.forEach(k -> previousThreadValues.put(k, threads.get(k)));
+        ATTRIBUTES.forEach(k -> previousRequestAttributes.put(k, request.getAttribute(k)));
+        DelegatedConversations.Lease sessionLease = null;
+        DelegatedResponse protectedResponse = null;
         try {
             sessions.setCurrentToolSession(null);
             try {
-                lease =
+                // With no flow header, this creates a session owned by this request only.
+                sessionLease =
                         DelegatedConversations.open(
                                 configuration,
                                 sessions,
                                 usage,
-                                account,
+                                sakaiAccount,
                                 identity,
                                 request.getHeader("X-MCP-Flow"),
                                 request.getHeader("X-MCP-Flow-End") != null,
@@ -356,52 +387,59 @@ public final class DelegatedCredentialGuard implements Filter {
                 response.sendError(denied.status);
                 return;
             }
-            Session delegated = lease.session;
-            sessions.setCurrentSession(delegated);
+            Session delegatedSession = sessionLease.session;
+            sessions.setCurrentSession(delegatedSession);
             request.setAttribute(
                     MARKER,
                     new BoundIdentity(
-                            delegated,
-                            account.getUid(),
-                            account.getEid(),
+                            delegatedSession,
+                            sakaiAccount.getUid(),
+                            sakaiAccount.getEid(),
                             DelegatedRoutes.placement(request, configuration),
                             request.getHeader("X-MCP-Flow") != null));
             request.setAttribute("mcp.externalTenantId", identity.tenantId());
             request.setAttribute("mcp.externalObjectId", identity.objectId());
-            guardedResponse =
+            // Keep output private until session cleanup succeeds. The wrapper also blocks cookies
+            // and native session IDs from escaping to the bearer client.
+            protectedResponse =
                     new DelegatedResponse(
-                            response, delegated.getId(), DelegatedRoutes.responseLimit(request));
+                            response,
+                            delegatedSession.getId(),
+                            DelegatedRoutes.responseLimit(request));
             try {
-                chain.doFilter(new NativeSessionRequest(request, delegated), guardedResponse);
+                // RequestFilter captures this selected session; the binder checks it afterward.
+                chain.doFilter(
+                        new NativeSessionRequest(request, delegatedSession), protectedResponse);
             } catch (IOException | ServletException | RuntimeException e) {
                 // No authenticated diagnostic or partial body reaches the container.
                 DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.HANDLER);
-                guardedResponse = null;
+                protectedResponse = null;
                 badGateway(response);
             }
         } finally {
             try {
-                if (lease != null) {
-                    lease.close();
+                if (sessionLease != null) {
+                    // Ordinary request sessions are invalidated here, even if the endpoint failed.
+                    sessionLease.close();
                 }
             } catch (RuntimeException failure) {
                 DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.SESSION_CLEANUP);
-                guardedResponse = null;
+                protectedResponse = null;
                 badGateway(response);
             } finally {
                 try {
-                    restore(request, beforeThreads, beforeAttributes);
+                    restorePreviousContext(request, previousThreadValues, previousRequestAttributes);
                 } catch (RuntimeException failure) {
                     DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.CONTEXT_RESTORE);
-                    guardedResponse = null;
+                    protectedResponse = null;
                     badGateway(response);
                 }
             }
         }
-        if (guardedResponse != null) {
+        if (protectedResponse != null) {
             try {
-                // Emit only once owned session cleanup and native restoration have completed.
-                guardedResponse.finish();
+                // Send the buffered response after cleanup and restoration succeed.
+                protectedResponse.finish();
             } catch (IOException | RuntimeException failure) {
                 DelegatedDiagnostics.failure(DelegatedDiagnostics.Stage.RESPONSE_COMPLETION);
                 badGateway(response);
@@ -409,18 +447,19 @@ public final class DelegatedCredentialGuard implements Filter {
         }
     }
 
-    private void restore(
+    private void restorePreviousContext(
             HttpServletRequest request,
-            Map<String, Object> beforeThreads,
-            Map<String, Object> beforeAttributes) {
+            Map<String, Object> previousThreadValues,
+            Map<String, Object> previousRequestAttributes) {
         List<Runnable> actions = new ArrayList<>();
-        beforeThreads.forEach((key, value) -> actions.add(() -> threads.set(key, value)));
-        actions.add(() -> sessions.setCurrentSession((Session) beforeThreads.get(CURRENT_SESSION)));
+        previousThreadValues.forEach((key, value) -> actions.add(() -> threads.set(key, value)));
+        actions.add(
+                () -> sessions.setCurrentSession((Session) previousThreadValues.get(CURRENT_SESSION)));
         actions.add(
                 () ->
                         sessions.setCurrentToolSession(
-                                (ToolSession) beforeThreads.get(CURRENT_TOOL)));
-        beforeAttributes.forEach(
+                                (ToolSession) previousThreadValues.get(CURRENT_TOOL)));
+        previousRequestAttributes.forEach(
                 (key, value) ->
                         actions.add(
                                 () -> {

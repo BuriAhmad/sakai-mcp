@@ -189,3 +189,54 @@ filter classes were verified in the installed artifacts. See
 [the dated release evidence](evidence/mcp/auth-cleanup-release-2026-10-25.md)
 for commands, hashes, coverage and remaining acceptance limits. This follow-up
 changes documentation only; no login error mapping or attachment proof was changed.
+
+
+## 2026-10-25 — Make the delegated authentication flow easier to read
+
+- **Branch:** `codex/auth-development`.
+- **Code commit:** pending; record the actual hash after committing.
+- **Before revision:** `f5693c8b`.
+- **Why:** the user requested clearer names, organization and plain-English
+  comments after walking through the authentication code.
+
+| Before | After | Reason |
+| --- | --- | --- |
+| `legacy`, `legacyAllows`, `legacyArtifact` route names | `isCustomMcpEndpoint`, `allowsCustomMcpEndpoint`, `isCustomMcpArtifactRequest` | Say which endpoints are being classified |
+| `allows` and `conversationAllows` | `allowsExistingHttpEndpoint` and `allowsToolSessionRequest` | Identify the distinct admission policies |
+| JWT callback embedded in `doFilter` | Named `authenticateBearerAndContinue` step | Separate request policy checks from Spring authentication |
+| `bind` and `restore` | `executeWithDelegatedSession` and `restorePreviousContext` | Explain the work and its lifecycle |
+| `headers`, `bearer`, `account`, `lease`, `delegated`, `beforeThreads` and `guardedResponse` | `authorizationHeaders`, `hasBearerHeader`, `sakaiAccount`, `sessionLease`, `delegatedSession`, `previousThreadValues` and `protectedResponse` | Make local values understandable without tracing their declarations |
+| Brief lifecycle comments | Plain-English comments for browser pass-through, route gating, verified identity, session ownership, buffered output and cleanup | Explain why the steps exist |
+
+**Files:** shared auth guard, route policy and session helper; existing
+`DelegatedChainTest` call sites for the renamed package-private route method;
+module README and this log. Caller searches preceded changes. The three positive
+attachment/content proof source files are unchanged.
+
+**Behavior:** method extraction, identifier renaming, comments and documentation
+only. Route predicates, their evaluation order, configuration keys/defaults,
+error decisions, Spring components, native identity/session handling and response
+limits are retained. No servlet mappings, dependencies, native business or core
+classes are changed. Ordinary request sessions still close before output is sent;
+optional multi-request sessions remain separately gated.
+
+**Verification:** existing focused Java reactor **107 passed** (42 shared auth +
+65 WebAPI), zero failures/errors/skips; source-boundary suite **8 passed**. The
+three changed production classes retain exactly the same string and character
+literal counts/values. Caller searches and final diff review found only the
+intended method extraction, names and comments. `git diff --check` passed. No tests
+were added and no assertions were weakened. The three proof sources are unchanged.
+
+Commands (Java 17):
+
+```bash
+mvn -B -ntp -f apps/sakai/pom.xml -pl mcp-auth,webapi -am \
+  '-Dtest=DelegatedBearerAuthenticationTest,Delegated*Test,PortalContainerTest,ExistingSitesChainTest,Mcp*Test,LoginControllerTests' \
+  -Dsurefire.failIfNoSpecifiedTests=false test
+# From services/mcp:
+uv run --no-sync pytest -q tests/security/test_native_auth_boundary.py
+```
+
+**Release state:** local source refactor; not deployed. The VM remains at
+`0c876798` / `20261024T192919Z-0c8767980ce8`. The existing-HTTP/flow activation
+proposal is not being executed, consistent with the user's clarified scope.

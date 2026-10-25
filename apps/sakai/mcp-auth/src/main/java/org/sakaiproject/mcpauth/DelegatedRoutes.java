@@ -29,21 +29,22 @@ import java.util.Set;
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletRequest;
 
-/** Credential reach only. Native handlers still enforce operation permissions. */
+/** Chooses where bearer credentials are accepted. Sakai endpoints still enforce permissions. */
 final class DelegatedRoutes {
 
-    static boolean legacy(HttpServletRequest request) {
+    /** The project-owned business endpoints currently called by the MCP service. */
+    static boolean isCustomMcpEndpoint(HttpServletRequest request) {
         return request.getRequestURI().startsWith("/api/mcp/v1/");
     }
 
-    static boolean legacyAllows(HttpServletRequest request) {
-        return legacy(request)
+    static boolean allowsCustomMcpEndpoint(HttpServletRequest request) {
+        return isCustomMcpEndpoint(request)
                 && "/api".equals(request.getContextPath())
                 && request.getDispatcherType() == DispatcherType.REQUEST;
     }
 
-    static boolean legacyArtifact(HttpServletRequest request) {
-        return legacyAllows(request)
+    static boolean isCustomMcpArtifactRequest(HttpServletRequest request) {
+        return allowsCustomMcpEndpoint(request)
                 && "GET".equals(request.getMethod())
                 && request.getRequestURI()
                         .matches(
@@ -51,17 +52,20 @@ final class DelegatedRoutes {
     }
 
     static int responseLimit(HttpServletRequest request) {
-        boolean file =
-                legacyAllows(request)
+        boolean customMcpFileRequest =
+                allowsCustomMcpEndpoint(request)
                         && "GET".equals(request.getMethod())
                         && request.getRequestURI()
                                 .matches(
                                         "/api/mcp/v1/courses/[^/]+/assignments/[^/]+/(grading-files/[^/]+|grading-submissions/[^/]+/files/[^/]+)");
-        // Matches the unchanged legacy per-file/capture cap, never the aggregate export budget.
-        return file || legacyArtifact(request) ? 10 * 1024 * 1024 : 1_000_000;
+        // Custom file responses retain their per-file limit; ordinary responses use the smaller cap.
+        return customMcpFileRequest || isCustomMcpArtifactRequest(request)
+                ? 10 * 1024 * 1024
+                : 1_000_000;
     }
 
-    static boolean allows(HttpServletRequest request) {
+    /** Selected standard Sakai endpoints, with their existing method and input restrictions. */
+    static boolean allowsExistingHttpEndpoint(HttpServletRequest request) {
         String path = request.getRequestURI();
         if ("/direct/assignment/setGrade.json".equals(path) && "POST".equals(request.getMethod())) {
             return gradingSubmit(request);
@@ -270,16 +274,18 @@ final class DelegatedRoutes {
         return configured != null && Arrays.asList(configured).contains(id) ? id : null;
     }
 
-    static boolean conversationAllows(
+    /** Checks optional multi-request tool routes selected by the X-MCP-Flow header. */
+    static boolean allowsToolSessionRequest(
             HttpServletRequest request, ServerConfigurationService configuration) {
         if (request.getDispatcherType() != DispatcherType.REQUEST
                 || request.getHeader("X-MCP-Flow") == null) {
             return false;
         }
         if (request.getHeader("X-MCP-Flow-End") != null) {
-            return "/direct/user/current.json".equals(request.getRequestURI()) && allows(request);
+            return "/direct/user/current.json".equals(request.getRequestURI())
+                    && allowsExistingHttpEndpoint(request);
         }
-        if (allows(request)) {
+        if (allowsExistingHttpEndpoint(request)) {
             return true;
         }
         if (placement(request, configuration) == null

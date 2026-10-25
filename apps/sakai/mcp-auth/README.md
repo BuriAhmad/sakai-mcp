@@ -32,6 +32,25 @@ existing HTTP interfaces independently require
 `mcp.integration.existingHttp.enabled=false` by default. These gates select
 credential reach, never different JWT implementations.
 
+## Reading the implementation
+
+Start with `DelegatedCredentialGuard.doFilter`: it checks for an already bound
+native dispatch, passes ordinary requests through, and applies bearer route and
+configuration checks. `authenticateBearerAndContinue` then asks Spring to verify
+the token. Its successful callback calls `executeWithDelegatedSession`, which
+resolves the Sakai account, opens the native session, runs the remaining chain,
+and cleans up before sending the response. `restorePreviousContext` restores the
+caller's thread values and request attributes even when processing fails.
+
+`DelegatedRoutes.isCustomMcpEndpoint` identifies `/api/mcp/v1/*`; this was previously
+named `legacy`. It is a route category, not a second authentication implementation.
+`allowsExistingHttpEndpoint` describes the selected standard Sakai API policy.
+`allowsToolSessionRequest` describes the separate optional multi-request policy.
+`DelegatedConversations.open` handles both ordinary single-request sessions and
+optional flows: no flow header takes the single-request path immediately.
+These names and comments do not change endpoint mappings, feature switches,
+token requirements, permissions or session cleanup.
+
 ## Token and transport policy
 
 The existing `mcp.integration.issuer`, `.tenant`, `.audience`, `.scope` and
@@ -66,13 +85,13 @@ No raw JWT or Spring context is stored in a native Session. Node affinity remain
 required; these locks are not business transaction locks.
 
 `DelegatedResponse` protects the complete native chain and postprocessing. It
-buffers 1 MB normally; only existing legacy file/artifact GET paths use the native
+buffers 1 MB normally; only existing custom MCP file/artifact GET paths use the native
 10 MiB per-file cap. It suppresses session credentials/cookies and rejects leaked
 session IDs, oversized or unsupported/compressed output. Body emission follows
 owned-session cleanup and native restoration; cleanup failure yields empty 502.
 
 WebAPI's narrowly scoped `DelegatedStreamingConfiguration` executes only a bound
-legacy artifact `StreamingResponseBody` synchronously under this same guard.
+custom MCP artifact `StreamingResponseBody` synchronously under this same guard.
 Other MVC streaming behavior is delegated to Spring unchanged. No upstream
 controller or async security-context propagation is introduced.
 

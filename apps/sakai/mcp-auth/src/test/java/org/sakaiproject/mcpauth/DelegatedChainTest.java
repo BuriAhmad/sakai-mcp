@@ -627,7 +627,8 @@ public class DelegatedChainTest {
             if (failure.equals("oversize")) request.setContent(new byte[60001]);
             if (failure.equals("badtype"))
                 request.setContentType("application/x-www-form-urlencoded-evil");
-            assertEquals(failure, failure.equals("none"), DelegatedRoutes.allows(request));
+            assertEquals(
+                    failure, failure.equals("none"), DelegatedRoutes.allowsExistingHttpEndpoint(request));
         }
     }
 
@@ -1006,10 +1007,12 @@ public class DelegatedChainTest {
     @Test
     public void opaqueSiteIdsAreCanonicalAndMalformedEncodingIsRejected() {
         for (String id : List.of("course.a", "course%20a", "course%2Ba", "%D8%A7")) {
-            assertTrue(DelegatedRoutes.allows(request("/direct/site/" + id + ".json")));
+            assertTrue(
+                    DelegatedRoutes.allowsExistingHttpEndpoint(request("/direct/site/" + id + ".json")));
         }
         for (String id : List.of("%2e%2e", "a%2fb", "a%252fb", "%FF", "%GG", "a;b")) {
-            assertFalse(DelegatedRoutes.allows(request("/direct/site/" + id + ".json")));
+            assertFalse(
+                    DelegatedRoutes.allowsExistingHttpEndpoint(request("/direct/site/" + id + ".json")));
         }
     }
 

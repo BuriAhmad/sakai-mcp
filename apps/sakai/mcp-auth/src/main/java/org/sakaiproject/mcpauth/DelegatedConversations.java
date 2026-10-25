@@ -31,7 +31,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-/** Bounded authentication conversations stored only in native Session attributes. */
+/**
+ * Owns native sessions for delegated requests. Without a flow nonce, each request gets a new
+ * session that is invalidated when its lease closes. Optional flows can retain it across requests.
+ */
 final class DelegatedConversations {
     static final String STATE = DelegatedConversations.class.getName() + ".state";
     private static final Object CREATION = new Object();
@@ -51,6 +54,7 @@ final class DelegatedConversations {
         }
     }
 
+    /** Holds the session and performs the cleanup needed when a request finishes. */
     static final class Lease implements AutoCloseable {
         final Session session;
         private final SessionManager sessions;
@@ -94,9 +98,11 @@ final class DelegatedConversations {
             String remote,
             Clock clock)
             throws Denied {
+        // This is the normal per-request path. Multi-request settings do not apply to it.
         if (nonce == null) {
             return create(sessions, usage, account, null, null, false, remote);
         }
+        // A supplied nonce opts into the separate, default-disabled multi-request protocol.
         if (!nonce.matches("[a-f0-9]{64}")) {
             throw new Denied(403);
         }
