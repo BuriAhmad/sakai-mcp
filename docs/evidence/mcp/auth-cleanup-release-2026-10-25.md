@@ -138,3 +138,44 @@ save/return, export/download or full end-user workflow acceptance is claimed.
 Local validator tests cover additional token failure cases; this live run did not
 mint every possible invalid-claim token. This is a tested development release,
 not full production or tool-migration acceptance.
+
+
+## Follow-up: explicit remaining-capability probes — 25 October 2026
+
+At the user's request, the remaining limits were investigated again without
+changing runtime configuration or repairing preserved proof source.
+
+- The live property inventory confirms legacy integration is enabled. Existing
+  HTTP and conversations properties are absent (both default false); flow secret
+  and placement allowlist are absent.
+- With a freshly acquired genuine student OBO token, five live HTTPS probes
+  (current user, existing sites, own site, current-user flow and explicit flow end)
+  each returned 404 and emitted no session cookie. This confirms the disabled
+  admission boundary, not positive feature acceptance.
+- `-Dtest=AttachmentReachProof` ran 24 tests: 23 inherited chain tests passed;
+  the positive delegated attachment reach assertion failed as before, expected
+  200 but got 403, `reached=false`. No assertion or production route was changed.
+- `-Dtest=AccessServletProof,ExistingContentAccessTest` ran 11 tests, all passing
+  (two actual AccessServlet dispatch/content fixtures and nine native content
+  behavior tests). This result does not supersede the blocked delegated route:
+  those fixtures supply a native session and synthetic ACL/storage collaborators.
+- Native authenticated read-only page inventories for both synthetic courses
+  succeeded. Announcement, Assignment and Gradebook placements can be selected
+  for a narrowly scoped flow test; private identifiers remain outside Git.
+
+Commands, using Java 17:
+
+```bash
+mvn -B -ntp -f apps/sakai/pom.xml -pl mcp-auth -am \
+  -Dtest=AttachmentReachProof -Dsurefire.failIfNoSpecifiedTests=false test
+mvn -B -ntp -f apps/sakai/pom.xml -pl mcp-auth -am \
+  '-Dtest=AccessServletProof,ExistingContentAccessTest' \
+  -Dsurefire.failIfNoSpecifiedTests=false test
+```
+
+The approved plan preserves disabled gates and excludes adding `/access` reach.
+A concrete request was presented for temporary existing-HTTP/flow activation,
+private secret and synthetic placement configuration, restart, read-only tests,
+and configuration restoration/restart. That activation is pending user approval;
+no positive live existing-HTTP/flow result is claimed. Attachment support would
+add authentication reach and needs a separate scoped implementation decision.
