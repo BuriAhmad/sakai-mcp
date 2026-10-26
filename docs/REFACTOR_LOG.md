@@ -272,3 +272,24 @@ passed full CI run `40198904498`; this change has identical `apps/sakai/` source
 release evidence. Baseline remains `208d69ac`; retain all feature branches and
 existing checkouts. Startup initially encountered Azure connection refusal;
 no successful release is claimed by this entry.
+
+
+## 2026-10-26 — Repair the dependency scan blocking main integration release
+
+- **Branch:** `codex/fix-certifi-release-check`, from main `b9711c70`.
+- **Code commit:** pending; record the actual hash after committing.
+- **Why:** required repository CI run `40290145173` found critical advisory
+  [GHSA-6q48-6c7w-9gw2](https://github.com/advisories/GHSA-6q48-6c7w-9gw2)
+  in the existing locked certifi bundle. The advisory removes trust in compromised
+  CA intermediates and identifies the fixed bundle. The scanner is not bypassed.
+- **Before → after:** certifi `2026.7.22` → `2026.10.19`, with regenerated
+  package URLs/hashes in `services/mcp/uv.lock`. No other package entry changed.
+- **Files:** that lockfile and this record. No tool definitions, workflows,
+  authentication code, environment flags, native APIs or schemas change.
+- **Verification:** `uv lock --upgrade-package certifi==2026.10.19`,
+  `uv sync --locked --python 3.11`, all **145 MCP tests passed**, Ruff passed,
+  mypy passed (17 source files), and parsed lock comparison confirms the change
+  is restricted to certifi. Remote source/image scans remain required.
+- **Release:** pending. Retain this as its own merge boundary. The previous
+  main/source CI remains useful evidence of the unchanged Sakai tree, while
+  final repository CI must run with the corrected lock.
