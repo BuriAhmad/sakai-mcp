@@ -244,7 +244,7 @@ proposal is not being executed, consistent with the user's clarified scope.
 ## 2026-10-26 — Establish feature development and main-only releases
 
 - **Branch:** `codex/main-release-policy`, based on reviewed auth `c1c5c27e`.
-- **Code commit:** pending; record the actual commit after committing.
+- **Code commit:** `d2386be4b0360055dd8ce0b995aa6963ade6dd76`.
 - **Why:** the user requires all development on feature branches, integration into
   main before deployment, retained feature/baseline history and generic agent guidance.
 
