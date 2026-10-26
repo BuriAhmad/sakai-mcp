@@ -277,7 +277,7 @@ no successful release is claimed by this entry.
 ## 2026-10-26 — Repair the dependency scan blocking main integration release
 
 - **Branch:** `codex/fix-certifi-release-check`, from main `b9711c70`.
-- **Code commit:** pending; record the actual hash after committing.
+- **Code commit:** `675270427b96d10a86eb0f31ffc1386a12a33adc`.
 - **Why:** required repository CI run `40290145173` found critical advisory
   [GHSA-6q48-6c7w-9gw2](https://github.com/advisories/GHSA-6q48-6c7w-9gw2)
   in the existing locked certifi bundle. The advisory removes trust in compromised
