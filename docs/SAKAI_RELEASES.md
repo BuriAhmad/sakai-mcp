@@ -1,10 +1,10 @@
 # Releasing Sakai to the development VM
 
-This procedure targets only `rg-sakai-mcp-dev/vm-sakai-dev`. A Git push runs checks but **does not deploy**. A release is an explicit choice of one pushed commit. The default source is `origin/main`; an explicitly authorized development branch can be selected with `--branch BRANCH`.
+This procedure targets only `rg-sakai-mcp-dev/vm-sakai-dev`. A Git push runs checks but **does not deploy**. A release is an explicit choice of one pushed commit. The source must be `origin/main`; feature branches are merged and pushed before release. Follow [the Git workflow](GIT_WORKFLOW.md).
 
 ## First release checklist
 
-1. Finish the Sakai change in `apps/sakai/`, commit it, and push it to the chosen release branch (normally `main`; see the explicit development-branch route below).
+1. Finish the Sakai change in `apps/sakai/`, commit it, and push it to the feature branch, validate it, then merge it into `main` and push `main`.
 2. Wait for the repository and Sakai source GitHub checks to pass. CI validates the parent POM and compiles all Sakai modules; the release repeats the full Maven build on the VM. The package builds skip Java tests; CI subsequently runs the focused authentication/login suite. Run focused tests for other changed modules before treating their features as validated.
 3. Confirm the change needs no database migration or irreversible runtime change. This release route backs up Tomcat application files, **not MySQL data**. Handle schema changes with a separate migration and database recovery plan.
 4. Ensure Azure MySQL is `Ready` and the VM is running. If the environment is stopped, run `./sakai start` only when the user has explicitly requested or permitted allocation. The deploy command refuses to start the VM implicitly. Allow plenty of time before the VM's 19:00 Pakistan-time auto-shutdown.
@@ -17,7 +17,7 @@ From the repo root on a Mac:
 ./sakai deploy HEAD
 ```
 
-The deploy command accepts `HEAD` or a commit SHA. It refuses commits not pushed to the selected remote branch (default `origin/main`) and refuses uncommitted Sakai/deployment changes. It opens SSH only to the current public IPv4 `/32`, sends an archive of the chosen commit, then builds it on the VM. The VM does not need a GitHub key or a Git clone for this path.
+The deploy command accepts `HEAD` or a commit SHA. It refuses commits not pushed to the pushed `origin/main` history and refuses uncommitted Sakai/deployment changes. It opens SSH only to the current public IPv4 `/32`, sends an archive of the chosen commit, then builds it on the VM. The VM does not need a GitHub key or a Git clone for this path.
 
 The VM stops Tomcat during the build because its 8 GiB RAM is insufficient to safely run Tomcat and the full Maven build together. It copies the current `webapps`, `components`, and `lib` directories into a staging Tomcat layout, deploys the new Maven output there, retains the original directories for rollback, and starts Tomcat. The command waits for the local portal and then checks public HTTPS. A failure after Tomcat is stopped triggers automatic code-file rollback and restart.
 
@@ -65,17 +65,15 @@ GitHub's Azure identity has Reader access to this resource group, VM Contributor
 
 The workflow does not automatically start MySQL, run database migrations, or deploy on every push. This is deliberately a manual dev-VM release; do not treat a 200 response at `/portal` as proof that every Sakai feature is healthy. Exercise the affected feature, login, and uploads after each meaningful change.
 
-## Explicit development branch release
+## Main-only release policy
 
-For an authorized auth candidate without advancing main:
+All new releases select an exact pushed commit on `origin/main`. Implement and
+validate changes on a feature branch, retain it, merge with `--no-ff`, then push
+main and select its merge commit. See [the Git workflow](GIT_WORKFLOW.md) and
+[the Git release Skill](../skills/git-release-workflow/SKILL.md).
 
-```bash
-./sakai deploy HEAD --branch codex/auth-development --check-only
-./sakai deploy HEAD --branch codex/auth-development
-```
-
-The command fetches the exact branch and verifies the selected commit belongs to
-it. All clean-source, checksum, Azure scope, staging, health and rollback checks
-still apply. This option does not change main, enable authentication gates, or
-change the main-only GitHub deployment environment. Record the exact commit and
-release ID in release evidence.
+The former `--branch` exception was used for the dated auth development releases.
+It was retired on 26 October 2026 at the user's request. Historical release
+records retain their original commands; those are execution history, not current
+instructions. The CLI rejects the old option. The durable VM unit, lock, checksum,
+staging, backup, rollback and health checks remain unchanged.

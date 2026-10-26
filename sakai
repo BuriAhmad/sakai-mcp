@@ -15,7 +15,7 @@ Everyday commands:
   stop                  Explicitly stop MCP app and MySQL, deallocate VM
   status                Show Azure resource and public application status
   open-ssh              Refresh the NSG rule without connecting
-  deploy COMMIT          Build and deploy a pushed Sakai commit (--branch BRANCH optional)
+  deploy COMMIT          Build and deploy a pushed commit from main
   rollback RELEASE_ID    Restore the release immediately before RELEASE_ID
   migrate-course-layout Apply course layout and Student roster defaults to Course A/B
   help                  Show this help

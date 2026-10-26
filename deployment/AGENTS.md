@@ -15,3 +15,10 @@ This directory controls Azure resources and the Sakai VM/application setup. Read
 - Follow `docs/PAUSE_AND_RESUME.md` for preserved stop/start of VM, MySQL, and MCP app. Never treat a forecast budget alert as authorization to change runtime state. `./sakai start` and `./sakai stop` require the user's explicit request or permission; a push or code release must not start paused resources implicitly.
 - Never commit `deployment/.env`, credentials, keys, or database content. Deployment scripts should remain repeatable and should fail clearly when required inputs are missing.
 - When adding a new deployment directory or pathway, document its purpose and command in that directory's README, then add a pointer here. When changing Azure resources, update the architecture documentation and any affected runbook steps.
+
+## Release source
+
+Follow [the Git workflow](../docs/GIT_WORKFLOW.md) and
+[Git release Skill](../skills/git-release-workflow/SKILL.md). Release only exact
+pushed commits on `origin/main`. Develop and validate changes on a feature branch;
+merge into main before deployment. Old feature-branch release evidence is historical.

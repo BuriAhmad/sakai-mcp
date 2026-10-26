@@ -5,6 +5,20 @@ explicit request to document and create separate development lines. This request
 authorizes this local Git organization; it does not authorize deployment, feature
 activation, academic operations, data cleanup or repair of recorded failed proofs.
 
+## Release integration policy — 26 October 2026
+
+The user now requires feature branches to merge into `main` before release.
+[Git workflow](GIT_WORKFLOW.md) and the [Git release Skill](../skills/git-release-workflow/SKILL.md)
+govern future integration and deployment. The separated checkouts below retain
+their ownership and historical anchors; the baseline reference does not advance.
+Main is the assembled release history. It receives merges, not direct source edits.
+Feature-line `role.json` records inherited by main document source provenance;
+`verify_arrangement.py --current` applies to its named development branch, not the
+assembled main checkout. Integration is checked against the selected feature tree
+and its reviewed diff. Later tool integration must preserve the merged auth code
+and reconcile overlapping removals/registrations rather than overwrite main with
+the tool-only tree. Historical branch-release records below are dated exceptions.
+
 ## Purpose
 
 Develop MCP authentication independently of the business-interface migration.

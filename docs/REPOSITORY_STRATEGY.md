@@ -14,7 +14,7 @@ The VM must not be the only place containing code changes. Edit locally, commit 
 
 ## Local Sakai source
 
-The `apps/sakai/` directory contains the Sakai 25.2 source and project changes directly in this repository. Its baseline is the official commit currently deployed on the VM, `b5b7800f0fcddf9d0db47276a66065189365d905`. The source is imported without a nested `.git` directory.
+The `apps/sakai/` directory contains the Sakai 25.2 source and project changes directly in this repository. Its imported upstream baseline is the official commit `b5b7800f0fcddf9d0db47276a66065189365d905`. The source is imported without a nested `.git` directory.
 
 Edit Sakai here, commit to this repository, and deploy an explicitly selected commit with `./sakai deploy COMMIT` or the manual GitHub release workflow. See `docs/SAKAI_RELEASES.md` for the build, downtime, health check, and rollback procedure. A local source checkout consumes disk space only; it does **not** run Java, Tomcat, MySQL, containers, or Azure resources.
 
@@ -50,6 +50,11 @@ Its locked dependencies, tests, non-root container, CI checks, Bicep runtime, ma
 
 The canonical Sakai, infrastructure, and MCP repository is the private GitHub repository `BuriAhmad/sakai-mcp`. GitHub Actions validates project shell syntax, runs ShellCheck, checks that local secrets remain untracked, and compiles the Bicep templates.
 
-Use small branches and pull requests for infrastructure and application changes. Protect the main branch when more than one person contributes. Sakai changes will be committed alongside the MCP and infrastructure in this repository. A push validates; it does not automatically release to Azure.
+Follow [the maintained Git workflow](GIT_WORKFLOW.md) and
+[repository Git release Skill](../skills/git-release-workflow/SKILL.md). Make all
+source and documentation changes on feature branches. Main receives reviewed
+merges with feature boundaries retained; deployments use exact pushed commits on
+main. Retain feature branches and baseline references. A push validates; it does
+not automatically release to Azure.
 
 Do not commit private keys, `.env` files, generated credentials, database dumps, build outputs, or user-uploaded Sakai content.
