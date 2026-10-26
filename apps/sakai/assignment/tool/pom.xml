@@ -17,6 +17,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.sakaiproject</groupId>
+            <artifactId>sakai-mcp-auth</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
         </dependency>

@@ -4,6 +4,16 @@
 		 version="2.5">
 
 	<display-name>sakai.gradebookng</display-name>
+	<!-- Authentication/session only; existing handlers retain all business checks. -->
+	<filter>
+		<filter-name>mcp.credentials</filter-name>
+		<filter-class>org.sakaiproject.mcpauth.DelegatedCredentialGuard</filter-class>
+	</filter>
+	<filter>
+		<filter-name>mcp.session</filter-name>
+		<filter-class>org.sakaiproject.mcpauth.DelegatedSessionFilter</filter-class>
+	</filter>
+
 
 	<!--  This application's servlet class -->
 	<servlet>
@@ -64,12 +74,27 @@
 		</init-param>
 	</filter>
 	<filter-mapping>
+		<filter-name>mcp.credentials</filter-name>
+		<servlet-name>sakai.gradebookng</servlet-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>sakai.request</filter-name>
 		<servlet-name>sakai.gradebookng</servlet-name>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
+	<filter-mapping>
+		<filter-name>mcp.session</filter-name>
+		<servlet-name>sakai.gradebookng</servlet-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+	</filter-mapping>
+
 	
 	
 	<!-- Sakai Tool Listener -->

@@ -42,3 +42,24 @@ This guidance adds initiative to request approval; it does not grant authorizati
 When a change adds or moves a service, code location, CLI command, deployment route, or Azure resource, review this guide and the relevant scoped guide and documentation in the same change. Add a short path and pointer only when it helps someone find or safely work on the new area. Put detailed procedures in a README or `docs/`. Add a scoped `AGENTS.md` when an area gains distinct working rules. Remove entries that no longer match the repository.
 
 Run `./scripts/check-repo-context.sh` after changing the `services/` or `deployment/` layout. It detects missing README files and guide entries for their direct child directories; review changes inside existing directories yourself.
+
+## Auth development worktree
+
+This branch develops MCP request/session authentication using the original custom business implementation as a host. Read [the worktree guide](docs/DEVELOPMENT_WORKTREES.md) and `docs/mcp/development-lines/role.json` first. Do not migrate/retire business tools or endpoints here. Preserve original source/catalogs and data. Auth must not add business APIs or weaken native permissions. No deployment, feature activation, runtime change or repair of recorded attachment proof failures is authorized by organization.
+
+## Record code refactors
+
+Maintain [the repository refactor log](docs/REFACTOR_LOG.md) for each code refactor.
+Add or update an entry in the same change with the date, branch, reason, previous
+implementation, resulting implementation, affected files/modules, behavior and
+compatibility impact, verification performed, remaining issues, and actual code
+commit IDs. Distinguish local source changes from deployed revisions; link the
+relevant plan, implementation report or release evidence instead of copying it.
+
+While work is uncommitted, mark commit references as pending. After committing,
+record the actual code commit in a following documentation commit; never invent a
+hash or require a commit to contain its own hash. Preserve earlier entries and
+append corrections or follow-ups. Keep credentials, tokens, private identifiers
+and user content out of the log. This practice applies to Codex work throughout
+this repository; it does not authorize changes outside the active worktree's
+ownership boundary or authorize deployment.

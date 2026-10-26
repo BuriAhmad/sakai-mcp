@@ -1,0 +1,115 @@
+{
+  "format_version": 1,
+  "date": "2026-10-25",
+  "kind": "auth-development",
+  "branch": "codex/auth-development",
+  "source_anchor": "d7756ee233affe2a9679e81ff53f2d20611b588d",
+  "original_baseline": "208d69ac624910a29a7529934ddcc18bbac853e8",
+  "mixed_source": "98364680e73489addf649685bb79511e8febf917",
+  "auth_core_commit": "98a4ca7de32e9ebbeec743c244a2c6193351829a",
+  "metadata_allowlist": [
+    "AGENTS.md",
+    "apps/sakai/AGENTS.md",
+    "apps/sakai/mcp-auth/AGENTS.md",
+    "apps/sakai/mcp-auth/README.md",
+    "services/mcp/AGENTS.md",
+    "services/mcp/README.md",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md",
+    "docs/DEVELOPMENT_WORKTREES.md",
+    "docs/mcp/development-lines/arrangement.json",
+    "docs/mcp/development-lines/classification.json",
+    "docs/mcp/development-lines/role.json",
+    "docs/mcp/development-lines/verify_arrangement.py",
+    "docs/mcp/development-lines/verification.json",
+    "docs/mcp/development-lines/extracted-auth-readme.md",
+    "docs/mcp/development-lines/protocol/sakai_flow.py",
+    "docs/mcp/existing-api-migration/check_scope.py",
+    "docs/mcp/existing-api-migration/progress.json",
+    "docs/mcp/existing-api-migration/coverage.json",
+    "docs/mcp/existing-api-migration/browser-flows.json",
+    "docs/mcp/existing-api-migration/native-change-ledger.json",
+    "docs/mcp/existing-api-migration/implementation-plan.md",
+    "docs/mcp/existing-api-migration/tool-limitations.md",
+    "docs/mcp/existing-api-migration/README.md",
+    "docs/mcp/sakai-bearer-auth-refactor-plan.md",
+    "docs/mcp/sakai-bearer-auth-refactor-implementation.md",
+    "docs/mcp/sakai-adapter.md",
+    "docs/SAKAI_ASSIGNMENT_SETUP.md",
+    "docs/SAKAI_INTEGRATION_GUIDE.md",
+    "deployment/README.md",
+    "docs/SAKAI_RELEASES.md",
+    "docs/evidence/mcp/auth-branch-release-2026-10-24.md",
+    "docs/REFACTOR_LOG.md",
+    "docs/evidence/mcp/auth-cleanup-release-2026-10-25.md"
+  ],
+  "restored_native_wiring": [],
+  "client_protocol": {
+    "path": "services/mcp/src/sakai_mcp/security/sakai_flow.py",
+    "sha256": "d5f8d01f58d56be77a06647f09ecf9be00a5188addd0916a80307012eb765aa0",
+    "auth_reference_path": "docs/mcp/development-lines/protocol/sakai_flow.py",
+    "status": "Unchanged client protocol dependency, not server auth implementation"
+  },
+  "runtime_acceptance": "Auth cleanup release healthy. Four synthetic principals: 89/93 live checks passed; four unchanged upstream wrong-password API HTTP 500 failures, with no authenticated identity. Native HTML/password login/logout, real bearer/OBO permission and mixed-credential checks, and 16 interleaved user-isolation reads passed. Existing-HTTP/flow and attachment acceptance remain outstanding. SAML is not configured.",
+  "required_native_auth": "One shared Spring Security 5.7.14 Resource Server pipeline serves original business host and selected existing handlers. Existing independent gates remain disabled by default; no legacy verifier remains.",
+  "extraction_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
+  "legacy_client_auth_paths": [
+    "services/mcp/src/sakai_mcp/auth.py",
+    "services/mcp/src/sakai_mcp/obo.py"
+  ],
+  "legacy_native_auth_paths": [
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpBearerFilter.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpJwtVerifier.java"
+  ],
+  "retired_legacy_native_auth_paths": [
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpBearerFilter.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpJwtVerifier.java"
+  ],
+  "auth_refactor": {
+    "implementation_report": "docs/mcp/sakai-bearer-auth-refactor-implementation.md",
+    "specification": "docs/mcp/sakai-bearer-auth-refactor-plan.md",
+    "framework": "5.3.39",
+    "spring_security": "5.7.14",
+    "nimbus": "9.37.4",
+    "spring_configuration": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedBearerAuthentication.java",
+    "localized_mvc_wiring": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/DelegatedStreamingConfiguration.java",
+    "protocol_change": false,
+    "deployment": true,
+    "note": "legacy_native_auth_paths remains the ownership allowlist for deliberate deletions against original_baseline; it does not name active implementations.",
+    "verification": {
+      "focused_java_tests": 107,
+      "python_tests": 145,
+      "webcomponent_browser_tests": 203,
+      "aggregate_modules": 455,
+      "aggregate_result": "455-module VM release build passed; CI attempt 2 passed after artifact-fetch failure; 203 browser tests passed",
+      "preservation_checker": "unchanged; passed",
+      "deployment": true
+    },
+    "development_release": {
+      "commit": "0c8767980ce8a9af210d9b41b51c5c1959542451",
+      "release_id": "20261024T192919Z-0c8767980ce8",
+      "evidence": "docs/evidence/mcp/auth-cleanup-release-2026-10-25.md",
+      "status": "healthy",
+      "main_advanced": false,
+      "acceptance": "Four-principal live HTTPS checks: 89 passed, 4 unchanged upstream wrong-password API status failures (500); no identity created. Existing-HTTP/flow and attachment acceptance remain outstanding."
+    },
+    "local_cleanup": {
+      "commit": "7da57f49d92303637c966fe83d4ca60e1fa4971d",
+      "date": "2026-10-25",
+      "refactor_log": "docs/REFACTOR_LOG.md",
+      "deployed": true,
+      "focused_java_tests": 107,
+      "source_boundary_tests": 8,
+      "focused_package": "passed",
+      "release_commit": "0c8767980ce8a9af210d9b41b51c5c1959542451"
+    },
+    "readability_cleanup": {
+      "commit": "d7756ee233affe2a9679e81ff53f2d20611b588d",
+      "date": "2026-10-25",
+      "refactor_log": "docs/REFACTOR_LOG.md",
+      "deployed": false,
+      "focused_java_tests": 107,
+      "source_boundary_tests": 8,
+      "behavior_change": false
+    }
+  }
+}

@@ -17,7 +17,7 @@ permissions:
 jobs:
   parent-pom:
     name: Sakai parent POM
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,7 +36,7 @@ jobs:
   full-build:
     name: Build all Sakai modules
     needs: parent-pom
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 120
     env:
       MAVEN_OPTS: -Xms512m -Xmx3072m
@@ -60,6 +60,6 @@ jobs:
 
       - name: Test delegated MCP adapter and Sakai login
         run: >-
-          mvn -B -ntp -f apps/sakai/pom.xml -pl webapi -am
-          -Dtest=Mcp*Test,LoginControllerTests
+          mvn -B -ntp -f apps/sakai/pom.xml -pl mcp-auth,webapi -am
+          -Dtest=DelegatedBearerAuthenticationTest,Delegated*Test,PortalContainerTest,ExistingSitesChainTest,Mcp*Test,LoginControllerTests
           -Dsurefire.failIfNoSpecifiedTests=false test

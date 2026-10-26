@@ -12,6 +12,12 @@
   <artifactId>sakai-content-tool</artifactId>
   <packaging>war</packaging>
   <dependencies>
+        <dependency>
+            <groupId>org.sakaiproject</groupId>
+            <artifactId>sakai-mcp-auth</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
     <dependency>
       <groupId>org.sakaiproject.kernel</groupId>
       <artifactId>sakai-kernel-util</artifactId>

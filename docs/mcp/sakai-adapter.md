@@ -36,7 +36,30 @@ The tracked [`configure-mcp-sakai.sh`](../../deployment/configure-mcp-sakai.sh) 
 | `mcp.integration.scope` | `sakai.mcp.access` delegated scope |
 | `mcp.integration.jwksUri` | Trusted HTTPS JWKS URI from the tenant metadata |
 
-The browser-facing `RequestFilter` runs first. The adapter filter runs only on `/api/mcp/v1/*`, requires Tomcat to see the request as HTTPS, rejects missing or invalid downstream bearer tokens, and resolves the verified `extn.SakaiEid` singleton array through Sakai's trusted external evidence path. It rejects disabled/unmapped accounts and any mismatch between the token identifier and resolved Sakai EID. It creates and invalidates a separate request-local Sakai session, then restores the previous context. The code never accepts an identity header or relies on a browser cookie for this path. The MCP service owns the certificate-backed OBO exchange; Sakai has no OBO credential.
+The shared `mcp-auth` guard now uses Spring Resource Server JWT authentication
+before selecting an isolated native Sakai Session. `RequestFilter` captures that
+Session normally; the post-filter binder validates and aligns native accessors.
+Both the legacy route group and selected existing HTTP interfaces use this one
+Spring pipeline, with separate default-disabled admission gates. The old
+`McpBearerFilter`, `McpJwtVerifier`, and `DelegatedJwtVerifier` are removed.
+
+The bridge resolves the validated singleton `extn.SakaiEid` through
+`ExternalTrustedEvidence`, rejects disabled/unknown/remapped users, logs in an
+owned native Session, and restores native/Spring state on completion. Optional
+`mcp.integration.identityClaim` defaults to that existing array-shaped claim.
+Issuer/tenant/single audience/delegated scope, required timestamps (strict expiry,
+60-second not-before leeway), RS256 and canonical identity remain enforced.
+Sakai owns all course/resource authorization. The MCP service retains OBO; Sakai
+has no OBO credential. Ordinary browser/SAML requests remain unchanged.
+
+The response envelope suppresses native session credentials. Legacy file/artifact
+GETs use the native 10 MiB file cap; ordinary responses retain 1 MB. Bound artifact
+streams run synchronously inside the existing delegated lifetime through a small
+MVC wiring adapter, preserving the controller and permission checks. Consult the
+[module guide](../../apps/sakai/mcp-auth/README.md) and
+[implementation report](sakai-bearer-auth-refactor-implementation.md) for the
+precise source, dependency, test and release boundaries. These are local source
+changes, not a deployment/activation record.
 
 ## V1 routes
 
@@ -55,8 +78,8 @@ All course paths require `SiteService.getSiteVisit` before reading or writing a 
 Use Java 17 and the Sakai reactor, because WebAPI depends on sibling Sakai modules:
 
 ```sh
-JAVA_HOME=/opt/homebrew/opt/openjdk@17 mvn -f apps/sakai/pom.xml -pl webapi -am \
-  -Dtest='Mcp*Test,LoginControllerTests' -Dsurefire.failIfNoSpecifiedTests=false test
+JAVA_HOME=/opt/homebrew/opt/openjdk@17 mvn -f apps/sakai/pom.xml -pl mcp-auth,webapi -am \
+  -Dtest='Delegated*Test,PortalContainerTest,ExistingSitesChainTest,Mcp*Test,LoginControllerTests' -Dsurefire.failIfNoSpecifiedTests=false test
 ```
 
 The local command and focused results are recorded in [`phase-7-sakai-adapter.md`](../evidence/mcp/phase-7-sakai-adapter.md). The development adapter was deployed through the existing guarded exact-commit release and passed the live delegated and ordinary-login checks in [`phase-8-release.md`](../evidence/mcp/phase-8-release.md). For subsequent changes, use the same [Sakai release procedure](../SAKAI_RELEASES.md) and repeat the focused tests and public acceptance checks. Code rollback does not revert the runtime MCP property block or any announcement created after deployment.

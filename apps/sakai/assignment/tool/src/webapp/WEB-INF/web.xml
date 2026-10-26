@@ -3,6 +3,16 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <display-name>sakai-assignment-tool</display-name>
+    <!-- Authentication/session only; existing handlers retain all business checks. -->
+    <filter>
+        <filter-name>mcp.credentials</filter-name>
+        <filter-class>org.sakaiproject.mcpauth.DelegatedCredentialGuard</filter-class>
+    </filter>
+    <filter>
+        <filter-name>mcp.session</filter-name>
+        <filter-class>org.sakaiproject.mcpauth.DelegatedSessionFilter</filter-class>
+    </filter>
+
     <description>sakai-assignment-tool</description>
 
 	<!-- Configure standard Spring application contexts. -->
@@ -28,12 +38,27 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>mcp.credentials</filter-name>
+        <servlet-name>sakai.assignment.grades</servlet-name>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
         <filter-name>sakai.request</filter-name>
         <servlet-name>sakai.assignment.grades</servlet-name>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>mcp.session</filter-name>
+        <servlet-name>sakai.assignment.grades</servlet-name>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+
 
 	<!-- the vm handling servlet : used direct by name, not by URL path -->
 	<servlet>
