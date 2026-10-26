@@ -15,6 +15,16 @@ Consult [the Sakai integration guide](../../docs/SAKAI_INTEGRATION_GUIDE.md) bef
 - Check database and runtime compatibility before changing schema, authentication, or public APIs.
 - Treat `/opt/sakai-src` on the VM as a deployed copy; make durable code changes here.
 
-## Separate auth ownership
+## Authentication module and feature ownership
 
-The shared `mcp-auth/` module owns the new request/session integration; follow its scoped guide. Original business sources remain baseline. See [worktree ownership](../../docs/DEVELOPMENT_WORKTREES.md). Do not develop business migration here.
+The shared `mcp-auth/` module owns delegated identity/session integration; follow
+its scoped guide. Follow the root [Git workflow](../../docs/GIT_WORKFLOW.md) for
+feature development and main integration. Existing development checkouts retain
+[their documented ownership](../../docs/DEVELOPMENT_WORKTREES.md); main assembles
+reviewed features rather than inheriting a permanent auth-only development role.
+
+New MCP business capabilities use existing Sakai APIs. Separately authorized
+business-interface retirement belongs on its feature branch under the approved
+migration/preservation plan. Preserve the shared authentication boundary and
+native permissions; this guide does not authorize new native business endpoints,
+core changes, data removal or feature activation.
