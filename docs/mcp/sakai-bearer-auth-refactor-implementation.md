@@ -215,5 +215,23 @@ comments explain the ordering and why response output is buffered. The module
 README provides a reading guide. See [the refactor log](../REFACTOR_LOG.md).
 
 Existing route/configuration/session behavior and all test assertions are retained.
-The existing 107 Java tests and eight boundary checks passed. This source-only
-readability change is not deployed; the development VM remains at `0c876798`.
+The existing 107 Java tests and eight boundary checks passed. This readability change was initially local-only. It is now included in the
+main release below.
+
+
+## Main integration release — 26 October 2026
+
+The user replaced feature-branch deployments with the standing
+[Git workflow](../GIT_WORKFLOW.md). Auth was merged into main with an explicit
+merge boundary, followed by the main-only release policy and a narrowly scoped
+certifi dependency fix needed for repository CI. The auth and baseline branches
+remain retained; tool migration is not integrated.
+
+Selected main `1eb316f23371ea4e56bf8f268f1ee91bf77eb20a` is deployed as
+`20261026T082756Z-1eb316f23371`, healthy. Installed bytecode confirms the readability
+helpers, one standard JWT pipeline and absence of retired verifier/filter classes.
+Spring Framework 5.3.39, Spring Security 5.7.14 and Nimbus 9.37.4 remain single
+checked shared versions. Main CI and local focused Java checks passed 107 tests;
+CI also passed the full 455-module build and 203 Chromium tests. The VM full build
+passed before coordinated startup. See [dated release evidence](../evidence/mcp/main-release-2026-10-26.md)
+for installed hashes, service revisions, final live results and acceptance limits.

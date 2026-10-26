@@ -293,3 +293,30 @@ no successful release is claimed by this entry.
 - **Release:** pending. Retain this as its own merge boundary. The previous
   main/source CI remains useful evidence of the unchanged Sakai tree, while
   final repository CI must run with the corrected lock.
+
+
+## 2026-10-26 — Main release verification follow-up
+
+The user authorized main integration and deployment. Auth merge `4eeea933`, policy
+merge `b9711c70` (code `d2386be4`) and dependency merge `1eb316f2` (code `67527042`)
+are pushed on main. All development and release evidence was edited on feature
+branches; main received explicit merges only. Baseline `208d69ac`, auth, policy,
+dependency and tool branches remain retained; checkouts/private files are preserved.
+
+Both Sakai and MCP now run main `1eb316f23371ea4e56bf8f268f1ee91bf77eb20a`.
+Sakai release `20261026T082756Z-1eb316f23371` is healthy; MCP revision is
+`ca-mcp-sakai-dev--0000019`. Readability code `d7756ee2` is verified in installed
+bytecode, superseding its earlier local-only recording state. The full 455-module
+CI/VM builds, 203 Chromium tests, 107 focused Java tests (also rerun locally),
+145 MCP tests, lint/types, security scan policy and six CLI admission checks passed.
+
+Post-release live results: Sakai 89/93 checks passed; four unchanged upstream API
+wrong-password status failures (500), each leaving no authenticated user. MCP
+15/15 checks passed. Network interruptions required reruns, with at most three
+transport attempts per request; 10 transport retries in the successful Sakai run,
+zero in MCP. No HTTP-status/assertion retry or test weakening occurred. Original
+feature gates and remaining attachment/flow acceptance boundaries are retained.
+[Release evidence](evidence/mcp/main-release-2026-10-26.md) records hashes,
+source/image/revision identity, rollback points, CI runs and remaining limitations.
+The evidence/guidance follow-up is documentation only; runtime source stays at
+that main commit. No Entra, schema, content or academic record changes were made.

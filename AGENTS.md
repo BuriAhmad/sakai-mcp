@@ -11,6 +11,19 @@ This repository owns the Sakai development environment's Azure infrastructure, o
 - `skills/` — repository-owned agent Skill definitions; the [assignment setup Skill](skills/sakai-assignment-setup/SKILL.md) has a separately authorized opt-in development release; see [release evidence](docs/evidence/mcp/assignment-setup-release.md).
 - `apps/sakai/` — tracked Sakai application source and project changes.
 
+## MCP integration boundary
+
+New MCP capabilities must use existing Sakai APIs, with parsing, pagination and
+workflow coordination in the external MCP service. The native extension exception
+is delegated authentication/session integration. Do not add native business
+endpoints, change business services/models/schema or ordinary login to make a tool
+possible. Existing custom business endpoints are the preserved transition host;
+their presence and historical runbooks do not authorize new native business APIs.
+Retirement and data preservation follow the approved migration plan in its
+feature checkout. This boundary does not authorize unplanned removals or runtime
+changes. Report unsupported API capabilities rather than filling gaps in native
+business code.
+
 ## Sources of truth
 
 - Use the tracked Bicep, scripts, and service code for intended behavior. Use `docs/REPOSITORY_STRATEGY.md` for repository boundaries and `docs/INFRASTRUCTURE.md` for the Azure architecture.
