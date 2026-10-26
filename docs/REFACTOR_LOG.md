@@ -240,3 +240,35 @@ uv run --no-sync pytest -q tests/security/test_native_auth_boundary.py
 **Release state:** local source refactor; not deployed. The VM remains at
 `0c876798` / `20261024T192919Z-0c8767980ce8`. The existing-HTTP/flow activation
 proposal is not being executed, consistent with the user's clarified scope.
+
+## 2026-10-26 — Establish feature development and main-only releases
+
+- **Branch:** `codex/main-release-policy`, based on reviewed auth `c1c5c27e`.
+- **Code commit:** pending; record the actual commit after committing.
+- **Why:** the user requires all development on feature branches, integration into
+  main before deployment, retained feature/baseline history and generic agent guidance.
+
+| Before | After | Reason |
+| --- | --- | --- |
+| CLI allowed an explicit feature-branch release override | CLI accepts only pushed main commits; `--branch` is rejected | Make release source follow the user's standing workflow |
+| Branch/release decisions spread across dated evidence | Generic `docs/GIT_WORKFLOW.md`, repo Skill and guide pointers | Apply the same workflow to future features |
+| Auth-specific root checkout wording | Generic integration guidance plus retained feature ownership records | Main assembles reviewed features while development lines stay distinct |
+
+**Files:** `scripts/deploy-sakai-release.sh`, CLI help, root/deployment guides,
+repository strategy, worktree guide, Sakai release runbook, new Git workflow and
+repository-local `skills/git-release-workflow/SKILL.md`. No application, MCP,
+security, native core, feature gate, schema or dependency changes are included.
+The durable VM job, checksum, lock, staging, rollback and health checks remain.
+
+**Verification:** Bash syntax and ShellCheck error checks passed; six temporary
+Git-fixture checks passed (pushed main accepted, unmerged feature rejected,
+branch override rejected, unpushed main rejected, pushed merge accepted, dirty
+application rejected). Skill validation and repository context checks passed;
+whitespace and diff reviewed. The validator needed PyYAML, so it ran in a temporary
+uv environment; project dependencies are unchanged. The latest auth source already
+passed full CI run `40198904498`; this change has identical `apps/sakai/` source.
+
+**Integration/release:** pending; record actual merge/main/release SHAs in dated
+release evidence. Baseline remains `208d69ac`; retain all feature branches and
+existing checkouts. Startup initially encountered Azure connection refusal;
+no successful release is claimed by this entry.

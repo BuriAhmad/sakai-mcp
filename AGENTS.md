@@ -43,9 +43,21 @@ When a change adds or moves a service, code location, CLI command, deployment ro
 
 Run `./scripts/check-repo-context.sh` after changing the `services/` or `deployment/` layout. It detects missing README files and guide entries for their direct child directories; review changes inside existing directories yourself.
 
-## Auth development worktree
+## Git and release workflow
 
-This branch develops MCP request/session authentication using the original custom business implementation as a host. Read [the worktree guide](docs/DEVELOPMENT_WORKTREES.md) and `docs/mcp/development-lines/role.json` first. Do not migrate/retire business tools or endpoints here. Preserve original source/catalogs and data. Auth must not add business APIs or weaken native permissions. No deployment, feature activation, runtime change or repair of recorded attachment proof failures is authorized by organization.
+Follow [the Git workflow](docs/GIT_WORKFLOW.md) and the repository-local
+[Git release Skill](skills/git-release-workflow/SKILL.md) when creating branches,
+integrating features, preparing releases or reverting changes. Develop code,
+configuration, documentation and fixes on feature branches; use `main` only for
+reviewed merges. Retain feature branches and baseline references. Deploy exact
+pushed commits on `origin/main`; a feature-branch push never deploys. Apply this
+practice to future work generally, not just the current development lines.
+
+Read [worktree ownership](docs/DEVELOPMENT_WORKTREES.md) before working in an
+existing development checkout. The original recovery checkout and baseline stay
+preserved. Ownership records describe their feature line; an inherited record in
+`main` is historical provenance, not an instruction to edit a different branch.
+Integration does not authorize unrelated business changes or feature activation.
 
 ## Record code refactors
 

@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/scripts/lib/azure.sh"
 
 usage() {
-  echo "Usage: ./sakai deploy COMMIT [--branch BRANCH] [--check-only]" >&2
+  echo "Usage: ./sakai deploy COMMIT [--check-only]" >&2
   exit 2
 }
 
@@ -14,17 +14,9 @@ usage() {
 requested_commit="$1"
 shift
 [[ "$requested_commit" == HEAD || "$requested_commit" =~ ^[0-9a-fA-F]{7,40}$ ]] || usage
-release_branch=main
 check_only=0
-branch_seen=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --branch)
-      [[ $# -ge 2 && "$branch_seen" -eq 0 ]] || usage
-      release_branch="$2"
-      branch_seen=1
-      shift 2
-      ;;
     --check-only)
       [[ "$check_only" -eq 0 ]] || usage
       check_only=1
@@ -43,13 +35,12 @@ commit="$(git -C "$ROOT_DIR" rev-parse --verify --end-of-options "${requested_co
   sakai_die "Unknown commit: $requested_commit"
 [[ "$commit" =~ ^[0-9a-f]{40}$ ]] || sakai_die 'Expected a complete Git commit SHA.'
 
-git check-ref-format "refs/heads/$release_branch" >/dev/null || \
-  sakai_die 'Invalid release branch name.'
-# Fetch the exact named branch; never use a stale remote-tracking ref.
+# Releases must come from main. Feature branches are merged and pushed before release.
+# Fetch main explicitly so an old local reference cannot admit an unpushed release.
 git -C "$ROOT_DIR" fetch --quiet origin \
-  "refs/heads/$release_branch:refs/remotes/origin/$release_branch"
-git -C "$ROOT_DIR" merge-base --is-ancestor "$commit" "refs/remotes/origin/$release_branch" || \
-  sakai_die "The selected commit is not on the pushed origin/$release_branch branch."
+  'refs/heads/main:refs/remotes/origin/main'
+git -C "$ROOT_DIR" merge-base --is-ancestor "$commit" refs/remotes/origin/main || \
+  sakai_die 'The selected commit is not on pushed origin/main. Merge and push before deploying.'
 git -C "$ROOT_DIR" cat-file -e "$commit:apps/sakai/pom.xml" || \
   sakai_die 'The selected commit has no Sakai source at apps/sakai/.'
 
@@ -63,7 +54,7 @@ for path in sakai scripts/deploy-sakai-release.sh deployment/release-sakai-vm.sh
 done
 
 echo "Selected pushed commit: $commit"
-echo "Release source: origin/$release_branch"
+echo 'Release source: origin/main'
 echo 'Target: rg-sakai-mcp-dev / vm-sakai-dev (development environment)'
 if [[ "$check_only" -eq 1 ]]; then
   echo 'Check only: no Azure resource or VM was changed.'
