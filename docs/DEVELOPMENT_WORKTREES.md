@@ -253,3 +253,19 @@ live tests passed 89/93 checks, with four unchanged upstream wrong-password API
 status failures. See [current release evidence](evidence/mcp/auth-cleanup-release-2026-10-25.md).
 Main remains at baseline; the original and tool migration checkouts are untouched.
 This supersedes the previous runtime revision above, not the ownership boundaries.
+
+
+## Main integration and release — 26 October 2026
+
+Main now contains baseline plus the reviewed auth feature and release-policy
+changes. Main source `1eb316f2` is deployed to both native Sakai and MCP; see
+[release evidence](evidence/mcp/main-release-2026-10-26.md). Tool migration remains
+separate. Baseline stays `208d69ac`; auth stays `c1c5c27e`; tool work stays on its
+existing branch. The new policy/maintenance/evidence branches are retained too.
+
+A managed integration checkout was added at
+`/Users/burhanahmadkhan/.codex/worktrees/main-release-policy/sakai-mcp` so merging
+and releasing main does not disturb the preserved original checkout or the three
+development directories. Changes were prepared on feature branches in that
+checkout; main receives merges only. This is an integration workspace, not a new
+feature-ownership line. No existing worktree or private file was removed.

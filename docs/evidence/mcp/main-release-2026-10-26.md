@@ -80,10 +80,38 @@ succeeded from selected main `1eb316f2`:
 
 ## Sakai execution and final acceptance
 
-Guarded exact-main Sakai deployment `40292366783` staged release
-`20261026T082756Z-1eb316f23371`. The full VM build passed all 455 modules; installation
-and startup health checks are in progress. Final runtime
-artifact verification and live checks remain pending. Existing-HTTP and
+Guarded exact-main Sakai deployment `40292366783` succeeded. Release
+`20261026T082756Z-1eb316f23371` passed the full VM build, local startup health and
+public HTTPS check. Direct installed-artifact verification confirms the exact
+main commit and healthy state, new readability helpers in bytecode, retired
+verifier/filter classes absent, and preserved webapps/components/lib rollback
+copies. The checked shared Framework/Security/Nimbus versions remain
+5.3.39/5.7.14/9.37.4 respectively, one each; API WAR has no duplicate security/Nimbus
+copy. Login WAR hash is unchanged from the prior release.
+
+| Installed artifact | SHA-256 |
+| --- | --- |
+| sakai-mcp-auth-25.2.jar | `c4128c9a9eef3c94aad0a82dab3c99ac39e63e88db449f19b631aad26682605d` |
+| api.war | `21f9d6ae348cff2b7a31e49884054c87b840e2c1c8c6c783f9f90d0870c97577` |
+| sakai-login-tool.war | `d2d93917e678b902b050001b7ed2a380aebf71c41ae1af13c574448994deca46` |
+
+Post-native-deployment live checks completed:
+
+- **Sakai: 89/93 passed**, four genuine token/OBO principals. All four failures
+  are the unchanged upstream wrong-password `/api/login` HTTP 500 mapping;
+  each rejection leaves the caller anonymous. Native HTML login/logout, canonical
+  EID, own/foreign course and role boundaries, mixed credentials, wrong-audience
+  and tampered-token rejection, identity-header spoofing, no bearer cookies and
+  tokenless follow-ups passed. All 16 interleaved student grade exercises passed.
+- **MCP: 15/15 passed** after native deployment: health, unauthenticated denial,
+  four-principal initialize/tools-list and MCP → OBO → Sakai course isolation.
+- The first attempts were interrupted by connection refusals/timeouts and are
+  not counted as completed acceptance. The successful rerun allowed at most
+  three transport attempts per request, never retried an HTTP status or failed
+  assertion. Sakai needed 10 transport retries; MCP needed zero. This preserves
+  the observed network limitation rather than claiming a clean network run.
+- Private fixtures, credentials, tokens, course IDs/content and raw logs remain
+  outside Git; this record contains sanitized outcomes only. Existing-HTTP and
 multi-request-flow gates remain disabled; attachment reach is unchanged. No
 academic writes, Entra or schema changes are part of this release.
 
@@ -97,3 +125,22 @@ existing-API/native-authentication-only boundary in the root guide. The auth
 module stays authentication-only; business retirement still needs its own
 approved plan and feature branch. Historical development-line ownership records
 are retained as provenance. No application source changes accompany this follow-up.
+
+
+## Release interpretation and remaining issues
+
+Both native Sakai and MCP now run source commit `1eb316f2` from main. The later
+release-evidence merge changes guidance/metadata only; main's tip may therefore
+be newer than the installed application without changing its source provenance.
+Baseline/auth/tool references retain their recorded commits; all feature branches
+remain available and no worktree was removed.
+The running VM, MySQL and MCP are the existing resources; scaling, schema, Entra,
+course content and academic records were not changed by the release.
+
+The baseline wrong-password API error status remains open, SAML is not configured,
+existing-HTTP/flow positive acceptance is outside this release, and delegated
+attachment support remains unaccepted. No grading/announcement writes, export or
+full tool-migration workflow acceptance is claimed. The certifi critical finding
+is fixed in the released image; the recorded 44 unfixable-high image findings and
+other upstream dependency alerts are not claimed resolved. Network instability
+required bounded retries. This is a development release, not production acceptance.

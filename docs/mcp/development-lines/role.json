@@ -49,7 +49,7 @@
     "auth_reference_path": "docs/mcp/development-lines/protocol/sakai_flow.py",
     "status": "Unchanged client protocol dependency, not server auth implementation"
   },
-  "runtime_acceptance": "Auth cleanup release healthy. Four synthetic principals: 89/93 live checks passed; four unchanged upstream wrong-password API HTTP 500 failures, with no authenticated identity. Native HTML/password login/logout, real bearer/OBO permission and mixed-credential checks, and 16 interleaved user-isolation reads passed. Existing-HTTP/flow and attachment acceptance remain outstanding. SAML is not configured.",
+  "runtime_acceptance": "Sakai 89/93 live checks passed; four unchanged upstream wrong-password API HTTP 500 failures with no identity created. MCP 15/15 passed after native deployment. Sakai required 10 transport retries; MCP zero. Existing-HTTP/flow and attachment acceptance remain outstanding.",
   "required_native_auth": "One shared Spring Security 5.7.14 Resource Server pipeline serves original business host and selected existing handlers. Existing independent gates remain disabled by default; no legacy verifier remains.",
   "extraction_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
   "legacy_client_auth_paths": [
@@ -85,12 +85,13 @@
       "deployment": true
     },
     "development_release": {
-      "commit": "0c8767980ce8a9af210d9b41b51c5c1959542451",
-      "release_id": "20261024T192919Z-0c8767980ce8",
-      "evidence": "docs/evidence/mcp/auth-cleanup-release-2026-10-25.md",
+      "commit": "1eb316f23371ea4e56bf8f268f1ee91bf77eb20a",
+      "release_id": "20261026T082756Z-1eb316f23371",
+      "evidence": "docs/evidence/mcp/main-release-2026-10-26.md",
       "status": "healthy",
-      "main_advanced": false,
-      "acceptance": "Four-principal live HTTPS checks: 89 passed, 4 unchanged upstream wrong-password API status failures (500); no identity created. Existing-HTTP/flow and attachment acceptance remain outstanding."
+      "main_advanced": true,
+      "acceptance": "Sakai 89/93 live checks passed; four unchanged upstream wrong-password API HTTP 500 failures with no identity created. MCP 15/15 passed after native deployment. Sakai required 10 transport retries; MCP zero. Existing-HTTP/flow and attachment acceptance remain outstanding.",
+      "source_branch": "main"
     },
     "local_cleanup": {
       "commit": "7da57f49d92303637c966fe83d4ca60e1fa4971d",
@@ -106,10 +107,19 @@
       "commit": "d7756ee233affe2a9679e81ff53f2d20611b588d",
       "date": "2026-10-25",
       "refactor_log": "docs/REFACTOR_LOG.md",
-      "deployed": false,
+      "deployed": true,
       "focused_java_tests": 107,
       "source_boundary_tests": 8,
-      "behavior_change": false
+      "behavior_change": false,
+      "release_commit": "1eb316f23371ea4e56bf8f268f1ee91bf77eb20a"
     }
+  },
+  "main_integration": {
+    "date": "2026-10-26",
+    "auth_merge": "4eeea933",
+    "workflow_merge": "b9711c70",
+    "dependency_merge": "1eb316f2",
+    "release_branch": "main",
+    "note": "This role remains auth-feature provenance; main receives reviewed feature merges under docs/GIT_WORKFLOW.md."
   }
 }
