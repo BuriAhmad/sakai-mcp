@@ -31,12 +31,12 @@ but shared commits/objects. They are not copies of the live application or datab
 No code is lost merely because it is assigned to another line. Uncommitted mixed
 work is captured in a named Git snapshot and private checkpoints before extraction.
 
-## Three development lines
+## Development lines and baseline
 
 | Line | Directory under `/Users/burhanahmadkhan/Desktop/` | Branch | Purpose |
 | --- | --- | --- | --- |
-| Original baseline | `sakai-mcp-custom-native` | `codex/sakai-custom-native-api` | Preserve the original tools and original auth at `208d69ac`; compare behavior and recover original source. Leave this checkout untouched. |
-| Auth development | `sakai-mcp-auth-development` | `codex/auth-development` | Original business implementation as host, plus the extracted native auth framework, auth-specific build/filter wiring and tests. Develop auth here. |
+| Original baseline | `sakai-mcp-original-baseline` | `codex/original-tools-baseline` | Preserve the original tools and original auth at `208d69ac`; compare behavior and recover original source. Leave this checkout untouched. |
+| Auth development (closed) | Removed on 27 October 2026 | `codex/auth-development` | Auth work was merged into `main`. The clean worktree was removed; the branch remains as a history reference and is an ancestor of `main`. |
 | Tool migration development | `sakai-mcp-tool-migration-development` | `codex/tool-migration-development` | Existing-HTTP Python tools, parsing/workflows/storage and focused native business retirement. New native servlet-auth framework/wiring is absent; declare the matching external auth requirement. |
 
 The existing `sakai-mcp` checkout is retained as an **inactive mixed recovery
@@ -48,8 +48,8 @@ holds the authoritative historical continuation chain and this organization reco
 ```mermaid
 flowchart TD
     B["Original baseline: 208d69ac"]
-    B --> O["Original tools + original auth\nPreserved baseline worktree"]
-    B --> A["Auth development\nOriginal business host + auth changes"]
+    B --> O["Original tools + original auth\nBaseline worktree: sakai-mcp-original-baseline"]
+    B --> A["Auth development\nClosed locally; merged to main"]
     B --> S["Reviewed preimplementation restructuring: b168e8cf"]
     S --> T["Tool migration development\nMigrated tools; external server-auth dependency"]
     M["Current mixed implementation\nPreserved snapshot + inactive original checkout"]

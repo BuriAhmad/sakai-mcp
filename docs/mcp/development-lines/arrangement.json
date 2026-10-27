@@ -9,14 +9,13 @@
   "auth_source_anchor": "b5100547aaee02e7cd33adaa5e7bf86a38d01c1e",
   "tool_source_anchor": "0cb3f331cb23ac2e3aaae14420bdc152dc3d7603",
   "branches": {
-    "baseline": "codex/sakai-custom-native-api",
+    "baseline": "codex/original-tools-baseline",
     "auth": "codex/auth-development",
     "tools": "codex/tool-migration-development",
     "mixed_snapshot": "codex/preserve-mixed-2026-10-20"
   },
   "worktrees": {
-    "baseline": "/Users/burhanahmadkhan/Desktop/sakai-mcp-custom-native",
-    "auth": "/Users/burhanahmadkhan/Desktop/sakai-mcp-auth-development",
+    "baseline": "/Users/burhanahmadkhan/Desktop/sakai-mcp-original-baseline",
     "tools": "/Users/burhanahmadkhan/Desktop/sakai-mcp-tool-migration-development",
     "mixed_recovery": "/Users/burhanahmadkhan/Desktop/sakai-mcp"
   },
@@ -110,5 +109,13 @@
   ],
   "private_checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Worktree-Separation-2026-10-20",
   "status": "created; source/commit/ownership/scope verification passed; runtime acceptance pending",
-  "failed_proofs": "Preserved; no implementation repairs or acceptance claims"
+  "failed_proofs": "Preserved; no implementation repairs or acceptance claims",
+  "closed_worktrees": {
+    "auth": {
+      "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp-auth-development",
+      "branch": "codex/auth-development",
+      "closed_date": "2026-10-27",
+      "status": "Worktree removed after confirming the clean auth branch is an ancestor of main; branch retained."
+    }
+  }
 }
