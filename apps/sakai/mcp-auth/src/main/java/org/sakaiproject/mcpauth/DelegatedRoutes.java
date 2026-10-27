@@ -23,6 +23,8 @@ final class DelegatedRoutes {
 
     static boolean allows(HttpServletRequest request) {
         String path = request.getRequestURI();
+        if ("/direct/assignment/setGrade.json".equals(path) && "POST".equals(request.getMethod()))
+            return gradingSubmit(request);
         if (!("/api".equals(request.getContextPath()) || "/direct".equals(request.getContextPath()))
                 || !path.startsWith(request.getContextPath() + "/")
                 || request.getDispatcherType() != DispatcherType.REQUEST
@@ -64,6 +66,25 @@ final class DelegatedRoutes {
                 || assignmentSiteRead(path)
                 || assignmentItemRead(path)
                 || ownGradeRead(path);
+    }
+
+    private static boolean gradingSubmit(HttpServletRequest request) {
+        if (!"/direct".equals(request.getContextPath())
+                || request.getDispatcherType() != DispatcherType.REQUEST
+                || request.getQueryString() != null
+                || request.getContentLengthLong() <= 0 || request.getContentLengthLong() > 60000
+                || request.getHeader("Transfer-Encoding") != null
+                || request.getContentType() == null
+                || !request.getContentType().split(";", 2)[0].trim().toLowerCase(java.util.Locale.ROOT)
+                        .equals("application/x-www-form-urlencoded")) return false;
+        Set<String> allowed = Set.of("courseId", "siteId", "gradableId", "studentId", "submissionId",
+                "grade", "gradeOption", "feedbackText", "feedbackComment", "privateNotes",
+                "resubmitNumber", "resubmitDate", "extensionDate");
+        if (!request.getParameterMap().keySet().containsAll(Set.of(
+                "courseId", "siteId", "gradableId", "studentId", "submissionId", "grade", "gradeOption"))
+                || !request.getParameterMap().entrySet().stream()
+                        .allMatch(e -> allowed.contains(e.getKey()) && e.getValue().length == 1)) return false;
+        return Set.of("save", "return").contains(request.getParameter("gradeOption"));
     }
 
     private static boolean assignmentItemRead(String path) {

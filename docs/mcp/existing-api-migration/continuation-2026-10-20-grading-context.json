@@ -1,0 +1,60 @@
+{
+  "format_version": 2,
+  "date": "2026-10-20",
+  "head": "0f9f44a76f34777b52f56ae03634ffd3a0b3bc6c",
+  "branch": "codex/replace-custom-sakai-api",
+  "previous_record": "continuation-2026-10-20-setup.json",
+  "previous_record_sha256": "8b22da938a9d890371393685eab86b344d57ce3fcc8b49b4012e3c0242fa945d",
+  "scope": "Source-backed T09/T18 dependency review only; no public default, native source, schema, feature gate, runtime or academic operation changed.",
+  "private_checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Grading-Context-2026-10-20",
+  "private_hashes": {
+    "manifest.json": "ad06db936e837daf1e92f52bb5bce1f243d0a91087950cd59c32f34c1859c890",
+    "source-before.tar.gz": "909e768545627609f4b1478920a64a12d5301c9b688b5b6f84a2b95956239c47"
+  },
+  "evidence": "docs/mcp/existing-api-migration/grading-context-payload-review-2026-10-20.md",
+  "original_manifests": "baseline.json, implementation-start.json, git-organization.json and all prior continuation records/private archives remain unchanged.",
+  "files": [
+    {
+      "path": "docs/mcp/existing-api-migration/README.md",
+      "before_sha256": "694c9ee965f31f151961f0bea42f2e4ea1c1d3b3fa0ad03996aba8281d6b65a8",
+      "after_sha256": "a7fa1da42586bf804e438b0cd550f4848450fe7adba0f6b1dd3c45dd0073a49d",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/browser-flows.json",
+      "before_sha256": "7f114887e1f76f6a5560e4dade3d0b5eab242f4680f26bd77f7edb7eb56d96bf",
+      "after_sha256": "3a748a5f7f51385573934bead34133473e0c2f32fca028cb11d50832b5fdf857",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/coverage.json",
+      "before_sha256": "9a09ab829611164ad725c32f8aa9fe3b0c2377b4370a409719f32a57ffa9d331",
+      "after_sha256": "eef0ddabd3c9d67c78791e987413a7c4a5170182ac4945024c7b0b69a9da622e",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/implementation-plan.md",
+      "before_sha256": "3277f84b97bce563ddc814a647303049827e44ed1c47f0b31285d27ac8499127",
+      "after_sha256": "914aa4fe4a40b092b2514288db5cb6c52e74a3745ab1ed182a07fafa447664ac",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/progress.json",
+      "before_sha256": "d9cdecf6c8fc83b90b4e5dfc530f48e87a93c1f0f9aad7c85d783a3c28c2fa39",
+      "after_sha256": "e204e7ed4e9190496f9e98306cc31e448df91d67431b3e3c7e28f30a28c342de",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/tool-limitations.md",
+      "before_sha256": "c56f57bdf12b693c954da34b0bd4f14d6aa0627ce100d818f5dd618416529a17",
+      "after_sha256": "f8c85157d34908cadc4a95e5cef16a72b416a6851e8ce3204fb6f148616f2829",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/grading-context-payload-review-2026-10-20.md",
+      "before_sha256": null,
+      "after_sha256": "6598604c6e14e8bd23d8c31d866bf6a43f068d66c3e648c115e8c8586491bf45",
+      "after_mode": "0o644"
+    }
+  ]
+}

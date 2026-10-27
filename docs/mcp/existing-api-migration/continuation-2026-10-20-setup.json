@@ -1,0 +1,194 @@
+{
+  "format_version": 2,
+  "date": "2026-10-20",
+  "head": "0f9f44a76f34777b52f56ae03634ffd3a0b3bc6c",
+  "branch": "codex/replace-custom-sakai-api",
+  "previous_record": "continuation-2026-10-20.json",
+  "previous_record_sha256": "bc05c70ee28bdc17094e849b8ac4909e311522d1c5b52535ca95d1c409f72870",
+  "scope": "Actual-default practical T06/T07/T08 existing-HTTP setup cutover with explicit partial state, focused unused native retirement and no runtime changes.",
+  "private_checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Setup-2026-10-20",
+  "private_hashes": {
+    "manifest.json": "7ede24f82f4a482357775013f17f1d3518867752372c5a24a80c13aad92208d8",
+    "source-before.tar.gz": "ae379d852347ea7b554311faf47b05fc7fd27ed1e7ce939d673347d9a49e7ad2",
+    "retired-generated.json": "0032bd02c0a91571bcf9de07f128a9e8ecf0de8b4e77eb464379faaec6f85753",
+    "additional-before.json": "92f9db398375b77eefd22b18e9947b16f521f1355baca2d99ecd950f5fc66e1a"
+  },
+  "evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md",
+  "original_manifests": "baseline.json, implementation-start.json, git-organization.json, both earlier continuations and their private archives remain unchanged.",
+  "files": [
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md",
+      "before_sha256": "6c2f5db940561fc93001bcb724faed6fd4ccf40afd1798a0943b01d4ec883577",
+      "after_sha256": "246a07d96d3e417d46099a6ab6831e72c04507f844a44827425b4d0c4f97d480",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentContextController.java",
+      "before_sha256": "57aba4ce9c15149d8ecc80b46c84c34f31123734c884ea507709da675a539760",
+      "after_sha256": null,
+      "after_mode": null
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentService.java",
+      "before_sha256": "f0eff2e56c36216dcd090c724b96f8ac75e4badb94dddcf9a2336899a183c2bb",
+      "after_sha256": "f426f7ae936115cfb1a6ee475c81ba2fd2a08bacfe8d089ab764901b4d542b75",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupService.java",
+      "before_sha256": "b9cc6363c484601889a5b6ae3f6ceaa685e3273f98fd14c4f3618f8481b5dbd7",
+      "after_sha256": null,
+      "after_mode": null
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteController.java",
+      "before_sha256": "30603c6a3c75d05a56d5a7bdbcab2d2ef777c38f62fb822849f6d881dbb3f532",
+      "after_sha256": null,
+      "after_mode": null
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupServiceTest.java",
+      "before_sha256": "b36c5ffad4e341d855e1fb7b3f17f084794867176442c17a77025431db56bdce",
+      "after_sha256": null,
+      "after_mode": null
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteControllerTest.java",
+      "before_sha256": "2e99e50446c08443e25a4458f1c55267b478e9229733fd66a51c19863b7dc168",
+      "after_sha256": null,
+      "after_mode": null
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingWiringTest.java",
+      "before_sha256": "ed8bee14956232a99881b9e9434aebf39bc9d7ba5f84a8ba60666be72301a510",
+      "after_sha256": "dcef7ee57eebea754ab6138ca79bc1ec49df9ccffce92cb14c8d875839a54d1c",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/SAKAI_INTEGRATION_GUIDE.md",
+      "before_sha256": "df584b99c36bc2b2826a5aadbae869a7ac6e7b1fe92d5a8bc9cc11346cb32229",
+      "after_sha256": "e46a2e0730d0799ff9844b009d037413e386860c5c861c8bb398ed92c8a84343",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/README.md",
+      "before_sha256": "893829b787dcfe9479b62e23e309d6219272e4cf5dc9fd9d38515c22c07260d6",
+      "after_sha256": "694c9ee965f31f151961f0bea42f2e4ea1c1d3b3fa0ad03996aba8281d6b65a8",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/browser-flows.json",
+      "before_sha256": "ae1d843ef6d226089c5b11cd0e0165bc09b084ed7ede3467f7bfc9062e9b11f3",
+      "after_sha256": "7f114887e1f76f6a5560e4dade3d0b5eab242f4680f26bd77f7edb7eb56d96bf",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/check_scope.py",
+      "before_sha256": "d77ea9ef3e44714310bd208210e3182ddae6d390653ae99b630a76e1fc804812",
+      "after_sha256": "cc73f14bbcdef566eecd929539b4a4c1da76392f24c2f1b282619ec7352bde11",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/coverage.json",
+      "before_sha256": "54be6103d2bebc357a2179aa9ff8e5f1bd5e0bafab2b227d2dfa50cad7d18c9c",
+      "after_sha256": "9a09ab829611164ad725c32f8aa9fe3b0c2377b4370a409719f32a57ffa9d331",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/implementation-plan.md",
+      "before_sha256": "94c41a881788aa8aedea8d1d97fc795c240f73313b907cf22f24fb950b8d8267",
+      "after_sha256": "3277f84b97bce563ddc814a647303049827e44ed1c47f0b31285d27ac8499127",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/native-change-ledger.json",
+      "before_sha256": "2c71b80a63f715f20a378264b8a5694f1e3a88c7d81231e4fe45df98f55e5a19",
+      "after_sha256": "c9de2acd21726ba4f95209609c027ae6430d2f1ec7c98a33469fe2a5fb85245d",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/progress.json",
+      "before_sha256": "e1cc6a14010c0e4b22c0aacdaf2200d6d1eba0be4b26a1687f59429a028ed318",
+      "after_sha256": "d9cdecf6c8fc83b90b4e5dfc530f48e87a93c1f0f9aad7c85d783a3c28c2fa39",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md",
+      "before_sha256": null,
+      "after_sha256": "4dc622e5f104d92105303ec64eefebf1bb185343a27980d7da855566b009c2af",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/tool-limitations.md",
+      "before_sha256": "64730eb739cb54e090e7ad1582f065011f19e720a74cbb43468d57f4b5b29897",
+      "after_sha256": "c56f57bdf12b693c954da34b0bd4f14d6aa0627ce100d818f5dd618416529a17",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/README.md",
+      "before_sha256": "d454598141c6ae1e46359f59d12fe9dea5027ad224ff2ec5dc443bf907c7df1d",
+      "after_sha256": "02f0171142f0972737f870bf785d39f354f7d0f484f506d98fbba6266eaa96d8",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/assessment_metadata.py",
+      "before_sha256": null,
+      "after_sha256": "a38479d089c5a1f59d877729ce25b7b926a107f144cd3d5027db0b406d7975ec",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/setup_forms.py",
+      "before_sha256": null,
+      "after_sha256": "c3076712ceb3cca9c0baa6c4f83b6639b3f1118bb445b235615acb9f10b7fc18",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/assignments.py",
+      "before_sha256": "e4483374a1817bc8503f10fc74f6697b71e1fa0a3201f7db245fcbbd7ac99da0",
+      "after_sha256": "4f0db4fe9a6fbb3ce9870396cfdd07209997fc7cd74952f6857c77e5c9869e65",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/client.py",
+      "before_sha256": "3d3a29eac85c63a500cb5c58f9778a65ad08011295ab2829aca04305c1af5785",
+      "after_sha256": "8e7484697ca402bf1a80d2b2dad38c4b2da438f9519bba6cd536d05bb6a8ad38",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/operations.py",
+      "before_sha256": "9ebcdce54fb9cdca4d15ba948bf75dfd5e97c6fb8b6ac83395141290d6352457",
+      "after_sha256": "bb8784cb13a5ca1710eb9892bdc60b823e2954430268cb4a04a194043d638d79",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/assignment_setup.py",
+      "before_sha256": null,
+      "after_sha256": "b3908af3558e82d2433976ce8d2d4e08d2cb10d264a5d3851adf6b3d90340bfb",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/setup_http.py",
+      "before_sha256": null,
+      "after_sha256": "ab834336fce4706502c01995c8716aad475a9e04328096d17531102ea3c49b15",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/integration/test_pipeline.py",
+      "before_sha256": "38fb09e42b05d17800b7de5fd41bfbbdc91e73c4ca8e519ef35c62b554272767",
+      "after_sha256": "2bacb0ade2fa64918ebcff0bfd6efcd59787aa812d8f6359cb348bd508c36736",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/test_assessment_calendar.py",
+      "before_sha256": "9ae6bb85cbc0f35d77d65fff34a2602070e6dc72e26e39a44c3b43286da45836",
+      "after_sha256": "97a221d6e416a697cadd3f65d9bb53e9a98d7a46f8e3434abf22b385c087f2c8",
+      "after_mode": "0o644"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_assignment_setup.py",
+      "before_sha256": "4afa9b920eb6a9c374f5ab6d36793edde47325cf09bd57d4f21c5f34a5172e97",
+      "after_sha256": "5c03bee855c4585859d5f8d40ee5b6d948c3a4afc5a253f2b2ae2fd9d423102e",
+      "after_mode": "0o644"
+    }
+  ]
+}

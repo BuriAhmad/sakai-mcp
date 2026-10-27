@@ -5,9 +5,9 @@ This package exposes a delegated Sakai MCP interface using the pinned MCP Python
 The [existing-HTTP migration](../../docs/mcp/existing-api-migration/implementation-plan.md)
 is in progress. `sakai/operations.py`, `existing_transport.py`, `webapi.py`,
 `entitybroker.py`, `cxf.py` and `contracts/existing_api.py` contain
-source-derived clients/contracts. Eight tools now use existing HTTP by default;
+source-derived clients/contracts. Twenty defaults now use existing HTTP/external records;
 [five-tool cutover evidence](../../docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md)
-records current role, completeness and precision limits. Fourteen tools still need
+records role, completeness and precision limits. Two tools still need
 replacement. See `tests/fixtures/existing_http/README.md`
 for unexercised fixture provenance and specific scope/serializer gaps. Auth remains
 Entra/OBO; browser conversation integration is a separate local proof gate.
@@ -208,3 +208,64 @@ automatic resend. The public tool has no idempotency key: a new invocation is a 
 intent and must not be used to retry uncertainty. Readback establishes an observed
 matching message, not a native causal receipt. Existing optional notification
 priority is preserved (`notify=o`); delivery is not verified locally.
+
+## External captures and selected grades
+
+The [current capture/grade evidence](../../docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md)
+records five further default replacements. `workflows/captures.py` owns conditional
+external capture/manifest/proposal reads; `workflows/selected_grades.py` joins exact
+native release indicators with selected Assignment observations. Captures require
+the durable store configuration described above and currently contain inline bytes
+only, always partial/incomplete. Pending captures never resume on reads/repeated
+requests. Current attachment resources are explicitly unsupported. Proposal reads
+require frozen external records; no live legacy owner import exists. MCQ evaluation
+still refuses incomplete evidence. Selected grades now follow rendered native
+pagination and independently read Gradebook point display scores for instructors
+with full grading/item-edit authority, using exact external reference/app and UID
+correlation. Comment bytes, raw precision and atomicity remain unavailable; other
+Assignment graders retain explicit unavailable projection. See
+[20 October readback evidence](../../docs/mcp/existing-api-migration/readback-2026-10-20.md)
+and current limitations. No schema, storage provisioning, feature
+activation or live acceptance follows from local implementation.
+
+## Existing-HTTP assignment setup
+
+The three setup tool defaults now use `workflows/assignment_setup.py` and the pure
+`contracts/setup_forms.py` parser through the original Assignment facade. The setup
+gate stays disabled by default. The useful subset supports individual points
+assignments, draft/posted create and observed-revision draft publication, with a
+configured durable journal and one native form POST. Current attachments/calendar
+coordination and nondefault Gradebook release/count policies remain unsupported.
+Context and link checks use the existing metadata-only item-data endpoint, with no
+student grade/submission reads. Context returns labelled partial metadata; successful saves preserve the ID and
+observation revision with explicit partial verification under the frozen full
+Assignment contract. Do not retry create/publish because a result is partial.
+See [20 October setup evidence](../../docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md)
+and the limitations reference for exact scope, locale/time precision, revision,
+normalization, category, concurrency and acceptance restrictions. No native business
+endpoint fallback, runtime activation or live acceptance follows from these tests.
+
+### External grading operation receipts
+
+`workflows/grading_operations.py` owns the T17 default and durable commit
+journaling around the existing HTTP T14/T15 defaults. Durable Prepared/Sending precedes one
+native commit; repeated IDs only read the stored outcome. Receipt reads reauthorize
+current Assignment targets through existing HTTP, preserve historical/unknown
+state and withhold historical Gradebook scores. They do not replay or reconcile
+unknown authorship. Native legacy records are preserved but need a reviewed import.
+See [operation evidence](../../docs/mcp/existing-api-migration/operation-read-2026-10-20.md).
+
+### Existing HTTP grading writes and preparation
+
+`workflows/grading_writes.py` coordinates native form/row observations, advisory
+validation, one Direct grading POST and partial readback;
+`contracts/grading_preservation.py` checks exactly preservable side fields.
+T14/T15/T18 now use this actual default with no native business fallback. The
+subset is one submitted individual integer-score row, English locale, editable
+instructor scope, no Gradebook integration and plain ASCII side fields.
+Use T19/T16 metadata and T11/T16 row observations; the retained T09 native context
+revision is incompatible and its write capability hints are false. Validation
+makes no academic POST. Commit requires durable external records; success remains
+partial, unknown never replays, and no native CAS/atomicity/causation is claimed.
+See [current evidence](../../docs/mcp/existing-api-migration/grading-write-2026-10-20.md)
+and the limitations reference before adopting this subset. T09 and T20 remain.

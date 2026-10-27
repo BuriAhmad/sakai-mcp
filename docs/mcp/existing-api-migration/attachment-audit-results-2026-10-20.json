@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-20",
+  "scope": "Local proof-only audit; user explicitly requested no fixes to failed proofs/tests. No live/deployed/native-role acceptance.",
+  "implementation_modified": false,
+  "failures_fixed": false,
+  "delegated_content_adopted": false,
+  "cases": [
+    {
+      "id": "native-servlet-delivery",
+      "status": "pass",
+      "test": "AccessServletProof.actualServletDispatchesToActualContentHandler",
+      "scope": "Actual AccessServlet.dispatch to actual BaseContentService handler; synthetic preselected session/resource/ACL/storage collaborators, no real RequestFilter or role grants."
+    },
+    {
+      "id": "native-servlet-denial",
+      "status": "pass",
+      "test": "AccessServletProof.actualServletMapsNativeContentDenialToForbidden",
+      "scope": "Synthetic native read denial mapped to HTTP403 by actual servlet; no bytes."
+    },
+    {
+      "id": "delegated-content-chain",
+      "status": "fail",
+      "test": "AttachmentReachProof.delegatedContentMustReachNativeServletChain",
+      "expected": "HTTP200, native chain reached",
+      "actual": "HTTP403; native chain reached=false",
+      "scope": "Configured synthetic verifier/account fixture with actual credential guard; RequestFilter, binder and servlet/content target prepared but never reached."
+    },
+    {
+      "id": "positive-python-readiness",
+      "status": "error",
+      "command": "cd services/mcp && uv run --no-sync pytest ../../docs/mcp/existing-api-migration/attachment_readiness_proof.py -q --junitxml=/tmp/sakai-attachment-audit-python-positive.xml",
+      "actual": "Collection failed: ModuleNotFoundError: No module named 'tests'",
+      "tests_executed": 0,
+      "scope": "Harness import failure; no result for its registration/content/public-resource tests. Not repaired or rerun with adjusted environment."
+    },
+    {
+      "id": "access-filter-registration",
+      "status": "missing-source-prerequisite",
+      "actual": [
+        "oauth.pre",
+        "sakai.request",
+        "oauth.post"
+      ],
+      "scope": "Read-only XML inspection; mcp.credentials/mcp.session absent. This is not a successfully executed Python probe."
+    },
+    {
+      "id": "effective-native-role-matrix",
+      "status": "blocked",
+      "reason": "Delegated AccessServlet chain not reached; actual instructor/student/outsider/revoked/group-TA permissions not established."
+    },
+    {
+      "id": "source-binding-response-validation",
+      "status": "blocked",
+      "reason": "Content/default attachment routes remain unaccepted. Arbitrary-reference/cross-course/source-change, MIME/truncation/redirect/sendfile handling not proved through delegated public download."
+    },
+    {
+      "id": "access-concurrent-identity-cleanup",
+      "status": "blocked",
+      "reason": "Target content context rejected before session binding; isolation/cleanup under that context not proved."
+    },
+    {
+      "id": "live-configuration-acceptance",
+      "status": "not-run",
+      "reason": "No deployment, runtime activation, live tokens, live resource reads or academic operation in this audit."
+    }
+  ],
+  "probe_sha256": {
+    "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/access/tool/AccessServletProof.java": "1f733e69866ee74eaa3d1c90befd54c380101a49291c791bb821668ae88b9b15",
+    "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/AttachmentReachProof.java": "b52233cab673028c4d1bb4b986ea151a514b4c47788e088c398ed5bb085cd0f6",
+    "docs/mcp/existing-api-migration/attachment_readiness_proof.py": "c3e4c6439f92185cb1188b53c5f94d9b194881b2b05af6c5eabc6b9f1a5b4210"
+  }
+}

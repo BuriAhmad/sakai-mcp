@@ -166,7 +166,7 @@ ITEM_DATA = Operation(
     "getSiteCategories",
     "A2",
     effect=Effect.MAY_INITIALIZE,
-    # Only authorized grader metadata correlation; may initialize native backing state.
+    # Authorized grader/editor metadata reads; may initialize native backing state.
 )
 ANNOUNCEMENTS = Operation(
     "announcements",
@@ -224,7 +224,7 @@ SET_GRADE = Operation(
     "setGrade",
     "A7",
     effect=Effect.WRITE,
-    blocked_reason="D3/D4: official writes require accepted guarantees, scope and preserved side fields",
+    # Adopted only by the supported single-row grading workflow after preflight.
 )
 CONTENT = Operation(
     "content",

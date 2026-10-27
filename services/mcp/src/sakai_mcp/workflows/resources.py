@@ -118,7 +118,15 @@ async def read_resource(
         if sha.lower() != revision.lower():
             raise SakaiError(ErrorCode.CONFLICT)
         return resource_data(data, mime)
-    if parts and parts[0] == "exports" and revision is None:
+    if revision is None and (
+        (len(parts) == 3 and parts[0] == "exports" and parts[2] == "manifest")
+        or (
+            len(parts) == 6
+            and parts[0] == "exports"
+            and parts[2] == "submissions"
+            and parts[4] == "files"
+        )
+    ):
         page = (
             await export_manifest(client, principal, course, assignment, parts[1])
             if len(parts) in {3, 6}
@@ -161,6 +169,7 @@ async def read_resource(
         and parts[0] == "proposals"
         and parts[2] == "reports"
         and revision is None
+        and parts[3] in {"proposals", "marks", "review-required"}
     ):
         record = await client.grading.get_proposal(
             principal, course, assignment, parts[1]

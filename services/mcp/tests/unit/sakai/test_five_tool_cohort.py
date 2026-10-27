@@ -167,8 +167,14 @@ async def test_observed_submission_paging_conflicts_on_change_and_missing_row_is
             ),
         )
     wire.assignment["submissions"] = []
-    empty = await client.grading.list_assignment_submissions(principal(), request)
-    assert not empty.items and empty.completeness.complete is False
+    # Native no-submission rows have no stable identity marker. Without positive
+    # individual-mode evidence, do not hydrate and manufacture an empty result.
+    before = sum(r.url.path.startswith("/direct/assignment/") for r in wire.calls)
+    with pytest.raises(SakaiError, match="UNSUPPORTED_CAPABILITY"):
+        await client.grading.list_assignment_submissions(principal(), request)
+    assert (
+        sum(r.url.path.startswith("/direct/assignment/") for r in wire.calls) == before
+    )
 
 
 @pytest.mark.asyncio

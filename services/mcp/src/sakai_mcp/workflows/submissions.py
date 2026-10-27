@@ -40,6 +40,19 @@ class SubmissionReads:
     async def source(
         self, principal: AccessToken, site: str, assignment: str
     ) -> tuple[ActorIdentity, AssignmentEvidence, list[WireSubmission]]:
+        actor, wire, rows, _ = await self.observed_source(principal, site, assignment)
+        return actor, wire, rows
+
+    async def observed_source(
+        self,
+        principal: AccessToken,
+        site: str,
+        assignment: str,
+        *,
+        all_pages: bool = False,
+    ) -> tuple[
+        ActorIdentity, AssignmentEvidence, list[WireSubmission], tuple[NativePage, ...]
+    ]:
         actor = await self.access.actor(principal)
         access = await self.access.course(principal, actor, site)
         if "asn.grade" not in await self.access.functions(principal, access):
@@ -47,7 +60,9 @@ class SubmissionReads:
         # Native list gives positive current identity/individual-mode evidence
         # before requesting hydrated data. Never hydrate a known anonymous/group
         # assignment and claim that discarding identifiers repairs its privacy.
-        await self._individual_view(principal, actor, site, assignment)
+        grading_page = await self._individual_pages(
+            principal, actor, site, assignment, all_pages=all_pages
+        )
         observed = await self.existing.observe_json(
             ASSIGNMENT_ITEM, principal, parameters={"assignment": assignment}
         )
@@ -55,7 +70,7 @@ class SubmissionReads:
         wire = parse(AssignmentEvidence, observed.value)
         if wire.id != assignment or wire.context != site:
             raise SakaiError(ErrorCode.CONFLICT)
-        return actor, wire, submitted_rows(wire)
+        return actor, wire, submitted_rows(wire), grading_page
 
     def _urls(self, page: NativePage, placement: str, action: str) -> list[str]:
         result: set[str] = set()
@@ -76,9 +91,15 @@ class SubmissionReads:
                     )
         return sorted(result)
 
-    async def _individual_view(
-        self, principal: AccessToken, actor: ActorIdentity, site: str, assignment: str
-    ) -> None:
+    async def _individual_pages(
+        self,
+        principal: AccessToken,
+        actor: ActorIdentity,
+        site: str,
+        assignment: str,
+        *,
+        all_pages: bool = False,
+    ) -> tuple[NativePage, ...]:
         bound = await self.discovery.resolve(principal, site, "sakai.assignment.grades")
         if bound.access.actor != actor:
             raise SakaiError(ErrorCode.UNAUTHENTICATED)
@@ -106,13 +127,42 @@ class SubmissionReads:
                     raise SakaiError(ErrorCode.CONFLICT)
                 if target:
                     grading = await flow.navigate(target[0])
-                    table = one(html(grading.data).find(id="submissionList"))
-                    photos = table.find(tag="sakai-user-photo")
-                    if not photos or any(
-                        p.attrs.get("user-id") in {None, "", "blank"} for p in photos
-                    ):
-                        raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
-                    return
+                    pages = []
+                    grading_seen: set[str] = set()
+                    positive = False
+                    for _ in range(20):
+                        signature = digest(grading.data)
+                        if signature in grading_seen:
+                            raise SakaiError(ErrorCode.CONFLICT)
+                        grading_seen.add(signature)
+                        table = one(html(grading.data).find(id="submissionList"))
+                        photos = table.find(tag="sakai-user-photo")
+                        if any(
+                            p.attrs.get("user-id") in {None, "", "blank"}
+                            for p in photos
+                        ):
+                            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+                        positive = positive or bool(photos)
+                        pages.append(grading)
+                        if not all_pages:
+                            if not positive:
+                                raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+                            return tuple(pages)
+                        controls = [
+                            n
+                            for n in html(grading.data).find(tag="input")
+                            if n.attrs.get("name") == "eventSubmit_doList_next"
+                        ]
+                        control = one(controls)
+                        if "disabled" in control.attrs:
+                            if not positive:
+                                raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+                            return tuple(pages)
+                        urls = self._urls(grading, placement, "eventSubmit_doList_next")
+                        if len(urls) != 1:
+                            raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+                        grading = await flow.navigate(urls[0])
+                    raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
                 controls = [
                     n
                     for n in html(page.data).find(tag="input")

@@ -294,8 +294,10 @@
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md",
       "group": "guidance",
       "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "d2da9d0ddcc5a7f2d3968f4b63b8efcb52e9e850a97923ffd2cf69e9231382b7"
+      "state": "Current transitional guide: three native business routes; external operation read and preserved native write/store dependencies",
+      "sha256": "df4d1211c6bcdaad5aeed6b2ade7d660fec9b25c5d60864dae351064c1784549",
+      "previous_sha256": "6c2f5db940561fc93001bcb724faed6fd4ccf40afd1798a0943b01d4ec883577",
+      "local_evidence": "docs/mcp/existing-api-migration/operation-read-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteController.java",
@@ -308,30 +310,35 @@
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentContextController.java",
       "group": "business-customization",
-      "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "57aba4ce9c15149d8ecc80b46c84c34f31123734c884ea507709da675a539760"
+      "present_in_working_tree": false,
+      "state": "retired-local after all current setup callers replaced; source/tests preserved privately and in Git; older clients incompatible",
+      "sha256": "57aba4ce9c15149d8ecc80b46c84c34f31123734c884ea507709da675a539760",
+      "local_evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentService.java",
       "group": "business-customization",
       "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "f0eff2e56c36216dcd090c724b96f8ac75e4badb94dddcf9a2336899a183c2bb"
+      "state": "retained-revision-only for actual grading query/evidence/mutation callers; unused setup/context/calendar/Gradebook coordination removed locally",
+      "sha256": "f0eff2e56c36216dcd090c724b96f8ac75e4badb94dddcf9a2336899a183c2bb",
+      "current_sha256": "f426f7ae936115cfb1a6ee475c81ba2fd2a08bacfe8d089ab764901b4d542b75",
+      "local_evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupService.java",
       "group": "business-customization",
-      "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "b9cc6363c484601889a5b6ae3f6ceaa685e3273f98fd14c4f3618f8481b5dbd7"
+      "present_in_working_tree": false,
+      "state": "retired-local after all current setup callers replaced; source/tests preserved privately and in Git; older clients incompatible",
+      "sha256": "b9cc6363c484601889a5b6ae3f6ceaa685e3273f98fd14c4f3618f8481b5dbd7",
+      "local_evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteController.java",
       "group": "business-customization",
-      "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "30603c6a3c75d05a56d5a7bdbcab2d2ef777c38f62fb822849f6d881dbb3f532"
+      "present_in_working_tree": false,
+      "state": "retired-local after all current setup callers replaced; source/tests preserved privately and in Git; older clients incompatible",
+      "sha256": "30603c6a3c75d05a56d5a7bdbcab2d2ef777c38f62fb822849f6d881dbb3f532",
+      "local_evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/contracts/McpContractSupport.java",
@@ -368,23 +375,28 @@
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpAssignmentGradingController.java",
       "group": "business-customization",
       "present_in_working_tree": true,
-      "state": "focused retirement after five-tool default facade cutover; shared live-dependent routes retained where present; no deployment",
-      "sha256": "fd23aa1168f7c1453924c96203ce3b32a4c30479b35e0fe1423df909cce90fa9",
-      "local_evidence": "docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md"
+      "state": "Local grading write cutover; auth-only exact form POST credential reach or focused native mutation retirement/test adjustment",
+      "sha256": "7ce45d9152bbb43b881a45f96345e42826c0c3cff926e541433434693eadf630",
+      "local_evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
+      "previous_sha256": "edc5fe7394a86b98b4d1af516ab18a40b341e6349988c0854b8dbec8d6402b19"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradeMutationService.java",
       "group": "business-customization",
-      "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "10ff7d0bc0411ede007e5cb7489c21198f18816b48f04b370cdb4cd15840c259"
+      "present_in_working_tree": false,
+      "state": "retired-local after T14/T15 actual HTTP default cutover; private source/generated copies retained",
+      "sha256": "c0f268bb38f09fd74484cd5cf2d72457cf24057c3ae683f2211e3e06d7b319fb",
+      "previous_sha256": "10ff7d0bc0411ede007e5cb7489c21198f18816b48f04b370cdb4cd15840c259",
+      "local_evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradebookProjection.java",
       "group": "business-customization",
       "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "e1f69c3f004537c227b5934373b4ef5ed3609df9514d1faeea2dfb75f7c922f5"
+      "state": "Focused unused mutation helper/constructor retirement; shared context behavior retained",
+      "sha256": "9cde4426f79354f9be754adc4a7bda6bb5aa4366e33a7abb005c61bba700e61c",
+      "previous_sha256": "e1f69c3f004537c227b5934373b4ef5ed3609df9514d1faeea2dfb75f7c922f5",
+      "local_evidence": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingAssignmentsController.java",
@@ -405,22 +417,26 @@
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingEvidence.java",
       "group": "business-customization",
       "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "8cb41f5663c452764188cc9c1b32222f2af5b90bacfc4d1028fc43e021eb5726"
+      "state": "Focused unused mutation helper/constructor retirement; shared context behavior retained",
+      "sha256": "9ccc23b8db237b3e82ba6c51c514c11c0ee7c3becd28522567d453a13823ad1d",
+      "previous_sha256": "8cb41f5663c452764188cc9c1b32222f2af5b90bacfc4d1028fc43e021eb5726",
+      "local_evidence": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingExportService.java",
       "group": "business-customization",
-      "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "46d5c5dbfdd16bec97fcdf8f75b31608c1819380ca04fdedbbe274eee0139ed7"
+      "present_in_working_tree": false,
+      "state": "retired-local after last current caller replaced; private source checkpoint and runtime records preserved; older clients incompatible",
+      "sha256": "46d5c5dbfdd16bec97fcdf8f75b31608c1819380ca04fdedbbe274eee0139ed7",
+      "local_evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingFileService.java",
       "group": "business-customization",
-      "present_in_working_tree": true,
-      "state": "retired sole list/detail/submission-file methods; retained shared context/roster/grade/file/export helpers; no storage deletion",
-      "sha256": "ab980630714563c03d0ecd417bc57164460f12aa56e1d61fa86812f8f74a9559"
+      "present_in_working_tree": false,
+      "state": "retired-local after last current caller replaced; private source checkpoint and runtime records preserved; older clients incompatible",
+      "sha256": "ab980630714563c03d0ecd417bc57164460f12aa56e1d61fa86812f8f74a9559",
+      "local_evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingJson.java",
@@ -432,17 +448,20 @@
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingProposalService.java",
       "group": "business-customization",
-      "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "e2ab328a96a9e4c88e8908385a49084422d29db628dcdca8c278fbb097c8b59a"
+      "present_in_working_tree": false,
+      "state": "retired-local after last current caller replaced; private source checkpoint and runtime records preserved; older clients incompatible",
+      "sha256": "e2ab328a96a9e4c88e8908385a49084422d29db628dcdca8c278fbb097c8b59a",
+      "local_evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingQueryService.java",
       "group": "business-customization",
       "present_in_working_tree": true,
-      "state": "retired sole list/detail/submission-file methods; retained shared context/roster/grade/file/export helpers; no storage deletion",
-      "sha256": "7117ab89bf7f0f0fadff1bb335dc8dd53776e6c7c7b41532ef12044328a18d4c",
-      "local_change": "Removed only listAssignments; other query callers and shared collaborators retained."
+      "state": "focused file/export/proposal/selected-grade retirement; shared context/mutation/auth/evidence/projection/store consumers retained",
+      "sha256": "d816eb31d841b2284d7ad8ef91c6408b7c25474e7b609ae8917d0f29a2daf032",
+      "local_change": "Removed only listAssignments; other query callers and shared collaborators retained.",
+      "previous_sha256": "7117ab89bf7f0f0fadff1bb335dc8dd53776e6c7c7b41532ef12044328a18d4c",
+      "local_evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md"
     },
     {
       "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingStore.java",
@@ -475,16 +494,18 @@
     {
       "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupServiceTest.java",
       "group": "business-customization",
-      "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "b36c5ffad4e341d855e1fb7b3f17f084794867176442c17a77025431db56bdce"
+      "present_in_working_tree": false,
+      "state": "retired-local after all current setup callers replaced; source/tests preserved privately and in Git; older clients incompatible",
+      "sha256": "b36c5ffad4e341d855e1fb7b3f17f084794867176442c17a77025431db56bdce",
+      "local_evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteControllerTest.java",
       "group": "business-customization",
-      "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "2e99e50446c08443e25a4458f1c55267b478e9229733fd66a51c19863b7dc168"
+      "present_in_working_tree": false,
+      "state": "retired-local after all current setup callers replaced; source/tests preserved privately and in Git; older clients incompatible",
+      "sha256": "2e99e50446c08443e25a4458f1c55267b478e9229733fd66a51c19863b7dc168",
+      "local_evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpCourseControllerTest.java",
@@ -511,15 +532,19 @@
       "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingServicesTest.java",
       "group": "business-customization",
       "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "baf83811222852c7af415ac7ade810a0c0b8dfcea14cee81af5e4cf46c61e786"
+      "state": "Focused unused mutation helper/constructor retirement; shared context behavior retained",
+      "sha256": "6ba7dc1be77c67e00acfa05ee48923681eceeb434911613e2ae103887ec3fb3a",
+      "previous_sha256": "f39ecb87516a59102c58d06f63b07024232e189e389e8b3645d3b5afe334f625",
+      "local_evidence": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingWiringTest.java",
       "group": "business-customization",
       "present_in_working_tree": true,
-      "state": "preexisting; untouched by Phase 0",
-      "sha256": "d60e64c97c664baef8eb8259bec4988db1e794bdd6ad89e797ab7cc2f34bc8af"
+      "state": "Focused unused mutation helper/constructor retirement; shared context behavior retained",
+      "sha256": "05c4b44bd4501affe49a5cc3ff56c0c97764a89a68980eeca39b391f50dd3591",
+      "previous_sha256": "1436eba8bbd980c552e1d284cb25e71086aa46a38568c82a848acaf570edd00d",
+      "local_evidence": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
     },
     {
       "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/security/McpBearerFilterTest.java",
@@ -551,7 +576,11 @@
       "path": "apps/sakai/mcp-auth/pom.xml",
       "group": "auth-integration",
       "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "sha256": "f5944777a77a6d2bb752b63ff935995b96715b45eea38909c675c905480bd115",
+      "state": "Test-only audit harness/dependencies; two servlet component passes, positive delegated failure preserved; no production repair",
+      "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
+      "previous_sha256": "d1b20da6079ac44255c017757dac8e1f6f9e861ef8ee983ddee435c9bf48084e"
     },
     {
       "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedConversations.java",
@@ -581,7 +610,10 @@
       "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedRoutes.java",
       "group": "auth-integration",
       "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "sha256": "ff9206476d00aa821b28dd9bc15bec2ea78d776f918937a66eb47781273b9e6c",
+      "local_evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
+      "state": "Local grading write cutover; auth-only exact form POST credential reach or focused native mutation retirement/test adjustment"
     },
     {
       "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedSessionFilter.java",
@@ -593,7 +625,11 @@
       "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedChainTest.java",
       "group": "auth-integration",
       "present_in_working_tree": true,
-      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement"
+      "implementation_evidence": "local-integration-2026-10-18.md; additive auth-only module/registration/tests; no business retirement",
+      "sha256": "3d44daa47d7e1eb1f4f6c3c27a6ef4b3e018dcb25586d91b4e47f406f8d0072a",
+      "local_evidence": "docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md",
+      "state": "Local native content characterization/test dependencies only; production auth reach unchanged; content route remains unaccepted",
+      "previous_sha256": "6a4932531ca8b8e15c3cf0511525cade0b6544cd8101f57b3f67c717177a8712"
     },
     {
       "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedJwtVerifierTest.java",
@@ -708,6 +744,31 @@
       "group": "auth-integration",
       "present_in_working_tree": true,
       "implementation_evidence": "read-discovery-2026-10-18.md; auth protection or existing-provider characterization only"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/content/impl/ExistingContentAccessTest.java",
+      "group": "existing-handler-tests",
+      "present_in_working_tree": true,
+      "sha256": "11947694d7cdb8cf7c8267fc3eb8d40eab9705f26ee87eda85b76a882cd92037",
+      "state": "Test-only audit harness/dependencies; two servlet component passes, positive delegated failure preserved; no production repair",
+      "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
+      "previous_sha256": "5f675fb648d8630714290d90ae79514e548334c7f88cdd92ceb8a48758f3fd20"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/access/tool/AccessServletProof.java",
+      "group": "existing-handler-tests",
+      "present_in_working_tree": true,
+      "sha256": "1f733e69866ee74eaa3d1c90befd54c380101a49291c791bb821668ae88b9b15",
+      "state": "Test-only audit harness/dependencies; two servlet component passes, positive delegated failure preserved; no production repair",
+      "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/AttachmentReachProof.java",
+      "group": "existing-handler-tests",
+      "present_in_working_tree": true,
+      "sha256": "b52233cab673028c4d1bb4b986ea151a514b4c47788e088c398ed5bb085cd0f6",
+      "state": "Test-only audit harness/dependencies; two servlet component passes, positive delegated failure preserved; no production repair",
+      "local_evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md"
     }
   ],
   "storage_configuration_paths": [
@@ -716,5 +777,28 @@
     "deployment/sakai-grading-cleanup.service",
     "deployment/sakai-grading-cleanup.timer"
   ],
-  "storage_note": "Paths verified in checkout. Native private store and SQL version column state remain unverified live; preserve before retirement."
+  "storage_note": "Paths verified in checkout. Native private store and SQL version column state remain unverified live; preserve before retirement.",
+  "latest_review": {
+    "date": "2026-10-20",
+    "evidence": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
+    "result": "User-requested proof audit without fixes. Delegated path fails403 before target; native servlet component passes; Python harness errors at collection. Production implementations/permissions/registration/storage unchanged."
+  },
+  "deferred_setup_domain_cleanup": {
+    "method": "AssignmentService.addDraftAssignment / AssignmentServiceImpl.addDraftAssignment",
+    "production_callers": "None after local setup coordinator retirement; verified repository Java search.",
+    "remaining_references": "API declaration, implementation and two AssignmentServiceTest cases.",
+    "gate": "D7 separate ordinary Assignment/API regression and domain retirement review. No new callers, schema or runtime changes; do not retain indefinitely."
+  },
+  "deferred_grading_helper_cleanup": {
+    "methods": [
+      "McpGradebookProjection.writeTarget",
+      "McpGradebookProjection.target",
+      "McpGradingEvidence.revision",
+      "McpGradingEvidence.current"
+    ],
+    "production_callers": "No production/test callers of four removed methods; remaining shared methods retain context consumers.",
+    "gate": "Focused method/constructor cleanup closed locally. Broader D7 domain/hydration/version/locks/stores and D6 legacy record preservation remain open.",
+    "status": "retired-local after caller review and actual constructor/wiring regression",
+    "evidence": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
+  }
 }

@@ -381,16 +381,17 @@
       "implementation": "services/mcp/src/sakai_mcp/sakai/assignments.py",
       "function": "AssignmentOperations.get_course_assessment_context",
       "owner_module": "services/mcp/src/sakai_mcp/sakai/assignments.py",
-      "legacy_route_ids": [
-        "assessment-context"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A2",
         "A4",
         "A8",
         "A10",
-        "A14"
+        "A14",
+        "B3",
+        "B4",
+        "B6"
       ],
       "product_decisions": [
         "D2",
@@ -401,8 +402,8 @@
         "D8"
       ],
       "implementation_phase": 3,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http; useful-partial-functionality; focused-native-retirement-local; live-and-full-functionality-pending",
+      "evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md",
       "migration_matrix_row": "| `get_course_assessment_context(course_id,window_start,window_end)` \u2192 `AssignmentOperations.get_course_assessment_context`; `contracts/assignment_setup.py` | `GET C/assessment-context` \u2192 `McpAssessmentService.context` | B3 Assignment list/edit controls without submission-body hydration + B6 Gradebook settings/items + A10/B5 calendar; Python aggregate. Ordered T06. | Per-field role/feature coverage, native backing initialization and timezone representation need fixtures. Read-only context must not save forms or create linked records. |",
       "browser_http_flow": {
         "id": "T06",
@@ -414,10 +415,14 @@
           "B5",
           "B6"
         ],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "actual default locally tested; practical individual-points setup subset and explicit partial observations; full field/live/recovery gates remain",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `get_course_assessment_context(course_id,window_start,window_end)` \u2192 `AssignmentOperations.get_course_assessment_context`; `contracts/assignment_setup.py` | `GET C/assessment-context` \u2192 `McpAssessmentService.context` | A0 plus limited SOAP metadata where no-evidence planning is required; A4 only after authorized-over-fetch decision or safe A14 validation; A2 item/category metadata and A10 calendar/window. Python assessment aggregator with explicit coverage. | Preserve visible drafts and no student-data public output. Some config fields, authoritative backing existence, timezone/owned deadline/settings unavailable. A4 site list hydrates by default: do not assume metadata-only access. Investigate A14 safely before choosing D4 schema/data-minimization changes. Read-triggered Gradebook initialization needs decision. SC/I/U. |"
+      "historical_api_only_matrix_row": "| `get_course_assessment_context(course_id,window_start,window_end)` \u2192 `AssignmentOperations.get_course_assessment_context`; `contracts/assignment_setup.py` | `GET C/assessment-context` \u2192 `McpAssessmentService.context` | A0 plus limited SOAP metadata where no-evidence planning is required; A4 only after authorized-over-fetch decision or safe A14 validation; A2 item/category metadata and A10 calendar/window. Python assessment aggregator with explicit coverage. | Preserve visible drafts and no student-data public output. Some config fields, authoritative backing existence, timezone/owned deadline/settings unavailable. A4 site list hydrates by default: do not assume metadata-only access. Investigate A14 safely before choosing D4 schema/data-minimization changes. Read-triggered Gradebook initialization needs decision. SC/I/U. |",
+      "historical_legacy_route_ids": [
+        "assessment-context"
+      ],
+      "functionality_limits": "Existing native forms and metadata-only item/category API; no student-score/submission reads. Full Assignment/Calendar/settings fields unavailable. Individual points subset, one durable-journaled save/post, observed revisions, explicit partial verification; no attachments/calendar or nondefault Gradebook flag policy; no CAS/automatic retries."
     },
     {
       "name": "create_assignment",
@@ -431,14 +436,15 @@
       "implementation": "services/mcp/src/sakai_mcp/sakai/assignments.py",
       "function": "AssignmentOperations.create_assignment",
       "owner_module": "services/mcp/src/sakai_mcp/sakai/assignments.py",
-      "legacy_route_ids": [
-        "assignment-create"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A8",
         "A9",
-        "A10"
+        "A10",
+        "B3",
+        "B4",
+        "B6"
       ],
       "product_decisions": [
         "D2"
@@ -448,8 +454,8 @@
         "D8"
       ],
       "implementation_phase": 5,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http; useful-partial-functionality; focused-native-retirement-local; live-and-full-functionality-pending",
+      "evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md",
       "migration_matrix_row": "| `create_assignment(...)` \u2192 `AssignmentOperations.create_assignment` + setup validation | `POST C/assignments` \u2192 `McpAssignmentSetupService.create` plus changed Assignment/Gradebook services | B4 existing Add form with `option=save` or `post`, B8 filepicker, B5 native linked deadline and B6 external-item flags. Ordered T07. | Draft/publication functionality source-confirmed. Test title/date/timezone/attachment semantics, native intermediate defaults and partial integration. Do not substitute internal for new external Gradebook ownership. |",
       "browser_http_flow": {
         "id": "T07",
@@ -461,10 +467,14 @@
           "B6",
           "B8"
         ],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "actual default locally tested; practical individual-points setup subset and explicit partial observations; full field/live/recovery gates remain",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `create_assignment(...)` \u2192 `AssignmentOperations.create_assignment` + setup validation | `POST C/assignments` \u2192 `McpAssignmentSetupService.create` plus changed Assignment/Gradebook services | A8 SOAP create is the only inspected general create candidate; Python validation/unit conversion/journal/readback could wrap its actual behavior after D2. | A8 cannot honor present drafts, resubmission/resources/category/flags/calendar-none/grade-release policy. Reject incompatible requests before mutation. Do not declare complete based on returned ID. SC interface/U full behavior. |"
+      "historical_api_only_matrix_row": "| `create_assignment(...)` \u2192 `AssignmentOperations.create_assignment` + setup validation | `POST C/assignments` \u2192 `McpAssignmentSetupService.create` plus changed Assignment/Gradebook services | A8 SOAP create is the only inspected general create candidate; Python validation/unit conversion/journal/readback could wrap its actual behavior after D2. | A8 cannot honor present drafts, resubmission/resources/category/flags/calendar-none/grade-release policy. Reject incompatible requests before mutation. Do not declare complete based on returned ID. SC interface/U full behavior. |",
+      "historical_legacy_route_ids": [
+        "assignment-create"
+      ],
+      "functionality_limits": "Existing native forms and metadata-only item/category API; no student-score/submission reads. Full Assignment/Calendar/settings fields unavailable. Individual points subset, one durable-journaled save/post, observed revisions, explicit partial verification; no attachments/calendar or nondefault Gradebook flag policy; no CAS/automatic retries."
     },
     {
       "name": "publish_assignment",
@@ -478,14 +488,15 @@
       "implementation": "services/mcp/src/sakai_mcp/sakai/assignments.py",
       "function": "AssignmentOperations.publish_assignment",
       "owner_module": "services/mcp/src/sakai_mcp/sakai/assignments.py",
-      "legacy_route_ids": [
-        "assignment-publish"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A4",
         "A8",
         "A10",
-        "A13"
+        "A13",
+        "B3",
+        "B4",
+        "B6"
       ],
       "product_decisions": [
         "D2"
@@ -495,8 +506,8 @@
         "D8"
       ],
       "implementation_phase": 5,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http; useful-partial-functionality; focused-native-retirement-local; live-and-full-functionality-pending",
+      "evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md",
       "migration_matrix_row": "| `publish_assignment(course_id,assignment_id,expected_assignment_revision,gradebook,calendar_deadline)` \u2192 `AssignmentOperations.publish_assignment` | `POST A/publish` \u2192 custom locks/staged links | B4 reopen same-ID draft and POST edit form `option=post` with requested native Gradebook/calendar controls; B5/B6 readback. Ordered T08. | Existing native publication found. Prefer edit/post over bulk where calendar integration is required. Observation comparison is not a lock; reconcile linked IDs before retry. |",
       "browser_http_flow": {
         "id": "T08",
@@ -508,10 +519,14 @@
           "B5",
           "B6"
         ],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "actual default locally tested; practical individual-points setup subset and explicit partial observations; full field/live/recovery gates remain",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `publish_assignment(course_id,assignment_id,expected_assignment_revision,gradebook,calendar_deadline)` \u2192 `AssignmentOperations.publish_assignment` | `POST A/publish` \u2192 custom locks/staged links | No existing equivalent found. A4 has no update/publish; SOAP date shifts do not publish; A10 generic event is unlinked. | U, D2 required. No native row lock/external private-first staging can remain hidden as \u201cauthentication.\u201d Existing drafts and partial setups need preserved IDs/manual handling, not recreate/delete. |"
+      "historical_api_only_matrix_row": "| `publish_assignment(course_id,assignment_id,expected_assignment_revision,gradebook,calendar_deadline)` \u2192 `AssignmentOperations.publish_assignment` | `POST A/publish` \u2192 custom locks/staged links | No existing equivalent found. A4 has no update/publish; SOAP date shifts do not publish; A10 generic event is unlinked. | U, D2 required. No native row lock/external private-first staging can remain hidden as \u201cauthentication.\u201d Existing drafts and partial setups need preserved IDs/manual handling, not recreate/delete. |",
+      "historical_legacy_route_ids": [
+        "assignment-publish"
+      ],
+      "functionality_limits": "Existing native forms and metadata-only item/category API; no student-score/submission reads. Full Assignment/Calendar/settings fields unavailable. Individual points subset, one durable-journaled save/post, observed revisions, explicit partial verification; no attachments/calendar or nondefault Gradebook flag policy; no CAS/automatic retries."
     },
     {
       "name": "get_assignment_grading_context",
@@ -546,7 +561,7 @@
       ],
       "implementation_phase": 3,
       "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "evidence": "source-reviewed 2026-10-20; frozen strict fields and native revision consumer prevent safe actual-default replacement from presently verified HTTP projections",
       "migration_matrix_row": "| `get_assignment_grading_context` \u2192 `GradingOperations.get_assignment_grading_context` | `GET A/grading-context`; Query/Authorization/Evidence/Projection | B3 grading-accessible metadata + B7 current scoped state + B6 linked Gradebook + safely authorized A12. Ordered T09. | Preserve grade-only TA and setup independence; modern/legacy field availability and supported Assignment variants explicit. No fabricated raw lock/release/version state. |",
       "browser_http_flow": {
         "id": "T09",
@@ -557,10 +572,12 @@
           "B6",
           "B7"
         ],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "source-reviewed; not safely cut over: required frozen state and compatible revision inputs unavailable in verified existing-HTTP projections",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `get_assignment_grading_context` \u2192 `GradingOperations.get_assignment_grading_context` | `GET A/grading-context`; Query/Authorization/Evidence/Projection | A0/A4/A5/A6/A2/A12; Python capability and context computation | Use A12 to detect a rubric association where safely authorized; cannot invent release flags, exact revision, other setting availability or full roster. Mark incomplete/unsupported capabilities. SC/I; D4. |"
+      "historical_api_only_matrix_row": "| `get_assignment_grading_context` \u2192 `GradingOperations.get_assignment_grading_context` | `GET A/grading-context`; Query/Authorization/Evidence/Projection | A0/A4/A5/A6/A2/A12; Python capability and context computation | Use A12 to detect a rubric association where safely authorized; cannot invent release flags, exact revision, other setting availability or full roster. Mark incomplete/unsupported capabilities. SC/I; D4. |",
+      "dependency_note": "T09 configuration_revision feeds current native T14/T15 preflight. McpAssessmentService.revision hashes persisted flags, attachment refs and the full property map; existing Assignment metadata/setup form do not provide every input, and http1 observation revisions are incompatible. Preserve until coordinated compatible revision migration.",
+      "remaining_gate": "Frozen required native release flag/raw scale and full state cannot be certified by researched existing DTO/forms. Keep native default; no fabricated unknowns or nominal replacement. docs/mcp/existing-api-migration/evidence-review-2026-10-20.md"
     },
     {
       "name": "list_assignment_submissions",
@@ -667,9 +684,7 @@
       "implementation": "services/mcp/src/sakai_mcp/sakai/grading.py",
       "function": "GradingOperations.export_assignment_submissions",
       "owner_module": "services/mcp/src/sakai_mcp/sakai/grading.py",
-      "legacy_route_ids": [
-        "export-create"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A4",
@@ -687,8 +702,8 @@
         "D6"
       ],
       "implementation_phase": 4,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http-and-external-records; partial-functionality; focused-native-retirement-local; live-and-legacy-acceptance-pending",
+      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
       "migration_matrix_row": "| `export_assignment_submissions` \u2192 `GradingOperations.export_assignment_submissions` | `POST A/grading-exports`; Export/Evidence/Store | T09\u2013T11 + B8 streams, optional verified B9 native ZIP, external immutable capture/manifest. Ordered T12. | No native transactional snapshot; conditional owner/request hash record, actual byte hashes, before/after observations, explicit partial capture. |",
       "browser_http_flow": {
         "id": "T12",
@@ -698,10 +713,14 @@
           "B8",
           "B9"
         ],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "actual default locally tested; explicit coverage/precision/storage/legacy and native role gates open",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `export_assignment_submissions` \u2192 `GradingOperations.export_assignment_submissions` | `POST A/grading-exports`; Export/Evidence/Store | Python export coordinator obtains A4/A5/A9; writes external immutable capture/manifest | Recheck before/after capture; bytes/hash guaranteed for captures, no atomic native snapshot. Conditional create by actor+request ID+payload hash, no resume with changed content. SC source/I implementation. |"
+      "historical_api_only_matrix_row": "| `export_assignment_submissions` \u2192 `GradingOperations.export_assignment_submissions` | `POST A/grading-exports`; Export/Evidence/Store | Python export coordinator obtains A4/A5/A9; writes external immutable capture/manifest | Recheck before/after capture; bytes/hash guaranteed for captures, no atomic native snapshot. Conditional create by actor+request ID+payload hash, no resume with changed content. SC source/I implementation. |",
+      "historical_legacy_route_ids": [
+        "export-create"
+      ],
+      "limitations_reference": "docs/mcp/existing-api-migration/tool-limitations.md"
     },
     {
       "name": "get_assignment_submission_export",
@@ -715,9 +734,7 @@
       "implementation": "services/mcp/src/sakai_mcp/sakai/grading.py",
       "function": "GradingOperations.get_assignment_submission_export",
       "owner_module": "services/mcp/src/sakai_mcp/sakai/grading.py",
-      "legacy_route_ids": [
-        "export-read"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A4",
@@ -733,8 +750,8 @@
         "D6"
       ],
       "implementation_phase": 4,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http-and-external-records; partial-functionality; focused-native-retirement-local; live-and-legacy-acceptance-pending",
+      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
       "migration_matrix_row": "| `get_assignment_submission_export` \u2192 `GradingOperations.get_assignment_submission_export` | `GET A/grading-exports/{E}`; Export/Store reauthorization | B10 external manifest/receipt + fresh native B0/B7 authorization. Ordered T13. | Owner/source/expiry every read; never resume capture from read; preserve imported IDs and original expiry. |",
       "browser_http_flow": {
         "id": "T13",
@@ -744,10 +761,14 @@
           "B0",
           "B7"
         ],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "actual default locally tested; explicit coverage/precision/storage/legacy and native role gates open",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `get_assignment_submission_export` \u2192 `GradingOperations.get_assignment_submission_export` | `GET A/grading-exports/{E}`; Export/Store reauthorization | External receipt/manifest + fresh A0/A4/A5 reauthorization | Owner/site/assignment/source targets/expiry every read. Pending/partial capture not restarted by GET. No native endpoint. I. |"
+      "historical_api_only_matrix_row": "| `get_assignment_submission_export` \u2192 `GradingOperations.get_assignment_submission_export` | `GET A/grading-exports/{E}`; Export/Store reauthorization | External receipt/manifest + fresh A0/A4/A5 reauthorization | Owner/site/assignment/source targets/expiry every read. Pending/partial capture not restarted by GET. No native endpoint. I. |",
+      "historical_legacy_route_ids": [
+        "export-read"
+      ],
+      "limitations_reference": "docs/mcp/existing-api-migration/tool-limitations.md"
     },
     {
       "name": "save_assignment_grades",
@@ -761,9 +782,7 @@
       "implementation": "services/mcp/src/sakai_mcp/sakai/grading.py",
       "function": "GradingOperations.save_assignment_grades",
       "owner_module": "services/mcp/src/sakai_mcp/sakai/grading.py",
-      "legacy_route_ids": [
-        "grade-save"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A2",
@@ -784,8 +803,8 @@
         "D6"
       ],
       "implementation_phase": 6,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http-supported-subset; partial-functionality; live-acceptance-pending",
+      "evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md; actual default SDK/JWT/OBO prepare/save/read-receipt/release; no legacy fallback",
       "migration_matrix_row": "| `save_assignment_grades` \u2192 `GradingOperations.save_assignment_grades` | `POST A/grading-save`; Mutation/Projection/Store/row locks | Python preflight/journal + B7 existing Direct/form operation chosen for `save` versus native UI `retract`, then B6 readback. Ordered T14. | Native ordinary checks retained; no academic POST in validate mode; side-field preservation, no blind retry, observed revisions and exact save/retract guarantees documented. |",
       "browser_http_flow": {
         "id": "T14",
@@ -795,10 +814,14 @@
           "B6",
           "B7"
         ],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "fixture-confirmed supported subset; actual rendered/delegated acceptance pending",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `save_assignment_grades` \u2192 `GradingOperations.save_assignment_grades` | `POST A/grading-save`; Mutation/Projection/Store/row locks | Python validation/journal + A7 `gradeOption=save` | D3 and D4 required: no CAS/known raw release flag, side-field preservation, Gradebook blanks/events, uncertain outcomes. Single send per row; no automatic retry. SC candidate/I coordinator. |"
+      "historical_api_only_matrix_row": "| `save_assignment_grades` \u2192 `GradingOperations.save_assignment_grades` | `POST A/grading-save`; Mutation/Projection/Store/row locks | Python validation/journal + A7 `gradeOption=save` | D3 and D4 required: no CAS/known raw release flag, side-field preservation, Gradebook blanks/events, uncertain outcomes. Single send per row; no automatic retry. SC candidate/I coordinator. |",
+      "historical_legacy_route_ids": [
+        "grade-save"
+      ],
+      "dependency_note": "Read-only advisory preflight; single individual integer-score unlinked Assignment subset; current HTTP metadata/content/grade observations, durable one-send commit journal; no CAS/causal receipt. Legacy context revision is explicitly unsupported."
     },
     {
       "name": "release_assignment_grades",
@@ -812,9 +835,7 @@
       "implementation": "services/mcp/src/sakai_mcp/sakai/grading.py",
       "function": "GradingOperations.release_assignment_grades",
       "owner_module": "services/mcp/src/sakai_mcp/sakai/grading.py",
-      "legacy_route_ids": [
-        "grade-return"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A2",
@@ -835,8 +856,8 @@
         "D6"
       ],
       "implementation_phase": 6,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http-supported-subset; partial-functionality; live-acceptance-pending",
+      "evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md; actual default SDK/JWT/OBO prepare/save/read-receipt/release; no legacy fallback",
       "migration_matrix_row": "| `release_assignment_grades` \u2192 `GradingOperations.release_assignment_grades` | `POST A/grading-release`; lock/save/projection/receipt | Python approved workflow + B7 actual native `return`/`returngrade`, then Assignment and B6 projection verification. Ordered T15. | Returned differs from released-only; native return can rewrite fields/notify. Per-row receipt, partial/unknown outcomes and no whole-batch atomicity promise. |",
       "browser_http_flow": {
         "id": "T15",
@@ -846,10 +867,14 @@
           "B6",
           "B7"
         ],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "fixture-confirmed supported subset; actual rendered/delegated acceptance pending",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `release_assignment_grades` \u2192 `GradingOperations.release_assignment_grades` | `POST A/grading-release`; lock/save/projection/receipt | Python separate approved workflow + A7 **return** option | Return rewrites submitted score/feedback, native projection may silently fail, independent Gradebook verification unavailable. Cannot preserve claimed exact verification/conditionality without decision. Never \u201crelease\u201d as a replacement for returned=true. SC/U guarantees. |"
+      "historical_api_only_matrix_row": "| `release_assignment_grades` \u2192 `GradingOperations.release_assignment_grades` | `POST A/grading-release`; lock/save/projection/receipt | Python separate approved workflow + A7 **return** option | Return rewrites submitted score/feedback, native projection may silently fail, independent Gradebook verification unavailable. Cannot preserve claimed exact verification/conditionality without decision. Never \u201crelease\u201d as a replacement for returned=true. SC/U guarantees. |",
+      "historical_legacy_route_ids": [
+        "grade-return"
+      ],
+      "dependency_note": "Read-only advisory preflight; single individual integer-score unlinked Assignment subset; current HTTP metadata/content/grade observations, durable one-send commit journal; no CAS/causal receipt. Legacy context revision is explicitly unsupported."
     },
     {
       "name": "get_assignment_grades",
@@ -863,14 +888,14 @@
       "implementation": "services/mcp/src/sakai_mcp/sakai/grading.py",
       "function": "GradingOperations.get_assignment_grades",
       "owner_module": "services/mcp/src/sakai_mcp/sakai/grading.py",
-      "legacy_route_ids": [
-        "grade-query"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A2",
         "A4",
-        "A5"
+        "A5",
+        "B6",
+        "B7"
       ],
       "product_decisions": [
         "D3",
@@ -881,8 +906,8 @@
         "D8"
       ],
       "implementation_phase": 3,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http-and-external-records; partial-functionality; focused-native-retirement-local; live-and-legacy-acceptance-pending",
+      "evidence": "docs/mcp/existing-api-migration/readback-2026-10-20.md",
       "migration_matrix_row": "| `get_assignment_grades` \u2192 `GradingOperations.get_assignment_grades` | `POST A/grading-grades/query`; Query/Projection reads exact selected values | B7 Assignment state + B6 existing individual Gradebook table/summary, joined by native UID/item/external relationship. Ordered T16. | New source-confirmed selected-score candidate; scope/over-fetch/precision/correlation must pass. No aggregate conversion or fabricated Assignment=Gradebook equality. |",
       "browser_http_flow": {
         "id": "T16",
@@ -892,10 +917,15 @@
           "B6",
           "B7"
         ],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "actual default locally tested; explicit coverage/precision/storage/legacy and native role gates open",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `get_assignment_grades` \u2192 `GradingOperations.get_assignment_grades` | `POST A/grading-grades/query`; Query/Projection reads exact selected values | A5 authorized selected Assignment grades; A2 only metadata/aggregate, **not exact selected Gradebook scores** | Assignment-only state can be returned honestly under a versioned completeness contract. Strict existing output must fail unsupported if required Gradebook values cannot be independently read; no fabricated equality. SC/U. |"
+      "historical_api_only_matrix_row": "| `get_assignment_grades` \u2192 `GradingOperations.get_assignment_grades` | `POST A/grading-grades/query`; Query/Projection reads exact selected values | A5 authorized selected Assignment grades; A2 only metadata/aggregate, **not exact selected Gradebook scores** | Assignment-only state can be returned honestly under a versioned completeness contract. Strict existing output must fail unsupported if required Gradebook values cannot be independently read; no fabricated equality. SC/U. |",
+      "historical_legacy_route_ids": [
+        "grade-query"
+      ],
+      "limitations_reference": "docs/mcp/existing-api-migration/tool-limitations.md",
+      "functionality_limits": "Bounded rendered native release pagination; independent selected point display scores only for full Gradebook grading/edit/instructor roles; exact external reference/app/UID correlation; no comment bytes, stored-precision or atomicity guarantee. Noneligible Assignment graders retain explicit unavailable projection; incomplete roster/attachments unchanged."
     },
     {
       "name": "get_assignment_grading_operation",
@@ -909,9 +939,7 @@
       "implementation": "services/mcp/src/sakai_mcp/sakai/grading.py",
       "function": "GradingOperations.get_assignment_grading_operation",
       "owner_module": "services/mcp/src/sakai_mcp/sakai/grading.py",
-      "legacy_route_ids": [
-        "operation-read"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A2",
@@ -929,18 +957,22 @@
         "D6"
       ],
       "implementation_phase": 6,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http-external-receipt; focused-native-method-retirement-local; historical-subset; legacy-reconciliation-live-gates-open",
+      "evidence": "docs/mcp/existing-api-migration/operation-read-2026-10-20.md",
       "migration_matrix_row": "| `get_assignment_grading_operation` \u2192 `GradingOperations.get_assignment_grading_operation` | `GET A/grading-operations/{O}`; native persistent receipt + readback | B10 external journal + T11/T16 current read-only reconciliation. Ordered T17. | Read does not replay writes. Preserve original payload/attribution uncertainty/legacy unresolved receipts; current matching values do not prove authorship. |",
       "browser_http_flow": {
         "id": "T17",
         "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
         "anchor": "t17",
         "cards": [],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "actual external default locally tested; historical receipt subset; legacy/native-role/backend/reconciliation acceptance pending",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `get_assignment_grading_operation` \u2192 `GradingOperations.get_assignment_grading_operation` | `GET A/grading-operations/{O}`; native persistent receipt + readback | External operation journal plus A4/A5/A2 probes allowed by scope | Read never commits pending work. Distinguish historical receipt from current state; possible success/uncertain attribution. Import unresolved legacy receipts; no cross-user lookup. I. |"
+      "historical_api_only_matrix_row": "| `get_assignment_grading_operation` \u2192 `GradingOperations.get_assignment_grading_operation` | `GET A/grading-operations/{O}`; native persistent receipt + readback | External operation journal plus A4/A5/A2 probes allowed by scope | Read never commits pending work. Distinguish historical receipt from current state; possible success/uncertain attribution. Import unresolved legacy receipts; no cross-user lookup. I. |",
+      "historical_legacy_route_ids": [
+        "operation-read"
+      ],
+      "functionality_limits": "Current source reauthorization and owner-bound durable external receipts. Historical state only; no pending execution/replay, no inferred reconciliation, historical Gradebook values withheld, native legacy receipts not imported. Native save/release remain transitional with external single-send journaling."
     },
     {
       "name": "prepare_assignment_grade_payload",
@@ -954,10 +986,7 @@
       "implementation": "services/mcp/src/sakai_mcp/workflows/grading.py",
       "function": "GradingWorkflow.prepare_grade_payload",
       "owner_module": "services/mcp/src/sakai_mcp/workflows/grading.py",
-      "legacy_route_ids": [
-        "grade-save",
-        "grade-return"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A4",
@@ -973,19 +1002,23 @@
         "D8"
       ],
       "implementation_phase": 6,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http-supported-subset; partial-functionality; live-acceptance-pending",
+      "evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md; actual default SDK/JWT/OBO prepare/save/read-receipt/release; no legacy fallback",
       "migration_matrix_row": "| `prepare_assignment_grade_payload` \u2192 `workflows/grading.py:prepare_grade_payload` | Python canonical hash then native save/release validation POST | Existing canonical hash/commit arguments with Python T09\u2013T11 advisory preflight; no native validation POST. Ordered T18. | Preparation is an observation, not reservation. Do not send fictitious dry-run fields to existing mutating UI/Direct operations; preserve exact approval boundary. |",
-      "dependency_note": "Canonical hashing is Python, but current prepare_grade_payload sends mode=validate through the native save or release endpoint. No academic commit is made by that mode.",
+      "dependency_note": "Read-only advisory preflight; single individual integer-score unlinked Assignment subset; current HTTP metadata/content/grade observations, durable one-send commit journal; no CAS/causal receipt. Legacy context revision is explicitly unsupported.",
       "browser_http_flow": {
         "id": "T18",
         "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
         "anchor": "t18",
         "cards": [],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "fixture-confirmed supported subset; actual rendered/delegated acceptance pending",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `prepare_assignment_grade_payload` \u2192 `workflows/grading.py:prepare_grade_payload` | Python canonical hash then native save/release validation POST | Retain canonical serializer/hashes; Python preflight over A0/A4/A5/A6, no native validation route | \u201cValidated\u201d is advisory observation; no reservation/CAS. Preserve exact commit arguments and separate human approvals; refuse when critical state unknown. I; schema wording D3. |"
+      "historical_api_only_matrix_row": "| `prepare_assignment_grade_payload` \u2192 `workflows/grading.py:prepare_grade_payload` | Python canonical hash then native save/release validation POST | Retain canonical serializer/hashes; Python preflight over A0/A4/A5/A6, no native validation route | \u201cValidated\u201d is advisory observation; no reservation/CAS. Preserve exact commit arguments and separate human approvals; refuse when critical state unknown. I; schema wording D3. |",
+      "historical_legacy_route_ids": [
+        "grade-save",
+        "grade-return"
+      ]
     },
     {
       "name": "list_assignments",
@@ -1047,11 +1080,7 @@
       "function": "GradingWorkflow.prepare_mcq",
       "owner_module": "services/mcp/src/sakai_mcp/workflows/grading.py",
       "legacy_route_ids": [
-        "grading-context",
-        "export-read",
-        "export-file",
-        "proposal-create",
-        "proposal-read"
+        "grading-context"
       ],
       "research_cards": [
         "A0",
@@ -1070,8 +1099,8 @@
         "D6"
       ],
       "implementation_phase": 4,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "not-migrated; complete-source-context-roster-blocker; external proposal/export dependencies replaced",
+      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md; no completed-tool claim; incomplete export rejected before residual native context read",
       "migration_matrix_row": "| `prepare_assignment_mcq_grades` \u2192 `GradingWorkflow.prepare_mcq/_prepare_mcq`, `grading/evaluator.py` | Reads native context/roster/exports/files; `POST A/grading-proposals` | B10 immutable export/current scope, existing pure evaluator/reports and external conditional proposal record. Ordered T20. | No official grade mutation; complete approved inputs, source hashes/expiry/provenance retained; no native proposal service required. |",
       "browser_http_flow": {
         "id": "T20",
@@ -1083,8 +1112,14 @@
       },
       "historical_api_only_matrix_row": "| `prepare_assignment_mcq_grades` \u2192 `GradingWorkflow.prepare_mcq/_prepare_mcq`, `grading/evaluator.py` | Reads native context/roster/exports/files; `POST A/grading-proposals` | Retain pure deterministic evaluator; replace all evidence reads with A4/A5/A6/A9 and persist proposal externally | Complete scoped evidence/key config required. Preserve source fingerprint/report bytes where feasible; changing revision/provenance is explicit engine/input-version migration. Never official save. I; external persistence can be idempotent. |",
       "historical_legacy_route_ids": [
-        "grading-submissions"
-      ]
+        "export-file",
+        "export-read",
+        "grading-submissions",
+        "proposal-create",
+        "proposal-read"
+      ],
+      "remaining_gate": "Current captures remain partial. Modern grader stored-row enumeration and generic memberships/role metadata do not prove complete eligible roster; no native context/evaluator/persistence after partial capture. docs/mcp/existing-api-migration/evidence-review-2026-10-20.md",
+      "latest_content_roster_evidence": "docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md; native handler-only characterization; no content route activation or complete input claim"
     },
     {
       "name": "get_assignment_grading_proposal",
@@ -1098,9 +1133,7 @@
       "implementation": "services/mcp/src/sakai_mcp/workflows/grading.py",
       "function": "GradingWorkflow.get_proposal",
       "owner_module": "services/mcp/src/sakai_mcp/workflows/grading.py",
-      "legacy_route_ids": [
-        "proposal-read"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A4",
@@ -1116,18 +1149,22 @@
         "D6"
       ],
       "implementation_phase": 4,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http-and-external-records; partial-functionality; focused-native-retirement-local; live-and-legacy-acceptance-pending",
+      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
       "migration_matrix_row": "| `get_assignment_grading_proposal` \u2192 `GradingWorkflow.get_proposal` | `GET A/grading-proposals/{P}`; Proposal/Export/Store | B10 external frozen proposal + source-export/current authorization + same Python paging/reports. Ordered T21. | Preserve config, digests, owner, expiry and report formats; no re-evaluation of old records against changed submissions. |",
       "browser_http_flow": {
         "id": "T21",
         "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
         "anchor": "t21",
         "cards": [],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "actual default locally tested; explicit coverage/precision/storage/legacy and native role gates open",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
-      "historical_api_only_matrix_row": "| `get_assignment_grading_proposal` \u2192 `GradingWorkflow.get_proposal` | `GET A/grading-proposals/{P}`; Proposal/Export/Store | External immutable record plus source-export/lifetime/current authorization checks; same proposal paging/report assembly | Retain frozen config/digests/owner; do not recompute old proposal with new data or extend expiry during migration. I. |"
+      "historical_api_only_matrix_row": "| `get_assignment_grading_proposal` \u2192 `GradingWorkflow.get_proposal` | `GET A/grading-proposals/{P}`; Proposal/Export/Store | External immutable record plus source-export/lifetime/current authorization checks; same proposal paging/report assembly | Retain frozen config/digests/owner; do not recompute old proposal with new data or extend expiry during migration. I. |",
+      "historical_legacy_route_ids": [
+        "proposal-read"
+      ],
+      "limitations_reference": "docs/mcp/existing-api-migration/tool-limitations.md"
     },
     {
       "name": "read_assignment_grading_resource",
@@ -1141,12 +1178,7 @@
       "implementation": "services/mcp/src/sakai_mcp/workflows/resources.py",
       "function": "read_resource",
       "owner_module": "services/mcp/src/sakai_mcp/workflows/resources.py",
-      "legacy_route_ids": [
-        "assignment-file",
-        "export-read",
-        "export-file",
-        "proposal-read"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A4",
@@ -1163,21 +1195,26 @@
         "D6"
       ],
       "implementation_phase": 4,
-      "state": "not-migrated",
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "state": "default-existing-http-and-external-records; partial-functionality; focused-native-retirement-local; live-and-legacy-acceptance-pending",
+      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
       "migration_matrix_row": "| `read_assignment_grading_resource(uri)` \u2192 tool wrapper \u2192 `workflows/resources.py:read_resource` | Dispatches custom current-file/export/proposal routes | Shared R01\u2013R05 (\u00a716.4): B7/B8 native current source or B10 external immutable files/reports; existing SDK presentation. Ordered T22. | Strict URI grammar/revision/owner/scope/hash/MIME/expiry; no arbitrary URL, session exposure or write on resource read. |",
       "browser_http_flow": {
         "id": "T22",
         "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
         "anchor": "t22",
         "cards": [],
-        "status": "source-candidate; dynamic delegated acceptance pending",
+        "status": "actual default locally tested; explicit coverage/precision/storage/legacy and native role gates open",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
       },
       "historical_api_only_matrix_row": "| `read_assignment_grading_resource(uri)` \u2192 tool wrapper \u2192 `workflows/resources.py:read_resource` | Dispatches custom current-file/export/proposal routes | Same five MCP URI families in \u00a76.4, existing APIs for current source and external storage for captures/reports | Preserve SDK EmbeddedResource text/blob/MIME behavior, validate URI grammar and actor; never a generic URL tool. I, protocol contract tests. |",
       "historical_legacy_route_ids": [
+        "assignment-file",
+        "export-file",
+        "export-read",
+        "proposal-read",
         "submission-file"
-      ]
+      ],
+      "limitations_reference": "docs/mcp/existing-api-migration/tool-limitations.md"
     }
   ],
   "resources": [
@@ -1196,7 +1233,7 @@
         "A9"
       ],
       "implementation_phase": 4,
-      "state": "partial-existing-http-inline-only; attachment-reads-unsupported; live-acceptance-pending",
+      "state": "partial-existing-http-inline-only; attachments-unsupported; live-pending",
       "product_decisions": [
         "D4"
       ],
@@ -1208,7 +1245,7 @@
         "01",
         "11"
       ],
-      "evidence": "five-tool-cutover-2026-10-19.md; inline default reauthorizes/refetches; no attachment route/integrity acceptance",
+      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
       "browser_http_flow": {
         "id": "R01",
         "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
@@ -1226,16 +1263,14 @@
       "id": "resource-2",
       "owner_module": "services/mcp/src/sakai_mcp/workflows/resources.py",
       "function": "read_resource",
-      "legacy_route_ids": [
-        "assignment-file"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A4",
         "A9"
       ],
       "implementation_phase": 4,
-      "state": "not-migrated",
+      "state": "explicitly-unsupported-current-assignment-bytes; legacy-route-retired-local; B8-gate-open",
       "product_decisions": [
         "D4"
       ],
@@ -1247,13 +1282,16 @@
         "01",
         "11"
       ],
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
       "browser_http_flow": {
         "id": "R02",
         "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
         "status": "source-candidate/external workflow design; dynamic delegated acceptance pending",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
-      }
+      },
+      "historical_legacy_route_ids": [
+        "assignment-file"
+      ]
     },
     {
       "description": "Delegated grading evidence. Current files require the supplied revision; captures expire.",
@@ -1262,17 +1300,14 @@
       "id": "resource-3",
       "owner_module": "services/mcp/src/sakai_mcp/workflows/resources.py",
       "function": "read_resource",
-      "legacy_route_ids": [
-        "export-read",
-        "export-file"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A4",
         "A5"
       ],
       "implementation_phase": 4,
-      "state": "not-migrated",
+      "state": "external-inline-captures-local; current-scope-expiry-byte-integrity-tested; legacy-and-live-pending",
       "product_decisions": [
         "D4",
         "D6"
@@ -1285,13 +1320,17 @@
         "01",
         "11"
       ],
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
       "browser_http_flow": {
         "id": "R03",
         "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
         "status": "source-candidate/external workflow design; dynamic delegated acceptance pending",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
-      }
+      },
+      "historical_legacy_route_ids": [
+        "export-file",
+        "export-read"
+      ]
     },
     {
       "description": "Delegated grading evidence. Current files require the supplied revision; captures expire.",
@@ -1300,16 +1339,14 @@
       "id": "resource-4",
       "owner_module": "services/mcp/src/sakai_mcp/workflows/resources.py",
       "function": "read_resource",
-      "legacy_route_ids": [
-        "export-read"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A4",
         "A5"
       ],
       "implementation_phase": 4,
-      "state": "not-migrated",
+      "state": "external-partial-inline-manifest-local; complete-evidence-legacy-and-live-pending",
       "product_decisions": [
         "D4",
         "D6"
@@ -1322,13 +1359,16 @@
         "01",
         "11"
       ],
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
       "browser_http_flow": {
         "id": "R04",
         "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
         "status": "source-candidate/external workflow design; dynamic delegated acceptance pending",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
-      }
+      },
+      "historical_legacy_route_ids": [
+        "export-read"
+      ]
     },
     {
       "description": "Delegated grading evidence. Current files require the supplied revision; captures expire.",
@@ -1337,16 +1377,14 @@
       "id": "resource-5",
       "owner_module": "services/mcp/src/sakai_mcp/workflows/resources.py",
       "function": "read_resource",
-      "legacy_route_ids": [
-        "proposal-read"
-      ],
+      "legacy_route_ids": [],
       "research_cards": [
         "A0",
         "A4",
         "A5"
       ],
       "implementation_phase": 4,
-      "state": "not-migrated",
+      "state": "frozen-external-proposal-reports-local; new-MCQ-and-legacy-and-live-gates-open",
       "product_decisions": [
         "D4",
         "D6"
@@ -1359,13 +1397,16 @@
         "01",
         "11"
       ],
-      "evidence": "source-researched; no existing-API delegated live acceptance",
+      "evidence": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
       "browser_http_flow": {
         "id": "R05",
         "companion": "docs/mcp/existing-api-migration/browser-http-research.md",
         "status": "source-candidate/external workflow design; dynamic delegated acceptance pending",
         "canonical_plan": "docs/mcp/existing-api-migration/implementation-plan.md"
-      }
+      },
+      "historical_legacy_route_ids": [
+        "proposal-read"
+      ]
     }
   ],
   "legacy_routes": [
@@ -1387,7 +1428,9 @@
       "function": "context",
       "line": 21,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local",
+      "local_evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md",
+      "compatibility": "Requires accepted matching Python cutover before native retirement; old clients require this route."
     },
     {
       "id": "assignment-create",
@@ -1397,7 +1440,9 @@
       "function": "create",
       "line": 68,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local",
+      "local_evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md",
+      "compatibility": "Requires accepted matching Python cutover before native retirement; old clients require this route."
     },
     {
       "id": "assignment-publish",
@@ -1407,7 +1452,9 @@
       "function": "publish",
       "line": 91,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local",
+      "local_evidence": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md",
+      "compatibility": "Requires accepted matching Python cutover before native retirement; old clients require this route."
     },
     {
       "id": "courses",
@@ -1497,7 +1544,7 @@
       "function": "assignmentFile",
       "line": 72,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local"
     },
     {
       "id": "proposal-create",
@@ -1507,7 +1554,7 @@
       "function": "createProposal",
       "line": 90,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local"
     },
     {
       "id": "proposal-read",
@@ -1517,7 +1564,7 @@
       "function": "proposal",
       "line": 98,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local"
     },
     {
       "id": "export-create",
@@ -1527,7 +1574,7 @@
       "function": "export",
       "line": 106,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local"
     },
     {
       "id": "export-read",
@@ -1537,7 +1584,7 @@
       "function": "exportStatus",
       "line": 114,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local"
     },
     {
       "id": "export-file",
@@ -1547,7 +1594,7 @@
       "function": "artifact",
       "line": 124,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local"
     },
     {
       "id": "grade-save",
@@ -1557,7 +1604,8 @@
       "function": "save",
       "line": 149,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local",
+      "evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md"
     },
     {
       "id": "grade-return",
@@ -1567,7 +1615,8 @@
       "function": "release",
       "line": 157,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local",
+      "evidence": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md"
     },
     {
       "id": "grade-query",
@@ -1577,7 +1626,7 @@
       "function": "grades",
       "line": 165,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local"
     },
     {
       "id": "operation-read",
@@ -1587,7 +1636,8 @@
       "function": "operation",
       "line": 173,
       "classification": "native-customization-to-retire-after-compatibility-gate",
-      "state": "legacy-runtime-dependency"
+      "state": "retired-local",
+      "local_evidence": "docs/mcp/existing-api-migration/operation-read-2026-10-20.md"
     },
     {
       "id": "assignment-list",
@@ -1719,8 +1769,8 @@
   "canonical_plan": {
     "repository_path": "docs/mcp/existing-api-migration/implementation-plan.md",
     "path": "/Users/burhanahmadkhan/Desktop/sakai-mcp/docs/mcp/existing-api-migration/implementation-plan.md",
-    "sha256": "8c5d5a6f5f30168f002021af4abb7f1c5ee94882c6c64d5767f02d2ef3eb8569",
+    "sha256": "f827f7152a4f5e51e829543db6d9a233d8c5fcf82f00a1ddec95cd442ae008a7",
     "delivery_copy": "/Users/burhanahmadkhan/Downloads/Sakai-Existing-APIs-Migration-Plan.md",
-    "updated_date": "2026-10-19"
+    "updated_date": "2026-10-20"
   }
 }

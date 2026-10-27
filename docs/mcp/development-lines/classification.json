@@ -1,0 +1,1178 @@
+{
+  "source": "98364680e73489addf649685bb79511e8febf917",
+  "comparison": "208d69ac624910a29a7529934ddcc18bbac853e8",
+  "paths": [
+    {
+      "path": ".github/copilot-instructions.md",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": ".gitignore",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "AGENTS.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "apps/sakai/AGENTS.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "apps/sakai/announcement/announcement-tool/tool/pom.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/announcement/announcement-tool/tool/src/test/org/sakaiproject/announcement/entityprovider/ExistingAnnouncementActionTest.java",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "apps/sakai/announcement/announcement-tool/tool/src/webapp/WEB-INF/web.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/assignment/tool/pom.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/assignment/tool/src/webapp/WEB-INF/web.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/content/content-tool/tool/pom.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/content/content-tool/tool/src/webapp/WEB-INF/web.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/entitybroker/core-providers/src/test/org/sakaiproject/entitybroker/providers/ExistingPagesActionTest.java",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "apps/sakai/entitybroker/core-providers/src/test/org/sakaiproject/entitybroker/providers/ExistingSiteVisibilityTest.java",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "apps/sakai/entitybroker/tool/pom.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/entitybroker/tool/src/webapp/WEB-INF/web.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/gradebookng/tool/pom.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/gradebookng/tool/src/webapp/WEB-INF/web.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/AGENTS.md",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/README.md",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/pom.xml",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedConversations.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedCredentialGuard.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedJwtVerifier.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedResponse.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedRoutes.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/main/java/org/sakaiproject/mcpauth/DelegatedSessionFilter.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/access/tool/AccessServletProof.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/content/impl/ExistingContentAccessTest.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/AttachmentReachProof.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedChainTest.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedJwtVerifierTest.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedResponseTest.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/PortalContainerTest.java",
+      "owner": "auth-core"
+    },
+    {
+      "path": "apps/sakai/pom.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/portal/portal-charon/charon/pom.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/portal/portal-charon/charon/src/webapp/WEB-INF/web.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/webapi/pom.xml",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/WebAppConfiguration.java",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAnnouncementWriteController.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssessmentContextController.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssessmentService.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssignmentGradingController.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssignmentGradingService.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssignmentSetupService.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpAssignmentWriteController.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpCourseController.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpGradesController.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpGradingAssignmentsController.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpGradingStore.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/McpSubmissionsController.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentService.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/contracts/McpContractSupport.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpAssignmentGradingController.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradebookProjection.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingAuthorization.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingEvidence.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingJson.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingQueryService.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingStore.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpBearerFilter.java",
+      "owner": "legacy-auth package/import/format restructuring; normalized bodies unchanged"
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/security/McpJwtVerifier.java",
+      "owner": "legacy-auth package/import/format restructuring; normalized bodies unchanged"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/mcpauth/ExistingSitesChainTest.java",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpAnnouncementWriteControllerTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpAssignmentGradingServiceTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpAssignmentSetupServiceTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpAssignmentWriteControllerTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpCourseControllerTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpGradesControllerTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/McpSubmissionsControllerTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteControllerTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpCourseControllerTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpGradesControllerTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpSubmissionsControllerTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingServicesTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/grading/McpGradingWiringTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/security/McpBearerFilterTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/security/McpJwtVerifierTest.java",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "docs/DEVELOPMENT_WORKTREES.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/MCP_IMPLEMENTATION_RUNBOOK.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/SAKAI_ASSIGNMENT_GRADING.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/SAKAI_ASSIGNMENT_SETUP.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/SAKAI_INTEGRATION_GUIDE.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-grading-local.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-grading-release.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/evidence/mcp/assignment-grading-run-2026-10-14.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/evidence/mcp/phase-25-client-compatibility.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/evidence/mcp/phase-31-final-acceptance.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/evidence/mcp/restructuring-local.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/architecture.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/development-lines/verify_arrangement.py",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/README.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/attachment-audit-results-2026-10-20.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/attachment_readiness_proof.py",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/baseline.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/browser-flows.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/browser-http-research.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/check_scope.py",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-19.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-attachment-audit.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-attachment-proof.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-evidence-review.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-grading-context.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-grading-write.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-operation-read.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-setup.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20-worktree-separation.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/continuation-2026-10-20.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/coverage.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/git-organization.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/git-worktrees.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/grading-context-payload-review-2026-10-20.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/implementation-plan.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/implementation-start.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/local-integration-2026-10-18.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/native-change-ledger.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/operation-read-2026-10-20.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/progress.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/read-cohort-cutover-2026-10-19.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/read-discovery-2026-10-18.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/readback-2026-10-20.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/route-references.json",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/t01-course-cutover-2026-10-19.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/existing-api-migration/tool-limitations.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/restructuring-plan.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "docs/mcp/sakai-adapter.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "sakai",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "scripts/README.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "scripts/check-mcp.sh",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "scripts/copy-to-sakai.sh",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "scripts/deploy-sakai-release.sh",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "scripts/lib/azure.sh",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "scripts/lib/config.sh",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "scripts/lib/ssh.sh",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "scripts/open-ssh-access.sh",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "scripts/rollback-sakai-release.sh",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "scripts/ssh-sakai.sh",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "services/mcp/AGENTS.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "services/mcp/Dockerfile",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/README.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "services/mcp/pyproject.toml",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/asgi.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/audit.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/bootstrap.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/config.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/announcements.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/assessment_metadata.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/assignment_setup.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/assignment_setup_validation.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/assignments.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/existing_api.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/gradebook_projection.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/gradebook_ui.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/grading_native.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/grading_preservation.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/grading_proposals.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/grading_public.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/native_forms.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/native_html.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/native_xml.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/placements.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/setup_forms.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/contracts/submissions.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/errors.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading/evaluator.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading/reports.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading/serialization.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading_proposal_tools.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading_resource_models.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading_resources.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/grading_tools.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/context.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/http.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/presenters.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/resources.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/server.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/mcp/tools.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/announcements.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/assignments.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/browser_transport.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/client.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/courses.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/cxf.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/entitybroker.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/existing_transport.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/grading.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/operations.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/paths.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/transport.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai/webapi.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/sakai_client.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/security/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/security/auth.py",
+      "owner": "legacy-auth layout migration; future behavior changes owned by auth development"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/security/obo.py",
+      "owner": "legacy-auth layout migration; future behavior changes owned by auth development"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/security/sakai_flow.py",
+      "owner": "shared-client-protocol; pinned tool dependency and auth reference"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/server.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/storage/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/storage/azure_blob.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/storage/base.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/storage/memory.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/storage/records.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/access.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/announcements.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/assignment_setup.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/captures.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/grading.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/grading_operations.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/grading_writes.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/operation_journal.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/own_grades.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/placements.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/resources.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/selected_grades.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/src/sakai_mcp/workflows/submissions.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/contracts/README.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "services/mcp/tests/contracts/catalog.json",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/contracts/grading.json",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/assignment_setup.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/authentication.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/existing_http/README.md",
+      "owner": "guidance-evidence"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/existing_http/wire.json",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/five_tool_http.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/grading_data.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/grading_http.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/grading_operations.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/grading_requests.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/sakai.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/fixtures/setup_http.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/integration/test_pipeline.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/integration/test_untrusted_content.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/protocol/test_contract_compatibility.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/protocol/test_grading_resources.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/protocol/test_grading_tools.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/protocol/test_server.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/security/test_auth.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/security/test_native_auth_boundary.py",
+      "owner": "auth-integration"
+    },
+    {
+      "path": "services/mcp/tests/security/test_obo.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/test_assessment_calendar.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/test_assignment_setup.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/test_browser_http.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/test_existing_api.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/contracts/test_grading.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/grading/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/grading/test_evaluator.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_assignment_discovery.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_assignment_setup.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_attachment_gate.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_browser_transport.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_existing_announcements.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_existing_courses.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_existing_http.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_five_tool_cohort.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_grading.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_grading_operations.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_grading_writes.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_lifecycle.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_proposals.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_selected_grades.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/sakai/test_transport.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/storage/test_azure_blob.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/storage/test_records.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/test_architecture.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/test_assessment_calendar.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/test_assignment_grading.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/test_assignment_setup.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/test_audit.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/test_health.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/workflows/__init__.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/workflows/test_operation_journal.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/workflows/test_placements.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/tests/unit/workflows/test_resources.py",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "services/mcp/uv.lock",
+      "owner": "tool-migration-or-preimplementation-restructuring"
+    },
+    {
+      "path": "skills/sakai-test-data-seeding/SKILL.md",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "skills/sakai-test-data-seeding/agents/openai.yaml",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "skills/sakai-test-data-seeding/references/assignment-submissions.md",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "skills/sakai-test-data-seeding/references/general.md",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    },
+    {
+      "path": "skills/sakai-test-data-seeding/references/lessons.md",
+      "owner": "preserved-support-or-existing-native-domain-change"
+    }
+  ]
+}

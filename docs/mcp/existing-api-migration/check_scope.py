@@ -78,7 +78,9 @@ def validate_progress():
     routes = load("coverage.json")["legacy_routes"]
     need(len(retired) == len(progress.get("retired_preexisting_paths", [])), "Duplicate retirement")
     for path, record in retired.items():
-        relevant = [r for r in routes if r["source"] == path]
+        related = set(record.get("related_route_ids", []))
+        need(related <= {r["id"] for r in routes}, "Unknown service retirement dependency")
+        relevant = [r for r in routes if r["source"] == path or r["id"] in related]
         need(relevant and all(r["state"] == "retired-local" for r in relevant),
              f"Retirement has an active/unmapped route: {path}")
         need(sha(Path(record["checkpoint"])) == record["sha256"], f"Retired source checkpoint changed: {path}")
@@ -119,8 +121,62 @@ def validate_progress():
              "Review post-checkpoint source changes in a new preservation record")
         changes = subprocess.check_output(
             ["git", "diff", "--name-only", checkpoint], cwd=ROOT, text=True)
-        need(set(changes.splitlines()) <= allowed,
-             "Working source differs from reviewed migration checkpoint")
+        continuation_name = Path(progress["continuation_record"]).name
+        chain = []
+        record_names = set()
+        while True:
+            need(re.fullmatch(r"continuation-[0-9]{4}-[0-9]{2}-[0-9]{2}(?:-[a-z][a-z0-9-]*)?\.json", continuation_name),
+                 "Invalid continuation name")
+            need(continuation_name not in record_names and len(chain) < 50,
+                 "Cyclic or excessive continuation chain")
+            record_names.add(continuation_name)
+            continuation = load(continuation_name)
+            chain.append(continuation)
+            previous = continuation.get("previous_record")
+            if previous is None:
+                need(continuation_name == "continuation-2026-10-19.json",
+                     "Continuation root differs")
+                break
+            need(Path(previous).name == previous, "Invalid prior continuation path")
+            need(sha(HERE / previous) == continuation["previous_record_sha256"],
+                 "Historical continuation changed")
+            continuation_name = previous
+        overlay = {}
+        review_paths = set()
+        for continuation in reversed(chain):
+            need(continuation["head"] == head, "Continuation base differs")
+            need(continuation["branch"] == branch, "Continuation branch differs")
+            private_continuation = Path(continuation["private_checkpoint"])
+            for name, digest in continuation["private_hashes"].items():
+                need(Path(name).name == name, "Invalid checkpoint filename")
+                need(sha(private_continuation / name) == digest, "Continuation checkpoint changed")
+            paths = {item["path"] for item in continuation["files"]}
+            need(len(paths) == len(continuation["files"]), "Duplicate continuation path")
+            review_paths.update(paths)
+            for item in continuation["files"]:
+                relative = item["path"]
+                path = ROOT / relative
+                need(path.is_relative_to(ROOT) and ".." not in Path(relative).parts,
+                     "Invalid continuation path")
+                need(not relative.startswith(("/", "../")), "Invalid continuation path")
+                if relative in overlay:
+                    original_sha = overlay[relative]["after_sha256"]
+                else:
+                    original = subprocess.run(["git", "show", f"{head}:{relative}"],
+                                              cwd=ROOT, capture_output=True)
+                    original_sha = hashlib.sha256(original.stdout).hexdigest() if original.returncode == 0 else None
+                need(original_sha == item["before_sha256"],
+                     f"Continuation prior bytes differ: {relative}")
+                overlay[relative] = item
+        for relative, item in overlay.items():
+            path = ROOT / relative
+            need(path.is_file() == (item["after_sha256"] is not None),
+                 f"Continuation presence differs: {relative}")
+            if path.is_file():
+                need(sha(path) == item["after_sha256"], f"Unreviewed continuation bytes: {relative}")
+                need(oct(path.stat().st_mode & 0o777) == item["after_mode"], "Continuation mode differs")
+        need(set(changes.splitlines()) <= allowed | review_paths,
+             "Working source differs from reviewed migration and continuation checkpoints")
     need(branch == progress["branch"], "Not on the reviewed migration branch")
     need(not subprocess.check_output(["git", "diff", "--cached", "--name-only"], cwd=ROOT), "Review staged changes")
     private = Path(start["private_checkpoint"])

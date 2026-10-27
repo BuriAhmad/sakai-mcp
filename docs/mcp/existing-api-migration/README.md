@@ -4,10 +4,10 @@ worktree at the original `208d69ac` baseline. See [worktree usage and verificati
 and [the separate organization record](git-organization.json). Original baseline,
 implementation-start and private checkpoints remain unchanged. Statements below
 about an uncommitted tree or fixed HEAD describe their dated checkpoints;
-`--verify-progress` now verifies the saved migration source and permits only the
-explicit organization metadata paths after that commit.
+`--verify-progress` verifies the saved migration source, explicit organization
+metadata paths and hash-chained dated continuation records after that commit.
 
-Current local status (19 October): eight default tools use existing HTTP: T01/T02/T03/T04/T05/T10/T11/T19. Nine old native routes are retired locally; fourteen active routes and fourteen tools remain. All five resource families still need completion; R01 has inline reads only. Completeness, role and field limits remain explicit. See [five-tool evidence](five-tool-cutover-2026-10-19.md) and `progress.json`; dated checkpoints below remain historical.
+Current local status (20 October): seventeen actual defaults use existing HTTP/external records; twenty routes are retired locally and three remain. Five tools and full resource/legacy/live acceptance remain. See [operation-read evidence](operation-read-2026-10-20.md), current coverage/progress/limitations.
 
 
 [Known tool limitations](tool-limitations.md) is the consolidated current reference for per-tool restrictions, caps, errors, evidence gaps and resolution gates.
@@ -131,3 +131,66 @@ entries and verifies the 22 active mappings against source. See
 [T01 evidence](t01-course-cutover-2026-10-19.md) for fresh checks, preservation,
 release incompatibility with older clients and remaining live gates. Earlier
 checkpoint results above are historical, not current verification.
+
+## Continuation after Git organization — 19 October 2026
+
+[External capture and selected-grade evidence](external-capture-cutover-2026-10-19.md)
+records five more default replacements (13 total), seven more retired routes
+(16 retired, seven active), precise partial-functionality and MCQ blockers.
+`continuation-2026-10-19.json` pins the new reviewed changes and private checkpoint
+against `0f9f44a7`. Original baseline/start/Git-organization manifests remain
+immutable. `check_scope.py --verify-progress` checks both preservation eras; the
+original `--verify-working-tree` remains historical. Neither Git worktree nor any
+runtime was reorganized or deployed. Follow current coverage/progress/limitations
+for ongoing implementation; earlier test counts in this README are dated history.
+
+## Readback continuation — 20 October 2026
+
+[Selected readback evidence](readback-2026-10-20.md) records Gradebook point display
+readback and rendered native grading-list pagination through T16's existing default.
+No new tool completion or native retirement is counted. The native missing-row
+template has no stable UID, so B7 completeness and T20's complete-evidence gate stay
+open. Fresh checks: 481 Python tests, lint/format/types, wheel/sdist and scope pass;
+no native source change or new Java/live acceptance. The new October 20 preservation
+record pins the October 19 record unchanged and validates prior/final bytes across
+the continuation chain. Original manifests/checkpoints remain immutable.
+
+## Practical setup continuation — 20 October 2026
+
+[Setup evidence](setup-cutover-2026-10-20.md) records T06/T07/T08 actual-default
+cutover, useful partial functionality, three further route retirements and the
+remaining shared grading revision dependency. Original public schemas/catalogs
+remain frozen. Named continuation records preserve multiple reviewed increments
+on the same date without rewriting prior records. All live/deployment gates remain
+separate; earlier counts and evidence retain their original dates.
+
+
+## Grading-context/payload dependency review — 20 October 2026
+
+The T09/T18 source review confirmed that the frozen grading context cannot yet
+represent several unknown Assignment fields, and the existing `http1-` revision
+projection is incompatible with the active native save/release revision check.
+T18 also relies on current-state native validation; replacing it with schema-only
+checks would overstate what was verified. No routing or completion count changed.
+See [the source-backed review](grading-context-payload-review-2026-10-20.md) and
+current [limitations](tool-limitations.md) for the next coordinated gate.
+
+### Grading write continuation — 20 October 2026
+
+[Fresh grading write evidence](grading-write-2026-10-20.md) records actual T14/T15/T18
+HTTP defaults for the supported subset, two route/coordinator retirements and
+preservation. Current totals: 20/22 defaults replaced locally, 22/23 historical
+routes retired; T09 and T20 remain. No resource family is fully migrated. Earlier
+counts are dated history. Nothing is live or deployed by this local cutover.
+
+[Context/MCQ and helper review](evidence-review-2026-10-20.md) records further
+source evidence and retirement of four unused native mutation methods. No new
+tool/default completion: totals remain 20/22 defaults and 22/23 retired routes.
+
+[Attachment handler proof](attachment-proof-2026-10-20.md) adds reproducible native
+stream/denial/filter/redirect/sendfile tests and guarded rejection through current
+resource facades. Content/roster routes remain unaccepted; no default count change.
+
+## Development line separation — 20 October 2026
+
+The [maintained worktree guide](../../DEVELOPMENT_WORKTREES.md) separates original baseline, auth development and tool migration development. This checkout and its original continuation checks remain the mixed recovery source; they do not define the new worktrees' active auth scope. No failed proof is repaired by organization.

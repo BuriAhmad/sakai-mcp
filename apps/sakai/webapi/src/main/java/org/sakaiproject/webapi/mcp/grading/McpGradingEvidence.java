@@ -9,7 +9,6 @@ import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.count;
 import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.decimal;
 import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.hash;
 import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.instant;
-import static org.sakaiproject.webapi.mcp.grading.McpGradingJson.string;
 
 import org.sakaiproject.assignment.api.AssignmentConstants;
 import org.sakaiproject.assignment.api.AssignmentService;
@@ -25,7 +24,6 @@ import org.sakaiproject.exception.TypeException;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
-import org.sakaiproject.webapi.mcp.assessment.McpAssessmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -34,26 +32,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/** Hydrated evidence mapping, content revisions and submission preconditions. */
+/** Retained context evidence mapping and content/grade observations. */
 @Service
 public class McpGradingEvidence {
     private final AssignmentService assignments;
     private final ContentHostingService content;
     private final UserDirectoryService users;
-    private final McpAssessmentService metadata;
-    private final McpGradingAuthorization authorization;
 
     public McpGradingEvidence(
             AssignmentService assignments,
             ContentHostingService content,
-            UserDirectoryService users,
-            McpAssessmentService metadata,
-            McpGradingAuthorization authorization) {
+            UserDirectoryService users) {
         this.assignments = assignments;
         this.content = content;
         this.users = users;
-        this.metadata = metadata;
-        this.authorization = authorization;
     }
 
     Map<String, Object> identity(String uid) {
@@ -282,19 +274,4 @@ public class McpGradingEvidence {
                 List.of());
     }
 
-    void revision(Assignment a, Map<String, Object> request) {
-        if (!metadata.revision(a).equals(string(request, "expected_assignment_revision")))
-            throw failure(HttpStatus.CONFLICT);
-    }
-
-    void current(Assignment a, AssignmentSubmission s, Map<String, Object> row, boolean grade) {
-        if (!a.getId().equals(s.getAssignment().getId()) || !authorization.allowed(a, s))
-            throw failure(HttpStatus.FORBIDDEN);
-        if (!Boolean.TRUE.equals(s.getSubmitted())
-                || !Boolean.TRUE.equals(s.getUserSubmission())
-                || !contentRevision(s).equals(string(row, "expected_content_revision")))
-            throw failure(HttpStatus.CONFLICT);
-        if (grade && !gradeRevision(s).equals(string(row, "expected_grade_revision")))
-            throw failure(HttpStatus.CONFLICT);
-    }
 }

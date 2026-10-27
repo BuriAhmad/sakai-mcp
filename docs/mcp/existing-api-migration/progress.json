@@ -1,13 +1,13 @@
 {
   "format_version": 1,
-  "date": "2026-10-19",
+  "date": "2026-10-20",
   "branch": "codex/replace-custom-sakai-api",
   "base_sha": "208d69ac624910a29a7529934ddcc18bbac853e8",
-  "scope": "Whole custom Sakai business API replacement/retirement; eight default tools locally replaced, with explicit role/field/completeness limits; live acceptance pending.",
+  "scope": "Whole custom business API replacement; twenty actual defaults locally replaced with disclosed partial functionality; two tools remain.",
   "phase_0": "reviewed-checkpoint-and-branch-complete",
   "phase_1": "bounded conventional/browser parsers and transports locally tested; live fixtures/helpers/multipart pending",
   "phase_2": "auth-only module and actual Sites/RequestFilter plus Tomcat Portal synthetic-target dispatch pass; actual native views/roles/live acceptance pending",
-  "public_routing": "T01/T02/T03/T04/T05/T10/T11/T19 always existing HTTP; nine historical native business routes retired locally; fourteen active routes remain. Fourteen other tools and five resource families still require completion; R01 inline only is partial.",
+  "public_routing": "T01/T02/T03/T04/T05/T06/T07/T08/T10/T11/T12/T13/T14/T15/T16/T17/T18/T19/T21/T22 actual defaults use existing HTTP/external records. Twenty-two native routes retired locally; only grading-context remains. Save/release/preparation support one individual integer-score unlinked Assignment row with partial readback and durable no-replay receipts.",
   "scaffolds": {
     "sakai/operations.py": "retained/revised; accepted narrow current-user/sites/site-permission descriptors, unsafe candidates blocked",
     "contracts/existing_api.py": "retained/revised; default course facade supports actual native DTO masking",
@@ -19,14 +19,22 @@
     "apps/sakai/AGENTS.md",
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/README.md",
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteController.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentContextController.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentService.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupService.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteController.java",
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpCourseController.java",
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpGradesController.java",
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpSubmissionsController.java",
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpAssignmentGradingController.java",
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingAssignmentsController.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingExportService.java",
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingFileService.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingProposalService.java",
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingQueryService.java",
     "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/announcements/McpAnnouncementWriteControllerTest.java",
+    "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupServiceTest.java",
+    "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteControllerTest.java",
     "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpCourseControllerTest.java",
     "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpGradesControllerTest.java",
     "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/courses/McpSubmissionsControllerTest.java",
@@ -55,16 +63,25 @@
     "services/mcp/src/sakai_mcp/sakai/existing_transport.py",
     "services/mcp/src/sakai_mcp/sakai/grading.py",
     "services/mcp/src/sakai_mcp/sakai/operations.py",
+    "services/mcp/src/sakai_mcp/workflows/grading.py",
+    "services/mcp/src/sakai_mcp/workflows/resources.py",
     "services/mcp/tests/integration/test_pipeline.py",
     "services/mcp/tests/integration/test_untrusted_content.py",
     "services/mcp/tests/protocol/test_grading_resources.py",
     "services/mcp/tests/protocol/test_server.py",
+    "services/mcp/tests/unit/contracts/test_assessment_calendar.py",
     "services/mcp/tests/unit/sakai/test_assignment_setup.py",
-    "services/mcp/tests/unit/sakai/test_transport.py"
+    "services/mcp/tests/unit/sakai/test_grading.py",
+    "services/mcp/tests/unit/sakai/test_proposals.py",
+    "services/mcp/tests/unit/sakai/test_transport.py",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradeMutationService.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradebookProjection.java",
+    "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingEvidence.java"
   ],
   "new_paths": [
     "apps/sakai/announcement/announcement-tool/tool/src/test/org/sakaiproject/announcement/entityprovider/ExistingAnnouncementActionTest.java",
     "apps/sakai/entitybroker/core-providers/src/test/org/sakaiproject/entitybroker/providers/ExistingPagesActionTest.java",
+    "apps/sakai/entitybroker/core-providers/src/test/org/sakaiproject/entitybroker/providers/ExistingSiteVisibilityTest.java",
     "apps/sakai/mcp-auth/AGENTS.md",
     "apps/sakai/mcp-auth/README.md",
     "apps/sakai/mcp-auth/pom.xml",
@@ -79,15 +96,24 @@
     "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/DelegatedResponseTest.java",
     "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/PortalContainerTest.java",
     "apps/sakai/webapi/src/test/java/org/sakaiproject/mcpauth/ExistingSitesChainTest.java",
+    "docs/mcp/existing-api-migration/continuation-2026-10-19.json",
+    "docs/mcp/existing-api-migration/external-capture-cutover-2026-10-19.md",
+    "docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md",
     "docs/mcp/existing-api-migration/implementation-start.json",
     "docs/mcp/existing-api-migration/local-integration-2026-10-18.md",
     "docs/mcp/existing-api-migration/progress.json",
+    "docs/mcp/existing-api-migration/read-cohort-cutover-2026-10-19.md",
     "docs/mcp/existing-api-migration/read-discovery-2026-10-18.md",
+    "docs/mcp/existing-api-migration/t01-course-cutover-2026-10-19.md",
+    "docs/mcp/existing-api-migration/tool-limitations.md",
     "services/mcp/src/sakai_mcp/contracts/announcements.py",
+    "services/mcp/src/sakai_mcp/contracts/assignments.py",
     "services/mcp/src/sakai_mcp/contracts/gradebook_ui.py",
     "services/mcp/src/sakai_mcp/contracts/native_forms.py",
+    "services/mcp/src/sakai_mcp/contracts/native_html.py",
     "services/mcp/src/sakai_mcp/contracts/native_xml.py",
     "services/mcp/src/sakai_mcp/contracts/placements.py",
+    "services/mcp/src/sakai_mcp/contracts/submissions.py",
     "services/mcp/src/sakai_mcp/sakai/browser_transport.py",
     "services/mcp/src/sakai_mcp/sakai/entitybroker.py",
     "services/mcp/src/sakai_mcp/sakai/webapi.py",
@@ -98,62 +124,79 @@
     "services/mcp/src/sakai_mcp/storage/memory.py",
     "services/mcp/src/sakai_mcp/storage/records.py",
     "services/mcp/src/sakai_mcp/workflows/access.py",
+    "services/mcp/src/sakai_mcp/workflows/announcements.py",
+    "services/mcp/src/sakai_mcp/workflows/captures.py",
     "services/mcp/src/sakai_mcp/workflows/operation_journal.py",
+    "services/mcp/src/sakai_mcp/workflows/own_grades.py",
     "services/mcp/src/sakai_mcp/workflows/placements.py",
+    "services/mcp/src/sakai_mcp/workflows/selected_grades.py",
+    "services/mcp/src/sakai_mcp/workflows/submissions.py",
     "services/mcp/tests/fixtures/existing_http/README.md",
     "services/mcp/tests/fixtures/existing_http/wire.json",
+    "services/mcp/tests/fixtures/five_tool_http.py",
     "services/mcp/tests/security/test_native_auth_boundary.py",
     "services/mcp/tests/unit/contracts/test_browser_http.py",
     "services/mcp/tests/unit/contracts/test_existing_api.py",
+    "services/mcp/tests/unit/sakai/test_assignment_discovery.py",
     "services/mcp/tests/unit/sakai/test_browser_transport.py",
     "services/mcp/tests/unit/sakai/test_existing_announcements.py",
     "services/mcp/tests/unit/sakai/test_existing_courses.py",
     "services/mcp/tests/unit/sakai/test_existing_http.py",
+    "services/mcp/tests/unit/sakai/test_five_tool_cohort.py",
+    "services/mcp/tests/unit/sakai/test_selected_grades.py",
     "services/mcp/tests/unit/storage/test_azure_blob.py",
     "services/mcp/tests/unit/storage/test_records.py",
     "services/mcp/tests/unit/workflows/test_operation_journal.py",
     "services/mcp/tests/unit/workflows/test_placements.py",
-    "apps/sakai/entitybroker/core-providers/src/test/org/sakaiproject/entitybroker/providers/ExistingSiteVisibilityTest.java",
-    "docs/mcp/existing-api-migration/t01-course-cutover-2026-10-19.md",
-    "services/mcp/src/sakai_mcp/contracts/assignments.py",
-    "services/mcp/tests/unit/sakai/test_assignment_discovery.py",
-    "docs/mcp/existing-api-migration/read-cohort-cutover-2026-10-19.md",
-    "services/mcp/src/sakai_mcp/contracts/native_html.py",
-    "services/mcp/src/sakai_mcp/contracts/submissions.py",
-    "services/mcp/src/sakai_mcp/workflows/own_grades.py",
-    "services/mcp/src/sakai_mcp/workflows/submissions.py",
-    "services/mcp/src/sakai_mcp/workflows/announcements.py",
-    "services/mcp/tests/fixtures/five_tool_http.py",
-    "services/mcp/tests/unit/sakai/test_five_tool_cohort.py",
-    "docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md",
-    "docs/mcp/existing-api-migration/tool-limitations.md"
+    "services/mcp/src/sakai_mcp/contracts/gradebook_projection.py",
+    "docs/mcp/existing-api-migration/continuation-2026-10-20.json",
+    "docs/mcp/existing-api-migration/readback-2026-10-20.md",
+    "services/mcp/src/sakai_mcp/contracts/setup_forms.py",
+    "services/mcp/src/sakai_mcp/contracts/assessment_metadata.py",
+    "services/mcp/src/sakai_mcp/workflows/assignment_setup.py",
+    "services/mcp/tests/fixtures/setup_http.py",
+    "docs/mcp/existing-api-migration/setup-cutover-2026-10-20.md",
+    "docs/mcp/existing-api-migration/continuation-2026-10-20-setup.json",
+    "services/mcp/src/sakai_mcp/workflows/grading_operations.py",
+    "services/mcp/tests/unit/sakai/test_grading_operations.py",
+    "services/mcp/tests/fixtures/grading_operations.py",
+    "docs/mcp/existing-api-migration/operation-read-2026-10-20.md",
+    "docs/mcp/existing-api-migration/continuation-2026-10-20-operation-read.json",
+    "services/mcp/src/sakai_mcp/contracts/grading_preservation.py",
+    "services/mcp/src/sakai_mcp/workflows/grading_writes.py",
+    "services/mcp/tests/fixtures/grading_http.py",
+    "services/mcp/tests/unit/sakai/test_grading_writes.py",
+    "docs/mcp/existing-api-migration/grading-write-2026-10-20.md",
+    "docs/mcp/existing-api-migration/continuation-2026-10-20-grading-write.json",
+    "docs/mcp/existing-api-migration/evidence-review-2026-10-20.md",
+    "docs/mcp/existing-api-migration/continuation-2026-10-20-evidence-review.json",
+    "docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md",
+    "docs/mcp/existing-api-migration/continuation-2026-10-20-attachment-proof.json",
+    "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/content/impl/ExistingContentAccessTest.java",
+    "services/mcp/tests/unit/sakai/test_attachment_gate.py",
+    "docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md",
+    "docs/mcp/existing-api-migration/attachment-audit-results-2026-10-20.json",
+    "docs/mcp/existing-api-migration/attachment_readiness_proof.py",
+    "docs/mcp/existing-api-migration/continuation-2026-10-20-attachment-audit.json",
+    "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/access/tool/AccessServletProof.java",
+    "apps/sakai/mcp-auth/src/test/java/org/sakaiproject/mcpauth/AttachmentReachProof.java",
+    "docs/DEVELOPMENT_WORKTREES.md",
+    "docs/mcp/development-lines/arrangement.json",
+    "docs/mcp/development-lines/classification.json",
+    "docs/mcp/development-lines/verification.json",
+    "docs/mcp/development-lines/verify_arrangement.py",
+    "docs/mcp/existing-api-migration/continuation-2026-10-20-worktree-separation.json"
   ],
   "verification": {
-    "dependency_sync": "uv sync --locked; explicit Azure SDK/aiohttp dependencies and lock updated",
-    "python": "19 October five-tool FINAL: 399 tests pass; Ruff lint/format; mypy 64 source files; composed real SDK/JWT/OBO covers all five defaults; frozen public contracts/evaluator/report baselines unchanged.",
-    "native": "19 October five-tool: Java17 reactor 96 tests across 19 suites, zero failures/errors/skips; auth/container/current providers, reduced Spring mapping, retained helpers and Login. /tmp/sakai-five-tool-native-tests.log",
-    "live": "No live check performed. Native release/config/schema/store/role/performance/delegated acceptance remains unverified; no runtime change.",
-    "preservation": "19 October five-tool: 201 starting paths, 46 reviewed changes including five individually checkpointed native source retirements; original manifests/private archives and remaining presence/modes preserved; index empty. Verified with check_scope.py --verify-progress.",
-    "repository": "19 October five-tool: final check-repo-context.sh, git diff --check and check_scope.py --verify-progress results recorded below.",
-    "package": "Fresh wheel/sdist build passes. Wheel contains all five original facades/new shared workflows and no retired duplicate course/announcement helpers; WAR and wheel content inspection passes.",
-    "native_package": {
-      "date": "2026-10-19",
-      "result": "Java17 WebAPI package passes after generated output clean. WAR excludes all five retired controllers and stale flat MCP classes; shared query/export/file/auth services retained. No deployment.",
-      "path": "apps/sakai/webapi/target/api-25.2.war",
-      "sha256": "fcc0351c405fb58d0931e9bf939840ac33953735501a7b92fb424548bb36ff7e"
-    },
-    "python_package": {
-      "path": "services/mcp/dist/sakai_mcp-0.2.0-py3-none-any.whl",
-      "sha256": "85730f30cfa826d4767967c2c6b49d4755df92b72db3e67241b0e5bea90d7fba"
-    },
-    "limitations_documentation": "19 October: consolidated all eight locally replaced tools and shared resources/remaining legacy dependencies; checked implementation caps, identity/permission/completeness/precision/concurrency and uncertain-write limits. Documentation-only follow-up; prior code test/build results remain dated history."
+    "organization": "Created separate auth and tool source commits/worktrees from explicitly preserved anchors. Original baseline/main/custom source and current mixed branch/HEAD/index/private/editor files preserved.",
+    "source": "Auth business host matches208d69ac; migrated Python source matches mixed98364680; native auth and wiring absent from tool line; original native auth bodies match after package/import/format normalization.",
+    "repository": "Fresh separate source/role/scope and guide checks pass; current mixed required continuation/preservation check recorded after final overlay. New worktrees clean.",
+    "tests": "No new tests or package builds run in this Git-only operation. Prior verification remains historical. Recorded failed proof/harness results preserved without repair.",
+    "runtime": "No deploy/activation/Azure/academic/schema/stored-data change."
   },
   "next_gate": [
-    "B2 exhaustive native announcement list/detail completeness",
-    "B3/B7 metadata-only discovery for group-only TAs and complete submission roster/evidence",
-    "R01 existing attachment scope/byte integrity; remaining independent context and selected-grade reads",
-    "Actual rendered native views/roles and announcement notification/readback acceptance; configured durable journal D6 acceptance before activation",
-    "Exact compatible N1/P0 -> accepted existing HTTP P1 -> N2 release order; D3 before official grading commits"
+    "Use auth-development for server-auth changes and tool-migration-development for migrated business HTTP work; see docs/DEVELOPMENT_WORKTREES.md. This mixed checkout is recovery evidence.",
+    "Matching auth/native/Python integration and failed attachment proof/strict context/complete MCQ evidence remain unaccepted; no fixes or deployment authorized by separation."
   ],
   "uncertainties": [
     "No actual native tool rendered form/Wicket callback/live OAuth/Basic or multi-node-affinity acceptance",
@@ -164,7 +207,19 @@
     "T19 site-wide A4 hydration only; supplementary-content role entitlement and serialization need live acceptance. Group-only TA discovery blocked pending B3/B7 metadata-only flow. http1 observations are not native full configuration hashes.",
     "T02 native UI display precision/locale/percentage and item identity collision limits; metadata may initialize Gradebook once; no actual StudentPage acceptance.",
     "T04/T10/T11 submitted individual rows only, no complete roster/flags/attachment bytes/CAS; group-only/anonymous/group views blocked before hydration. R01 inline only; attachment resources explicitly unsupported.",
-    "T05 durable configured store required; D6 pending, no provisioning/activation. Source-derived form/optional-notification behavior unexercised live; observed readback is not causal receipt; uncertain sends never replay."
+    "T05 durable configured store required; D6 pending, no provisioning/activation. Source-derived form/optional-notification behavior unexercised live; observed readback is not causal receipt; uncertain sends never replay.",
+    "New capture defaults support inline-only partial evidence; pending never resumes; legacy owner importer absent.",
+    "T16 bounded rendered pagination and independently correlated Gradebook point display readback for fully authorized instructors only; comment bytes/stored precision/atomicity remain unavailable.",
+    "T21 reads frozen external records; new MCQ preparation remains incomplete-evidence blocked and is not a new completion.",
+    "T22 removes last legacy file fallback; R02 Assignment bytes explicitly unsupported pending native content scope/fidelity proof.",
+    "T06 strict Assignment objects/settings/Calendar remain unavailable; labelled metadata/revisions and actual item/category metadata are partial; no student grade/submission read for setup.",
+    "T07/T08 practical individual points subset only; native initial persistence/staging differs from old custom private-first behavior, all successes partial under strict full Assignment contract; source-bound single-send/readback is not causation or CAS.",
+    "Setup requires actual native form/role/locale/timezone/category policy acceptance and durable journal backend before activation; no academic operation performed.",
+    "The unused addDraftAssignment native factory/API and its two tests remain for separate D7 ordinary Assignment/API retirement review; no remaining production caller after setup retirement.",
+    "T14/T15/T18 limited to one unreleased submitted individual integer-score row, no Gradebook integration, plain ASCII side fields, editable instructor scope and HTTP observations. Native context hash not accepted; successful readback partial, no CAS/atomicity/causation, no uncertain replay. D3/D6/D8 still open.",
+    "Additional source review: site memberships/role metadata differ from Assignment-reference realm unlock eligibility, may omit user-directory records, and membership start/limit loop is not safe completeness evidence. No new route adopted or academic state guessed. docs/mcp/existing-api-migration/evidence-review-2026-10-20.md",
+    "B8 handler tests show native success can truncate or delegate body delivery to sendfile, filters may rewrite bytes and URL/storage can redirect. Default HtmlPageFilter leaves text/plain/PDF unchanged locally, but delegated AccessServlet/effective ACL/config acceptance remains open. Roster2 all/total is after privacy/config/group/cache/directory filtering. docs/mcp/existing-api-migration/attachment-proof-2026-10-20.md",
+    "Proof audit: native servlet component passes do not imply delegated acceptance; positive full chain fails403, Python positive probes do not collect. No fixes made per user. docs/mcp/existing-api-migration/attachment-audit-2026-10-20.md"
   ],
   "data_preservation": "No academic records, exports, proposals, receipts, schema or stored files modified or removed.",
   "previously_clean_tracked_paths": [
@@ -185,7 +240,7 @@
     "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/WebAppConfiguration.java",
     "services/mcp/uv.lock"
   ],
-  "evidence": "docs/mcp/existing-api-migration/five-tool-cutover-2026-10-19.md",
+  "evidence": "docs/mcp/existing-api-migration/operation-read-2026-10-20.md",
   "branch_history": [
     "codex/sakai-existing-http-migration",
     "codex/sakai-python-http-native-auth-only",
@@ -225,7 +280,261 @@
       "checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Five-Tool-Cohort-2026-10-19/apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/courses/McpSubmissionsController.java",
       "sha256": "8f748f65cfcee765bb0f91381d883b9e82e21bd33912318b8031d48aa20a846a",
       "reason": "Sole-purpose controller, default callers replaced with existing HTTP; all source routes retired locally; shared dependencies/data preserved; live compatibility gated."
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingExportService.java",
+      "checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-External-Capture-2026-10-19/apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingExportService.java",
+      "sha256": "46d5c5dbfdd16bec97fcdf8f75b31608c1819380ca04fdedbbe274eee0139ed7",
+      "reason": "Last current caller replaced; entire unused native service retired locally; source/records/checkpoints preserved; legacy runtime cutover remains gated.",
+      "related_route_ids": [
+        "export-create",
+        "export-read",
+        "export-file"
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingProposalService.java",
+      "checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-External-Capture-2026-10-19/apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingProposalService.java",
+      "sha256": "e2ab328a96a9e4c88e8908385a49084422d29db628dcdca8c278fbb097c8b59a",
+      "reason": "Last current caller replaced; entire unused native service retired locally; source/records/checkpoints preserved; legacy runtime cutover remains gated.",
+      "related_route_ids": [
+        "proposal-create",
+        "proposal-read"
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingFileService.java",
+      "checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-External-Capture-2026-10-19/apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradingFileService.java",
+      "sha256": "79f552371ba77dbbad4ebf50aa548253b8d7fd7ede456b475469dff4c2b1abaf",
+      "reason": "Last current caller replaced; entire unused native service retired locally; source/records/checkpoints preserved; legacy runtime cutover remains gated.",
+      "related_route_ids": [
+        "assignment-file"
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentContextController.java",
+      "checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Setup-2026-10-20/apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssessmentContextController.java",
+      "sha256": "57aba4ce9c15149d8ecc80b46c84c34f31123734c884ea507709da675a539760",
+      "reason": "All actual current setup callers replaced. Focused unused native source or dedicated tests retired locally; independent custom line/source/data preserved; compatible runtime cutover still gated.",
+      "related_route_ids": [
+        "assessment-context",
+        "assignment-create",
+        "assignment-publish"
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteController.java",
+      "checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Setup-2026-10-20/apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteController.java",
+      "sha256": "30603c6a3c75d05a56d5a7bdbcab2d2ef777c38f62fb822849f6d881dbb3f532",
+      "reason": "All actual current setup callers replaced. Focused unused native source or dedicated tests retired locally; independent custom line/source/data preserved; compatible runtime cutover still gated.",
+      "related_route_ids": [
+        "assessment-context",
+        "assignment-create",
+        "assignment-publish"
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupService.java",
+      "checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Setup-2026-10-20/apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupService.java",
+      "sha256": "b9cc6363c484601889a5b6ae3f6ceaa685e3273f98fd14c4f3618f8481b5dbd7",
+      "reason": "All actual current setup callers replaced. Focused unused native source or dedicated tests retired locally; independent custom line/source/data preserved; compatible runtime cutover still gated.",
+      "related_route_ids": [
+        "assessment-context",
+        "assignment-create",
+        "assignment-publish"
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteControllerTest.java",
+      "checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Setup-2026-10-20/apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentWriteControllerTest.java",
+      "sha256": "2e99e50446c08443e25a4458f1c55267b478e9229733fd66a51c19863b7dc168",
+      "reason": "All actual current setup callers replaced. Focused unused native source or dedicated tests retired locally; independent custom line/source/data preserved; compatible runtime cutover still gated.",
+      "related_route_ids": [
+        "assessment-context",
+        "assignment-create",
+        "assignment-publish"
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupServiceTest.java",
+      "checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Setup-2026-10-20/apps/sakai/webapi/src/test/java/org/sakaiproject/webapi/mcp/assessment/McpAssignmentSetupServiceTest.java",
+      "sha256": "b36c5ffad4e341d855e1fb7b3f17f084794867176442c17a77025431db56bdce",
+      "reason": "All actual current setup callers replaced. Focused unused native source or dedicated tests retired locally; independent custom line/source/data preserved; compatible runtime cutover still gated.",
+      "related_route_ids": [
+        "assessment-context",
+        "assignment-create",
+        "assignment-publish"
+      ]
+    },
+    {
+      "path": "apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradeMutationService.java",
+      "checkpoint": "/Users/burhanahmadkhan/Downloads/Sakai-Grading-Write-2026-10-20/apps/sakai/webapi/src/main/java/org/sakaiproject/webapi/mcp/grading/McpGradeMutationService.java",
+      "sha256": "c0f268bb38f09fd74484cd5cf2d72457cf24057c3ae683f2211e3e06d7b319fb",
+      "reason": "T14/T15 actual HTTP defaults and all coordinator callers cut over; private source retained; legacy data/schema/domain/cleanup untouched.",
+      "related_route_ids": [
+        "grade-save",
+        "grade-return"
+      ]
     }
   ],
-  "limitations_reference": "docs/mcp/existing-api-migration/tool-limitations.md"
+  "limitations_reference": "docs/mcp/existing-api-migration/tool-limitations.md",
+  "previous_verification": {
+    "dependency_sync": "uv sync --locked; explicit Azure SDK/aiohttp dependencies and lock updated",
+    "python": "19 October five-tool FINAL: 399 tests pass; Ruff lint/format; mypy 64 source files; composed real SDK/JWT/OBO covers all five defaults; frozen public contracts/evaluator/report baselines unchanged.",
+    "native": "19 October five-tool: Java17 reactor 96 tests across 19 suites, zero failures/errors/skips; auth/container/current providers, reduced Spring mapping, retained helpers and Login. /tmp/sakai-five-tool-native-tests.log",
+    "live": "No live check performed. Native release/config/schema/store/role/performance/delegated acceptance remains unverified; no runtime change.",
+    "preservation": "19 October five-tool: 201 starting paths, 46 reviewed changes including five individually checkpointed native source retirements; original manifests/private archives and remaining presence/modes preserved; index empty. Verified with check_scope.py --verify-progress.",
+    "repository": "19 October five-tool: final check-repo-context.sh, git diff --check and check_scope.py --verify-progress results recorded below.",
+    "package": "Fresh wheel/sdist build passes. Wheel contains all five original facades/new shared workflows and no retired duplicate course/announcement helpers; WAR and wheel content inspection passes.",
+    "native_package": {
+      "date": "2026-10-19",
+      "result": "Java17 WebAPI package passes after generated output clean. WAR excludes all five retired controllers and stale flat MCP classes; shared query/export/file/auth services retained. No deployment.",
+      "path": "apps/sakai/webapi/target/api-25.2.war",
+      "sha256": "fcc0351c405fb58d0931e9bf939840ac33953735501a7b92fb424548bb36ff7e"
+    },
+    "python_package": {
+      "path": "services/mcp/dist/sakai_mcp-0.2.0-py3-none-any.whl",
+      "sha256": "85730f30cfa826d4767967c2c6b49d4755df92b72db3e67241b0e5bea90d7fba"
+    },
+    "limitations_documentation": "19 October: consolidated all eight locally replaced tools and shared resources/remaining legacy dependencies; checked implementation caps, identity/permission/completeness/precision/concurrency and uncertain-write limits. Documentation-only follow-up; prior code test/build results remain dated history."
+  },
+  "continuation_record": "docs/mcp/existing-api-migration/continuation-2026-10-20-worktree-separation.json",
+  "previous_verification_2026_10_19": {
+    "python": "Fresh final check-mcp.sh: 451 tests pass, Ruff lint/format (118 files), mypy (66 source files); frozen contracts/evaluator/report checks unchanged. SDK/JWT/OBO exercises default capture/status/selected-grade/resource paths; source-derived facade tests cover frozen proposal reads.",
+    "native": "Fresh Java17 reactor: 91 tests in 19 suites, no failures/errors/skips. Final focused context/mutation/wiring/retired-class check: 19 tests, no failures/errors/skips, after removal of unused query GradingService dependency. BUILD SUCCESS.",
+    "live": "No live/deployed acceptance; no runtime/start/deploy/activation or academic operation.",
+    "preservation": "Original baseline archive/start manifests/start archive/retired checkpoints and full private Git-organization archive verified unchanged; 249-file private continuation checkpoint and exact committed-base before/after hashes; editor files unchanged, empty index, custom worktree clean and unmodified.",
+    "dependency_sync": "uv sync --locked passed; no dependency changes.",
+    "package": "Fresh wheel/sdist and Java17 WebAPI package builds pass; ZIP inspection matches wheel default source bytes, excludes editor/cache files, all eight retired controllers/services absent, selected controller bytecode contains only retained mappings. Retired generated WAR staging classes were individually removed before final rebuild; no other generated/user data cleanup.",
+    "repository": "Fresh check-repo-context.sh and git diff --check passed; check_scope.py --verify-progress passes with reviewed continuation record.",
+    "native_package": {
+      "path": "apps/sakai/webapi/target/api-25.2.war",
+      "sha256": "12b3415ee1041caabcf40e47cf776d5b5fc287767955b84723907095b1aefc13",
+      "deployed": false
+    },
+    "python_package": {
+      "path": "services/mcp/dist/sakai_mcp-0.2.0-py3-none-any.whl",
+      "sha256": "319f97db941bf3d58753f7a002c5a7efb6af91c022ad802a8f26884447c5f748",
+      "deployed": false
+    }
+  },
+  "previous_verification_2026_10_20_readback": {
+    "python": "20 October fresh check-mcp.sh: 481 tests pass, Ruff lint/format (119 files), mypy (67 source files); default facade and composed SDK/JWT/OBO Gradebook readback, frozen contracts/evaluator/report checks pass.",
+    "dependency_sync": "Fresh uv sync --locked passed; no dependency changes.",
+    "native": "No native source change in this continuation. 19 October Java results remain historical; not rerun.",
+    "live": "No live or deployed acceptance, runtime changes or academic operations.",
+    "package": "Fresh Python wheel/sdist build and source byte inspection pass; no native package rebuild or deployment.",
+    "preservation": "292-file private checkpoint and hash-chained October 20 continuation; prior records/manifests/private archives preserved, index empty; independent custom worktree clean and unmodified. Original Git-organization private files manifest/archive hashes freshly reverified.",
+    "repository": "Fresh check-repo-context.sh, git diff --check and check_scope.py --verify-progress pass.",
+    "python_package": {
+      "path": "services/mcp/dist/sakai_mcp-0.2.0-py3-none-any.whl",
+      "sha256": "5a91617f978124520437a57c617b2573aaa7e8e446526788f96a9238d77bce50",
+      "deployed": false
+    }
+  },
+  "previous_verification_2026_10_20_setup": {
+    "dependency_sync": "Fresh uv sync --locked passes; no dependency changes.",
+    "python": "Final fresh check-mcp.sh: 535 tests pass, Ruff lint/format (123 files), mypy (70 source files); real default facades and composed SDK/JWT/OBO setup flow; frozen schemas/catalog/descriptions/evaluator/reports preserved.",
+    "native": "Java17 reactor: 47 tests in 8 suites, zero failures/errors/skips; auth/container, existing Sites/Login and retained grading/wiring/retired-class checks pass. /tmp/sakai-setup-native-2026-10-20.log",
+    "package": "Fresh Python wheel/sdist and Java17 package builds pass. ZIP inspection matches new parsers/workflow/default facade/client source bytes; excludes editor/cache files. WAR excludes all 11 retired business controller/service classes and obsolete metadata item index, retaining grading/revision/auth dependencies.",
+    "live": "No live/native rendered/delegated mutation acceptance; no deployment/activation/Azure/academic operation.",
+    "preservation": "Verified 266-file owner-only pre-edit archive, direct retired sources/tests and 19 focused generated class copies; exact prior October20 continuation pinned, old manifests/records/checkpoints untouched, editor files untouched, empty index, custom worktree preserved.",
+    "repository": "Fresh check-repo-context.sh and git diff --check pass. Required check_scope.py --verify-progress uses the final named continuation overlay; index empty and independent custom worktree clean.",
+    "python_package": {
+      "path": "services/mcp/dist/sakai_mcp-0.2.0-py3-none-any.whl",
+      "sha256": "7c56838edbce44d238365779d7ee355a2e058a134cbd41a23bd722943d35f2f2",
+      "deployed": false
+    },
+    "native_package": {
+      "path": "apps/sakai/webapi/target/api-25.2.war",
+      "sha256": "4e11b8617713aff2899d960ea4d38fa43f8df9aa1f1dd4940f9fdc62547ef286",
+      "deployed": false
+    }
+  },
+  "previous_verification_2026_10_20_operation_read": {
+    "dependency_sync": "Fresh uv sync --locked passed; no dependency changes.",
+    "python": "Fresh check-mcp.sh: 551 tests, Ruff lint/format 126 files, mypy 71 source files. Actual default receipt facade and SDK/JWT/OBO save-to-operation lookup pass; frozen public contracts/descriptions/evaluator/reports unchanged.",
+    "native": "Fresh Java17 focused reactor: 47 tests in 8 suites, zero failures/errors/skips; three-route wiring, grading, delegated auth/Sites/Portal/Login pass. /tmp/sakai-operation-read-java.log",
+    "package": "Fresh wheel/sdist and Java17 package pass; byte inspection matches default facade/workflow and native changed classes. Retired operation mapping/method and all 11 earlier retired business classes absent from WAR.",
+    "live": "No live/deployed acceptance, feature activation, runtime/Azure or academic operation.",
+    "preservation": "Verified 188-file private before manifest/185-file archive; named operation-read continuation pins prior grading-context continuation. All prior manifests/private archives/continuations preserved; all four editor files match fingerprints; index empty, independent custom worktree clean, HEAD/main/custom refs unchanged.",
+    "repository": "Fresh check_scope.py --verify-progress passes: 22 tools, 5 resources, 3 active of 23 historical routes, 4 catalogs. check-repo-context.sh and git diff --check pass.",
+    "python_package": {
+      "path": "services/mcp/dist/sakai_mcp-0.2.0-py3-none-any.whl",
+      "sha256": "d1bcf05aa10ff00830593032189d5c8a414618b70cdc14131e66a3660de848e2",
+      "deployed": false
+    },
+    "native_package": {
+      "path": "apps/sakai/webapi/target/api-25.2.war",
+      "sha256": "68b30f39972ac0f3041b9331a1dc07884485596942c90b81e3c4bfeb98b1fa97",
+      "deployed": false
+    }
+  },
+  "previous_verification_2026_10_20_grading_write": {
+    "dependency_sync": "Fresh uv sync --locked passed; no dependency changes.",
+    "python": "Fresh check-mcp.sh: 565 tests; Ruff lint/format 130 files; mypy 73 source files. Actual SDK/JWT/OBO HTTP prepare/save/external receipt/release and student denial pass. Frozen contracts/catalogs/descriptions/evaluator/reports unchanged.",
+    "native": "Fresh explicit Java17 focused reactor: 38 tests in 8 suites, zero failures/errors/skips; sole context route wiring and selected POST credential guard plus JWT/response/RequestFilter/Sites/Portal/Login pass. Ten retired native mutation-coordinator cases replaced by Python facade coverage; one new auth test.",
+    "package": "Fresh wheel/sdist and Java17 package pass. Wheel matches all Python sources, no editors. WAR changed classes match; sole context mapping; all 12 retired business classes absent.",
+    "live": "No actual rendered/delegated native-role acceptance, deployment, feature activation, runtime/Azure or academic operation.",
+    "preservation": "Verified 205-file private before manifest/201-file source archive; new grading-write continuation pins immutable operation-read predecessor. Retired source and two exact generated leaves preserved individually. Four editor fingerprints/index/custom refs preserved.",
+    "repository": "Fresh repository guidance and whitespace pass; required scope/preservation check records 22 tools, 5 resources, 1 active of 23 historical routes and 4 frozen catalogs.",
+    "python_package": {
+      "path": "services/mcp/dist/sakai_mcp-0.2.0-py3-none-any.whl",
+      "sha256": "7e225e757af39dc6de0a3f84638269b1a702e75b1221a184008c7dcb13192a94",
+      "deployed": false
+    },
+    "native_package": {
+      "path": "apps/sakai/webapi/target/api-25.2.war",
+      "sha256": "8ebbb11776f6c3e8762835e6b4ec1af594da9666ede48da63613a70683c44be2",
+      "deployed": false
+    }
+  },
+  "previous_verification_2026_10_20_evidence_review": {
+    "dependency_sync": "Fresh uv sync --locked passed; no dependency changes.",
+    "python": "Fresh full check-mcp.sh: 565 tests; Ruff lint/format 130 files; mypy 73 source files. Actual public HTTP write/receipt and MCQ partial-input gates pass. Frozen contracts/catalogs/descriptions/evaluator/reports unchanged. No Python implementation edit this increment.",
+    "native": "Fresh explicit Java17 focused reactor: 38 tests in 8 suites, zero failures/errors/skips; actual reduced Spring constructor wiring/method absence, retained context/roster/permissions and auth/Sites/Portal/Login pass.",
+    "package": "Fresh wheel/sdist and Java17 package pass. Wheel matches Python sources and excludes editors. WAR changed helpers/controller/query match built bytes, all 12 retired business classes absent; javap confirms four methods absent and reduced constructors.",
+    "live": "No real rendered/delegated native-role acceptance, configuration inventory, deployment, activation, runtime/Azure or academic operation.",
+    "preservation": "Fresh verified 71-file private before manifest/67-file archive and immutable predecessor-pinned evidence-review record; four editors preserved; original Git-organization private manifest/archive hashes freshly verified. No clean/reset/stage/push/Git reorganization.",
+    "repository": "Fresh repository guidance, whitespace and required scope/progress/preservation checks pass; 22 tools, 5 resources, 1 active of 23 historical routes, 4 frozen catalogs. Totals unchanged 20/22 actual defaults.",
+    "python_package": {
+      "path": "services/mcp/dist/sakai_mcp-0.2.0-py3-none-any.whl",
+      "sha256": "c70a70d2615c7512d9ba590464963c8a98d386e55a853f515e39183ce574a0f7",
+      "deployed": false
+    },
+    "native_package": {
+      "path": "apps/sakai/webapi/target/api-25.2.war",
+      "sha256": "9f6081b7280889f4cfb86e1a1cbe99573985c528f95fd666e05418bae56d2f11",
+      "deployed": false
+    }
+  },
+  "previous_verification_2026_10_20_attachment_proof": {
+    "dependency_sync": "Fresh uv sync --locked passed; no Python dependency changes.",
+    "python": "Fresh full check-mcp.sh: 568 tests; Ruff lint/format 131 files; mypy 73 source files. Three actual content/resource gate cases added. Frozen schemas/catalogs/descriptions/evaluator/reports unchanged.",
+    "native": "Fresh explicit Java17 reactor: 48 tests in 9 suites, zero failures/errors/skips; nine unchanged content-handler characterization cases and one additional unaccepted-context guard case; retained auth/Sites/Portal/Login/grading/wiring pass.",
+    "package": "Fresh wheel/sdist and Java package pass; wheel matches Python source/no editors; auth JAR matches production class bytes and excludes test-only content characterization/dependency classes. Production implementation and prior WAR hash unchanged.",
+    "live": "No real delegated AccessServlet/effective-role ACL/config acceptance, content route adoption, deployment/activation, runtime/Azure or academic operation.",
+    "preservation": "Fresh verified private 75-path manifest/71-source archive with four excluded editor fingerprints; new attachment-proof record pins immutable evidence-review predecessor. Index/custom worktree/main/HEAD preserved.",
+    "repository": "Required scope/progress and chained preservation, guidance and whitespace pass; 22 tools, 5 resource families, 1 active of 23 historical routes; 20/22 local replacements unchanged.",
+    "python_package": {
+      "path": "services/mcp/dist/sakai_mcp-0.2.0-py3-none-any.whl",
+      "sha256": "c70a70d2615c7512d9ba590464963c8a98d386e55a853f515e39183ce574a0f7",
+      "deployed": false
+    },
+    "native_package": {
+      "path": "apps/sakai/webapi/target/api-25.2.war",
+      "sha256": "9f6081b7280889f4cfb86e1a1cbe99573985c528f95fd666e05418bae56d2f11",
+      "deployed": false
+    }
+  },
+  "historical_verification_before_worktree_separation": {
+    "dependency_sync": "Fresh uv sync --locked passed; no Python dependency change.",
+    "python": "Normal check-mcp.sh passes 568 tests, Ruff131 files, mypy73 source files; frozen baselines unchanged. SEPARATE positive audit has collection error (tests import), zero executed probes; not fixed.",
+    "native": "Normal explicit Java17 selection passes 48 tests in9 suites. SEPARATE positive Java audit:2 actual servlet component passes,1 delegated-chain failure (expected200,actual403,reached=false). Failure not fixed; no content acceptance claim.",
+    "package": "Not rebuilt/deployed in this proof-only audit. Previous artifact checks are historical. Test-only Access/Velocity dependencies and fixture bridges added; production source/runtime boundaries unchanged.",
+    "live": "No real native role/config/deployed acceptance, content route activation, live reads, deployment, runtime/Azure or academic operation.",
+    "preservation": "Fresh verified private76-path manifest/72-file source archive and4 editor fingerprints; exact failed audit logs/JUnit XML privately preserved. Prior continuation pinned; original records/archives untouched, empty index/custom worktree/refs preserved.",
+    "repository": "Required scope/progress/preservation, guidance and whitespace checks pass. Counts unchanged20/22 actual defaults,1 active of23 historical routes. Full attachment proof NOT accepted; failures deliberately preserved."
+  },
+  "development_role": "inactive-mixed-recovery; implementation continues in separate auth and tool worktrees"
 }

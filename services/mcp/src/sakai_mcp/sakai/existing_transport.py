@@ -9,6 +9,7 @@ import hashlib
 import json
 from dataclasses import dataclass
 from typing import Any
+from urllib.parse import urlencode
 
 import httpx
 from mcp.server.auth.provider import AccessToken
@@ -100,6 +101,30 @@ class ExistingApiTransport:
         except (ValueError, UnicodeDecodeError, RecursionError):
             raise SakaiError(ErrorCode.INTERNAL_ERROR) from None
 
+    async def grade_form(
+        self, principal: AccessToken, values: dict[str, str]
+    ) -> JsonObservation:
+        """One source-defined existing action. Caller journals before invoking."""
+        from sakai_mcp.sakai.operations import SET_GRADE
+
+        body = urlencode(values).encode()
+        if len(body) > 60_000:
+            raise SakaiError(ErrorCode.VALIDATION_ERROR)
+        data, _, identity = await self._read(
+            SET_GRADE, principal, None, None, body=body
+        )
+        try:
+            return JsonObservation(
+                json.loads(
+                    data.decode("utf-8-sig"),
+                    parse_constant=_invalid_constant,
+                    object_pairs_hook=_unique_keys,
+                ),
+                identity,
+            )
+        except (ValueError, UnicodeDecodeError, RecursionError):
+            raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME) from None
+
     async def content(self, principal: AccessToken, reference: str) -> ContentBytes:
         """Caller must first select ref from currently authorized source evidence."""
         from sakai_mcp.sakai.operations import CONTENT
@@ -120,11 +145,16 @@ class ExistingApiTransport:
         principal: AccessToken,
         parameters: dict[str, str] | None,
         query: dict[str, str] | None,
+        *,
+        body: bytes | None = None,
     ) -> tuple[bytes, httpx.Headers, TokenIdentity]:
         if OPERATIONS.get(op.name) is not op:
             raise SakaiError(ErrorCode.VALIDATION_ERROR)
-        if op.blocked_reason or op.effect == Effect.WRITE:
+        academic = op.effect == Effect.WRITE
+        if op.blocked_reason or (academic and (op.name != "set-grade" or body is None)):
             raise SakaiError(ErrorCode.UNSUPPORTED_CAPABILITY)
+        if not academic and body is not None:
+            raise SakaiError(ErrorCode.VALIDATION_ERROR)
         path = op.path(parameters, query)
         try:
             delegated = await self.obo.acquire(principal)
@@ -151,11 +181,29 @@ class ExistingApiTransport:
                             "X-Correlation-ID": current_request_id(),
                             "Accept": accept,
                             "Accept-Encoding": "identity",
+                            **(
+                                {
+                                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+                                }
+                                if body is not None
+                                else {}
+                            ),
                         },
+                        content=body,
                     )
                     response = await self._http.send(
                         request, stream=True, follow_redirects=False, auth=None
                     )
+                    if academic and response.status_code not in {
+                        200,
+                        400,
+                        401,
+                        403,
+                        404,
+                        422,
+                        429,
+                    }:
+                        raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME)
                     self._status(response.status_code)
                     encoding = response.headers.get(
                         "content-encoding", "identity"
@@ -204,14 +252,31 @@ class ExistingApiTransport:
                         ),
                     )
             except SakaiError as error:
+                if academic:
+                    if response is not None and response.status_code in {
+                        400,
+                        401,
+                        403,
+                        404,
+                        422,
+                        429,
+                    }:
+                        raise
+                    raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME) from None
                 if (
                     error.code != ErrorCode.DEPENDENCY_UNAVAILABLE
                     or attempt + 1 == op.attempts
                 ):
                     raise
             except httpx.DecodingError:
-                raise SakaiError(ErrorCode.INTERNAL_ERROR) from None
+                raise SakaiError(
+                    ErrorCode.AMBIGUOUS_WRITE_OUTCOME
+                    if academic
+                    else ErrorCode.INTERNAL_ERROR
+                ) from None
             except (httpx.HTTPError, TimeoutError):
+                if academic:
+                    raise SakaiError(ErrorCode.AMBIGUOUS_WRITE_OUTCOME) from None
                 if attempt + 1 == op.attempts:
                     raise SakaiError(ErrorCode.DEPENDENCY_UNAVAILABLE) from None
             finally:

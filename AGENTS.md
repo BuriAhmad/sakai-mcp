@@ -1,5 +1,7 @@
 # Repository guide
 
+The user-authorized [development worktree separation](docs/DEVELOPMENT_WORKTREES.md) assigns auth and tool work to distinct checkouts. This original checkout is retained as the mixed recovery source; preserve its files and use the recorded development directories for new implementation.
+
 The [canonical existing-HTTP migration plan](docs/mcp/existing-api-migration/implementation-plan.md) governs current migration work. Historical native business/lock/storage descriptions below document transition dependencies, not authorization to extend or retain them indefinitely. Only delegated authentication/session integration may be added in Sakai; replacement, focused retirement and data preservation follow the plan.
 
 This repository owns the Sakai development environment's Azure infrastructure, operations, and project services. Sakai application source lives under `apps/sakai/`.

@@ -1,14 +1,14 @@
 # Known tool limitations
 
-Reviewed against the local implementation on **19 October 2026**, branch
+Reviewed against the local implementation on **20 October 2026**, branch
 `codex/replace-custom-sakai-api`. This is the current limitations reference for
 maintainers and tool consumers. The [canonical plan](implementation-plan.md)
 governs implementation; [coverage](coverage.json) and [progress](progress.json)
 record migration state. Update this reference whenever a limit is discovered,
 changed or resolved, and link the implementation and verification evidence.
 
-**Eight tools have local existing-HTTP replacements. This does not establish full
-functional parity or live acceptance.** Fourteen tools still need migration, and
+**Twenty tools have local default existing-HTTP/external-record replacements. This does not establish full
+functional parity or live acceptance.** Two tools still need migration, and
 none of the five resource families is fully migrated. Local tests and package
 builds do not prove deployed configuration, actual rendered native views, all
 Sakai roles, notification delivery or production performance. Nothing in this
@@ -230,6 +230,135 @@ acceptance remain open.
 [assignment parser](../../../services/mcp/src/sakai_mcp/contracts/assignments.py),
 [read/discovery evidence](read-cohort-cutover-2026-10-19.md).
 
+## Practical setup defaults — T06/T07/T08, 20 October 2026
+
+These actual defaults now use existing Assignment list/edit/save/post HTTP and
+external journals. They are locally replaced with **partial functionality**, not
+full parity or live acceptance. Public schemas/catalog descriptions remain frozen;
+unsupported combinations fail explicitly and returned completeness/partial fields
+carry the narrower behavior. [Source and tests](setup-cutover-2026-10-20.md).
+
+### `get_course_assessment_context` — T06
+
+Requires site-wide `asn.new`, `asn.revise` and `gradebook.editAssignments` plus a
+resolvable Assignment placement. Group-only edit/grading permissions do not suffice.
+Reads the existing native list and edit forms without hydrating Direct submission
+DTOs. Enumeration is bounded to **20 pages / 500 editable rows**; native group/search/
+draft-owner preferences can narrow it. Only the first **20** editable rows receive
+form-revision observations. Effective actor UID/EID/site/timezone are bound to the
+native Portal header; the timezone is the acting user's effective native zone,
+**not a verified course policy**. Its preference-versus-server source stays unknown.
+
+The frozen full Assignment shape requires unexposed deletion/release/integration
+fields. It is **not filled with guessed flags**: `assignments=[]` has explicit
+`sections.assignments.status=unavailable`. Available ID/title/draft/form-revision
+observations are labelled `assignment_metadata_only: <JSON>` warning entries;
+null revisions mean no usable edit revision was established. Category selector
+IDs/names are similarly labelled `gradebook_category_choice_metadata_only`.
+These entries support planning and obtaining the observation revision for publish;
+they are not complete Assignment/Category records or absence claims. This is an
+interim representation within the unchanged strict contract, not full metadata parity.
+
+Reads the **existing metadata-only** `/api/sites/{site}/grading/item-data` endpoint,
+already used by the client, after native course and item-edit authority checks.
+The native service permits assignment metadata to editors or graders. Setup never
+requests student grades, submission bodies or the instructor score table, including
+during link verification. Response budget is **1 MB**, with at most **500 items and
+500 categories**. Item context must exactly match the site; IDs and duplicate checks
+are strict. Native item flags, external references, maxima and exposed category
+weight/drop/keep/equal-weight/extra-credit rules are returned. Nullable or omitted
+required flags/rules do not become false/zero: the affected full object is omitted
+with an explicit ID-labelled warning. Complete=false and permission-scoped status
+remain; missing objects do not prove absence.
+
+Maxima/weights use native double precision. Item due dates, full Gradebook mode/entry/
+display settings and group Gradebooks remain unavailable. The metadata read may
+initialize native Gradebook backing state; it has no automatic retries. Native DTO
+serialization failures and real editor/role behavior remain acceptance gates.
+Calendar is not read: section unavailable, events empty, no absence claim. Explicit
+valid calendar windows are preserved; the old default UTC window (-14 days through
++42 days from today's midnight) remains. Capabilities reflect observed native
+permissions and do not guarantee every adapter operation is implemented.
+
+### `create_assignment` — T07
+
+Useful local subset: **individual/site-wide points assignments**, the five existing
+public submission modes, draft or posted publication, finite dates and structured
+resubmissions (**0–10 or unlimited -1**; non-electronic supports 0). **100 UTF-16 code-unit
+native title limit**, a conservative **65,535 UTF-8 byte instruction limit**,
+**11-character points field**, native **minute precision** and
+date-picker upper year **2099** apply; finer instants are rejected, never truncated.
+Requested instants are converted to the observed native acting-user timezone without
+changing preferences; unrecognized native timezone aliases and ambiguous/nonexistent
+DST wall times fail. Writes currently
+require an English numeric locale; other locales fail before POST rather than risk
+native decimal interpretation. Native scale/rounding remains a readback/acceptance
+limit: requested displayed points must match readback numerically.
+
+Current Assignment attachments, group/group-Gradebook/anonymous/peer/review/rubric
+variants and linked calendar deadlines are unsupported before mutation. New-form
+optional auto-announcement/calendar defaults are explicitly unchecked for the
+requested `none` policy; forced controls fail. Native unrequested form defaults can
+still affect other ordinary policies, so full configuration is not certified.
+
+Gradebook mode `none` and native `new_external` are supported. External creation
+requires native Gradebook item-edit authority, passes native metadata authorization
+before mutation, and requires **released=true,
+counted=true**, matching the existing native create behavior; other policies fail
+before write, avoiding an unwanted transient release. A configured category must
+be selected by its rendered existing ID. When native category choices are rendered, requesting
+uncategorized plus counted=true is rejected because the native table treats that
+item as uncounted. No category, weight, existing item or grading policy is edited.
+An exact metadata-only external Assignment reference/app/item/category/flag readback
+establishes only the observed stored link flags, not effective course-grade calculation,
+full settings/precision or an atomic setup transaction. Empty/hidden category settings
+can remain unknown. A visible duplicate Gradebook title conflicts before creating a
+new external item; no title is used as the authority for link identity.
+
+A configured durable private journal is mandatory **before HTTP**. Prepared/Sending
+persist before **one academic POST**. Response loss, 5xx, unknown controls, ambiguous
+new-ID delta, scope/binding or core readback mismatch never cause automatic resend.
+A new invocation is a new intent; native title checks and visible-ID deltas do not
+establish cross-request idempotency or discover hidden drafts. Native first persistence
+is not the old custom private-first factory, and post/link stages are not atomic.
+
+After a unique visible new ID, required fields and draft/posted state are observed,
+results deliberately remain **`outcome=partial`, `assignment=null`,
+`remaining_steps=[verify_setup]`, `retry_safe=false`** because the strict full object
+cannot be verified. The saved ID, timestamp, operation ID and `configuration_revision`
+warning are preserved. Instruction normalization differences additionally require
+`verify_assignment`; they are explicitly reported rather than treated as equal.
+A later transient/unsupported Gradebook read produces an unknown link with the
+known Assignment ID. Identity/permission failures remain errors, with previously
+observed IDs retained privately. Matching source state is not a causal receipt.
+Do **not** repeat create merely because verification is partial or unknown.
+
+### `publish_assignment` — T08
+
+Publishes one **currently visible/editable draft** through its rendered edit form.
+Get the form observation revision from context metadata or a prior create result;
+old custom configuration tokens and T19's different metadata hashes are not equivalent.
+Changed observations conflict before POST; an already posted assignment conflicts
+instead of being reposted to resume links. Inactive visible/resubmission date defaults
+are excluded from the revision so native default-time changes do not invalidate an
+otherwise unchanged draft. Active fields and preserved controls remain guarded by
+an observation only; concurrent UI changes/ABA can occur between read and POST.
+
+Preserves existing form fields and uses the same locale, individual/points, attachment,
+feature and integration restrictions as creation. Existing checked calendar/auto-
+announcement state is rejected, rather than silently deleting/regenerating links or
+sending notifications. JavaScript-synchronized tag controls and raw rubric controls
+are also rejected during publish: forwarding an empty raw tag input can clear existing
+associations. The existing native rubric handler skips association updates when no
+rubric parameters are posted; explicitly detected active rubrics remain unsupported. No bulk publish, edit API, repair/resume, native CAS or automatic
+retry is provided. Uses the same durable one-send journal and explicit partial readback
+result. A caller must inspect partial/unknown results before any further academic action.
+
+**Resolution gates:** actual native rendered/delegated role and timezone acceptance;
+full Assignment/Category/Calendar fields; scoped attachments; additional Gradebook
+flag edits and verified partial recovery; durable retention/ownership and compatible
+release ordering. These do not block useful local tests of the supported subset.
+
 ## Shared transport, resource and release limits
 
 Existing JSON responses default to a **1,000,000-byte** budget. Native HTML is also
@@ -239,29 +368,170 @@ reached. Browser navigation interprets only accepted rendered URLs/controls;
 source-derived synthetic fixtures do not prove every customization or Wicket/form
 variant. No arbitrary JavaScript or unknown native workflow is executed.
 
-All five resource families remain incomplete. R01 submission files has existing
-HTTP **inline support only**. Assignment files, captured export files/manifests,
-proposal/report dependencies still require their own existing-HTTP migration and
-legacy-record compatibility work. The public resource fallback tool is not proof
-that every resource is migrated or every attachment readable.
+All five resource families retain functionality/legacy/live acceptance gaps. R01
+supports current inline bytes only. R02 current Assignment attachments explicitly
+returns `UNSUPPORTED_CAPABILITY`; it no longer calls a custom native file route.
+The retained context facade marks these attachments unreadable with no resource
+revision, so its presenter does not advertise unusable links.
+R03/R04 captured bytes/manifests and R05 frozen reports now use external records
+with fresh native source reauthorization. Legacy records require a separately
+reviewed offline owner mapping/import; their bytes/UUIDs/expiry remain preserved,
+but are not automatically accessible in the new namespace.
 
-Fourteen tools still require migration: `get_course_assessment_context`,
-`create_assignment`, `publish_assignment`, `get_assignment_grading_context`,
-`export_assignment_submissions`, `get_assignment_submission_export`,
-`save_assignment_grades`, `release_assignment_grades`, `get_assignment_grades`,
-`get_assignment_grading_operation`, `prepare_assignment_grade_payload`,
-`prepare_assignment_mcq_grades`, `get_assignment_grading_proposal` and
-`read_assignment_grading_resource`. Some coordinate replaced reads but still have
-legacy business-route dependencies. In particular, MCQ preparation cannot bypass
-the incomplete submission-evidence gate. Their architecture/concurrency/storage
-acceptance is not closed by the eight replacements; consult the per-tool matrix
-and D1–D8 decisions in the [canonical plan](implementation-plan.md).
+Two tools still require migration: `get_assignment_grading_context` (T09) and
+`prepare_assignment_mcq_grades` (T20). The native context's strict full Assignment
+and semantic configuration hash remain unavailable through researched existing
+reads. Its prepare/save/release capability hints are now false: obtain HTTP
+metadata/row observations through T19/T11 or T16 for the supported write subset.
+No unavailable fields are guessed. MCQ still requires complete roster/content
+and attachment evidence; it is not counted as migrated.
 
-The local native tip has retired **nine** historical routes and cannot serve older
-Python clients needing them. Release ordering must remain compatible additive-auth
-native revision → accepted Python HTTP cutover → native retirement. Rolling back
-Python also requires compatible native route support. No deployed behavior should
-be inferred from this local source state.
+The local native tip has retired **twenty-two** historical routes; one remains.
+It cannot serve older Python clients needing retired routes. Preserve compatible
+additive-auth native revision → accepted Python HTTP cutover → native retirement,
+with compatible-native-first rollback. Nothing is newly live or deployed.
+
+## Additional locally replaced defaults
+
+### `export_assignment_submissions` — T12
+
+Requires the grading gate, configured durable external store and the same fresh
+site-wide, submitted-individual source authority as T10/T11. Without store
+configuration it fails before HTTP. Group-only/anonymous/group/peer modes remain
+unsupported. Exact selected assignment/content observations must match before
+conditional intent creation. At most **100 distinct selections**, **100 inline
+artifacts**, **65,535 UTF-8 bytes per inline artifact** and **two preparations**
+concurrently; new inline captures cannot exceed 6,553,500 bytes. Attachments and
+ZIP are unsupported. No content is rendered, normalized or extracted.
+
+Every new finalized export is **partial**, every row incomplete (or source_changed),
+and completeness false. Exact captured inline bytes/hash remain useful for manual
+inspection; they cannot establish a complete roster/evidence set for MCQ scoring.
+Exposed source changes after capture are recorded; unexposed changes/ABA are not
+covered. This is not a native snapshot or a lock against UI/student writers.
+
+An export UUID freezes the owner, payload hash and original **24-hour expiry**.
+Same payload returns the existing pending/final outcome; different payload
+conflicts. Conditional creator/ETag handling prevents cooperating workers from
+recapturing the same intent. An interrupted capture may remain **pending** with
+private unreferenced bytes. Neither a duplicate invocation nor a read resumes,
+cleans or extends it. Permission/storage errors after intent require explicit
+reconciliation. D6 retention/backup/actual Blob durability and legacy import remain
+activation/release gates; no production memory fallback is provided.
+
+### `get_assignment_submission_export` — T13
+
+Reads frozen external receipts, reauthorizing **every selected submission/user**
+against current native source access. Tenant/object/native UID/course/Assignment
+owner binding and original expiry are enforced. A removed/omitted row, changed
+submitter or revoked permission denies access. Newer source bytes do not rewrite
+the historical capture. Receipt, request and artifact relationships/digests are
+checked; artifact downloads verify actual stored length/hash.
+
+Pending status can be inspected but cannot be used as a completed resource or
+evaluator manifest. The read never captures/resumes/repairs. Pages hold at most
+100 artifacts and use manifest-bound opaque cursors; old numeric cursors conflict.
+Actual external persistence, legacy owner import and delegated role acceptance
+are open; a missing external UUID is not proof no native historical record exists.
+
+### `get_assignment_grades` — T16
+
+Requires site-wide `asn.grade`, submitted individual rows and recognized native
+list photo/Assignment/submission link/release-cell relationships. Selected reads
+follow **rendered Next controls**, at most **20 grading pages** and **5000 identified
+submitted rows**, in the same delegated conversation; Assignment discovery is
+separately bounded to 20 pages. A disabled Next must terminate enumeration.
+Repeated pages, duplicate submission/student identities, ambiguous/missing controls,
+foreign links, missing release cells and unknown indicators fail explicitly.
+Group-only/anonymous/group/peer variants remain unsupported. The existing `si-check`
+indicator establishes release; native `returned` remains separate. Two enumerations
+reject an exposed selected release change. They are not a native snapshot or CAS;
+search/group preferences can still narrow the native list.
+
+Returns Assignment **display point strings**, blank as null and zero as zero.
+Localized/letter/nonpoint scores are unsupported. Feedback hash covers the emitted
+comment; returned-at remains unknown. An `http1-` revision describes observed
+Assignment/release fields and cannot serve as a native commit precondition.
+
+Independent Gradebook **display scores and link flags** are now read from B6 only
+when fresh native permissions include all of `gradebook.gradeAll`,
+`gradebook.editAssignments` and `section.role.instructor`. Other authorized Assignment
+graders retain Assignment/release reads with explicit unavailable Gradebook fields;
+the broader instructor table is never opened for them. Eligible readers use the
+configured Gradebook placement's existing `/grades` mount. Site/form Gradebook UID
+and `settings.gUid` must equal the requested site; group Gradebooks are unsupported.
+The column must have the exact Assignment external reference and native external
+application ID, external maintenance and typed release/count flags. User IDs are
+exact; names/titles/order are never correlation keys. Absence in this potentially
+filtered table does **not** prove 'not linked'. Failed/unsupported eligible reads
+fail the operation; no legacy or Assignment-score substitution is used.
+
+B6 is a **bounded full instructor table read**, even though only selected values
+are returned. Native preferences may initialize on first visit. Payload is capped
+at **1 MB**, the matrix at **100,000 cells**. Category columns participate in matrix
+indexing. Points mode only; JSON uses the native double representation, packed
+fractions can round to hundredths. The baseline's ambiguous fraction-carry encoding,
+negative/excused scores and values outside the fixed public numeric grammar fail.
+Raw stored precision and comment bytes are unavailable. Available means selected
+display-score evidence, including an observed null; it does not certify exact stored
+values, projection equality, complete Gradebook state or comments. Completeness
+remains false, with explicit reasons/warnings. Assignment, release and Gradebook
+observations are separate and can race, including unobserved ABA changes.
+
+**Evidence/resolution gate:** [20 October readback evidence](readback-2026-10-20.md).
+Actual native rendered data/roles, deployment compatibility, display precision and
+comment handling require separate acceptance. B6 score-only adoption closes neither
+D3 concurrency nor the full grading-context field gate.
+
+### `get_assignment_grading_proposal` — T21
+
+Reads frozen external records only, checking owner/site/Assignment/proposal/request
+identity, payload hash, original expiry and source-export lifetime/authority. It
+never re-evaluates or refreshes a proposal. Source export deletion/expiry/revocation
+also denies reports. Pagination retains the frozen public numeric offset grammar; every page
+loads the immutable owner-bound record and reauthorizes it. Canonical JSON and CSV renderers/evaluator source remain unchanged.
+
+No new MCQ proposal can be prepared from today's incomplete captures. Local tests
+seed synthetic external records for read coverage. **No legacy importer or live
+owner mapping was implemented**; preserved native records require an independently
+reviewed offline translation or drain before cutover. Do not infer usable proposal
+creation merely from this reader. D6 storage/retention/ownership and actual host
+acceptance remain open.
+
+### `read_assignment_grading_resource` — T22
+
+Both the fallback tool and SDK resource reads use the same strict `sakai://`
+resolver with no legacy business-route fallback. Current inline support remains;
+current submission/Assignment attachment bytes are unsupported. Captured inline
+artifacts/manifests and frozen proposal reports use the external pipeline above.
+Wrong resource shapes/report names fail before HTTP. Reads enforce source scope,
+owner, revision or expiry and stored-byte integrity, and never issue an academic
+POST or start/resume capture. Full attachment fidelity, native role/live behavior,
+legacy links/owner import and external durability remain open.
+
+Source and fresh focused evidence for all five additions:
+[external-capture cohort](external-capture-cutover-2026-10-19.md),
+[capture workflow](../../../services/mcp/src/sakai_mcp/workflows/captures.py),
+[selected grades](../../../services/mcp/src/sakai_mcp/workflows/selected_grades.py)
+and [resource resolver](../../../services/mcp/src/sakai_mcp/workflows/resources.py).
+
+## Stable roster identity gate — B7, T04/T10/T11/T12/T20
+
+The actual native `chef_assignments_instructor_list_submissions.vm` no-submission
+branch renders a display name and blank cells, **without a stable UID, photo or
+grading link**. Exhausting pages cannot establish who those missing students are.
+Do not join by name or position. The synthetic empty-list fixture has been corrected;
+without positive individual identity evidence, current source hydration fails
+unsupported before requesting the Assignment item. A list containing only missing
+rows therefore cannot produce a fabricated empty complete roster. Group/anonymous
+privacy preflight remains in force.
+
+A separately researched, authorized eligible-submitter roster with stable native
+UIDs, active membership/role and submission eligibility is required to close this
+gate. Native serialization can still omit evidence; attachments also remain blocked
+on B8 scoped delegated Content access, ACL and byte/MIME integrity. MCQ preparation
+continues to refuse incomplete captures. No full roster or attachment-byte claim
+was added by the pagination improvement.
 
 ## Closing and maintaining limits
 
@@ -273,3 +543,136 @@ history. Priorities remain B2 exhaustive announcement enumeration, B3/B7 scoped
 metadata/complete roster evidence, R01 attachment scope/integrity, D3 concurrency
 acceptance and D6 private-store acceptance. No limit is resolved by broadening
 native permissions, adding replacement business endpoints or hiding uncertainty.
+
+## Operation receipt default — T17, 20 October 2026
+
+`get_assignment_grading_operation` now reads owner-bound external commit receipts
+and reauthorizes the current site-wide individual Assignment targets through
+existing HTTP. It preserves the historical timestamp, stages and unknown outcome;
+it does not reconcile authorship from present grades. Historical Gradebook scores
+are withheld as null with an explicit warning because current item/student
+permissions are not established by this read. Required warnings never silently
+truncate original warnings; over-budget receipts fail unsupported.
+
+The configured durable store is required before any HTTP. Receipt/request hashes,
+ID/kind/mode/row membership and owner/expiry are checked. Reads neither change
+storage/expiry nor send an academic POST, resume pending work or retry a send.
+Missing, expired, incompatible or unimported legacy records never fall back to a
+native business route. Current scope uses the T10/T11 submitted individual subset;
+withdrawn/missing/anonymous/group-only targets can fail reauthorization.
+
+Current save/release defaults now use the existing Direct grading action for the
+subset below. The earlier transitional native writer description is historical.
+Prepared/Sending and stored historical outcomes retain their external record
+format. Repeated IDs read without sending; different payloads conflict. Pending
+records never resume automatically. D6 durable backend/retention/legacy ownership
+and actual-role/live acceptance remain unresolved.
+
+## Existing HTTP save, release and preparation — T14/T15/T18
+
+**Actual defaults replaced locally, limited functionality; no live acceptance.**
+The original facades use `workflows/grading_writes.py`; T18 keeps its exact frozen
+canonical hash and commit arguments and calls read-only Python advisory validation.
+Validation performs no academic POST or journal mutation.
+
+- Exactly one submitted individual site-wide points row, integer displayed score,
+  English locale, editable Assignment and existing instructor/item-edit authority.
+  Group-only TAs, groups/anonymous/peer/review/rubric/tag/calendar/attachment and
+  unsupported policy variants fail before mutation. Assignment must have an
+  observed enabled Gradebook control switched off; linked or multi-Gradebook
+  assignments are unsupported. No Gradebook score writes or projection guarantee.
+- All overwritten private notes, feedback text/comment and resubmission/extension
+  properties must be observable and exactly preservable. Plain ASCII text only;
+  HTML, unsafe controls, trimming/Unicode transformations and missing/incomplete
+  properties fail before POST. Preserve feedback, clear feedback and plain-text
+  replacement are supported. Native submission/feedback attachments are not added;
+  the existing action retains them. Complete attachment evidence remains unknown.
+- Use T19 `list_assignments` or T16 `get_assignment_grades` Assignment metadata
+  revision, T11 current grade revision or T16 composite grade/release revision,
+  and current content revision. Each accepted row projection is checked separately;
+  released/returned rows are rejected. T09's native semantic revision is rejected.
+  Preparation reserves nothing; changed observations can invalidate later commit.
+- `gradeOption=save` saves an unreleased row without native retract semantics;
+  `gradeOption=return` performs native return/release and existing notifications.
+  Release requires the current score and feedback digest; it is a separate intent.
+- A configured durable external journal is required before commit HTTP. After
+  Prepared/Sending, current actor/form/content/grade/private fields are rechecked,
+  then exactly one URL-encoded POST to `/direct/assignment/setGrade.json` occurs.
+  A race between the last read and POST remains possible. Neither the journal nor
+  read revisions provide native CAS, row locks, transaction or batch atomicity.
+- Post-readback checks assignment/form identity, score, release/returned flags,
+  content revision, side fields and properties (except native `last_graded_date`).
+  A successful observation is always `outcome=partial`, stage `saved` or
+  `assignment_released`, with Gradebook score null and explicit warnings. It is
+  not a causal receipt or full-state fidelity proof. Concurrent unseen state or
+  notification delivery cannot be certified.
+- Lost/invalid replies, mismatched post identity, uncertain transport/server errors,
+  post-readback failure or journal persistence failure remain unknown. Repeated
+  operation IDs read their historical outcome and never replay/resume, including
+  pending records. A new ID is a new academic intent, not safe recovery.
+
+Resolution gates: D3 rendered native grading/notification/field-preservation and
+concurrent-edit acceptance; D6 durable backend/retention/legacy record ownership;
+D8 matching native authentication, real roles/locales/configuration and deployment.
+Widen batches, decimal precision, linked Gradebook, alternate policies or roles
+only after their semantics and evidence are established. Source, synthetic facade
+checks and preserved retirements: [grading write evidence](grading-write-2026-10-20.md).
+
+## Additional context/MCQ evidence and helper retirement — 20 October 2026
+
+Counts remain 20/22 local default replacements and 22/23 retired native routes.
+T09 still cannot populate required raw native scale/release fields from the
+researched existing projections. Warnings do not permit fabricated required values.
+T20's current partial manifest is rejected before context/evaluation or proposal
+persistence; its existing external frozen-proposal reconciliation remains useful
+but was already implemented and is not counted again.
+
+The modern Direct `assignment/gradable` action computes allowed/visible users but
+returns only stored submission maps, not a complete no-submission roster. Generic
+membership responses expose stable identities under separate native roster authority,
+with privacy/user-directory omission behavior and a start/limit loop that is not
+safe completeness evidence. Role-permission reads require site maintainer authority
+and do not themselves reproduce Assignment-reference realm eligibility. These are
+research candidates; no broader delegated route or membership fallback was activated.
+Do not join no-submission rows by display name or assume a named role is eligible.
+
+Four now-unused native mutation helper methods and their unused collaborator
+injections were removed after caller review. Context link/capability/evidence
+mapping and native metadata hashing remain unchanged. D7 factory/hydration/version/
+lock/store compatibility and D6 records/cleanup ownership still need review. See
+[source review and checks](evidence-review-2026-10-20.md).
+
+## Attachment handler proof and Roster2 candidate — 20 October 2026
+
+Native handler characterization confirms exact bytes/MIME for a synthetic plain
+text stream and that the configured default HTML filter leaves text/plain/PDF
+unchanged. Other configurations can transform bytes. Native success can contain
+a truncated stream or an X-Sendfile header with no in-process body; URL/cloud
+resources can redirect. HTTP status alone does not prove complete raw evidence.
+
+These tests use synthetic ACL/resource/storage collaborators; they establish
+handler ordering and behavior, not effective-role permission correctness or an
+accepted delegated AccessServlet chain. Content remains blocked in Python and
+native credential reach, covered through actual method/resource facades and guard
+regressions. No resource family is newly complete or counted as migrated.
+
+The additional Roster2 get-membership candidate returns totals only after cached
+membership resolution, directory omission, hidden-member, configured visible-role
+and group filters. Optional pronunciation integration can make third-party calls.
+Assignment-reference authorization includes an Assignment realm alongside context
+realms, so site roles alone cannot certify eligible submission identities.
+No new native roster route or credential reach was adopted. Exact evidence and
+next chain/response-validation gate: [attachment proof](attachment-proof-2026-10-20.md).
+
+## Recorded attachment audit failures — 20 October 2026
+
+The positive delegated content-chain proof fails with HTTP403 before RequestFilter,
+binder or AccessServlet is reached. Source also lacks delegated filters on the
+Access servlet. Two actual servlet-to-content component cases pass with synthetic
+session/ACL/resource/storage collaborators; they do not prove effective native
+role grants or the rejected delegated context. The separate positive Python
+readiness probes fail collection (`No module named tests`) and establish no Python
+capability result. Exact failures and untouched probes are recorded in the
+[audit](attachment-audit-2026-10-20.md). The user requested failures be recorded
+without fixes; no implementation or failed harness was repaired. Passing normal
+regressions does not override these outcomes. Counts/functionality remain unchanged.
