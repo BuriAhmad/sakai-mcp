@@ -48,7 +48,7 @@ Its locked dependencies, tests, non-root container, CI checks, Bicep runtime, ma
 
 ## Git workflow
 
-The canonical Sakai, infrastructure, and MCP repository is the private GitHub repository `BuriAhmad/sakai-mcp`. GitHub Actions validates project shell syntax, runs ShellCheck, checks that local secrets remain untracked, and compiles the Bicep templates.
+The canonical Sakai, infrastructure, and MCP repository is the public GitHub repository `BuriAhmad/sakai-mcp`. GitHub Actions validates project shell syntax, runs ShellCheck, checks that local secrets remain untracked, and compiles the Bicep templates.
 
 Follow [the maintained Git workflow](GIT_WORKFLOW.md) and
 [repository Git release Skill](../skills/git-release-workflow/SKILL.md). Make all
